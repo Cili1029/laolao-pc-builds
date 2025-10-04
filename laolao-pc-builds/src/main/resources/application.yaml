@@ -1,0 +1,40 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: laolao-pc-builds
+  profiles:
+    active: dev
+#  main:
+    # 循环依赖
+#    allow-circular-references: true
+  datasource:
+    driver-class-name: ${laolao.datasource.driver-class-name}
+    url: jdbc:mysql://${laolao.datasource.host}:${laolao.datasource.port}/${laolao.datasource.database}?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
+    username: ${laolao.datasource.username}
+    password: ${laolao.datasource.password}
+
+  data:
+    redis:
+      host: ${laolao.redis.host}
+      port: ${laolao.redis.port}
+      database: ${laolao.redis.database}
+
+mybatis:
+  #mapper配置文件
+  mapper-locations: classpath:mapper/*.xml
+#  type-aliases-package: com.laolao
+  configuration:
+    #开启驼峰命名
+    map-underscore-to-camel-case: true
+
+laolao:
+  jwt:
+    # 设置jwt签名加密时使用的秘钥
+    user-secret-key: laolaolaolaolaolaolaolaolaolaolao
+    # 设置jwt过期时间
+    user-ttl: 7200000
+    # 设置前端传递过来的令牌名称
+    user-token-name: authentication
+

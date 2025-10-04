@@ -1,0 +1,12 @@
+laolao:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    host: localhost
+    port: 3306
+    database: laolao_pc_builds
+    username: root
+    password: 293576
+  redis:
+    host: localhost
+    port: 6379
+    database: 1
