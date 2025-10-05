@@ -102,6 +102,17 @@ public class UserServiceImpl implements UserService {
         return setJwtToLogin(user, res);
     }
 
+    @Override
+    public Result<String> logout(HttpServletResponse res) {
+        Cookie cookie = new Cookie("jwt_token", null);
+        cookie.setHttpOnly(true);        // 防止 XSS 攻击
+        cookie.setSecure(false);         // 本地开发用 false，生产环境用 true (HTTPS)
+        cookie.setPath("/");             // 对整个应用有效
+        cookie.setMaxAge(0); // 7天过期
+        res.addCookie(cookie);
+        return Result.success();
+    }
+
     // 电话合理性以及验证码验证
     private Result<String> phone(UserLoginOrRegisterDTO userLoginOrRegisterDTO) {
         if (!StringUtils.hasText(userLoginOrRegisterDTO.getUsername()) || !StringUtils.hasText(userLoginOrRegisterDTO.getPassword()) || !StringUtils.hasText(userLoginOrRegisterDTO.getPhone()) || !StringUtils.hasText(userLoginOrRegisterDTO.getSmsCode())) {

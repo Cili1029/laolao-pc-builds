@@ -11,4 +11,6 @@ public interface UserService {
     Result<UserLoginVO> login(UserLoginOrRegisterDTO userLoginOrRegisterDTO, HttpServletResponse res);
 
     Result<UserLoginVO> register(UserLoginOrRegisterDTO userRegisterDTO, HttpServletResponse res) ;
+
+    Result<String> logout(HttpServletResponse res);
 }

@@ -35,4 +35,9 @@ public class UserController {
     public Result<UserLoginVO> register(@RequestBody UserLoginOrRegisterDTO userLoginOrRegisterDTO, HttpServletResponse res) {
         return userService.register(userLoginOrRegisterDTO, res);
     }
+
+    @GetMapping("logout")
+    public Result<String> logout(HttpServletResponse res) {
+        return userService.logout(res);
+    }
 }
