@@ -7,12 +7,13 @@ import com.laolao.constant.JwtClaimsConstant;
 import com.laolao.constant.MessageConstant;
 import com.laolao.constant.RedisConstant;
 import com.laolao.converter.UserMapStruct;
-import com.laolao.exception.*;
+import com.laolao.exception.UnknownError;
 import com.laolao.mapper.UserMapper;
 import com.laolao.pojo.dto.UserLoginOrRegisterDTO;
 import com.laolao.pojo.entity.User;
 import com.laolao.pojo.vo.UserLoginVO;
 import com.laolao.properties.JwtProperties;
+import com.laolao.result.Result;
 import com.laolao.service.UserService;
 import com.laolao.utils.JwtUtil;
 import jakarta.annotation.Resource;
@@ -42,6 +43,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public void getSmsCode(String phone) {
         // 手机号位数验证待开发
+        if (!StringUtils.hasText(phone)) {
+            throw new UnknownError(MessageConstant.UNKNOWN_ERROR);
+        }
 
         // 暂且用图形验证码代替
         LineCaptcha captcha = CaptchaUtil.createLineCaptcha(200, 100);
@@ -51,32 +55,38 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserLoginVO login(UserLoginOrRegisterDTO userLoginOrRegisterDTO, HttpServletResponse res) {
-        phone(userLoginOrRegisterDTO);
+    public Result<UserLoginVO> login(UserLoginOrRegisterDTO userLoginOrRegisterDTO, HttpServletResponse res) {
+        Result<String> result = phone(userLoginOrRegisterDTO);
+        if (result != null) {
+            return Result.error(result.getMsg());
+        }
 
         User user = userMapper.getByUsername(userLoginOrRegisterDTO.getUsername());
         // 用户不存在
         if (user == null) {
-            throw new UserNotFound(MessageConstant.USER_NOT_FOUND);
+            return Result.error(MessageConstant.USER_NOT_FOUND);
         }
 
         // 加密密码进行比对，错误则密码错误
         String password = DigestUtils.md5DigestAsHex(userLoginOrRegisterDTO.getPassword().getBytes());
         if (!password.equals(user.getPassword())) {
-            throw new PasswordError(MessageConstant.PASSWORD_ERROR);
+            return Result.error(MessageConstant.PASSWORD_ERROR);
         }
 
         // 设置jwt令牌并返回前端
-        return SetJwtToLogin(user, res);
+        return setJwtToLogin(user, res);
     }
 
     @Override
-    public UserLoginVO register(UserLoginOrRegisterDTO userLoginOrRegisterDTO, HttpServletResponse res) {
-        phone(userLoginOrRegisterDTO);
+    public Result<UserLoginVO> register(UserLoginOrRegisterDTO userLoginOrRegisterDTO, HttpServletResponse res) {
+        Result<String> result = phone(userLoginOrRegisterDTO);
+        if (result != null) {
+            return Result.error(result.getMsg());
+        }
 
         // 用户已存在
         if (userMapper.getByUsername(userLoginOrRegisterDTO.getUsername()) != null) {
-            throw new UserAlreadyExists(MessageConstant.USER_ALREADY_EXISTS);
+            return Result.error(MessageConstant.USER_ALREADY_EXISTS);
         }
 
         User user = new User();
@@ -89,13 +99,13 @@ public class UserServiceImpl implements UserService {
         userMapper.addUser(user);
 
         // 设置jwt令牌并返回前端
-        return SetJwtToLogin(user, res);
+        return setJwtToLogin(user, res);
     }
 
     // 电话合理性以及验证码验证
-    private void phone(UserLoginOrRegisterDTO userLoginOrRegisterDTO) {
+    private Result<String> phone(UserLoginOrRegisterDTO userLoginOrRegisterDTO) {
         if (!StringUtils.hasText(userLoginOrRegisterDTO.getUsername()) || !StringUtils.hasText(userLoginOrRegisterDTO.getPassword()) || !StringUtils.hasText(userLoginOrRegisterDTO.getPhone()) || !StringUtils.hasText(userLoginOrRegisterDTO.getSmsCode())) {
-            throw new UnknowError(MessageConstant.UNKNOWN_ERROR);
+            return Result.error(MessageConstant.UNKNOWN_ERROR);
         }
 
         // 手机号位数验证待开发
@@ -103,11 +113,14 @@ public class UserServiceImpl implements UserService {
         // 验证验证码
         String smsCode = stringRedisTemplate.opsForValue().get(RedisConstant.LOGIN_CODE_KEY + userLoginOrRegisterDTO.getPhone());
         if (smsCode == null || !smsCode.equals(userLoginOrRegisterDTO.getSmsCode())) {
-            throw new SmsCodeError(MessageConstant.SMSCODE_ERROR);
+            return Result.error(MessageConstant.SMSCODE_ERROR);
         }
+
+        // 合理，通过
+        return null;
     }
 
-    private UserLoginVO SetJwtToLogin(User user, HttpServletResponse res) {
+    private Result<UserLoginVO> setJwtToLogin(User user, HttpServletResponse res) {
         // 转换为VO
         UserLoginVO userLoginVO = userMapStruct.userToUserLoginVO(user);
 
@@ -126,7 +139,7 @@ public class UserServiceImpl implements UserService {
         cookie.setMaxAge(7 * 24 * 60 * 60); // 7天过期
         res.addCookie(cookie);
 
-        return userLoginVO;
+        return Result.success(userLoginVO);
     }
 
 }

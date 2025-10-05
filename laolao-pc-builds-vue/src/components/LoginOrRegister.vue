@@ -13,7 +13,7 @@
         <TabsContent value="login">
           <Card>
             <CardHeader>
-              <CardTitle>欢迎回来！</CardTitle>
+              <CardTitle>自己人？快进来！</CardTitle>
               <CardDescription>
                 输入您的账户（用户名），密码以及验证码
               </CardDescription>
@@ -35,9 +35,8 @@
                 <Label for="Code">验证码</Label>
                 <div class="flex gap-2">
                   <Input id="code" v-model="user.smsCode" class="flex-1" placeholder="请输入验证码" />
-                  <Button @click="getSmsCode()" 
-                    class="w-1/4">
-                    发送验证码
+                  <Button :disabled="countDown > 0" @click="getSmsCode()" class="w-1/4">
+                    {{ countDown > 0 ? countDown + 's' : "发送验证码" }}
                   </Button>
                 </div>
               </div>
@@ -50,7 +49,7 @@
         <TabsContent value="register">
           <Card>
             <CardHeader>
-              <CardTitle>加入大家庭！</CardTitle>
+              <CardTitle>没有号？整一个！</CardTitle>
               <CardDescription>
                 填写您的账户（用户名），密码以及验证码
               </CardDescription>
@@ -72,9 +71,8 @@
                 <Label for="Code">验证码</Label>
                 <div class="flex gap-2">
                   <Input id="code" v-model="user.smsCode" class="flex-1" placeholder="请输入验证码" />
-                  <Button @click="getSmsCode()" 
-                    class="w-1/4">
-                    发送验证码
+                  <Button :disabled="countDown > 0" @click="getSmsCode()" class="w-1/4">
+                    {{ countDown > 0 ? countDown + 's' : "发送验证码" }}
                   </Button>
                 </div>
               </div>
@@ -110,6 +108,7 @@
 
   // 背景图
   import background from '@/assets/background1.jpg'
+  import { ref } from "vue"
 
   const user = reactive({
     username: "",
@@ -118,9 +117,22 @@
     smsCode: ""
   })
 
+  const countDown = ref(0)
+  let timer: number | null = null
+
   const getSmsCode = async () => {
+    if (!user.phone) {
+      toast("啊哈！", {
+        description: "不得为空！",
+        action: {
+          label: '我知道了',
+        },
+      })
+      return
+    }
+
     try {
-      const response = await axios.post('/user/user/smscode',{
+      const response = await axios.post('/user/user/smscode', {
         phone: user.phone
       })
 
@@ -130,6 +142,15 @@
           label: '我知道了',
         },
       })
+
+      countDown.value = 60
+      timer = setInterval(() => {
+        countDown.value--
+        if (countDown.value <= 0 && timer) {
+          clearInterval(timer)
+          timer = null
+        }
+      }, 1000)
 
     } catch (error) {
       console.error(error)
