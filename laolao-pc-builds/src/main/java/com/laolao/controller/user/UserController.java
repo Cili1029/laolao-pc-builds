@@ -36,7 +36,7 @@ public class UserController {
         return userService.register(userLoginOrRegisterDTO, res);
     }
 
-    @GetMapping("logout")
+    @GetMapping("/logout")
     public Result<String> logout(HttpServletResponse res) {
         return userService.logout(res);
     }

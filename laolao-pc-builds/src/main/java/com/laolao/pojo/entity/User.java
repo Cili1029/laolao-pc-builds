@@ -6,9 +6,9 @@ import java.time.LocalDateTime;
 // 用户
 public class User implements Serializable {
     private Long id;
-    private String name;
     private String username;
     private String password;
+    private String name;
     private String phone;
     private LocalDateTime createTime;
 
@@ -18,14 +18,6 @@ public class User implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getUsername() {
@@ -42,6 +34,14 @@ public class User implements Serializable {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getPhone() {

@@ -6,7 +6,7 @@ import cn.hutool.core.util.RandomUtil;
 import com.laolao.constant.JwtClaimsConstant;
 import com.laolao.constant.MessageConstant;
 import com.laolao.constant.RedisConstant;
-import com.laolao.converter.UserMapStruct;
+import com.laolao.converter.MapStruct;
 import com.laolao.exception.UnknownError;
 import com.laolao.mapper.UserMapper;
 import com.laolao.pojo.dto.UserLoginOrRegisterDTO;
@@ -36,7 +36,7 @@ public class UserServiceImpl implements UserService {
     @Resource
     private JwtProperties jwtProperties;
     @Resource
-    private UserMapStruct userMapStruct;
+    private MapStruct mapStruct;
     @Resource
     private StringRedisTemplate stringRedisTemplate;
 
@@ -133,7 +133,7 @@ public class UserServiceImpl implements UserService {
 
     private Result<UserLoginVO> setJwtToLogin(User user, HttpServletResponse res) {
         // 转换为VO
-        UserLoginVO userLoginVO = userMapStruct.userToUserLoginVO(user);
+        UserLoginVO userLoginVO = mapStruct.userToUserLoginVO(user);
 
         //设置jwt
         HashMap<String, Object> claims = new HashMap<>();
