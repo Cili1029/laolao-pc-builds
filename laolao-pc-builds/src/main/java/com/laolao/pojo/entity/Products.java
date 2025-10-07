@@ -1,7 +1,6 @@
 package com.laolao.pojo.entity;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public class Products implements Serializable {
@@ -12,11 +11,9 @@ public class Products implements Serializable {
 
     private int categoryId;
 
-    private BigDecimal price;
-
     private String image;
 
-    private String description;
+    private String commonDescription;
 
     private Integer status;
 
@@ -29,6 +26,13 @@ public class Products implements Serializable {
     private String createBy;
 
     private String updateBy;
+//
+//    // 用于联表查询的字段
+//    private String editionName;
+//
+//    private BigDecimal price;
+//
+//    private String description;
 
     public int getId() {
         return id;
@@ -54,14 +58,6 @@ public class Products implements Serializable {
         this.categoryId = categoryId;
     }
 
-    public BigDecimal getPrice() {
-        return price;
-    }
-
-    public void setPrice(BigDecimal price) {
-        this.price = price;
-    }
-
     public String getImage() {
         return image;
     }
@@ -70,12 +66,12 @@ public class Products implements Serializable {
         this.image = image;
     }
 
-    public String getDescription() {
-        return description;
+    public String getCommonDescription() {
+        return commonDescription;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setCommonDescription(String commonDescription) {
+        this.commonDescription = commonDescription;
     }
 
     public Integer getStatus() {
@@ -126,13 +122,12 @@ public class Products implements Serializable {
         this.updateBy = updateBy;
     }
 
-    public Products(int id, String name, int categoryId, BigDecimal price, String image, String description, Integer status, int sort, LocalDateTime createAt, LocalDateTime updateAt, String createBy, String updateBy) {
+    public Products(int id, String name, int categoryId, String image, String commonDescription, Integer status, int sort, LocalDateTime createAt, LocalDateTime updateAt, String createBy, String updateBy) {
         this.id = id;
         this.name = name;
         this.categoryId = categoryId;
-        this.price = price;
         this.image = image;
-        this.description = description;
+        this.commonDescription = commonDescription;
         this.status = status;
         this.sort = sort;
         this.createAt = createAt;
@@ -150,15 +145,14 @@ public class Products implements Serializable {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", categoryId=" + categoryId +
-                ", price=" + price +
                 ", image='" + image + '\'' +
-                ", description='" + description + '\'' +
+                ", commonDescription='" + commonDescription + '\'' +
                 ", status=" + status +
                 ", sort=" + sort +
                 ", createAt=" + createAt +
                 ", updateAt=" + updateAt +
-                ", createBy=" + createBy +
-                ", updateBy=" + updateBy +
+                ", createBy='" + createBy + '\'' +
+                ", updateBy='" + updateBy + '\'' +
                 '}';
     }
 }

@@ -5,9 +5,9 @@ import java.math.BigDecimal;
 public class ProductsVO {
     private int id;
     private String name;
-    private BigDecimal price;
     private String image;
-    private String description;
+    private String commonDescription;
+    private BigDecimal price;
 
     public int getId() {
         return id;
@@ -25,14 +25,6 @@ public class ProductsVO {
         this.name = name;
     }
 
-    public BigDecimal getPrice() {
-        return price;
-    }
-
-    public void setPrice(BigDecimal price) {
-        this.price = price;
-    }
-
     public String getImage() {
         return image;
     }
@@ -41,33 +33,40 @@ public class ProductsVO {
         this.image = image;
     }
 
-    public String getDescription() {
-        return description;
+    public String getCommonDescription() {
+        return commonDescription;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setCommonDescription(String commonDescription) {
+        this.commonDescription = commonDescription;
     }
 
-    public ProductsVO(int id, String name, BigDecimal price, String image, String description) {
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+    }
+
+    public ProductsVO(int id, String name, String image, String commonDescription, BigDecimal price) {
         this.id = id;
         this.name = name;
-        this.price = price;
         this.image = image;
-        this.description = description;
+        this.commonDescription = commonDescription;
+        this.price = price;
     }
 
-    public ProductsVO() {
-    }
+    public ProductsVO() {}
 
     @Override
     public String toString() {
         return "ProductsVO{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", price=" + price +
                 ", image='" + image + '\'' +
-                ", description='" + description + '\'' +
+                ", commonDescription='" + commonDescription + '\'' +
+                ", price=" + price +
                 '}';
     }
 }

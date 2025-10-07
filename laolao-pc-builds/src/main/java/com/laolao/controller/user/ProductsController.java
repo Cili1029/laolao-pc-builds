@@ -1,5 +1,6 @@
 package com.laolao.controller.user;
 
+import com.laolao.pojo.vo.ProductsEditionVO;
 import com.laolao.pojo.vo.ProductsVO;
 import com.laolao.result.Result;
 import com.laolao.service.ProductsService;
@@ -17,9 +18,20 @@ public class ProductsController {
     @Resource
     private ProductsService productsService;
 
-    @GetMapping("list")
-    public Result<List<ProductsVO>> list(int categoryId) {
+    @GetMapping("/products-list")
+    public Result<List<ProductsVO>> productsList(int categoryId) {
 
-        return productsService.listWithId(categoryId);
+        return productsService.listWithCategoryId(categoryId);
+    }
+
+    @GetMapping("/edition-list")
+    public Result<List<ProductsEditionVO>> editionList(int productsId) {
+
+        return productsService.listWithProductsId(productsId);
+    }
+
+    @GetMapping("/search")
+    public Result<List<ProductsVO>> SearchByName(int categoryId, String searchContent) {
+        return productsService.searchByName(categoryId,searchContent);
     }
 }

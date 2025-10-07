@@ -3,19 +3,18 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.laolao.mapper.ProductsMapper">
-    <select id="getByCategoryId" resultType="com.laolao.pojo.entity.Products" parameterType="Products">
-        select * from products
+    <select id="getByConditions" resultType="com.laolao.pojo.vo.ProductsVO" parameterType="ProductsVO">
+        SELECT p.id, p.name, p.image, p.common_description, MIN(pe.price) as price
+        FROM products p
+                 JOIN products_edition pe ON p.id = pe.product_id
         <where>
-<!--            <if test="name != null">-->
-<!--                and name like concat ('%',#{name},'%')-->
-<!--            </if>-->
-            <if test="categoryId != null">
-                and category_id = #{categoryId}
+            <if test="categoryId != null and categoryId != '' and categoryId != 0">
+                and p.category_id = #{categoryId}
             </if>
-<!--            <if test="status != null">-->
-<!--                and status = #{status}-->
-<!--            </if>-->
+            <if test="searchContent != null and searchContent != ''">
+                and p.name like concat('%',#{searchContent},'%')
+            </if>
         </where>
-        order by created_at desc
+        GROUP BY p.id
     </select>
 </mapper>

@@ -80,6 +80,8 @@
           </div>
 
           <div class="flex space-x-6">
+            <a href="#" class="text-gray-300 hover:text-white transition-colors">假如再也见不到你</a>
+            <a href="#" class="text-gray-300 hover:text-white transition-colors">祝你</a>
             <a href="#" class="text-gray-300 hover:text-white transition-colors">早安</a>
             <a href="#" class="text-gray-300 hover:text-white transition-colors">午安</a>
             <a href="#" class="text-gray-300 hover:text-white transition-colors">晚安</a>
