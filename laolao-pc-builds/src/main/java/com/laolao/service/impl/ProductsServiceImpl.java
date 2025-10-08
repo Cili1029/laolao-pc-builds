@@ -1,6 +1,5 @@
 package com.laolao.service.impl;
 
-import com.laolao.converter.MapStruct;
 import com.laolao.mapper.ProductsMapper;
 import com.laolao.pojo.vo.ProductsEditionVO;
 import com.laolao.pojo.vo.ProductsVO;
@@ -16,8 +15,6 @@ public class ProductsServiceImpl implements ProductsService {
 
     @Resource
     private ProductsMapper productsMapper;
-    @Resource
-    private MapStruct mapStruct;
 
     @Override
     public Result<List<ProductsVO>> listWithCategoryId(int categoryId) {

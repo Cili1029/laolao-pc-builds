@@ -4,7 +4,6 @@
     <header class="bg-white sticky top-0 z-50 shadow-md">
       <div class="w-full">
         <div class="container mx-auto px-4 py-3 flex justify-between items-center border-l border-r border-gray-200">
-          <!-- Logo -->
           <div class="flex items-center space-x-2">
             <img :src="logo" class="w-9 h-9 rounded-md" @click="goHome" />
             <span class="text-xl font-bold">劳劳的装机工坊</span>
@@ -15,19 +14,91 @@
             <RouterLink to="/buy" class="text-gray-600 hover:text-blue-500 transition-colors">买</RouterLink>
             <RouterLink to="/hello" class="text-gray-600 hover:text-blue-500 transition-colors">功能</RouterLink>
 
-            <!-- 头像区域 - 根据前端 Cookie 状态显示不同内容 -->
+            <!-- 未登录，点击登录 -->
             <div v-if="!isLoggedIn">
-              <Avatar class="cursor-pointer hover:ring-2 hover:ring-blue-500 transition-all"
-                @click="showLoginModal = true">
-                <AvatarFallback>登录</AvatarFallback>
-              </Avatar>
+              <Dialog :open="showLoginModal" @update:open="(value) => {
+                showLoginModal = value
+                if (value) {
+                  // 打开模态框时重置到密码登录
+                  status = 'A'
+                  resetLoginForm()
+                }
+              }">
+                <DialogTrigger as-child>
+                  <Avatar class="cursor-pointer hover:ring-2 hover:ring-blue-500 transition-all">
+                    <AvatarFallback>登录</AvatarFallback>
+                  </Avatar>
+                </DialogTrigger>
+                <DialogContent class="sm:max-w-[425px]">
+                  <DialogHeader>
+                    <DialogTitle>登录或注册</DialogTitle>
+                  </DialogHeader>
+                  <DialogDescription></DialogDescription>
+                  <Tabs default-value="loginA" class="w-full">
+                    <TabsList class="grid w-full grid-cols-3">
+                      <TabsTrigger value="loginA" @click="status = 'A', resetLoginForm()">
+                        密码登录
+                      </TabsTrigger>
+                      <TabsTrigger value="loginB" @click="status = 'B', resetLoginForm()">
+                        验证码登录
+                      </TabsTrigger>
+                      <TabsTrigger value="register" @click="status = 'C', resetLoginForm()">
+                        注册
+                      </TabsTrigger>
+                    </TabsList>
+                    <TabsContent v-for="tab in tabs" :key="tab.value" :value="tab.value">
+                      <Card>
+                        <CardHeader>
+                          <CardTitle>{{ tab.title }}</CardTitle>
+                          <CardDescription>
+                            {{ tab.description }}
+                          </CardDescription>
+                        </CardHeader>
+                        <CardContent class="space-y-2">
+                          <div class="space-y-1" v-if="status === 'A' || status === 'C'">
+                            <Label for="Username">用户名</Label>
+                            <Input id="username" :required="tab.value === 'register'" v-model="loginUser.username" />
+                          </div>
+                          <div class="space-y-1" v-if="status === 'A' || status === 'C'">
+                            <Label for="Password">密码</Label>
+                            <Input id="password" type="password" :required="tab.value === 'register'"
+                              v-model="loginUser.password" />
+                          </div>
+                          <div class="space-y-1" v-if="status === 'B' || status === 'C'">
+                            <Label for="Password">手机号</Label>
+                            <Input id="phone" v-model="loginUser.phone" />
+                          </div>
+                          <div class="space-y-1" v-if="status === 'B' || status === 'C'">
+                            <Label for="Code">验证码</Label>
+                            <div class="flex gap-2">
+                              <Input id="code" v-model="loginUser.smsCode" class="flex-1" placeholder="请输入验证码" />
+                              <Button :disabled="countDown > 0 || isSendingCode" @click="getSmsCode()" class="w-1/4">
+                                <span v-if="isSendingCode">发送中...</span>
+                                <span v-else>{{ countDown > 0 ? countDown + 's' : "发送验证码" }}</span>
+                              </Button>
+                            </div>
+                          </div>
+                        </CardContent>
+                        <CardFooter>
+                          <Button class="w-full" :disabled="isLoading"
+                            @click="loginOrRegister(tab.value as 'login' | 'register')">
+                            <span v-if="isLoading && currentAction === tab.value">{{ tab.buttonText }}中...</span>
+                            <span v-else>{{ tab.buttonText }}</span>
+                          </Button>
+                        </CardFooter>
+                      </Card>
+                    </TabsContent>
+                  </Tabs>
+                </DialogContent>
+              </Dialog>
             </div>
 
+            <!-- 已登录，显示用户数据 -->
             <div v-else>
               <DropdownMenu>
                 <DropdownMenuTrigger as-child>
                   <Avatar class="cursor-pointer hover:ring-2 hover:ring-blue-500 transition-all rounded-md">
-                    <AvatarImage src="https://github.com/unovue.png" alt="用户头像" />
+                    <AvatarImage src="" alt="用户头像" />
                     <AvatarFallback>{{ userInitials }}</AvatarFallback>
                   </Avatar>
                 </DropdownMenuTrigger>
@@ -89,53 +160,89 @@
         </div>
       </div>
     </footer>
-
-    <!-- 登录 -->
-    <LoginModal v-model="showLoginModal" @login-success="handleLoginSuccess" />
+    <!-- 全局消息弹窗 -->
+    <Toaster position="top-right" />
   </div>
-  <Toaster position="top-right" />
 </template>
 
 <script setup lang="ts">
-  import { ref, onMounted, computed } from 'vue'
-  import axios from "axios"
+  import { ref, onMounted, computed, reactive } from 'vue'
+  import axios from './utils/myAxios'
   import { useRouter } from 'vue-router'
   import { useCookies } from 'vue3-cookies'
-  import LoginModal from '@/components/LoginOrRegister.vue'
+  import logo from '@/assets/logo.jpg'
   import { Toaster } from '@/components/ui/sonner'
+  import { toast } from "vue-sonner"
   import 'vue-sonner/style.css'
   import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
   import { CreditCard, LogOut, Settings, User } from "lucide-vue-next"
   import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-  import 'vue-sonner/style.css'
-  import { toast } from "vue-sonner"
-
-  import logo from '@/assets/logo.jpg'
-
+  import { Button } from "@/components/ui/button"
+  import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+  import { Input } from "@/components/ui/input"
+  import { Label } from "@/components/ui/label"
+  import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+  import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
   const router = useRouter()
   const { cookies } = useCookies()
 
+  // 组件挂载时检查登录状态
+  onMounted(() => {
+    checkLoginStatus()
+  })
+
+  // 回主页
   const goHome = () => {
-    router.push('/');
+    router.push('/home');
   }
 
-  // 控制登录模态框显示状态
+  // 登陆注册显示问题
+  const status = ref('A')
+  const tabs = [
+    {
+      value: 'loginA',
+      title: '自己人？快进来！',
+      description: '输入您的账户（用户名），密码',
+      buttonText: '登录'
+    },
+    {
+      value: 'loginB',
+      title: '自己人？快进来！',
+      description: '输入您的手机号，验证码',
+      buttonText: '登录'
+    },
+    {
+      value: 'register',
+      title: '没有号？整一个！',
+      description: '填写您的账户（用户名），密码以及验证码',
+      buttonText: '注册'
+    }
+  ]
+
+  // 登录框状态
   const showLoginModal = ref(false)
-  // 登录状态
+  // 判断是否登陆用
   const isLoggedIn = ref(false)
-  // 用户信息
   const username = ref('')
 
-  // 检查前端 Cookie 登录状态
-  const checkLoginStatus = () => {
-    const loginStatus = cookies.get('user_login_status')
-    const storedUsername = cookies.get('user_username')
+  // 登录表单数据
+  const loginUser = reactive({
+    username: "",
+    password: "",
+    phone: "",
+    smsCode: ""
+  })
 
-    isLoggedIn.value = loginStatus === '1'
-    username.value = storedUsername || '用户'
-  }
+  // 验证码相关状态
+  const countDown = ref(0)
+  const isLoading = ref(false)
+  const isSendingCode = ref(false)
+  const currentAction = ref<"login" | "register" | null>(null)
+  let timer: number | null = null
 
-  // 用户名字首字母（用于头像回退显示）
+
+
+  // 图片加载失败显示用户名字首字母
   const userInitials = computed(() => {
     if (!username.value) return '用户'
     return username.value.substring(0, 2).toUpperCase()
@@ -147,49 +254,180 @@
     showLoginModal.value = false
   }
 
-  // 退出登录
-  const logout = async () => {
-    try {
-      const response = await axios.get('/user/user/logout')
+  // 检查前端 Cookie 登录状态
+  const checkLoginStatus = () => {
+    const loginStatus = cookies.get('user_login_status')
+    const storedUsername = cookies.get('user_username')
 
-      toast("啊哈！", {
-        description: response.data.msg,
+    isLoggedIn.value = loginStatus === '1'
+    username.value = storedUsername || '用户'
+  }
+
+  // 切换注册登录选项重置表单
+  const resetLoginForm = () => {
+    Object.assign(loginUser, {
+      username: "",
+      password: "",
+      phone: "",
+      smsCode: ""
+    })
+  }
+
+  // 发送验证码
+  const getSmsCode = async () => {
+    if (!loginUser.phone) {
+      toast("嗨！", {
+        description: "手机号不得为空！",
         action: {
           label: '我知道了',
         },
       })
+      return
+    }
+
+    isSendingCode.value = true
+
+    try {
+      await axios.post('/user/user/smscode', {
+        phone: loginUser.phone
+      })
+
+      countDown.value = 60
+      timer = setInterval(() => {
+        countDown.value--
+        if (countDown.value <= 0 && timer) {
+          clearInterval(timer)
+          timer = null
+        }
+      }, 1000)
+
+    } catch (error) {
+      console.error(error)
+      toast("嗨！", {
+        description: "发送验证码失败，请重试",
+        action: {
+          label: '我知道了',
+        },
+      })
+    } finally {
+      isSendingCode.value = false
+    }
+  }
+
+  // 登录和注册
+  const loginOrRegister = async (type: "login" | "register") => {
+    // 验证字段
+    if (type === 'register') {
+      // 注册验证
+      if (!loginUser.username || !loginUser.password || !loginUser.smsCode || !loginUser.phone) {
+        toast("嗨！", {
+          description: "所有字段都不得为空！",
+          action: {
+            label: '我知道了',
+          },
+        })
+        return
+      }
+    } else {
+      // 登录验证 - 根据当前状态区分密码登录和验证码登录
+      if (status.value === 'A') {
+        // 密码登录验证
+        if (!loginUser.username || !loginUser.password) {
+          toast("嗨！", {
+            description: "用户名和密码不能为空！",
+            action: {
+              label: '我知道了',
+            },
+          })
+          return
+        }
+      } else if (status.value === 'B') {
+        // 验证码登录验证
+        if (!loginUser.phone || !loginUser.smsCode) {
+          toast("嗨！", {
+            description: "手机号和验证码不能为空！",
+            action: {
+              label: '我知道了',
+            },
+          })
+          return
+        }
+      }
+    }
+
+    isLoading.value = true
+    currentAction.value = type
+
+    try {
+      let response
+
+      if (type === 'register') {
+        // 注册逻辑
+        response = await axios.post('/user/user/register', {
+          username: loginUser.username,
+          password: loginUser.password,
+          phone: loginUser.phone,
+          smsCode: loginUser.smsCode
+        })
+      } else {
+        // 登录逻辑 - 根据状态发送不同的数据
+        if (status.value === 'A') {
+          // 密码登录
+          response = await axios.post('/user/user/login', {
+            username: loginUser.username,
+            password: loginUser.password
+          })
+        } else {
+          // 验证码登录
+          response = await axios.post('/user/user/login', {
+            phone: loginUser.phone,
+            smsCode: loginUser.smsCode
+          })
+        }
+      }
+
+      if (response.data.code === 1) {
+        cookies.set('user_login_status', '1', '7d')
+        cookies.set('user_username', response.data.data.username, '7d')
+        handleLoginSuccess()
+      }
     } catch (error) {
       console.log(error)
-      // 即使后端退出失败，也要清除前端状态
-      toast("啊哈！", {
+    } finally {
+      isLoading.value = false
+      currentAction.value = null
+    }
+  }
+
+  // 退出登录
+  const logout = async () => {
+    try {
+      await axios.get('/user/user/logout')
+      goHome()
+    } catch (error) {
+      toast("嗨！", {
         description: "退出登录遇到问题，但已清除本地状态",
         action: {
           label: '我知道了',
         },
       })
     } finally {
-      // 无论后端退出是否成功，都清除前端状态
       cookies.remove('user_login_status')
       cookies.remove('user_username')
-
-      // 更新状态
       isLoggedIn.value = false
       username.value = ''
     }
   }
 
-  // 组件挂载时检查登录状态
-  onMounted(() => {
-    checkLoginStatus()
-  })
+  
 </script>
 
 <style scoped>
   .min-h-screen {
-  background-image: url('./assets/background1.jpg');
-  background-size: cover; /* 覆盖整个容器 */
-  background-position: center; /* 居中显示 */
-  background-attachment: fixed; /* 固定背景，不随内容滚动 */
-  background-repeat: no-repeat; /* 不重复 */
-}
+    background-image: url('./assets/background1.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+  }
 </style>

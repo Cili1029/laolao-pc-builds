@@ -31,7 +31,7 @@ public class JwtUtil {
      * jwt解密
      * @param secretKey jwt秘钥
      * @param jwt       jwt令牌
-     * @return          内容
+     * @return          {userId=1, username=laolao, exp=1760444574}
      */
     public static Claims parseJWT(String secretKey, String jwt) {
 

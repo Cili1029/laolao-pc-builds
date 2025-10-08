@@ -11,7 +11,7 @@ import com.laolao.exception.UnknownError;
 import com.laolao.mapper.UserMapper;
 import com.laolao.pojo.dto.UserLoginOrRegisterDTO;
 import com.laolao.pojo.entity.User;
-import com.laolao.pojo.vo.UserLoginVO;
+import com.laolao.pojo.vo.UserVO;
 import com.laolao.properties.JwtProperties;
 import com.laolao.result.Result;
 import com.laolao.service.UserService;
@@ -42,7 +42,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void getSmsCode(String phone) {
-        // 手机号位数验证待开发
+        // 手机号位数验证待开发 应该先验证用户是否存在，在验证验证码
         if (!StringUtils.hasText(phone)) {
             throw new UnknownError(MessageConstant.UNKNOWN_ERROR);
         }
@@ -55,37 +55,52 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Result<UserLoginVO> login(UserLoginOrRegisterDTO userLoginOrRegisterDTO, HttpServletResponse res) {
-        Result<String> result = phone(userLoginOrRegisterDTO);
-        if (result != null) {
-            return Result.error(result.getMsg());
-        }
+    public Result<UserVO> login(UserLoginOrRegisterDTO userLoginOrRegisterDTO, HttpServletResponse res) {
+        if (StringUtils.hasText(userLoginOrRegisterDTO.getUsername()) && StringUtils.hasText(userLoginOrRegisterDTO.getPassword())) {
+            // 账户密码登录
+            User user = userMapper.checkUserExists(userLoginOrRegisterDTO);
 
-        User user = userMapper.getByUsername(userLoginOrRegisterDTO.getUsername());
-        // 用户不存在
-        if (user == null) {
-            return Result.error(MessageConstant.USER_NOT_FOUND);
-        }
+            // 用户不存在
+            if (user == null) {
+                return Result.error(MessageConstant.USER_NOT_FOUND);
+            }
 
-        // 加密密码进行比对，错误则密码错误
-        String password = DigestUtils.md5DigestAsHex(userLoginOrRegisterDTO.getPassword().getBytes());
-        if (!password.equals(user.getPassword())) {
-            return Result.error(MessageConstant.PASSWORD_ERROR);
-        }
+            // 加密密码进行比对，错误则密码错误
+            String password = DigestUtils.md5DigestAsHex(userLoginOrRegisterDTO.getPassword().getBytes());
+            if (!password.equals(user.getPassword())) {
+                return Result.error(MessageConstant.PASSWORD_ERROR);
+            }
 
-        // 设置jwt令牌并返回前端
-        return setJwtToLogin(user, res);
+            // 设置jwt令牌并返回前端
+            return setJwtToLogin(user, res);
+        } else if (StringUtils.hasText(userLoginOrRegisterDTO.getPhone()) && StringUtils.hasText(userLoginOrRegisterDTO.getSmsCode())) {
+            // 电话验证码登录
+            Result<String> result = phone(userLoginOrRegisterDTO);
+            if (result != null) {
+                return Result.error(result.getMsg());
+            }
+            User user = userMapper.checkUserExists(userLoginOrRegisterDTO);
+            // 用户不存在
+            if (user == null) {
+                return Result.error(MessageConstant.USER_NOT_FOUND);
+            }
+            return setJwtToLogin(user, res);
+        }
+        return Result.error(MessageConstant.UNKNOWN_ERROR);
     }
 
     @Override
-    public Result<UserLoginVO> register(UserLoginOrRegisterDTO userLoginOrRegisterDTO, HttpServletResponse res) {
+    public Result<UserVO> register(UserLoginOrRegisterDTO userLoginOrRegisterDTO, HttpServletResponse res) {
+        if (!StringUtils.hasText(userLoginOrRegisterDTO.getUsername()) || !StringUtils.hasText(userLoginOrRegisterDTO.getPassword()) || !StringUtils.hasText(userLoginOrRegisterDTO.getPhone()) || !StringUtils.hasText(userLoginOrRegisterDTO.getSmsCode())) {
+            return Result.error(MessageConstant.UNKNOWN_ERROR);
+        }
+
         Result<String> result = phone(userLoginOrRegisterDTO);
         if (result != null) {
             return Result.error(result.getMsg());
         }
 
-        // 用户已存在
-        if (userMapper.getByUsername(userLoginOrRegisterDTO.getUsername()) != null) {
+        if (userMapper.checkUserExists(userLoginOrRegisterDTO) != null) {
             return Result.error(MessageConstant.USER_ALREADY_EXISTS);
         }
 
@@ -110,15 +125,11 @@ public class UserServiceImpl implements UserService {
         cookie.setPath("/");             // 对整个应用有效
         cookie.setMaxAge(0); // 7天过期
         res.addCookie(cookie);
-        return Result.success();
+        return Result.success("已退出！");
     }
 
     // 电话合理性以及验证码验证
     private Result<String> phone(UserLoginOrRegisterDTO userLoginOrRegisterDTO) {
-        if (!StringUtils.hasText(userLoginOrRegisterDTO.getUsername()) || !StringUtils.hasText(userLoginOrRegisterDTO.getPassword()) || !StringUtils.hasText(userLoginOrRegisterDTO.getPhone()) || !StringUtils.hasText(userLoginOrRegisterDTO.getSmsCode())) {
-            return Result.error(MessageConstant.UNKNOWN_ERROR);
-        }
-
         // 手机号位数验证待开发
 
         // 验证验证码
@@ -131,16 +142,15 @@ public class UserServiceImpl implements UserService {
         return null;
     }
 
-    private Result<UserLoginVO> setJwtToLogin(User user, HttpServletResponse res) {
+    private Result<UserVO> setJwtToLogin(User user, HttpServletResponse res) {
         // 转换为VO
-        UserLoginVO userLoginVO = mapStruct.userToUserLoginVO(user);
+        UserVO userVO = mapStruct.userToUserVO(user);
 
         //设置jwt
         HashMap<String, Object> claims = new HashMap<>();
         claims.put(JwtClaimsConstant.USER_ID, user.getId());
         claims.put(JwtClaimsConstant.USERNAME, user.getUsername());
         String jwt = JwtUtil.createJWT(jwtProperties.getUserSecretKey(), jwtProperties.getUserTtl(), claims);
-        userLoginVO.setJwt(jwt);
 
         // 存入Cookie
         Cookie cookie = new Cookie("jwt_token", jwt);
@@ -150,7 +160,7 @@ public class UserServiceImpl implements UserService {
         cookie.setMaxAge(7 * 24 * 60 * 60); // 7天过期
         res.addCookie(cookie);
 
-        return Result.success(userLoginVO);
+        return Result.success(userVO);
     }
 
 }

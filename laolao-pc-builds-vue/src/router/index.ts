@@ -8,6 +8,10 @@ import Buy from '../components/Buy.vue';
 const routes = [
   {
     path: '/',
+    redirect: '/home'
+  },
+  {
+    path: '/home',
     name: 'home',
     component: Home
   },

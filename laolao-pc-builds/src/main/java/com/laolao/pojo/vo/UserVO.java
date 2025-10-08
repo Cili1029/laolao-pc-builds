@@ -1,12 +1,9 @@
 package com.laolao.pojo.vo;
 
-import java.io.Serializable;
-
-public class UserLoginVO implements Serializable {
+public class UserVO {
     private Long id;
     private String username;
     private String name;
-    private String jwt;
 
     public Long getId() {
         return id;
@@ -32,21 +29,21 @@ public class UserLoginVO implements Serializable {
         this.name = name;
     }
 
-    public String getJwt() {
-        return jwt;
-    }
-
-    public void setJwt(String jwt) {
-        this.jwt = jwt;
-    }
-
-    public UserLoginVO(Long id, String username, String name, String jwt) {
+    public UserVO(Long id, String username, String name) {
         this.id = id;
         this.username = username;
         this.name = name;
-        this.jwt = jwt;
     }
 
-    public UserLoginVO() {
+    public UserVO() {
+    }
+
+    @Override
+    public String toString() {
+        return "UserVO{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", name='" + name + '\'' +
+                '}';
     }
 }

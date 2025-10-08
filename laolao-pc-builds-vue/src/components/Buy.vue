@@ -57,8 +57,7 @@
                                     </div>
                                     <div class="w-1/2 flex flex-col justify-between">
                                         <div class="mb-4 h-1/2">
-                                            <p class="text-sm text-gray-600">{{ selectedEdition?.description ||
-                                                currentEditions[0]?.description }}</p>
+                                            <p class="text-sm text-gray-600">{{ selectedEdition?.description || currentEditions[0]?.description }}</p>
                                         </div>
                                         <div class="space-y-2 mb-4">
                                             <Button type="button" class="w-full" v-for="edi in currentEditions"
@@ -86,7 +85,7 @@
 </template>
 
 <script setup lang="ts">
-    import axios from "axios"
+    import axios from "@/utils/myAxios"
     import { onMounted, ref } from "vue"
     import { Button } from "@/components/ui/button"
     import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
@@ -201,7 +200,7 @@
 
             console.log(response.data.data)
             if (response.data.data.length === 0) {
-                toast("啊哈！", {
+                toast("嗨！", {
                     description: "什么也没有",
                     action: {
                         label: '我知道了',
