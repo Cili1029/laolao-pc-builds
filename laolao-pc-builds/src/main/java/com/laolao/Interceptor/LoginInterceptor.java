@@ -1,10 +1,10 @@
 package com.laolao.Interceptor;
 
-import com.laolao.constant.JwtClaimsConstant;
-import com.laolao.context.BaseContext;
+import com.laolao.common.constant.JwtClaimsConstant;
+import com.laolao.common.context.BaseContext;
 import com.laolao.pojo.vo.UserVO;
-import com.laolao.properties.JwtProperties;
-import com.laolao.utils.JwtUtil;
+import com.laolao.common.properties.JwtProperties;
+import com.laolao.common.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.Cookie;

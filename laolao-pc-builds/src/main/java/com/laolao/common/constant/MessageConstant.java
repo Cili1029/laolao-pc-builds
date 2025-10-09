@@ -1,4 +1,4 @@
-package com.laolao.constant;
+package com.laolao.common.constant;
 
 /**
  * 信息提示常量类

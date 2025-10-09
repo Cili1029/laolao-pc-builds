@@ -1,4 +1,4 @@
-package com.laolao.context;
+package com.laolao.common.context;
 
 public class BaseContext {
 

@@ -1,7 +1,7 @@
 package com.laolao.controller.user;
 
 import com.laolao.pojo.vo.CategoryVO;
-import com.laolao.result.Result;
+import com.laolao.common.result.Result;
 import com.laolao.service.CategoryService;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.GetMapping;

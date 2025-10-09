@@ -1,4 +1,4 @@
-package com.laolao.properties;
+package com.laolao.common.properties;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;

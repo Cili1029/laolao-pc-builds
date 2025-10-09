@@ -2,7 +2,7 @@ package com.laolao.controller.user;
 
 import com.laolao.pojo.dto.UserLoginOrRegisterDTO;
 import com.laolao.pojo.vo.UserVO;
-import com.laolao.result.Result;
+import com.laolao.common.result.Result;
 import com.laolao.service.UserService;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletResponse;

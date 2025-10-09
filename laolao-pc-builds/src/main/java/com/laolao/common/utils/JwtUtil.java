@@ -1,4 +1,4 @@
-package com.laolao.utils;
+package com.laolao.common.utils;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

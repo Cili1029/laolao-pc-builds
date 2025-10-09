@@ -3,7 +3,7 @@ package com.laolao.pojo.entity;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-public class Products implements Serializable {
+public class Component implements Serializable {
 
     private int id;
 
@@ -26,13 +26,6 @@ public class Products implements Serializable {
     private String createBy;
 
     private String updateBy;
-//
-//    // 用于联表查询的字段
-//    private String editionName;
-//
-//    private BigDecimal price;
-//
-//    private String description;
 
     public int getId() {
         return id;
@@ -122,7 +115,7 @@ public class Products implements Serializable {
         this.updateBy = updateBy;
     }
 
-    public Products(int id, String name, int categoryId, String image, String commonDescription, Integer status, int sort, LocalDateTime createAt, LocalDateTime updateAt, String createBy, String updateBy) {
+    public Component(int id, String name, int categoryId, String image, String commonDescription, Integer status, int sort, LocalDateTime createAt, LocalDateTime updateAt, String createBy, String updateBy) {
         this.id = id;
         this.name = name;
         this.categoryId = categoryId;
@@ -136,12 +129,12 @@ public class Products implements Serializable {
         this.updateBy = updateBy;
     }
 
-    public Products() {
+    public Component() {
     }
 
     @Override
     public String toString() {
-        return "Products{" +
+        return "Component{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", categoryId=" + categoryId +

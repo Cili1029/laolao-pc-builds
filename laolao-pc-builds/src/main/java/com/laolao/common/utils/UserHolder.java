@@ -1,4 +1,4 @@
-package com.laolao.utils;
+package com.laolao.common.utils;
 
 import com.laolao.pojo.vo.UserVO;
 

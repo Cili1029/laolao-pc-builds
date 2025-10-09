@@ -1,4 +1,4 @@
-package com.laolao.result;
+package com.laolao.common.result;
 
 import java.io.Serializable;
 

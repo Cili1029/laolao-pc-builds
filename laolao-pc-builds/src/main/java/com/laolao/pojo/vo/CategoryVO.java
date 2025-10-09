@@ -1,6 +1,5 @@
 package com.laolao.pojo.vo;
 
-import java.math.BigDecimal;
 
 public class CategoryVO {
     private int id;

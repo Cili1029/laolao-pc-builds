@@ -1,4 +1,4 @@
-package com.laolao.constant;
+package com.laolao.common.constant;
 
 public class RedisConstant {
     public static final String LOGIN_CODE_KEY = "login:code:";

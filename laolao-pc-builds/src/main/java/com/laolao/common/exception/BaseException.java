@@ -1,4 +1,4 @@
-package com.laolao.exception;
+package com.laolao.common.exception;
 
 /**
  * 业务异常

@@ -3,19 +3,19 @@ package com.laolao.service.impl;
 import cn.hutool.captcha.CaptchaUtil;
 import cn.hutool.captcha.LineCaptcha;
 import cn.hutool.core.util.RandomUtil;
-import com.laolao.constant.JwtClaimsConstant;
-import com.laolao.constant.MessageConstant;
-import com.laolao.constant.RedisConstant;
+import com.laolao.common.constant.JwtClaimsConstant;
+import com.laolao.common.constant.MessageConstant;
+import com.laolao.common.constant.RedisConstant;
 import com.laolao.converter.MapStruct;
-import com.laolao.exception.UnknownError;
+import com.laolao.common.exception.UnknownError;
 import com.laolao.mapper.UserMapper;
 import com.laolao.pojo.dto.UserLoginOrRegisterDTO;
 import com.laolao.pojo.entity.User;
 import com.laolao.pojo.vo.UserVO;
-import com.laolao.properties.JwtProperties;
-import com.laolao.result.Result;
+import com.laolao.common.properties.JwtProperties;
+import com.laolao.common.result.Result;
 import com.laolao.service.UserService;
-import com.laolao.utils.JwtUtil;
+import com.laolao.common.utils.JwtUtil;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -160,7 +160,7 @@ public class UserServiceImpl implements UserService {
         cookie.setMaxAge(7 * 24 * 60 * 60); // 7天过期
         res.addCookie(cookie);
 
-        return Result.success(userVO);
+        return Result.success(userVO, "登陆/注册成功！");
     }
 
 }

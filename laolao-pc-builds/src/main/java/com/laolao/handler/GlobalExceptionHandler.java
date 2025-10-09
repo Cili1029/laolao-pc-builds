@@ -1,7 +1,7 @@
 package com.laolao.handler;
 
-import com.laolao.exception.BaseException;
-import com.laolao.result.Result;
+import com.laolao.common.exception.BaseException;
+import com.laolao.common.result.Result;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 

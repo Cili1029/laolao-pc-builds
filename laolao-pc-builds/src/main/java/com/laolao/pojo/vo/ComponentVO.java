@@ -2,7 +2,7 @@ package com.laolao.pojo.vo;
 
 import java.math.BigDecimal;
 
-public class ProductsVO {
+public class ComponentVO {
     private int id;
     private String name;
     private String image;
@@ -49,7 +49,7 @@ public class ProductsVO {
         this.price = price;
     }
 
-    public ProductsVO(int id, String name, String image, String commonDescription, BigDecimal price) {
+    public ComponentVO(int id, String name, String image, String commonDescription, BigDecimal price) {
         this.id = id;
         this.name = name;
         this.image = image;
@@ -57,11 +57,11 @@ public class ProductsVO {
         this.price = price;
     }
 
-    public ProductsVO() {}
+    public ComponentVO() {}
 
     @Override
     public String toString() {
-        return "ProductsVO{" +
+        return "ComponentVO{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", image='" + image + '\'' +

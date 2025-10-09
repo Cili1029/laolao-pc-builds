@@ -19,8 +19,8 @@
               <Dialog :open="showLoginModal" @update:open="(value) => {
                 showLoginModal = value
                 if (value) {
-                  // 打开模态框时重置到密码登录
-                  status = 'A'
+                  // 打开登陆注册框时重置到密码登录
+                  status = 'loginA'
                   resetLoginForm()
                 }
               }">
@@ -36,13 +36,13 @@
                   <DialogDescription></DialogDescription>
                   <Tabs default-value="loginA" class="w-full">
                     <TabsList class="grid w-full grid-cols-3">
-                      <TabsTrigger value="loginA" @click="status = 'A', resetLoginForm()">
+                      <TabsTrigger value="loginA" @click="status = 'loginA', resetLoginForm()">
                         密码登录
                       </TabsTrigger>
-                      <TabsTrigger value="loginB" @click="status = 'B', resetLoginForm()">
+                      <TabsTrigger value="loginB" @click="status = 'loginB', resetLoginForm()">
                         验证码登录
                       </TabsTrigger>
-                      <TabsTrigger value="register" @click="status = 'C', resetLoginForm()">
+                      <TabsTrigger value="register" @click="status = 'register', resetLoginForm()">
                         注册
                       </TabsTrigger>
                     </TabsList>
@@ -55,20 +55,19 @@
                           </CardDescription>
                         </CardHeader>
                         <CardContent class="space-y-2">
-                          <div class="space-y-1" v-if="status === 'A' || status === 'C'">
+                          <div class="space-y-1" v-if="status === 'loginA' || status === 'register'">
                             <Label for="Username">用户名</Label>
-                            <Input id="username" :required="tab.value === 'register'" v-model="loginUser.username" />
+                            <Input id="username" v-model="loginUser.username" />
                           </div>
-                          <div class="space-y-1" v-if="status === 'A' || status === 'C'">
+                          <div class="space-y-1" v-if="status === 'loginA' || status === 'register'">
                             <Label for="Password">密码</Label>
-                            <Input id="password" type="password" :required="tab.value === 'register'"
-                              v-model="loginUser.password" />
+                            <Input id="password" type="password" v-model="loginUser.password" />
                           </div>
-                          <div class="space-y-1" v-if="status === 'B' || status === 'C'">
+                          <div class="space-y-1" v-if="status === 'loginB' || status === 'register'">
                             <Label for="Password">手机号</Label>
                             <Input id="phone" v-model="loginUser.phone" />
                           </div>
-                          <div class="space-y-1" v-if="status === 'B' || status === 'C'">
+                          <div class="space-y-1" v-if="status === 'loginB' || status === 'register'">
                             <Label for="Code">验证码</Label>
                             <div class="flex gap-2">
                               <Input id="code" v-model="loginUser.smsCode" class="flex-1" placeholder="请输入验证码" />
@@ -191,13 +190,19 @@
     checkLoginStatus()
   })
 
+  // 检查前端 Cookie 登录状态
+  const checkLoginStatus = () => {
+    isLoggedIn.value = cookies.get('user_login_status') === '1'
+    username.value = cookies.get('user_username') || '用户'
+  }
+
   // 回主页
   const goHome = () => {
     router.push('/home');
   }
 
   // 登陆注册显示问题
-  const status = ref('A')
+  const status = ref('loginA')
   const tabs = [
     {
       value: 'loginA',
@@ -223,6 +228,7 @@
   const showLoginModal = ref(false)
   // 判断是否登陆用
   const isLoggedIn = ref(false)
+  // 登陆后用的用户名
   const username = ref('')
 
   // 登录表单数据
@@ -252,15 +258,6 @@
   const handleLoginSuccess = () => {
     checkLoginStatus()
     showLoginModal.value = false
-  }
-
-  // 检查前端 Cookie 登录状态
-  const checkLoginStatus = () => {
-    const loginStatus = cookies.get('user_login_status')
-    const storedUsername = cookies.get('user_username')
-
-    isLoggedIn.value = loginStatus === '1'
-    username.value = storedUsername || '用户'
   }
 
   // 切换注册登录选项重置表单
@@ -330,7 +327,7 @@
       }
     } else {
       // 登录验证 - 根据当前状态区分密码登录和验证码登录
-      if (status.value === 'A') {
+      if (status.value === 'loginA') {
         // 密码登录验证
         if (!loginUser.username || !loginUser.password) {
           toast("嗨！", {
@@ -341,7 +338,7 @@
           })
           return
         }
-      } else if (status.value === 'B') {
+      } else if (status.value === 'loginB') {
         // 验证码登录验证
         if (!loginUser.phone || !loginUser.smsCode) {
           toast("嗨！", {
@@ -371,7 +368,7 @@
         })
       } else {
         // 登录逻辑 - 根据状态发送不同的数据
-        if (status.value === 'A') {
+        if (status.value === 'loginA') {
           // 密码登录
           response = await axios.post('/user/user/login', {
             username: loginUser.username,

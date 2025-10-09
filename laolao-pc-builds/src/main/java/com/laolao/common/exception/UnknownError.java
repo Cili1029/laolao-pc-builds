@@ -1,4 +1,4 @@
-package com.laolao.exception;
+package com.laolao.common.exception;
 
 /**
  * 账号已存在异常

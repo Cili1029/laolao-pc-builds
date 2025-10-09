@@ -1,9 +1,9 @@
 package com.laolao.aspect;
 
 import com.laolao.annotation.AutoFill;
-import com.laolao.constant.AutoFillConstant;
-import com.laolao.context.BaseContext;
-import com.laolao.enumeration.OperationType;
+import com.laolao.common.constant.AutoFillConstant;
+import com.laolao.common.context.BaseContext;
+import com.laolao.common.enumeration.OperationType;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
