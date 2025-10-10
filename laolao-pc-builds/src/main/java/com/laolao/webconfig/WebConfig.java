@@ -16,7 +16,7 @@ public class WebConfig implements WebMvcConfigurer {
         System.out.println("注册拦截器");
         registry.addInterceptor(loginInterceptor)
                 .addPathPatterns("/**")
-                .excludePathPatterns("/user/user/smscode")
+                .excludePathPatterns("/user/user/email-code")
                 .excludePathPatterns("/user/user/login")
                 .excludePathPatterns("/user/user/register");
     }

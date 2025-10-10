@@ -4,7 +4,7 @@ package com.laolao.common.constant;
  * 信息提示常量类
  */
 public class MessageConstant {
-    public static final String SMSCODE_ERROR = "验证码错误";
+    public static final String EMAILCODE_ERROR = "验证码错误";
     public static final String USER_ALREADY_EXISTS = "用户已存在";
     public static final String PASSWORD_ERROR = "密码错误";
     public static final String USER_NOT_FOUND = "用户不存在";

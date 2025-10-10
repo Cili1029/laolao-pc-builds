@@ -64,14 +64,14 @@
                             <Input id="password" type="password" v-model="loginUser.password" />
                           </div>
                           <div class="space-y-1" v-if="status === 'loginB' || status === 'register'">
-                            <Label for="Password">手机号</Label>
-                            <Input id="phone" v-model="loginUser.phone" />
+                            <Label for="Password">邮箱号</Label>
+                            <Input id="email" v-model="loginUser.email" />
                           </div>
                           <div class="space-y-1" v-if="status === 'loginB' || status === 'register'">
                             <Label for="Code">验证码</Label>
                             <div class="flex gap-2">
-                              <Input id="code" v-model="loginUser.smsCode" class="flex-1" placeholder="请输入验证码" />
-                              <Button :disabled="countDown > 0 || isSendingCode" @click="getSmsCode()" class="w-1/4">
+                              <Input id="code" v-model="loginUser.emailCode" class="flex-1" placeholder="请输入验证码" />
+                              <Button :disabled="countDown > 0 || isSendingCode" @click="getEmailCode()" class="w-1/4">
                                 <span v-if="isSendingCode">发送中...</span>
                                 <span v-else>{{ countDown > 0 ? countDown + 's' : "发送验证码" }}</span>
                               </Button>
@@ -213,7 +213,7 @@
     {
       value: 'loginB',
       title: '自己人？快进来！',
-      description: '输入您的手机号，验证码',
+      description: '输入您的邮箱号，验证码',
       buttonText: '登录'
     },
     {
@@ -235,8 +235,8 @@
   const loginUser = reactive({
     username: "",
     password: "",
-    phone: "",
-    smsCode: ""
+    email: "",
+    emailCode: ""
   })
 
   // 验证码相关状态
@@ -265,16 +265,16 @@
     Object.assign(loginUser, {
       username: "",
       password: "",
-      phone: "",
-      smsCode: ""
+      email: "",
+      emailCode: ""
     })
   }
 
   // 发送验证码
-  const getSmsCode = async () => {
-    if (!loginUser.phone) {
+  const getEmailCode = async () => {
+    if (!loginUser.email) {
       toast("嗨！", {
-        description: "手机号不得为空！",
+        description: "邮箱号不得为空！",
         action: {
           label: '我知道了',
         },
@@ -285,8 +285,8 @@
     isSendingCode.value = true
 
     try {
-      await axios.post('/user/user/smscode', {
-        phone: loginUser.phone
+      await axios.post('/user/user/email-code', {
+        email: loginUser.email
       })
 
       countDown.value = 60
@@ -316,7 +316,7 @@
     // 验证字段
     if (type === 'register') {
       // 注册验证
-      if (!loginUser.username || !loginUser.password || !loginUser.smsCode || !loginUser.phone) {
+      if (!loginUser.username || !loginUser.password || !loginUser.emailCode || !loginUser.email) {
         toast("嗨！", {
           description: "所有字段都不得为空！",
           action: {
@@ -340,9 +340,9 @@
         }
       } else if (status.value === 'loginB') {
         // 验证码登录验证
-        if (!loginUser.phone || !loginUser.smsCode) {
+        if (!loginUser.email || !loginUser.emailCode) {
           toast("嗨！", {
-            description: "手机号和验证码不能为空！",
+            description: "邮箱号和验证码不能为空！",
             action: {
               label: '我知道了',
             },
@@ -363,8 +363,8 @@
         response = await axios.post('/user/user/register', {
           username: loginUser.username,
           password: loginUser.password,
-          phone: loginUser.phone,
-          smsCode: loginUser.smsCode
+          email: loginUser.email,
+          emailCode: loginUser.emailCode
         })
       } else {
         // 登录逻辑 - 根据状态发送不同的数据
@@ -377,8 +377,8 @@
         } else {
           // 验证码登录
           response = await axios.post('/user/user/login', {
-            phone: loginUser.phone,
-            smsCode: loginUser.smsCode
+            email: loginUser.email,
+            emailCode: loginUser.emailCode
           })
         }
       }

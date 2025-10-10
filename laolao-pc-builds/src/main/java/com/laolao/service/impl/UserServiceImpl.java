@@ -1,11 +1,10 @@
 package com.laolao.service.impl;
 
-import cn.hutool.captcha.CaptchaUtil;
-import cn.hutool.captcha.LineCaptcha;
 import cn.hutool.core.util.RandomUtil;
 import com.laolao.common.constant.JwtClaimsConstant;
 import com.laolao.common.constant.MessageConstant;
 import com.laolao.common.constant.RedisConstant;
+import com.laolao.common.utils.AliyunDirectMailUtils;
 import com.laolao.converter.MapStruct;
 import com.laolao.common.exception.UnknownError;
 import com.laolao.mapper.UserMapper;
@@ -26,6 +25,7 @@ import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -41,17 +41,21 @@ public class UserServiceImpl implements UserService {
     private StringRedisTemplate stringRedisTemplate;
 
     @Override
-    public void getSmsCode(String phone) {
+    public void getEmailCode(String email) throws Exception {
         // 手机号位数验证待开发 应该先验证用户是否存在，在验证验证码
-        if (!StringUtils.hasText(phone)) {
+        if (!StringUtils.hasText(email)) {
             throw new UnknownError(MessageConstant.UNKNOWN_ERROR);
         }
 
-        // 暂且用图形验证码代替
-        LineCaptcha captcha = CaptchaUtil.createLineCaptcha(200, 100);
+        String code = String.format("%06d", ThreadLocalRandom.current().nextInt(0, 1000000));
+
+        Boolean result = AliyunDirectMailUtils.sendEmail(email, "您的验证码是<strong>" + code + "</strong>");
+        if (!result) {
+            throw new UnknownError(MessageConstant.UNKNOWN_ERROR);
+        }
+
         // 验证码存入Redis用于验证
-        stringRedisTemplate.opsForValue().set(RedisConstant.LOGIN_CODE_KEY + phone, captcha.getCode() , RedisConstant.LOGIN_CODE_TTL, TimeUnit.MINUTES);
-        System.out.println(captcha.getCode());
+        stringRedisTemplate.opsForValue().set(RedisConstant.LOGIN_CODE_KEY + email, code, RedisConstant.LOGIN_CODE_TTL, TimeUnit.MINUTES);
     }
 
     @Override
@@ -73,9 +77,9 @@ public class UserServiceImpl implements UserService {
 
             // 设置jwt令牌并返回前端
             return setJwtToLogin(user, res);
-        } else if (StringUtils.hasText(userLoginOrRegisterDTO.getPhone()) && StringUtils.hasText(userLoginOrRegisterDTO.getSmsCode())) {
+        } else if (StringUtils.hasText(userLoginOrRegisterDTO.getEmail()) && StringUtils.hasText(userLoginOrRegisterDTO.getEmailCode())) {
             // 电话验证码登录
-            Result<String> result = phone(userLoginOrRegisterDTO);
+            Result<String> result = email(userLoginOrRegisterDTO);
             if (result != null) {
                 return Result.error(result.getMsg());
             }
@@ -91,11 +95,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Result<UserVO> register(UserLoginOrRegisterDTO userLoginOrRegisterDTO, HttpServletResponse res) {
-        if (!StringUtils.hasText(userLoginOrRegisterDTO.getUsername()) || !StringUtils.hasText(userLoginOrRegisterDTO.getPassword()) || !StringUtils.hasText(userLoginOrRegisterDTO.getPhone()) || !StringUtils.hasText(userLoginOrRegisterDTO.getSmsCode())) {
+        if (!StringUtils.hasText(userLoginOrRegisterDTO.getUsername()) || !StringUtils.hasText(userLoginOrRegisterDTO.getPassword()) || !StringUtils.hasText(userLoginOrRegisterDTO.getEmail()) || !StringUtils.hasText(userLoginOrRegisterDTO.getEmailCode())) {
             return Result.error(MessageConstant.UNKNOWN_ERROR);
         }
 
-        Result<String> result = phone(userLoginOrRegisterDTO);
+        Result<String> result = email(userLoginOrRegisterDTO);
         if (result != null) {
             return Result.error(result.getMsg());
         }
@@ -108,7 +112,7 @@ public class UserServiceImpl implements UserService {
         user.setName("user_" + RandomUtil.randomString(10));
         user.setUsername(userLoginOrRegisterDTO.getUsername());
         user.setPassword(DigestUtils.md5DigestAsHex(userLoginOrRegisterDTO.getPassword().getBytes()));
-        user.setPhone(userLoginOrRegisterDTO.getPhone());
+        user.setEmail(userLoginOrRegisterDTO.getEmail());
         user.setCreateTime(LocalDateTime.now());
         // 写入数据库
         userMapper.addUser(user);
@@ -129,13 +133,13 @@ public class UserServiceImpl implements UserService {
     }
 
     // 电话合理性以及验证码验证
-    private Result<String> phone(UserLoginOrRegisterDTO userLoginOrRegisterDTO) {
+    private Result<String> email(UserLoginOrRegisterDTO userLoginOrRegisterDTO) {
         // 手机号位数验证待开发
 
         // 验证验证码
-        String smsCode = stringRedisTemplate.opsForValue().get(RedisConstant.LOGIN_CODE_KEY + userLoginOrRegisterDTO.getPhone());
-        if (smsCode == null || !smsCode.equals(userLoginOrRegisterDTO.getSmsCode())) {
-            return Result.error(MessageConstant.SMSCODE_ERROR);
+        String emailCode = stringRedisTemplate.opsForValue().get(RedisConstant.LOGIN_CODE_KEY + userLoginOrRegisterDTO.getEmail());
+        if (emailCode == null || !emailCode.equals(userLoginOrRegisterDTO.getEmailCode())) {
+            return Result.error(MessageConstant.EMAILCODE_ERROR);
         }
 
         // 合理，通过

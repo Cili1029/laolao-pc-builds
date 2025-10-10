@@ -18,9 +18,9 @@ public class UserController {
     private UserService userService;
 
     // 生成验证码
-    @PostMapping("/smscode")
-    public Result<String> getSmsCode(@RequestBody Map<String, String> request) {
-        userService.getSmsCode(request.get("phone"));
+    @PostMapping("/email-code")
+    public Result<String> getEmailCode(@RequestBody Map<String, String> request) throws Exception {
+        userService.getEmailCode(request.get("email"));
         return Result.success("发送成功！");
     }
 

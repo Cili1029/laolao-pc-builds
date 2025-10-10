@@ -10,8 +10,8 @@
             <if test="username != null and username != ''">
                 or username = #{username}
             </if>
-            <if test="phone != null and phone != ''">
-                or phone = #{phone}
+            <if test="email != null and email != ''">
+                or email = #{email}
             </if>
         </where>
         limit 1

@@ -10,8 +10,8 @@ import org.apache.ibatis.annotations.Options;
 public interface UserMapper {
     User checkUserExists(UserLoginOrRegisterDTO userLoginOrRegisterDTO);
 
-    @Insert("insert into user (id, username, password, name, phone, create_time) " +
-            "values (#{id}, #{username}, #{password}, #{name}, #{phone}, #{createTime})")
+    @Insert("insert into user (id, username, password, name, email, created_at) " +
+            "values (#{id}, #{username}, #{password}, #{name}, #{email}, #{createTime})")
     @Options(useGeneratedKeys = true, keyProperty = "id")
     void addUser(User user);
 }

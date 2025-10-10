@@ -29,6 +29,10 @@ mybatis:
     #开启驼峰命名
     map-underscore-to-camel-case: true
 
+aliyun-direct-mail:
+  accessKey-id: ${laolao.aliyun-direct-mail.accessKey-id}
+  accessKeySecret: ${laolao.aliyun-direct-mail.accessKeySecret}
+
 laolao:
   jwt:
     # 设置jwt签名加密时使用的秘钥
@@ -37,4 +41,3 @@ laolao:
     user-ttl: 604800000
     # 设置前端传递过来的令牌名称
     user-token-name: authentication
-

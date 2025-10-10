@@ -6,7 +6,7 @@ import com.laolao.common.result.Result;
 import jakarta.servlet.http.HttpServletResponse;
 
 public interface UserService {
-    void getSmsCode(String phone);
+    void getEmailCode(String email) throws Exception;
 
     Result<UserVO> login(UserLoginOrRegisterDTO userLoginOrRegisterDTO, HttpServletResponse res);
 

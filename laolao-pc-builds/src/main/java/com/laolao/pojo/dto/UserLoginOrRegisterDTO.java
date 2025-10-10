@@ -3,8 +3,8 @@ package com.laolao.pojo.dto;
 public class UserLoginOrRegisterDTO {
     private String username;
     private String password;
-    private String phone;
-    private String smsCode;
+    private String email;
+    private String emailCode;
 
     public String getUsername() {
         return username;
@@ -22,19 +22,19 @@ public class UserLoginOrRegisterDTO {
         this.password = password;
     }
 
-    public String getPhone() {
-        return phone;
+    public String getEmail() {
+        return email;
     }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
-    public String getSmsCode() {
-        return smsCode;
+    public String getEmailCode() {
+        return emailCode;
     }
 
-    public void setSmsCode(String smsCode) {
-        this.smsCode = smsCode;
+    public void setEmailCode(String emailCode) {
+        this.emailCode = emailCode;
     }
 }
