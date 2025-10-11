@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 public class Category {
     private int id;
+    private int type;
     private String name;
     private Integer status;
     private int sort;
@@ -18,6 +19,14 @@ public class Category {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
     }
 
     public String getName() {
@@ -76,8 +85,9 @@ public class Category {
         this.updateBy = updateBy;
     }
 
-    public Category(int id, String name, Integer status, int sort, LocalDateTime createAt, LocalDateTime updateAt, String createBy, String updateBy) {
+    public Category(int id, int type, String name, Integer status, int sort, LocalDateTime createAt, LocalDateTime updateAt, String createBy, String updateBy) {
         this.id = id;
+        this.type = type;
         this.name = name;
         this.status = status;
         this.sort = sort;
@@ -94,6 +104,7 @@ public class Category {
     public String toString() {
         return "Category{" +
                 "id=" + id +
+                ", type=" + type +
                 ", name='" + name + '\'' +
                 ", status=" + status +
                 ", sort=" + sort +

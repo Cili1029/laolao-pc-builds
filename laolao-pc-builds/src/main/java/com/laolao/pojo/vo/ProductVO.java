@@ -2,12 +2,14 @@ package com.laolao.pojo.vo;
 
 import java.math.BigDecimal;
 
-public class ComponentVO {
+public class ProductVO {
     private int id;
+    private int type;
     private String name;
+    private BigDecimal price;
     private String image;
     private String commonDescription;
-    private BigDecimal price;
+    private String description;
 
     public int getId() {
         return id;
@@ -17,12 +19,28 @@ public class ComponentVO {
         this.id = id;
     }
 
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
+
     public String getName() {
         return name;
     }
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
     }
 
     public String getImage() {
@@ -41,32 +59,37 @@ public class ComponentVO {
         this.commonDescription = commonDescription;
     }
 
-    public BigDecimal getPrice() {
-        return price;
+    public String getDescription() {
+        return description;
     }
 
-    public void setPrice(BigDecimal price) {
-        this.price = price;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public ComponentVO(int id, String name, String image, String commonDescription, BigDecimal price) {
+    public ProductVO(int id, int type, String name, BigDecimal price, String image, String commonDescription, String description) {
         this.id = id;
+        this.type = type;
         this.name = name;
+        this.price = price;
         this.image = image;
         this.commonDescription = commonDescription;
-        this.price = price;
+        this.description = description;
     }
 
-    public ComponentVO() {}
+    public ProductVO() {
+    }
 
     @Override
     public String toString() {
         return "ComponentVO{" +
                 "id=" + id +
+                ", type=" + type +
                 ", name='" + name + '\'' +
+                ", price=" + price +
                 ", image='" + image + '\'' +
                 ", commonDescription='" + commonDescription + '\'' +
-                ", price=" + price +
+                ", description='" + description + '\'' +
                 '}';
     }
 }

@@ -3,6 +3,7 @@ package com.laolao.pojo.vo;
 
 public class CategoryVO {
     private int id;
+    private int type;
     private String name;
 
     public int getId() {
@@ -13,6 +14,14 @@ public class CategoryVO {
         this.id = id;
     }
 
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
+
     public String getName() {
         return name;
     }
@@ -21,19 +30,21 @@ public class CategoryVO {
         this.name = name;
     }
 
-    public CategoryVO(int id, String name) {
+    public CategoryVO(int id, int type, String name) {
         this.id = id;
+        this.type = type;
         this.name = name;
     }
 
-    public CategoryVO() {}
+    public CategoryVO() {
+    }
 
     @Override
     public String toString() {
         return "CategoryVO{" +
                 "id=" + id +
+                ", type=" + type +
                 ", name='" + name + '\'' +
-                ", image='" +
                 '}';
     }
 }

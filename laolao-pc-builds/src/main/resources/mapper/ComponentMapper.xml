@@ -3,18 +3,18 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.laolao.mapper.ComponentMapper">
-    <select id="getByConditions" resultType="com.laolao.pojo.vo.ComponentVO" parameterType="ComponentVO">
-        SELECT p.id, p.name, p.image, p.common_description, MIN(pe.price) as price
-        FROM components p
-                 JOIN component_variants pe ON p.id = pe.component_id
+    <select id="getByConditions" resultType="com.laolao.pojo.vo.ProductVO" parameterType="ProductVO">
+        SELECT co.id, ca.type,co.name, co.image, co.common_description, MIN(va.price) as price
+        FROM components co
+                 JOIN component_variants va ON co.id = va.component_id JOIN category ca ON ca.id = co.category_id
         <where>
             <if test="categoryId != null and categoryId != '' and categoryId != 0">
-                and p.category_id = #{categoryId}
+                and co.category_id = #{categoryId}
             </if>
             <if test="searchContent != null and searchContent != ''">
-                and p.name like concat('%',#{searchContent},'%')
+                and co.name like concat('%',#{searchContent},'%')
             </if>
         </where>
-        GROUP BY p.id
+        GROUP BY co.id
     </select>
 </mapper>

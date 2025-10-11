@@ -4,11 +4,23 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 public class ComponentVariantVO implements Serializable {
-    private  int id;
+    private int id;
     private int componentId;
     private String variantName;
     private BigDecimal price;
     private String description;
+
+    // 主机用
+    private String name;
+    private String image;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public int getComponentId() {
         return componentId;
@@ -42,20 +54,30 @@ public class ComponentVariantVO implements Serializable {
         this.description = description;
     }
 
-    public int getId() {
-        return id;
+    public String getName() {
+        return name;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public ComponentVariantVO(int id, int componentId, String variantName, BigDecimal price, String description) {
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public ComponentVariantVO(int id, int componentId, String variantName, BigDecimal price, String description, String name, String image) {
         this.id = id;
         this.componentId = componentId;
         this.variantName = variantName;
         this.price = price;
         this.description = description;
+        this.name = name;
+        this.image = image;
     }
 
     public ComponentVariantVO() {
@@ -69,6 +91,8 @@ public class ComponentVariantVO implements Serializable {
                 ", variantName='" + variantName + '\'' +
                 ", price=" + price +
                 ", description='" + description + '\'' +
+                ", name='" + name + '\'' +
+                ", image='" + image + '\'' +
                 '}';
     }
 }

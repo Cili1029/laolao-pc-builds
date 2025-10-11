@@ -9,7 +9,7 @@
             <div class="space-y-4">
                 <div class="flex items-center p-3 rounded-lg transition-colors"
                     :class="cat.id === categoryIndex ? 'bg-gray-100' : 'hover:bg-gray-50'" v-for="cat in category"
-                    :key="cat.id" @click="ShowComponent(cat.id)">
+                    :key="cat.id" @click="ShowComponent(cat.id, cat.type)">
                     <span class="icon-[streamline-cyber--smiley-sigh] text-3xl"></span>
                     <div class="ml-4 flex-1">
                         <h4 class="font-medium">{{ cat.name }}</h4>
@@ -31,37 +31,43 @@
 
             <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 <div class="flex flex-col items-center p-3 rounded-lg hover:bg-gray-100 transition-colors shadow-sm"
-                    v-for="component in Components" :key="component.id">
+                    v-for="product in products" :key="product.id">
                     <div class="w-22 h-22 bg-gray-200 rounded-lg flex items-center justify-center mb-2">
-                        <img :src="component.image" />
+                        <img :src="product.image" />
                     </div>
                     <div class="text-center mb-2 h-30">
-                        <h4 class="font-medium">{{ component.name }}</h4>
-                        <span class="text-sm block mt-1">{{ component.commonDescription }}</span>
+                        <h4 class="font-medium">{{ product.name }}</h4>
+                        <span v-if="product.type === 1" class="text-sm block mt-1">{{ product.commonDescription
+                            }}</span>
+                        <span v-else-if="product.type === 2" class="text-sm block mt-1">{{ product.description }}</span>
                     </div>
                     <div class="flex items-center justify-between w-full mt-auto">
-                        <span class="font-bold text-red-500">{{ component.price }}起</span>
+                        <span v-if="product.type === 1" class="font-bold text-red-500">{{ product.price }}起</span>
+                        <span v-else-if="product.type === 2" class="font-bold text-red-500">{{ product.price }}</span>
                         <Dialog>
                             <DialogTrigger as-child>
                                 <span class="icon-[material-symbols--shopping-cart-outline] text-4xl hover:bg-red-500"
-                                    @click="openVariantDialog(component)"></span>
+                                    @click="openVariantDialog(product)"></span>
                             </DialogTrigger>
                             <DialogContent class="sm:max-w-[1000px]">
                                 <DialogHeader>
-                                    <DialogTitle>{{ component.name }}</DialogTitle>
-                                    <DialogDescription>{{ component.commonDescription }}</DialogDescription>
+                                    <DialogTitle>{{ product.name }}</DialogTitle>
+                                    <DialogDescription>{{ product.commonDescription }}</DialogDescription>
                                 </DialogHeader>
-                                <div class="flex gap-6 py-4">
+                                <!-- 单件 -->
+                                <div v-if="product.type === 1" class="flex gap-6 py-4">
                                     <div class="w-1/2">
-                                        <img :src="component.image" class="w-full h-auto rounded-lg" />
+                                        <img :src="product.image" class="w-full h-auto rounded-lg" />
                                     </div>
                                     <div class="w-1/2 flex flex-col justify-between">
                                         <div class="mb-4 h-1/2">
-                                            <p class="text-sm text-gray-600">{{ selectedVariant?.description || currentVariants[0]?.description }}</p>
+                                            <p class="text-sm text-gray-600">{{ selectedVariant?.description ||
+                                                currentVariants[0]?.description }}</p>
                                         </div>
                                         <div class="space-y-2 mb-4">
                                             <Button type="button" class="w-full" v-for="variant in currentVariants"
-                                                :key="`${variant.id}-${variant.variantName}`" @click="selectVariant(variant)"
+                                                :key="`${variant.id}-${variant.variantName}`"
+                                                @click="selectVariant(variant)"
                                                 :variant="(selectedVariant?.variantName === variant.variantName || (!selectedVariant && variant === currentVariants[0])) ? 'default' : 'outline'">
                                                 {{ variant.variantName }} - {{ variant.price }}元
                                             </Button>
@@ -71,6 +77,35 @@
                                                 买！ - {{ selectedVariant?.price || currentVariants[0]?.price }}元
                                             </Button>
                                         </DialogFooter>
+                                    </div>
+                                </div>
+
+                                <!-- 主机 -->
+                                <div v-else-if="product.type === 2" class="flex gap-6 py-4">
+                                    <div class="w-3/5 flex flex-col space-y-2">
+                                        <div v-for="variant in currentVariants" :key="variant.id"
+                                            class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 flex items-center">
+                                            <img :src="variant.image" class="w-15 h-15 object-cover rounded-md mr-4" />
+                                            <div class="flex-1">
+                                                <h3 class="font-medium text-gray-900">{{ variant.name }}</h3>
+                                                {{ variant.variantName }}
+                                            </div>
+                                            <div class="ml-auto">
+                                                原价:<span class="text-lg font-bold text-red-600">{{ variant.price
+                                                }}元</span>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <div class="w-2/5 flex flex-col justify-between">
+                                        <div class="mb-4 h-1/2">
+                                            <p class="text-sm text-gray-600">{{ product.description }}</p>
+                                        </div>
+                                        <DialogFooter class="mt-auto">
+                                        <Button type="button" class="w-full" @click="buy()">
+                                            买！ - {{ selectedVariant?.price || currentVariants[0]?.price }}元
+                                        </Button>
+                                    </DialogFooter>
                                     </div>
                                 </div>
                             </DialogContent>
@@ -93,15 +128,19 @@
     import 'vue-sonner/style.css'
     import { toast } from "vue-sonner"
 
-    interface Component {
+    interface Product {
         id: number
+        type: number
         name: string
+        price: number
         image: string
         commonDescription: string
-        price: number
+        description: string
     }
+
     interface category {
         id: number
+        type: number
         name: string
     }
     interface variant {
@@ -110,9 +149,13 @@
         variantName: string
         price: number
         description: string
+
+        // 主机用
+        image: string
+        name: string
     }
 
-    const Components = ref<Component[]>([])
+    const products = ref<Product[]>([])
     const category = ref<category[]>([])
 
     const categoryIndex = ref(1)
@@ -126,7 +169,7 @@
             const response = await axios.get('/user/category/list')
 
             // 默认第一页
-            ShowComponent(1)
+            ShowComponent(1, 1)
 
             category.value = response.data.data
 
@@ -135,17 +178,25 @@
         }
     }
 
-    const ShowComponent = async (id: number) => {
+    const ShowComponent = async (id: number, type: number) => {
         try {
             categoryIndex.value = id
-            const response = await axios.get('/user/components/components', {
-                params: {
-                    categoryId: id
-                }
-            })
 
-            Components.value = response.data.data
-
+            if (type === 1) {
+                const response = await axios.get('/user/products/components', {
+                    params: {
+                        categoryId: id
+                    }
+                })
+                products.value = response.data.data
+            } else {
+                const response = await axios.get('/user/products/bundles', {
+                    params: {
+                        categoryId: id
+                    }
+                })
+                products.value = response.data.data
+            }
         } catch (error) {
             console.log(error)
         }
@@ -157,7 +208,7 @@
     const selectedVariant = ref<variant | null>(null)
 
     // 打开商品对话框
-    const openVariantDialog = async (component: Component) => {
+    const openVariantDialog = async (component: Product) => {
         // 重置之前的状态
         currentVariants.value = []
         selectedVariant.value = null
@@ -165,9 +216,10 @@
         // 设置新商品
 
         try {
-            const response = await axios.get('/user/components/variants', {
+            const response = await axios.get('/user/products/variants', {
                 params: {
-                    componentId: component.id
+                    id: component.id,
+                    type: component.type
                 }
             })
             currentVariants.value = response.data.data
@@ -193,7 +245,7 @@
 
     const search = async (categoryId: number | undefined) => {
         try {
-            const response = await axios.get('/user/components/search', {
+            const response = await axios.get('/user/products/search', {
                 params: {
                     searchContent: searchContent.value,
                     categoryId: categoryId
@@ -210,7 +262,7 @@
                 })
             }
 
-            Components.value = response.data.data
+            products.value = response.data.data
         } catch (error) {
             console.log(error)
         }
