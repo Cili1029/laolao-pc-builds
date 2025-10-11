@@ -23,7 +23,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 import org.springframework.util.StringUtils;
 
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
@@ -113,7 +112,6 @@ public class UserServiceImpl implements UserService {
         user.setUsername(userLoginOrRegisterDTO.getUsername());
         user.setPassword(DigestUtils.md5DigestAsHex(userLoginOrRegisterDTO.getPassword().getBytes()));
         user.setEmail(userLoginOrRegisterDTO.getEmail());
-        user.setCreateTime(LocalDateTime.now());
         // 写入数据库
         userMapper.addUser(user);
 

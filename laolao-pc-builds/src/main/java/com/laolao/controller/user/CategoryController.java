@@ -10,6 +10,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * 分类相关
+ */
+
 @RestController
 @RequestMapping("/user/category")
 public class CategoryController {
@@ -17,6 +21,12 @@ public class CategoryController {
     @Resource
     private CategoryService categoryService;
 
+    /**
+     * 获取商品分类
+     * 分部件和整机
+     *
+     * @return 商品分类信息
+     */
     @GetMapping("list")
     public Result<List<CategoryVO>> list() {
 

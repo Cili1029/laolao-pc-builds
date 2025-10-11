@@ -4,28 +4,60 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 public class Component implements Serializable {
-
+    /**
+     * 主键
+     */
     private int id;
 
+    /**
+     * 组件名
+     */
     private String name;
 
+    /**
+     * 商品类型
+     */
     private int categoryId;
 
+    /**
+     * 图片
+     */
     private String image;
 
+    /**
+     * 通用描述
+     */
     private String commonDescription;
 
+    /**
+     * 状态 1启用 0停用
+     */
     private Integer status;
 
+    /**
+     * 排序
+     */
     private int sort;
 
-    private LocalDateTime createAt;
+    /**
+     * 创建人
+     */
+    private String createdBy;
 
-    private LocalDateTime updateAt;
+    /**
+     * 创建时间
+     */
+    private LocalDateTime createdAt;
 
-    private String createBy;
+    /**
+     * 最后更新人
+     */
+    private String updatedBy;
 
-    private String updateBy;
+    /**
+     * 最后更新时间
+     */
+    private LocalDateTime updatedAt;
 
     public int getId() {
         return id;
@@ -83,39 +115,42 @@ public class Component implements Serializable {
         this.sort = sort;
     }
 
-    public LocalDateTime getCreateAt() {
-        return createAt;
+    public String getCreatedBy() {
+        return createdBy;
     }
 
-    public void setCreateAt(LocalDateTime createAt) {
-        this.createAt = createAt;
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
     }
 
-    public LocalDateTime getUpdateAt() {
-        return updateAt;
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
-    public void setUpdateAt(LocalDateTime updateAt) {
-        this.updateAt = updateAt;
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
-    public String getCreateBy() {
-        return createBy;
+    public String getUpdatedBy() {
+        return updatedBy;
     }
 
-    public void setCreateBy(String createBy) {
-        this.createBy = createBy;
+    public void setUpdatedBy(String updatedBy) {
+        this.updatedBy = updatedBy;
     }
 
-    public String getUpdateBy() {
-        return updateBy;
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
     }
 
-    public void setUpdateBy(String updateBy) {
-        this.updateBy = updateBy;
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
-    public Component(int id, String name, int categoryId, String image, String commonDescription, Integer status, int sort, LocalDateTime createAt, LocalDateTime updateAt, String createBy, String updateBy) {
+    public Component() {
+    }
+
+    public Component(int id, String name, int categoryId, String image, String commonDescription, Integer status, int sort, String createdBy, LocalDateTime createdAt, String updatedBy, LocalDateTime updatedAt) {
         this.id = id;
         this.name = name;
         this.categoryId = categoryId;
@@ -123,13 +158,10 @@ public class Component implements Serializable {
         this.commonDescription = commonDescription;
         this.status = status;
         this.sort = sort;
-        this.createAt = createAt;
-        this.updateAt = updateAt;
-        this.createBy = createBy;
-        this.updateBy = updateBy;
-    }
-
-    public Component() {
+        this.createdBy = createdBy;
+        this.createdAt = createdAt;
+        this.updatedBy = updatedBy;
+        this.updatedAt = updatedAt;
     }
 
     @Override
@@ -142,10 +174,10 @@ public class Component implements Serializable {
                 ", commonDescription='" + commonDescription + '\'' +
                 ", status=" + status +
                 ", sort=" + sort +
-                ", createAt=" + createAt +
-                ", updateAt=" + updateAt +
-                ", createBy='" + createBy + '\'' +
-                ", updateBy='" + updateBy + '\'' +
+                ", createdBy='" + createdBy + '\'' +
+                ", createdAt=" + createdAt +
+                ", updatedBy='" + updatedBy + '\'' +
+                ", updatedAt=" + updatedAt +
                 '}';
     }
 }

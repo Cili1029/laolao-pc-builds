@@ -3,15 +3,50 @@ package com.laolao.pojo.entity;
 import java.time.LocalDateTime;
 
 public class Category {
+    /**
+     * 主键
+     */
     private int id;
+
+    /**
+     * 商品类型
+     */
     private int type;
+
+    /**
+     * 类型名
+     */
     private String name;
+
+    /**
+     * 状态 1启用 0停用
+     */
     private Integer status;
+
+    /**
+     * 排序
+     */
     private int sort;
-    private LocalDateTime createAt;
-    private LocalDateTime updateAt;
-    private String createBy;
-    private String updateBy;
+
+    /**
+     * 创建人
+     */
+    private String createdBy;
+
+    /**
+     * 创建时间
+     */
+    private LocalDateTime createdAt;
+
+    /**
+     * 最后更新人
+     */
+    private String updatedBy;
+
+    /**
+     * 最后更新时间
+     */
+    private LocalDateTime updatedAt;
 
     public int getId() {
         return id;
@@ -53,51 +88,51 @@ public class Category {
         this.sort = sort;
     }
 
-    public LocalDateTime getCreateAt() {
-        return createAt;
+    public String getCreatedBy() {
+        return createdBy;
     }
 
-    public void setCreateAt(LocalDateTime createAt) {
-        this.createAt = createAt;
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
     }
 
-    public LocalDateTime getUpdateAt() {
-        return updateAt;
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
-    public void setUpdateAt(LocalDateTime updateAt) {
-        this.updateAt = updateAt;
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
-    public String getCreateBy() {
-        return createBy;
+    public String getUpdatedBy() {
+        return updatedBy;
     }
 
-    public void setCreateBy(String createBy) {
-        this.createBy = createBy;
+    public void setUpdatedBy(String updatedBy) {
+        this.updatedBy = updatedBy;
     }
 
-    public String getUpdateBy() {
-        return updateBy;
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
     }
 
-    public void setUpdateBy(String updateBy) {
-        this.updateBy = updateBy;
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
-    public Category(int id, int type, String name, Integer status, int sort, LocalDateTime createAt, LocalDateTime updateAt, String createBy, String updateBy) {
+    public Category() {
+    }
+
+    public Category(int id, int type, String name, Integer status, int sort, String createdBy, LocalDateTime createdAt, String updatedBy, LocalDateTime updatedAt) {
         this.id = id;
         this.type = type;
         this.name = name;
         this.status = status;
         this.sort = sort;
-        this.createAt = createAt;
-        this.updateAt = updateAt;
-        this.createBy = createBy;
-        this.updateBy = updateBy;
-    }
-
-    public Category() {
+        this.createdBy = createdBy;
+        this.createdAt = createdAt;
+        this.updatedBy = updatedBy;
+        this.updatedAt = updatedAt;
     }
 
     @Override
@@ -108,10 +143,10 @@ public class Category {
                 ", name='" + name + '\'' +
                 ", status=" + status +
                 ", sort=" + sort +
-                ", createAt=" + createAt +
-                ", updateAt=" + updateAt +
-                ", createBy='" + createBy + '\'' +
-                ", updateBy='" + updateBy + '\'' +
+                ", createdBy='" + createdBy + '\'' +
+                ", createdAt=" + createdAt +
+                ", updatedBy='" + updatedBy + '\'' +
+                ", updatedAt=" + updatedAt +
                 '}';
     }
 }

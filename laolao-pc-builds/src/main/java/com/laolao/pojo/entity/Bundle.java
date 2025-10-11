@@ -5,32 +5,70 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public class Bundle implements Serializable {
-
+    /**
+     * 主键
+     */
     private int id;
 
+    /**
+     * 整机名
+     */
     private String name;
 
+    /**
+     * 所属分类Id
+     */
     private int categoryId;
 
+    /**
+     * 价格
+     */
     private BigDecimal price;
 
+    /**
+     * 图片
+     */
     private String image;
 
+    /**
+     * 描述
+     */
     private String Description;
 
+    /**
+     * 状态 1启用 0停用
+     */
     private Integer status;
 
+    /**
+     * 排序
+     */
     private int sort;
 
-    private LocalDateTime createdAt;
-
-    private LocalDateTime updatedAt;
-
+    /**
+     * 创建人
+     */
     private String createdBy;
 
+    /**
+     * 创建时间
+     */
+    private LocalDateTime createdAt;
+
+    /**
+     * 最后更新人
+     */
     private String updatedBy;
 
+    /**
+     * 最后更新时间
+     */
+    private LocalDateTime updatedAt;
+
     // 联表查询用
+    /**
+     * 商品类型
+     */
     private int type;
 
     public int getId() {
@@ -97,28 +135,20 @@ public class Bundle implements Serializable {
         this.sort = sort;
     }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
     public String getCreatedBy() {
         return createdBy;
     }
 
     public void setCreatedBy(String createdBy) {
         this.createdBy = createdBy;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
     public String getUpdatedBy() {
@@ -129,6 +159,14 @@ public class Bundle implements Serializable {
         this.updatedBy = updatedBy;
     }
 
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
     public int getType() {
         return type;
     }
@@ -137,7 +175,10 @@ public class Bundle implements Serializable {
         this.type = type;
     }
 
-    public Bundle(int id, String name, int categoryId, BigDecimal price, String image, String description, Integer status, int sort, LocalDateTime createdAt, LocalDateTime updatedAt, String createdBy, String updatedBy, int type) {
+    public Bundle() {
+    }
+
+    public Bundle(int id, String name, int categoryId, BigDecimal price, String image, String description, Integer status, int sort, String createdBy, LocalDateTime createdAt, String updatedBy, LocalDateTime updatedAt, int type) {
         this.id = id;
         this.name = name;
         this.categoryId = categoryId;
@@ -146,14 +187,11 @@ public class Bundle implements Serializable {
         Description = description;
         this.status = status;
         this.sort = sort;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
         this.createdBy = createdBy;
+        this.createdAt = createdAt;
         this.updatedBy = updatedBy;
+        this.updatedAt = updatedAt;
         this.type = type;
-    }
-
-    public Bundle() {
     }
 
     @Override
@@ -167,10 +205,10 @@ public class Bundle implements Serializable {
                 ", Description='" + Description + '\'' +
                 ", status=" + status +
                 ", sort=" + sort +
-                ", createdAt=" + createdAt +
-                ", updatedAt=" + updatedAt +
                 ", createdBy='" + createdBy + '\'' +
+                ", createdAt=" + createdAt +
                 ", updatedBy='" + updatedBy + '\'' +
+                ", updatedAt=" + updatedAt +
                 ", type=" + type +
                 '}';
     }

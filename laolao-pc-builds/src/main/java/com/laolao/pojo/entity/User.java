@@ -5,12 +5,35 @@ import java.time.LocalDateTime;
 
 // 用户
 public class User implements Serializable {
+    /**
+     * 主键
+     */
     private Long id;
+
+    /**
+     * 账号
+     */
     private String username;
+
+    /**
+     * 密码
+     */
     private String password;
+
+    /**
+     * 用户名
+     */
     private String name;
+
+    /**
+     * 邮箱
+     */
     private String email;
-    private LocalDateTime createTime;
+
+    /**
+     * 创建时间
+     */
+    private LocalDateTime createdAt;
 
     public Long getId() {
         return id;
@@ -52,24 +75,24 @@ public class User implements Serializable {
         this.email = email;
     }
 
-    public LocalDateTime getCreateTime() {
-        return createTime;
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
-    public void setCreateTime(LocalDateTime createTime) {
-        this.createTime = createTime;
-    }
-
-    public User(Long id, String name, String username, String password, String email, LocalDateTime createTime) {
-        this.id = id;
-        this.name = name;
-        this.username = username;
-        this.password = password;
-        this.email = email;
-        this.createTime = createTime;
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
     public User() {
+    }
+
+    public User(Long id, String username, String password, String name, String email, LocalDateTime createdAt) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.name = name;
+        this.email = email;
+        this.createdAt = createdAt;
     }
 
     @Override
@@ -80,7 +103,7 @@ public class User implements Serializable {
                 ", password='" + password + '\'' +
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
-                ", createTime=" + createTime +
+                ", createdAt=" + createdAt +
                 '}';
     }
 }

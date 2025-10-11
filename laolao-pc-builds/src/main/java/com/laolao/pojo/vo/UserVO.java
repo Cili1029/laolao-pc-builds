@@ -1,8 +1,19 @@
 package com.laolao.pojo.vo;
 
 public class UserVO {
+    /**
+     * 主键
+     */
     private Long id;
+
+    /**
+     * 账号
+     */
     private String username;
+
+    /**
+     * 用户名
+     */
     private String name;
 
     public Long getId() {

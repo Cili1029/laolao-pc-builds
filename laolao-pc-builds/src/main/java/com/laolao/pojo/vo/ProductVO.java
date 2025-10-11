@@ -3,12 +3,39 @@ package com.laolao.pojo.vo;
 import java.math.BigDecimal;
 
 public class ProductVO {
+    /**
+     * 主键
+     */
     private int id;
+
+    /**
+     * 商品类型
+     */
     private int type;
+
+    /**
+     * 商品名
+     */
     private String name;
+
+    /**
+     * 价格
+     */
     private BigDecimal price;
+
+    /**
+     * 图片
+     */
     private String image;
+
+    /**
+     * 通用描述
+     */
     private String commonDescription;
+
+    /**
+     * 描述
+     */
     private String description;
 
     public int getId() {

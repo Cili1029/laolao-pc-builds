@@ -2,8 +2,19 @@ package com.laolao.pojo.vo;
 
 
 public class CategoryVO {
+    /**
+     * 主键
+     */
     private int id;
+
+    /**
+     * 商品类型
+     */
     private int type;
+
+    /**
+     * 商品名
+     */
     private String name;
 
     public int getId() {
