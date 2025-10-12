@@ -6,7 +6,7 @@
     <select id="getByConditions" resultType="com.laolao.pojo.vo.ProductVO" parameterType="ProductVO">
         SELECT co.id, ca.type,co.name, co.image, co.common_description, MIN(va.price) as price
         FROM components co
-                 JOIN component_variants va ON co.id = va.component_id JOIN category ca ON ca.id = co.category_id
+                 JOIN component_variants va ON co.id = va.component_id JOIN categories ca ON ca.id = co.category_id
         <where>
             <if test="categoryId != null and categoryId != '' and categoryId != 0">
                 and co.category_id = #{categoryId}

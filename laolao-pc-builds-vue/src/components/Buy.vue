@@ -39,7 +39,6 @@
                         <h4 class="font-medium">{{ product.name }}</h4>
                         <span v-if="product.type === 1" class="text-sm block mt-1">{{ product.commonDescription
                             }}</span>
-                        <span v-else-if="product.type === 2" class="text-sm block mt-1">{{ product.description }}</span>
                     </div>
                     <div class="flex items-center justify-between w-full mt-auto">
                         <span v-if="product.type === 1" class="font-bold text-red-500">{{ product.price }}起</span>

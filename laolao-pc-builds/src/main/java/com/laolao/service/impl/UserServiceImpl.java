@@ -4,7 +4,7 @@ import cn.hutool.core.util.RandomUtil;
 import com.laolao.common.constant.JwtClaimsConstant;
 import com.laolao.common.constant.MessageConstant;
 import com.laolao.common.constant.RedisConstant;
-import com.laolao.common.utils.AliyunDirectMailUtils;
+import com.laolao.common.utils.AliyunDirectMailUtil;
 import com.laolao.converter.MapStruct;
 import com.laolao.common.exception.UnknownError;
 import com.laolao.mapper.UserMapper;
@@ -15,8 +15,10 @@ import com.laolao.common.properties.JwtProperties;
 import com.laolao.common.result.Result;
 import com.laolao.service.UserService;
 import com.laolao.common.utils.JwtUtil;
+import io.jsonwebtoken.Claims;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -48,7 +50,7 @@ public class UserServiceImpl implements UserService {
 
         String code = String.format("%06d", ThreadLocalRandom.current().nextInt(0, 1000000));
 
-        Boolean result = AliyunDirectMailUtils.sendEmail(email, "您的验证码是<strong>" + code + "</strong>");
+        Boolean result = AliyunDirectMailUtil.sendEmail(email, "您的验证码是<strong>" + code + "</strong>");
         if (!result) {
             throw new UnknownError(MessageConstant.UNKNOWN_ERROR);
         }
@@ -130,6 +132,32 @@ public class UserServiceImpl implements UserService {
         return Result.success("已退出！");
     }
 
+    @Override
+    public Result<UserVO> getProfile(HttpServletRequest req) {
+        Cookie[] cookies = req.getCookies();
+        String jwt = getJwtFromCookie(cookies);
+        try {
+            Claims claims = JwtUtil.parseJWT(jwtProperties.getUserSecretKey(), jwt);
+            long userId = Long.parseLong(claims.get(JwtClaimsConstant.USER_ID).toString());
+            User user = userMapper.getUser(userId);
+            UserVO userVO = mapStruct.userToUserVO(user);
+            return Result.success(userVO);
+        }  catch (Exception e) {
+            return Result.error();
+        }
+    }
+
+    public String getJwtFromCookie(Cookie[] cookies) {
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("jwt_token")) {
+                    return cookie.getValue();
+                }
+            }
+        }
+        return null;
+    }
+
     // 电话合理性以及验证码验证
     private Result<String> email(UserLoginOrRegisterDTO userLoginOrRegisterDTO) {
         // 手机号位数验证待开发
@@ -152,6 +180,7 @@ public class UserServiceImpl implements UserService {
         HashMap<String, Object> claims = new HashMap<>();
         claims.put(JwtClaimsConstant.USER_ID, user.getId());
         claims.put(JwtClaimsConstant.USERNAME, user.getUsername());
+        claims.put(JwtClaimsConstant.NAME, user.getName());
         String jwt = JwtUtil.createJWT(jwtProperties.getUserSecretKey(), jwtProperties.getUserTtl(), claims);
 
         // 存入Cookie

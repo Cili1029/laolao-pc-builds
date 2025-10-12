@@ -5,7 +5,7 @@
 <mapper namespace="com.laolao.mapper.UserMapper">
     <select id="checkUserExists" resultType="com.laolao.pojo.entity.User" parameterType="User">
         SELECT *
-        FROM user
+        FROM users
         <where>
             <if test="username != null and username != ''">
                 or username = #{username}

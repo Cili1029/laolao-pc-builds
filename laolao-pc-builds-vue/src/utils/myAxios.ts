@@ -4,7 +4,7 @@ import router from '@/router'
 
 const request = axios.create({
     baseURL: '',
-    withCredentials: true
+    withCredentials: true,
 })
 
 // 请求拦截器

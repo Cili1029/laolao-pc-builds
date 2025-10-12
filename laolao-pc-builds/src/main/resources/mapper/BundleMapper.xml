@@ -6,7 +6,7 @@
     <select id="getByConditions" resultType="com.laolao.pojo.entity.Bundle" parameterType="Bundle">
         SELECT *
         FROM bundles
-        join category  on category.id = bundles.category_id
+        join categories  on categories.id = bundles.category_id
         <where>
             <if test="categoryId != null and categoryId != '' and categoryId != 0">
                 and category_id = #{categoryId}

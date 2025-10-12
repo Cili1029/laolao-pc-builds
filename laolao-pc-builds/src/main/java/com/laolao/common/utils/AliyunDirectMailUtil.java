@@ -8,7 +8,7 @@ import jakarta.annotation.Resource;
 import org.springframework.stereotype.Component;
 
 @Component
-public class AliyunDirectMailUtils {
+public class AliyunDirectMailUtil {
 
     @Resource
     private AliyunDirectMailProperties properties;
@@ -37,7 +37,7 @@ public class AliyunDirectMailUtils {
     }
 
     public static Boolean sendEmail(String address, String content) throws Exception {
-        com.aliyun.dm20151123.Client client = AliyunDirectMailUtils.createClient();
+        com.aliyun.dm20151123.Client client = AliyunDirectMailUtil.createClient();
         com.aliyun.dm20151123.models.SingleSendMailRequest singleSendMailRequest = new com.aliyun.dm20151123.models.SingleSendMailRequest()
                 .setAccountName("laolao@laolao123.fun")
                 .setAddressType(1)

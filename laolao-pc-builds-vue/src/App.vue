@@ -103,7 +103,7 @@
                 </DropdownMenuTrigger>
                 <DropdownMenuContent class="w-56" align="end">
                   <DropdownMenuLabel class="flex flex-col">
-                    <span class="font-semibold">{{ username }}</span>
+                    <span class="font-semibold">{{ user.name }}</span>
                     <span class="text-xs text-gray-500 font-normal">欢迎回来！</span>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
@@ -168,7 +168,6 @@
   import { ref, onMounted, computed, reactive } from 'vue'
   import axios from './utils/myAxios'
   import { useRouter } from 'vue-router'
-  import { useCookies } from 'vue3-cookies'
   import logo from '@/assets/logo.jpg'
   import { Toaster } from '@/components/ui/sonner'
   import { toast } from "vue-sonner"
@@ -183,18 +182,11 @@
   import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
   import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
   const router = useRouter()
-  const { cookies } = useCookies()
 
   // 组件挂载时检查登录状态
   onMounted(() => {
-    checkLoginStatus()
+    getProfile()
   })
-
-  // 检查前端 Cookie 登录状态
-  const checkLoginStatus = () => {
-    isLoggedIn.value = cookies.get('user_login_status') === '1'
-    username.value = cookies.get('user_username') || '用户'
-  }
 
   // 回主页
   const goHome = () => {
@@ -228,8 +220,6 @@
   const showLoginModal = ref(false)
   // 判断是否登陆用
   const isLoggedIn = ref(false)
-  // 登陆后用的用户名
-  const username = ref('')
 
   // 登录表单数据
   const loginUser = reactive({
@@ -250,15 +240,9 @@
 
   // 图片加载失败显示用户名字首字母
   const userInitials = computed(() => {
-    if (!username.value) return '用户'
-    return username.value.substring(0, 2).toUpperCase()
+    if (!user.value) return '用户'
+    return user.value.name.substring(0, 2).toUpperCase()
   })
-
-  // 处理登录成功
-  const handleLoginSuccess = () => {
-    checkLoginStatus()
-    showLoginModal.value = false
-  }
 
   // 切换注册登录选项重置表单
   const resetLoginForm = () => {
@@ -269,6 +253,29 @@
       emailCode: ""
     })
   }
+
+  const getProfile = async () => {
+    try {
+      const response = await axios.get('/user/user/profile')
+      if (response.data.code === 1) {
+        user.value = response.data.data
+        user.value.status = '1'
+        // 设置已登录
+        isLoggedIn.value = true
+      }
+
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  // 当前登录的用户昵称
+  const user = ref({
+    status: '',
+    id: '',
+    username: '',
+    name: '',
+  })
 
   // 发送验证码
   const getEmailCode = async () => {
@@ -384,9 +391,9 @@
       }
 
       if (response.data.code === 1) {
-        cookies.set('user_login_status', '1', '7d')
-        cookies.set('user_username', response.data.data.username, '7d')
-        handleLoginSuccess()
+        user.value = response.data.data
+        showLoginModal.value = false
+        isLoggedIn.value = true
       }
     } catch (error) {
       console.log(error)
@@ -409,14 +416,17 @@
         },
       })
     } finally {
-      cookies.remove('user_login_status')
-      cookies.remove('user_username')
       isLoggedIn.value = false
-      username.value = ''
+      user.value = {
+        status: '',
+        id: '',
+        username: '',
+        name: ''
+      }
     }
   }
 
-  
+
 </script>
 
 <style scoped>

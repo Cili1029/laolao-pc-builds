@@ -23,14 +23,11 @@ public class CategoryServiceImpl implements CategoryService {
     public Result<List<CategoryVO>> list() {
         List<Category> categoryList = categoryMapper.get();
 
-        System.out.println(categoryList);
-
         List<CategoryVO> categoryVOList = new ArrayList<>();
         for (Category category : categoryList) {
             CategoryVO categoryVO = mapStruct.categoryToCategoryVO(category);
             categoryVOList.add(categoryVO);
         }
-        System.out.println(categoryVOList);
         return Result.success(categoryVOList);
     }
 }
