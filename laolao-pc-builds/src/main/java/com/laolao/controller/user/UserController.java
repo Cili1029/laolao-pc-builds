@@ -38,7 +38,7 @@ public class UserController {
      * 用户登录
      *
      * @param userLoginOrRegisterDTO 登录所需的基本信息
-     * @param res 请求
+     * @param res 响应
      * @return 登陆后的基本信息
      */
     @PostMapping("/login")
@@ -51,7 +51,7 @@ public class UserController {
      * 注册成功后自动登录
      *
      * @param userLoginOrRegisterDTO 注册所需的基本信息
-     * @param res 请求
+     * @param res 响应
      * @return 登陆后的基本信息
      */
     @PostMapping("/register")
@@ -76,7 +76,7 @@ public class UserController {
      * 用户退出
      * 同时清除Cookie，JWT
      *
-     * @param res 请求
+     * @param res 响应
      * @return 结果信息
      */
     @GetMapping("/logout")

@@ -2,13 +2,13 @@ package com.laolao.common.context;
 
 public class BaseContext {
 
-    public static ThreadLocal<Long> threadLocal = new ThreadLocal<>();
+    public static ThreadLocal<Integer> threadLocal = new ThreadLocal<>();
 
-    public static void setCurrentId(Long id) {
+    public static void setCurrentId(int id) {
         threadLocal.set(id);
     }
 
-    public static Long getCurrentId() {
+    public static int getCurrentId() {
         return threadLocal.get();
     }
 

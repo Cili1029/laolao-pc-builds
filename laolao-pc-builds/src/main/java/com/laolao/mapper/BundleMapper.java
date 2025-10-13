@@ -17,4 +17,7 @@ public interface BundleMapper {
             "         join components c on cv.component_id = c.id\n" +
             "where cv.id in (select variant_id from bundle_configurations b where bundle_id = #{id})")
     List<ComponentVariantVO> getByComponentsId(int id);
+
+    @Select("select * from bundles where id = 1 and status = 1")
+    Bundle check(int id);
 }

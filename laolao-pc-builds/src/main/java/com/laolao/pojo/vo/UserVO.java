@@ -4,7 +4,7 @@ public class UserVO {
     /**
      * 主键
      */
-    private Long id;
+    private int id;
 
     /**
      * 账号
@@ -16,11 +16,11 @@ public class UserVO {
      */
     private String name;
 
-    public Long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -40,7 +40,7 @@ public class UserVO {
         this.name = name;
     }
 
-    public UserVO(Long id, String username, String name) {
+    public UserVO(int id, String username, String name) {
         this.id = id;
         this.username = username;
         this.name = name;

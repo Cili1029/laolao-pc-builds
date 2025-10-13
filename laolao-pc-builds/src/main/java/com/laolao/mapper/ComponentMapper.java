@@ -1,5 +1,6 @@
 package com.laolao.mapper;
 
+import com.laolao.pojo.entity.Variant;
 import com.laolao.pojo.vo.ComponentVariantVO;
 import com.laolao.pojo.vo.ProductVO;
 import org.apache.ibatis.annotations.Mapper;
@@ -16,4 +17,7 @@ public interface ComponentMapper {
 
     @Select("select type from laolao_pc_builds.categories where id = #{categoryId}")
     int getType(int categoryId);
+
+    @Select("select * from component_variants where id = #{id} and status = 1 and stock > 0")
+    Variant check(int id);
 }

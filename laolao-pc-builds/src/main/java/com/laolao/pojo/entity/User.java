@@ -8,7 +8,7 @@ public class User implements Serializable {
     /**
      * 主键
      */
-    private Long id;
+    private int id;
 
     /**
      * 账号
@@ -35,11 +35,11 @@ public class User implements Serializable {
      */
     private LocalDateTime createdAt;
 
-    public Long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -86,7 +86,7 @@ public class User implements Serializable {
     public User() {
     }
 
-    public User(Long id, String username, String password, String name, String email, LocalDateTime createdAt) {
+    public User(int id, String username, String password, String name, String email, LocalDateTime createdAt) {
         this.id = id;
         this.username = username;
         this.password = password;

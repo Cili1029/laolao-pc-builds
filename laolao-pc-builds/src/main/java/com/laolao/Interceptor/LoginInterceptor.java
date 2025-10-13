@@ -25,7 +25,7 @@ public class LoginInterceptor implements HandlerInterceptor {
         String jwt = getJwtFromCookie(cookies);
         try {
             Claims claims = JwtUtil.parseJWT(jwtProperties.getUserSecretKey(), jwt);
-            long userId = Long.parseLong(claims.get(JwtClaimsConstant.USER_ID).toString());
+            int userId = Integer.parseInt(claims.get(JwtClaimsConstant.USER_ID).toString());
             BaseContext.setCurrentId(userId);
 
             return true;

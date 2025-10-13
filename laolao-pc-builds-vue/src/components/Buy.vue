@@ -38,7 +38,7 @@
                     <div class="text-center mb-2 h-30">
                         <h4 class="font-medium">{{ product.name }}</h4>
                         <span v-if="product.type === 1" class="text-sm block mt-1">{{ product.commonDescription
-                            }}</span>
+                        }}</span>
                     </div>
                     <div class="flex items-center justify-between w-full mt-auto">
                         <span v-if="product.type === 1" class="font-bold text-red-500">{{ product.price }}起</span>
@@ -72,7 +72,8 @@
                                             </Button>
                                         </div>
                                         <DialogFooter class="mt-auto">
-                                            <Button type="button" class="w-full" @click="buy()">
+                                            <Button type="button" class="w-full"
+                                                @click="addToCart(product.type, selectedVariant?.id)">
                                                 买！ - {{ selectedVariant?.price || currentVariants[0]?.price }}元
                                             </Button>
                                         </DialogFooter>
@@ -91,7 +92,7 @@
                                             </div>
                                             <div class="ml-auto">
                                                 原价:<span class="text-lg font-bold text-red-600">{{ variant.price
-                                                }}元</span>
+                                                    }}元</span>
                                             </div>
                                         </div>
 
@@ -101,10 +102,11 @@
                                             <p class="text-sm text-gray-600">{{ product.description }}</p>
                                         </div>
                                         <DialogFooter class="mt-auto">
-                                        <Button type="button" class="w-full" @click="buy()">
-                                            买！ - {{ selectedVariant?.price || currentVariants[0]?.price }}元
-                                        </Button>
-                                    </DialogFooter>
+                                            <Button type="button" class="w-full"
+                                                @click="addToCart(product.type, product.id)">
+                                                买！ - {{ selectedVariant?.price || currentVariants[0]?.price }}元
+                                            </Button>
+                                        </DialogFooter>
                                     </div>
                                 </div>
                             </DialogContent>
@@ -207,7 +209,7 @@
     const selectedVariant = ref<variant | null>(null)
 
     // 打开商品对话框
-    const openVariantDialog = async (component: Product) => {
+    const openVariantDialog = async (product: Product) => {
         // 重置之前的状态
         currentVariants.value = []
         selectedVariant.value = null
@@ -217,8 +219,8 @@
         try {
             const response = await axios.get('/user/products/variants', {
                 params: {
-                    id: component.id,
-                    type: component.type
+                    id: product.id,
+                    type: product.type
                 }
             })
             currentVariants.value = response.data.data
@@ -230,14 +232,20 @@
         }
     }
 
-    // 选择版本的方法
+    // 选择部件版本的方法
     const selectVariant = (edi: variant) => {
         selectedVariant.value = edi
-        console.log(edi)
     }
 
-    const buy = () => {
-        console.log(selectedVariant.value)
+    const addToCart = async (type: number, id: number | undefined) => {
+        try {
+            await axios.post('/user/cart/add', {
+                type: type,
+                productId: id
+            })
+        } catch (error) {
+            console.log(error)
+        }
     }
 
     const searchContent = ref()
