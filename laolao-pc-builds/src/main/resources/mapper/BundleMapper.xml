@@ -16,4 +16,15 @@
             </if>
         </where>
     </select>
+
+    <select id="ListFromCart" resultType="com.laolao.pojo.vo.CartProductVO" parameterType="cartProductVO">
+        select bundles.id, cart_items.type, bundles.name, bundles.image, bundles.price, cart_items.quantity
+        from bundles
+        join cart_items on cart_items.product_id = bundles.id
+        where cart_items.user_id = #{userId}
+        and bundles.id in
+        <foreach collection="productIds" item="productId" open="(" separator="," close=")">
+            #{productId}
+        </foreach>
+    </select>
 </mapper>

@@ -1,6 +1,7 @@
 package com.laolao.mapper;
 
 import com.laolao.pojo.entity.Bundle;
+import com.laolao.pojo.vo.CartProductVO;
 import com.laolao.pojo.vo.ComponentVariantVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -20,4 +21,6 @@ public interface BundleMapper {
 
     @Select("select * from bundles where id = 1 and status = 1")
     Bundle check(int id);
+
+    List<CartProductVO> ListFromCart(int userId, List<Integer> productIds);
 }

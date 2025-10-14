@@ -17,4 +17,15 @@
         </where>
         GROUP BY co.id
     </select>
+    <select id="ListFromCart" resultType="com.laolao.pojo.vo.CartProductVO" parameterType="cartProductVO">
+        select cv.id, ca.type, co.name, cv.variant_name, co.image, cv.price, ca.quantity
+        from component_variants cv
+                 join components co on cv.component_id = co.id
+                 join cart_items ca on ca.product_id = cv.id
+        where ca.user_id = #{userId}
+          and cv.id in
+        <foreach collection="productIds" item="productId" open="(" separator="," close=")">
+            #{productId}
+        </foreach>
+    </select>
 </mapper>

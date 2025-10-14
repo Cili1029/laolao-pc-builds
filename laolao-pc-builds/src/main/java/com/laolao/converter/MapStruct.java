@@ -1,6 +1,8 @@
 package com.laolao.converter;
 
+import com.laolao.pojo.dto.CartProductDTO;
 import com.laolao.pojo.entity.Bundle;
+import com.laolao.pojo.entity.CartItem;
 import com.laolao.pojo.entity.Category;
 import com.laolao.pojo.entity.User;
 import com.laolao.pojo.vo.CategoryVO;
@@ -20,4 +22,6 @@ public interface MapStruct {
     CategoryVO categoryToCategoryVO(Category category);
 
     ProductVO BundleToComponentVO(Bundle bundle);
+
+    CartItem cartProductDTOToCartItem(CartProductDTO cartProductDTO);
 }

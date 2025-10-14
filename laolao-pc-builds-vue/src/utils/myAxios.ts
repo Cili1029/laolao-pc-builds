@@ -31,7 +31,6 @@ request.interceptors.response.use(
         return response
     },
     error => {
-        console.log("b")
         let msg = ''
         // HTTP状态码错误
         if (error.response) {

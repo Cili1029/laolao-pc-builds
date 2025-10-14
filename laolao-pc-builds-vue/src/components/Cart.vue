@@ -68,7 +68,7 @@
         showCart()
     })
 
-    interface product {
+    interface Product {
         id: number,
         type: number,
         name: string
@@ -78,7 +78,7 @@
         quantity: number
     }
 
-    const products = ref<product[]>([])
+    const products = ref<Product[]>([])
 
     const totalPrice = computed(() =>
         products.value.reduce((sum, product) => sum + product.price * product.quantity, 0)
@@ -93,7 +93,7 @@
         }
     }
 
-    const quantity = async (product: product, type: number) => {
+    const quantity = async (product: Product, type: number) => {
         try {
             if (type === 0) {
                 await axios.delete("/user/cart/minus", {
@@ -128,6 +128,7 @@
             console.log(error)
         }
     }
+    
 
 </script>
 

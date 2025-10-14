@@ -239,7 +239,7 @@
 
     const addToCart = async (type: number, id: number | undefined) => {
         try {
-            await axios.post('/user/cart/add', {
+            await axios.post('/user/cart/plus', {
                 type: type,
                 productId: id
             })

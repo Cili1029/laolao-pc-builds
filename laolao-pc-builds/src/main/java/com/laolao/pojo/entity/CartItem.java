@@ -81,8 +81,7 @@ public class CartItem {
         this.createdAt = createdAt;
     }
 
-    public CartItem(int id) {
-        this.id = id;
+    public CartItem() {
     }
 
     public CartItem(int id, int userId, int type, int productId, int quantity, LocalDateTime createdAt) {

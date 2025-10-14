@@ -2,6 +2,7 @@ package com.laolao.service.impl;
 
 import com.laolao.common.context.BaseContext;
 import com.laolao.common.result.Result;
+import com.laolao.converter.MapStruct;
 import com.laolao.mapper.BundleMapper;
 import com.laolao.mapper.CartMapper;
 import com.laolao.mapper.ComponentMapper;
@@ -9,9 +10,13 @@ import com.laolao.pojo.dto.CartProductDTO;
 import com.laolao.pojo.entity.Bundle;
 import com.laolao.pojo.entity.CartItem;
 import com.laolao.pojo.entity.Variant;
+import com.laolao.pojo.vo.CartProductVO;
 import com.laolao.service.CartService;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class CartServiceImpl implements CartService {
@@ -22,6 +27,40 @@ public class CartServiceImpl implements CartService {
     private ComponentMapper componentMapper;
     @Resource
     private BundleMapper bundleMapper;
+    @Resource
+    private MapStruct mapStruct;
+
+    @Override
+    public Result<List<CartProductVO>> getCartProductList() {
+        int userId = BaseContext.getCurrentId();
+        List<CartItem> cartItemList = cartMapper.getList(userId);
+
+        // 组件的id
+        List<Integer> componentIds = cartItemList.stream()
+                .filter(cartItem -> cartItem.getType() == 1)
+                .map(CartItem::getProductId)
+                .toList();
+
+        // 整机的id
+        List<Integer> bundleIds = cartItemList.stream()
+                .filter(cartItem -> cartItem.getType() == 2)
+                .map(CartItem::getProductId)
+                .toList();
+
+        if (componentIds.isEmpty() && bundleIds.isEmpty()) {
+            return Result.success(null);
+        }
+
+        List<CartProductVO> cartProductVOList = new ArrayList<CartProductVO>();
+        if (!componentIds.isEmpty()) {
+            cartProductVOList = componentMapper.ListFromCart(userId, componentIds);
+        }
+        if (!bundleIds.isEmpty()) {
+            cartProductVOList.addAll(bundleMapper.ListFromCart(userId, bundleIds));
+        }
+
+        return Result.success(cartProductVOList);
+    }
 
     @Override
     public Result<String> addToCart(CartProductDTO cartProductDTO) {
@@ -40,15 +79,46 @@ public class CartServiceImpl implements CartService {
 
         // 查询购物车表里有没有这个商品
         int userId = BaseContext.getCurrentId();
-        CartItem cartItem = cartMapper.isExists(userId, cartProductDTO);
-        if (cartItem == null) {
+        CartItem cartItem = mapStruct.cartProductDTOToCartItem(cartProductDTO);
+        cartItem.setUserId(userId);
+
+        CartItem res = cartMapper.isExists(cartItem);
+        if (res == null) {
             // 无，添加
-            cartMapper.add(userId,cartProductDTO);
+            cartMapper.add(cartItem);
         } else {
             // 有，数量加1
-            cartMapper.update(userId,cartProductDTO);
+            cartMapper.updateQuantity(cartItem, +1);
         }
 
         return Result.success("加入购物车了！");
+    }
+
+
+    @Override
+    public Result<String> deleteFromCart(CartProductDTO cartProductDTO) {
+        // 判断数量是一个还是多个
+        CartItem cartItem = mapStruct.cartProductDTOToCartItem(cartProductDTO);
+        cartItem.setUserId(BaseContext.getCurrentId());
+        CartItem res = cartMapper.isExists(cartItem);
+        if (res == null) {
+            return Result.error("购物车中不存在该商品");
+        }
+        // 大于一个
+        if (res.getQuantity() > 1) {
+            cartMapper.updateQuantity(cartItem, -1);
+        } else {
+            // 不止一个
+            cartMapper.del(cartItem);
+        }
+
+        return Result.success("删除成功！");
+    }
+
+    @Override
+    public Result<String> clearCart() {
+        int userId = BaseContext.getCurrentId();
+        cartMapper.clear(userId);
+        return Result.success("清空购物车！");
     }
 }

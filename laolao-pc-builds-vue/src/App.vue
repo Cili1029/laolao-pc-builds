@@ -12,7 +12,7 @@
           <!-- 导航链接 -->
           <div class="hidden md:flex space-x-6 items-center">
             <RouterLink to="/buy" class="text-gray-600 hover:text-blue-500 transition-colors">买</RouterLink>
-            <RouterLink to="/hello" class="text-gray-600 hover:text-blue-500 transition-colors">功能</RouterLink>
+            <RouterLink to="/hello" class="text-gray-600 hover:text-blue-500 transition-colors">购物车</RouterLink>
 
             <!-- 未登录，点击登录 -->
             <div v-if="!isLoggedIn">
@@ -425,8 +425,6 @@
       }
     }
   }
-
-
 </script>
 
 <style scoped>
