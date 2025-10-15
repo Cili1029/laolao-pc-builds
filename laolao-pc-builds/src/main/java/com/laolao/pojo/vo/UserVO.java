@@ -7,6 +7,11 @@ public class UserVO {
     private int id;
 
     /**
+     * 头像
+     */
+    private String avatar;
+
+    /**
      * 账号
      */
     private String username;
@@ -22,6 +27,14 @@ public class UserVO {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
     }
 
     public String getUsername() {
@@ -40,19 +53,21 @@ public class UserVO {
         this.name = name;
     }
 
-    public UserVO(int id, String username, String name) {
-        this.id = id;
-        this.username = username;
-        this.name = name;
+    public UserVO() {
     }
 
-    public UserVO() {
+    public UserVO(int id, String avatar, String username, String name) {
+        this.id = id;
+        this.avatar = avatar;
+        this.username = username;
+        this.name = name;
     }
 
     @Override
     public String toString() {
         return "UserVO{" +
                 "id=" + id +
+                ", avatar='" + avatar + '\'' +
                 ", username='" + username + '\'' +
                 ", name='" + name + '\'' +
                 '}';

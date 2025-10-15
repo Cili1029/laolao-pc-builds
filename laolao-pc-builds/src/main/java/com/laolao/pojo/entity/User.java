@@ -21,6 +21,11 @@ public class User implements Serializable {
     private String password;
 
     /**
+     * 头像
+     */
+    private String avatar;
+
+    /**
      * 用户名
      */
     private String name;
@@ -59,6 +64,14 @@ public class User implements Serializable {
         this.password = password;
     }
 
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
+
     public String getName() {
         return name;
     }
@@ -86,10 +99,11 @@ public class User implements Serializable {
     public User() {
     }
 
-    public User(int id, String username, String password, String name, String email, LocalDateTime createdAt) {
+    public User(int id, String username, String password, String avatar, String name, String email, LocalDateTime createdAt) {
         this.id = id;
         this.username = username;
         this.password = password;
+        this.avatar = avatar;
         this.name = name;
         this.email = email;
         this.createdAt = createdAt;
@@ -101,6 +115,7 @@ public class User implements Serializable {
                 "id=" + id +
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
+                ", avatar='" + avatar + '\'' +
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
                 ", createdAt=" + createdAt +

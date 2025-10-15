@@ -37,13 +37,13 @@ public class CartServiceImpl implements CartService {
 
         // 组件的id
         List<Integer> componentIds = cartItemList.stream()
-                .filter(cartItem -> cartItem.getType() == 1)
+                .filter(cartItem -> cartItem.getProductType() == 1)
                 .map(CartItem::getProductId)
                 .toList();
 
         // 整机的id
         List<Integer> bundleIds = cartItemList.stream()
-                .filter(cartItem -> cartItem.getType() == 2)
+                .filter(cartItem -> cartItem.getProductType() == 2)
                 .map(CartItem::getProductId)
                 .toList();
 
@@ -51,7 +51,7 @@ public class CartServiceImpl implements CartService {
             return Result.success(null);
         }
 
-        List<CartProductVO> cartProductVOList = new ArrayList<CartProductVO>();
+        List<CartProductVO> cartProductVOList = new ArrayList<>();
         if (!componentIds.isEmpty()) {
             cartProductVOList = componentMapper.ListFromCart(userId, componentIds);
         }
@@ -65,7 +65,7 @@ public class CartServiceImpl implements CartService {
     @Override
     public Result<String> addToCart(CartProductDTO cartProductDTO) {
         // 查询是否在售,库存是否充足
-        if (cartProductDTO.getType() == 1) {
+        if (cartProductDTO.getProductType() == 1) {
             Variant variant = componentMapper.check(cartProductDTO.getProductId());
             if (variant == null) {
                 return Result.error("商品不可购买（停售或无库存）");

@@ -10,7 +10,7 @@ public class CategoryVO {
     /**
      * 商品类型
      */
-    private int type;
+    private int productType;
 
     /**
      * 商品名
@@ -25,12 +25,12 @@ public class CategoryVO {
         this.id = id;
     }
 
-    public int getType() {
-        return type;
+    public int getProductType() {
+        return productType;
     }
 
-    public void setType(int type) {
-        this.type = type;
+    public void setProductType(int productType) {
+        this.productType = productType;
     }
 
     public String getName() {
@@ -41,9 +41,9 @@ public class CategoryVO {
         this.name = name;
     }
 
-    public CategoryVO(int id, int type, String name) {
+    public CategoryVO(int id, int productType, String name) {
         this.id = id;
-        this.type = type;
+        this.productType = productType;
         this.name = name;
     }
 
@@ -54,7 +54,7 @@ public class CategoryVO {
     public String toString() {
         return "CategoryVO{" +
                 "id=" + id +
-                ", type=" + type +
+                ", productType=" + productType +
                 ", name='" + name + '\'' +
                 '}';
     }

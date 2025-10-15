@@ -16,7 +16,7 @@ public interface ComponentMapper {
     @Select("SELECT id,component_id, variant_name, price, description FROM component_variants WHERE component_id = #{componentId};")
     List<ComponentVariantVO> getByComponentsId(int componentId);
 
-    @Select("select type from laolao_pc_builds.categories where id = #{categoryId}")
+    @Select("select product_type from laolao_pc_builds.categories where id = #{categoryId}")
     int getType(int categoryId);
 
     @Select("select * from component_variants where id = #{id} and status = 1 and stock > 0")

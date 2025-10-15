@@ -11,7 +11,7 @@ public class Category {
     /**
      * 商品类型
      */
-    private int type;
+    private int productType;
 
     /**
      * 类型名
@@ -56,12 +56,12 @@ public class Category {
         this.id = id;
     }
 
-    public int getType() {
-        return type;
+    public int getProductType() {
+        return productType;
     }
 
-    public void setType(int type) {
-        this.type = type;
+    public void setProductType(int productType) {
+        this.productType = productType;
     }
 
     public String getName() {
@@ -123,9 +123,9 @@ public class Category {
     public Category() {
     }
 
-    public Category(int id, int type, String name, Integer status, int sort, String createdBy, LocalDateTime createdAt, String updatedBy, LocalDateTime updatedAt) {
+    public Category(int id, int productType, String name, Integer status, int sort, String createdBy, LocalDateTime createdAt, String updatedBy, LocalDateTime updatedAt) {
         this.id = id;
-        this.type = type;
+        this.productType = productType;
         this.name = name;
         this.status = status;
         this.sort = sort;
@@ -139,7 +139,7 @@ public class Category {
     public String toString() {
         return "Category{" +
                 "id=" + id +
-                ", type=" + type +
+                ", productType=" + productType +
                 ", name='" + name + '\'' +
                 ", status=" + status +
                 ", sort=" + sort +

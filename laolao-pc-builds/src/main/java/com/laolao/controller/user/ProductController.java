@@ -40,13 +40,13 @@ public class ProductController {
      * 8G，16G，，，
      *
      * @param id 组件Id
-     * @param type 商品类型
+     * @param productType 商品类型
      * @return 版本信息
      */
     @GetMapping("/variants")
-    public Result<List<ComponentVariantVO>> Variants(int id, int type) {
+    public Result<List<ComponentVariantVO>> Variants(int id, int productType) {
 
-        return productService.listWithComponentId(id, type);
+        return productService.listWithComponentId(id, productType);
     }
 
     /**

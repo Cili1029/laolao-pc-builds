@@ -2,19 +2,34 @@ package com.laolao.pojo.entity;
 
 import java.time.LocalDateTime;
 
-public class CartItem {
+public class Comment {
     /**
      * 主键
      */
     private int id;
 
     /**
-     * 用户Id
+     * 评论用户
      */
     private int userId;
 
     /**
-     * 商品类型
+     * 评论
+     */
+    private String comment;
+
+    /**
+     * 评论层级
+     */
+    private int level;
+
+    /**
+     * 父级评论Id
+     */
+    private int parentId;
+
+    /**
+     * 所属商品类型
      */
     private int productType;
 
@@ -24,12 +39,7 @@ public class CartItem {
     private int productId;
 
     /**
-     * 数量
-     */
-    private int quantity;
-
-    /**
-     * 添加时间
+     * 创建时间
      */
     private LocalDateTime createdAt;
 
@@ -49,6 +59,30 @@ public class CartItem {
         this.userId = userId;
     }
 
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
+    }
+
+    public int getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(int parentId) {
+        this.parentId = parentId;
+    }
+
     public int getProductType() {
         return productType;
     }
@@ -65,14 +99,6 @@ public class CartItem {
         this.productId = productId;
     }
 
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
-
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
@@ -81,26 +107,30 @@ public class CartItem {
         this.createdAt = createdAt;
     }
 
-    public CartItem() {
+    public Comment() {
     }
 
-    public CartItem(int id, int userId, int productType, int productId, int quantity, LocalDateTime createdAt) {
+    public Comment(int id, int userId, String comment, int level, int parentId, int productType, int productId, LocalDateTime createdAt) {
         this.id = id;
         this.userId = userId;
+        this.comment = comment;
+        this.level = level;
+        this.parentId = parentId;
         this.productType = productType;
         this.productId = productId;
-        this.quantity = quantity;
         this.createdAt = createdAt;
     }
 
     @Override
     public String toString() {
-        return "CartItem{" +
+        return "ProductComment{" +
                 "id=" + id +
                 ", userId=" + userId +
+                ", comment='" + comment + '\'' +
+                ", level=" + level +
+                ", parentId=" + parentId +
                 ", productType=" + productType +
                 ", productId=" + productId +
-                ", quantity=" + quantity +
                 ", createdAt=" + createdAt +
                 '}';
     }

@@ -11,7 +11,7 @@ public class ProductVO {
     /**
      * 商品类型
      */
-    private int type;
+    private int productType;
 
     /**
      * 商品名
@@ -46,12 +46,12 @@ public class ProductVO {
         this.id = id;
     }
 
-    public int getType() {
-        return type;
+    public int getProductType() {
+        return productType;
     }
 
-    public void setType(int type) {
-        this.type = type;
+    public void setProductType(int productType) {
+        this.productType = productType;
     }
 
     public String getName() {
@@ -94,9 +94,9 @@ public class ProductVO {
         this.description = description;
     }
 
-    public ProductVO(int id, int type, String name, BigDecimal price, String image, String commonDescription, String description) {
+    public ProductVO(int id, int productType, String name, BigDecimal price, String image, String commonDescription, String description) {
         this.id = id;
-        this.type = type;
+        this.productType = productType;
         this.name = name;
         this.price = price;
         this.image = image;
@@ -111,7 +111,7 @@ public class ProductVO {
     public String toString() {
         return "ComponentVO{" +
                 "id=" + id +
-                ", type=" + type +
+                ", productType=" + productType +
                 ", name='" + name + '\'' +
                 ", price=" + price +
                 ", image='" + image + '\'' +

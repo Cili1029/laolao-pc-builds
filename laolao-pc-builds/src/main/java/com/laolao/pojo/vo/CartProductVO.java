@@ -12,7 +12,7 @@ public class CartProductVO implements Serializable {
     /**
      * 商品类型
      */
-    private int type;
+    private int productType;
 
     /**
      * 商品名
@@ -47,12 +47,12 @@ public class CartProductVO implements Serializable {
         this.id = id;
     }
 
-    public int getType() {
-        return type;
+    public int getProductType() {
+        return productType;
     }
 
-    public void setType(int type) {
-        this.type = type;
+    public void setProductType(int productType) {
+        this.productType = productType;
     }
 
     public String getName() {
@@ -98,9 +98,9 @@ public class CartProductVO implements Serializable {
     public CartProductVO() {
     }
 
-    public CartProductVO(int id, int type, String name, String variantName, String image, BigDecimal price, int quantity) {
+    public CartProductVO(int id, int productType, String name, String variantName, String image, BigDecimal price, int quantity) {
         this.id = id;
-        this.type = type;
+        this.productType = productType;
         this.name = name;
         this.variantName = variantName;
         this.image = image;
@@ -112,7 +112,7 @@ public class CartProductVO implements Serializable {
     public String toString() {
         return "CartProductVO{" +
                 "id=" + id +
-                ", type=" + type +
+                ", productType=" + productType +
                 ", name='" + name + '\'' +
                 ", variantName='" + variantName + '\'' +
                 ", image='" + image + '\'' +

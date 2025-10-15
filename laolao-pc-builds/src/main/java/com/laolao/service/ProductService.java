@@ -9,7 +9,7 @@ import java.util.List;
 public interface ProductService {
     Result<List<ProductVO>> listWithCategoryId(int categoryId);
 
-    Result<List<ComponentVariantVO>> listWithComponentId(int id, int type);
+    Result<List<ComponentVariantVO>> listWithComponentId(int id, int productType);
 
     Result<List<ProductVO>> searchByName(int categoryId, String searchContent);
 }

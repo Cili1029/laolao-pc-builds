@@ -11,8 +11,65 @@
 
           <!-- 导航链接 -->
           <div class="hidden md:flex space-x-6 items-center">
-            <RouterLink to="/buy" class="text-gray-600 hover:text-blue-500 transition-colors">买</RouterLink>
-            <RouterLink to="/hello" class="text-gray-600 hover:text-blue-500 transition-colors">购物车</RouterLink>
+            <RouterLink to="/hello" class="text-gray-600 hover:text-blue-500 transition-colors">功能测试</RouterLink>
+
+            <!-- 购物车 -->
+            <Drawer>
+              <DrawerTrigger class="text-gray-600 hover:text-blue-500" @click="showCart()">购物车</DrawerTrigger>
+              <DrawerContent v-if="products && products.length > 0" class="h-3/4">
+                <DrawerHeader>
+                  <DrawerTitle class="text-3xl">我的购物车</DrawerTitle>
+                  <DrawerDescription>
+                    <p class="text-xl hover:text-blue-500" @click="clear()">清空购物车</p>
+                  </DrawerDescription>
+                </DrawerHeader>
+                <div class="flex gap-6 py-4 overflow-y-auto">
+                  <div class="w-full flex flex-col space-y-2">
+                    <div v-for="product in products" :key="product.name"
+                      class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 flex items-center">
+                      <img :src="product.image" class="w-15 h-15 object-cover rounded-md mr-4" />
+                      <div class="flex-1">
+                        <h3 class="font-medium text-gray-900">{{ product.name }}</h3>
+                        {{ product.variantName }}
+                      </div>
+                      <div class="ml-auto mx-10">
+                        <span class="text-lg font-bold text-red-600">{{ product.price }}元</span>
+                      </div>
+                      <div class="ml-auto mx-10">
+                        <Button variant="outline" size="icon" class="h-8 w-8 shrink-0 rounded-full"
+                          @click="quantity(product, 0)">
+                          <span class="icon-[mdi--minus] h-4 w-4"></span>
+                          <span class="sr-only">Decrease</span>
+                        </Button>
+                        <span class="text-lg font-bold mx-1">{{ product.quantity }}</span>
+                        <Button variant="outline" size="icon" class="h-8 w-8 shrink-0 rounded-full"
+                          @click="quantity(product, 1)">
+                          <span class="icon-[mdi--plus] h-4 w-4"></span>
+                          <span class="sr-only">Increase</span>
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <DrawerFooter>
+                  <div class="text-xl ml-auto font-bold text-red-600">总价: {{ totalPrice.toFixed(2) }}元</div>
+                  <Button class="h-15">提交订单</Button>
+                </DrawerFooter>
+              </DrawerContent>
+
+              <DrawerContent v-else class="h-3/4">
+                <DrawerHeader>
+                  <DrawerTitle class="text-3xl">我的购物车</DrawerTitle>
+                  <DrawerDescription></DrawerDescription>
+                </DrawerHeader>
+                <div class="text-4xl text-center">
+                  购物车是空的！
+                </div>
+                <DrawerFooter>
+                  <Button class="h-15" disabled>提交订单</Button>
+                </DrawerFooter>
+              </DrawerContent>
+            </Drawer>
 
             <!-- 未登录，点击登录 -->
             <div v-if="!isLoggedIn">
@@ -97,7 +154,7 @@
               <DropdownMenu>
                 <DropdownMenuTrigger as-child>
                   <Avatar class="cursor-pointer hover:ring-2 hover:ring-blue-500 transition-all rounded-md">
-                    <AvatarImage src="" alt="用户头像" />
+                    <AvatarImage :src="user?.avatar" alt="用户头像" />
                     <AvatarFallback>{{ userInitials }}</AvatarFallback>
                   </Avatar>
                 </DropdownMenuTrigger>
@@ -112,12 +169,16 @@
                     <span>个人信息</span>
                   </DropdownMenuItem>
                   <DropdownMenuItem>
-                    <CreditCard class="mr-2 h-4 w-4" />
-                    <span>账单管理</span>
+                    <Smile class="mr-2 h-4 w-4" />
+                    <span>签到/优惠券</span>
                   </DropdownMenuItem>
                   <DropdownMenuItem>
-                    <Settings class="mr-2 h-4 w-4" />
-                    <span>账户设置</span>
+                    <ShoppingBag class="mr-2 h-4 w-4" />
+                    <span>我的订单</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <MapPinHouse class="mr-2 h-4 w-4" />
+                    <span>我的地址</span>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem @click="logout" class="text-red-600 focus:text-red-600">
@@ -173,7 +234,7 @@
   import { toast } from "vue-sonner"
   import 'vue-sonner/style.css'
   import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-  import { CreditCard, LogOut, Settings, User } from "lucide-vue-next"
+  import { ShoppingBag, MapPinHouse, LogOut, User, Smile } from "lucide-vue-next"
   import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
   import { Button } from "@/components/ui/button"
   import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
@@ -259,7 +320,6 @@
       const response = await axios.get('/user/user/profile')
       if (response.data.code === 1) {
         user.value = response.data.data
-        user.value.status = '1'
         // 设置已登录
         isLoggedIn.value = true
       }
@@ -271,8 +331,7 @@
 
   // 当前登录的用户昵称
   const user = ref({
-    status: '',
-    id: '',
+    avatar: '',
     username: '',
     name: '',
   })
@@ -418,13 +477,86 @@
     } finally {
       isLoggedIn.value = false
       user.value = {
-        status: '',
-        id: '',
+        avatar:'',
         username: '',
         name: ''
       }
     }
   }
+
+  // 以下是购物车模块
+  import { Drawer, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer"
+
+  interface Product {
+    id: number,
+    productType: number,
+    name: string
+    variantName: string,
+    image: string,
+    price: number,
+    quantity: number
+  }
+
+  const products = ref<Product[]>([])
+
+  const totalPrice = computed(() =>
+    products.value.reduce((sum, product) => sum + product.price * product.quantity, 0)
+  )
+
+  const showCart = async () => {
+    try {
+      const response = await axios.get("/user/cart/list")
+      products.value = response.data.data || []
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const quantity = async (product: Product, type: number) => {
+    try {
+      if (type === 0) {
+        await axios.delete("/user/cart/minus", {
+          data: {
+            productType: product.productType,
+            productId: product.id
+          }
+        })
+
+        const update = products.value.find(p => p.id === product?.id)
+        if (update) {
+          update.quantity = update.quantity - 1
+          if (update.quantity === 0) {
+            products.value = products.value.filter(p => p.id !== product?.id)
+          }
+        }
+        console.log(products.value)
+
+      } else {
+        await axios.post("/user/cart/plus", {
+          productType: product.productType,
+          productId: product.id
+        })
+
+        const update = products.value.find(p => p.id === product?.id)
+        if (update) {
+          update.quantity = update.quantity + 1
+        }
+      }
+
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const clear = async () => {
+    try {
+      await axios.delete("/user/cart/clear")
+
+      products.value = []
+    } catch(error) {
+      console.log(error)
+    }
+  } 
 </script>
 
 <style scoped>

@@ -26,9 +26,9 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Result<List<ProductVO>> listWithCategoryId(int categoryId) {
-        int type = componentMapper.getType(categoryId);
+        int productType = componentMapper.getType(categoryId);
         List<ProductVO> productVoList = new ArrayList<>();
-        if (type == 1) {
+        if (productType == 1) {
             productVoList =  componentMapper.getByConditions(categoryId, null);
         } else {
             List<Bundle> bundles = bundleMapper.getByConditions(categoryId, null);
@@ -41,9 +41,9 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Result<List<ComponentVariantVO>> listWithComponentId(int id, int type) {
+    public Result<List<ComponentVariantVO>> listWithComponentId(int id, int productType) {
         List<ComponentVariantVO> componentVariantVO;
-        if (type == 1) {
+        if (productType == 1) {
             componentVariantVO =  componentMapper.getByComponentsId(id);
         } else {
             componentVariantVO =bundleMapper.getByComponentsId(id);
@@ -54,9 +54,9 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Result<List<ProductVO>> searchByName(int categoryId, String searchContent) {
-        int type = componentMapper.getType(categoryId);
+        int productType = componentMapper.getType(categoryId);
         List<ProductVO> productVoList = new ArrayList<>();
-        if (type == 1) {
+        if (productType == 1) {
             productVoList =  componentMapper.getByConditions(categoryId, searchContent);
         } else {
             List<Bundle> bundles = bundleMapper.getByConditions(categoryId, searchContent);

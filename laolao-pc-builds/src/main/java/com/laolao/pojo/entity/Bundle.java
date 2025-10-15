@@ -69,7 +69,7 @@ public class Bundle implements Serializable {
     /**
      * 商品类型
      */
-    private int type;
+    private int productType;
 
     public int getId() {
         return id;
@@ -167,18 +167,18 @@ public class Bundle implements Serializable {
         this.updatedAt = updatedAt;
     }
 
-    public int getType() {
-        return type;
+    public int getProductType() {
+        return productType;
     }
 
-    public void setType(int type) {
-        this.type = type;
+    public void setProductType(int productType) {
+        this.productType = productType;
     }
 
     public Bundle() {
     }
 
-    public Bundle(int id, String name, int categoryId, BigDecimal price, String image, String description, Integer status, int sort, String createdBy, LocalDateTime createdAt, String updatedBy, LocalDateTime updatedAt, int type) {
+    public Bundle(int id, String name, int categoryId, BigDecimal price, String image, String description, Integer status, int sort, String createdBy, LocalDateTime createdAt, String updatedBy, LocalDateTime updatedAt, int productType) {
         this.id = id;
         this.name = name;
         this.categoryId = categoryId;
@@ -191,7 +191,7 @@ public class Bundle implements Serializable {
         this.createdAt = createdAt;
         this.updatedBy = updatedBy;
         this.updatedAt = updatedAt;
-        this.type = type;
+        this.productType = productType;
     }
 
     @Override
@@ -209,7 +209,7 @@ public class Bundle implements Serializable {
                 ", createdAt=" + createdAt +
                 ", updatedBy='" + updatedBy + '\'' +
                 ", updatedAt=" + updatedAt +
-                ", type=" + type +
+                ", productType=" + productType +
                 '}';
     }
 }

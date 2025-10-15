@@ -9,7 +9,7 @@
             <div class="space-y-4">
                 <div class="flex items-center p-3 rounded-lg transition-colors"
                     :class="cat.id === categoryIndex ? 'bg-gray-100' : 'hover:bg-gray-50'" v-for="cat in category"
-                    :key="cat.id" @click="ShowComponent(cat.id, cat.type)">
+                    :key="cat.id" @click="ShowComponent(cat.id, cat.productType)">
                     <span class="icon-[streamline-cyber--smiley-sigh] text-3xl"></span>
                     <div class="ml-4 flex-1">
                         <h4 class="font-medium">{{ cat.name }}</h4>
@@ -37,12 +37,12 @@
                     </div>
                     <div class="text-center mb-2 h-30">
                         <h4 class="font-medium">{{ product.name }}</h4>
-                        <span v-if="product.type === 1" class="text-sm block mt-1">{{ product.commonDescription
+                        <span v-if="product.productType === 1" class="text-sm block mt-1">{{ product.commonDescription
                         }}</span>
                     </div>
                     <div class="flex items-center justify-between w-full mt-auto">
-                        <span v-if="product.type === 1" class="font-bold text-red-500">{{ product.price }}起</span>
-                        <span v-else-if="product.type === 2" class="font-bold text-red-500">{{ product.price }}</span>
+                        <span v-if="product.productType === 1" class="font-bold text-red-500">{{ product.price }}起</span>
+                        <span v-else-if="product.productType === 2" class="font-bold text-red-500">{{ product.price }}</span>
                         <Dialog>
                             <DialogTrigger as-child>
                                 <span class="icon-[material-symbols--shopping-cart-outline] text-4xl hover:bg-red-500"
@@ -54,7 +54,7 @@
                                     <DialogDescription>{{ product.commonDescription }}</DialogDescription>
                                 </DialogHeader>
                                 <!-- 单件 -->
-                                <div v-if="product.type === 1" class="flex gap-6 py-4">
+                                <div v-if="product.productType === 1" class="flex gap-6 py-4">
                                     <div class="w-1/2">
                                         <img :src="product.image" class="w-full h-auto rounded-lg" />
                                     </div>
@@ -73,7 +73,7 @@
                                         </div>
                                         <DialogFooter class="mt-auto">
                                             <Button type="button" class="w-full"
-                                                @click="addToCart(product.type, selectedVariant?.id)">
+                                                @click="addToCart(product.productType, selectedVariant?.id)">
                                                 买！ - {{ selectedVariant?.price || currentVariants[0]?.price }}元
                                             </Button>
                                         </DialogFooter>
@@ -81,7 +81,7 @@
                                 </div>
 
                                 <!-- 主机 -->
-                                <div v-else-if="product.type === 2" class="flex gap-6 py-4">
+                                <div v-else-if="product.productType === 2" class="flex gap-6 py-4">
                                     <div class="w-3/5 flex flex-col space-y-2">
                                         <div v-for="variant in currentVariants" :key="variant.id"
                                             class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 flex items-center">
@@ -103,7 +103,7 @@
                                         </div>
                                         <DialogFooter class="mt-auto">
                                             <Button type="button" class="w-full"
-                                                @click="addToCart(product.type, product.id)">
+                                                @click="addToCart(product.productType, product.id)">
                                                 买！ - {{ selectedVariant?.price || currentVariants[0]?.price }}元
                                             </Button>
                                         </DialogFooter>
@@ -131,7 +131,7 @@
 
     interface Product {
         id: number
-        type: number
+        productType: number
         name: string
         price: number
         image: string
@@ -141,7 +141,7 @@
 
     interface category {
         id: number
-        type: number
+        productType: number
         name: string
     }
     interface variant {
@@ -179,11 +179,11 @@
         }
     }
 
-    const ShowComponent = async (id: number, type: number) => {
+    const ShowComponent = async (id: number, productType: number) => {
         try {
             categoryIndex.value = id
 
-            if (type === 1) {
+            if (productType === 1) {
                 const response = await axios.get('/user/products/components', {
                     params: {
                         categoryId: id
@@ -220,7 +220,7 @@
             const response = await axios.get('/user/products/variants', {
                 params: {
                     id: product.id,
-                    type: product.type
+                    productType: product.productType
                 }
             })
             currentVariants.value = response.data.data
@@ -237,10 +237,10 @@
         selectedVariant.value = edi
     }
 
-    const addToCart = async (type: number, id: number | undefined) => {
+    const addToCart = async (productType: number, id: number | undefined) => {
         try {
             await axios.post('/user/cart/plus', {
-                type: type,
+                productType: productType,
                 productId: id
             })
         } catch (error) {
