@@ -3,7 +3,6 @@ package com.laolao.common.utils;
 import com.aliyun.credentials.models.Config;
 import com.aliyun.tea.TeaException;
 import com.laolao.common.properties.AliyunDirectMailProperties;
-import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Component;
 
@@ -13,20 +12,18 @@ public class AliyunDirectMailUtil {
     @Resource
     private AliyunDirectMailProperties properties;
 
-    // 静态字段存储配置
-    private static String ACCESS_KEY_ID;
-    private static String ACCESS_KEY_SECRET;
-
-    @PostConstruct
-    public void init() {
-        ACCESS_KEY_ID = properties.getAccessKeyId();
-        ACCESS_KEY_SECRET = properties.getAccessKeySecret();
+    private String getAccessKeyId() {
+        return properties.getAccessKeyId();
     }
 
-    public static com.aliyun.dm20151123.Client createClient() throws Exception {
+    private String getAccessKeySecret() {
+        return properties.getAccessKeySecret();
+    }
+
+    public com.aliyun.dm20151123.Client createClient() throws Exception {
         Config authConfig = new Config()
-                .setAccessKeyId(ACCESS_KEY_ID)
-                .setAccessKeySecret(ACCESS_KEY_SECRET);
+                .setAccessKeyId(getAccessKeyId())
+                .setAccessKeySecret(getAccessKeySecret());
         authConfig.setType("access_key");
 
         com.aliyun.credentials.Client credential = new com.aliyun.credentials.Client(authConfig);
@@ -36,8 +33,8 @@ public class AliyunDirectMailUtil {
         return new com.aliyun.dm20151123.Client(config);
     }
 
-    public static Boolean sendEmail(String address, String content) throws Exception {
-        com.aliyun.dm20151123.Client client = AliyunDirectMailUtil.createClient();
+    public Boolean sendEmail(String address, String content) throws Exception {
+        com.aliyun.dm20151123.Client client = createClient();
         com.aliyun.dm20151123.models.SingleSendMailRequest singleSendMailRequest = new com.aliyun.dm20151123.models.SingleSendMailRequest()
                 .setAccountName("laolao@laolao123.fun")
                 .setAddressType(1)

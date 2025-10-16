@@ -2,7 +2,6 @@ package com.laolao.Interceptor;
 
 import com.laolao.common.constant.JwtClaimsConstant;
 import com.laolao.common.context.BaseContext;
-import com.laolao.common.properties.JwtProperties;
 import com.laolao.common.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
 import jakarta.annotation.Resource;
@@ -17,14 +16,14 @@ import org.springframework.web.servlet.HandlerInterceptor;
 public class LoginInterceptor implements HandlerInterceptor {
 
     @Resource
-    private JwtProperties jwtProperties;
+    private JwtUtil jwtUtil;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         Cookie[] cookies = request.getCookies();
         String jwt = getJwtFromCookie(cookies);
         try {
-            Claims claims = JwtUtil.parseJWT(jwtProperties.getUserSecretKey(), jwt);
+            Claims claims = jwtUtil.parseJWT(jwt);
             int userId = Integer.parseInt(claims.get(JwtClaimsConstant.USER_ID).toString());
             BaseContext.setCurrentId(userId);
 

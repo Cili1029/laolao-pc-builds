@@ -11,7 +11,6 @@ public class JwtProperties {
      */
     private String userSecretKey;
     private long userTtl;
-    private String userTokenName;
 
     public String getUserSecretKey() {
         return userSecretKey;
@@ -27,13 +26,5 @@ public class JwtProperties {
 
     public void setUserTtl(long userTtl) {
         this.userTtl = userTtl;
-    }
-
-    public String getUserTokenName() {
-        return userTokenName;
-    }
-
-    public void setUserTokenName(String userTokenName) {
-        this.userTokenName = userTokenName;
     }
 }

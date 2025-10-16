@@ -6,9 +6,9 @@ spring:
     name: laolao-pc-builds
   profiles:
     active: dev
-#  main:
+    #  main:
     # 循环依赖
-#    allow-circular-references: true
+  #    allow-circular-references: true
   datasource:
     driver-class-name: ${laolao.datasource.driver-class-name}
     url: jdbc:mysql://${laolao.datasource.host}:${laolao.datasource.port}/${laolao.datasource.database}?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
@@ -41,3 +41,5 @@ laolao:
     user-ttl: 604800000
     # 设置前端传递过来的令牌名称
     user-token-name: authentication
+amap:
+  key: ${laolao.amap.key}

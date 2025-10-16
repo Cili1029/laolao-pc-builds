@@ -11,7 +11,6 @@ import com.laolao.mapper.UserMapper;
 import com.laolao.pojo.dto.UserLoginOrRegisterDTO;
 import com.laolao.pojo.entity.User;
 import com.laolao.pojo.vo.UserVO;
-import com.laolao.common.properties.JwtProperties;
 import com.laolao.common.result.Result;
 import com.laolao.service.UserService;
 import com.laolao.common.utils.JwtUtil;
@@ -35,11 +34,13 @@ public class UserServiceImpl implements UserService {
     @Resource
     private UserMapper userMapper;
     @Resource
-    private JwtProperties jwtProperties;
+    private JwtUtil jwtUtil;
     @Resource
     private MapStruct mapStruct;
     @Resource
     private StringRedisTemplate stringRedisTemplate;
+    @Resource
+    private AliyunDirectMailUtil aliyunDirectMailUtil;
 
     @Override
     public void getEmailCode(String email) throws Exception {
@@ -50,7 +51,7 @@ public class UserServiceImpl implements UserService {
 
         String code = String.format("%06d", ThreadLocalRandom.current().nextInt(0, 1000000));
 
-        Boolean result = AliyunDirectMailUtil.sendEmail(email, "您的验证码是<strong>" + code + "</strong>");
+        Boolean result =aliyunDirectMailUtil.sendEmail(email, "您的验证码是<strong>" + code + "</strong>");
         if (!result) {
             throw new UnknownError(MessageConstant.UNKNOWN_ERROR);
         }
@@ -137,7 +138,7 @@ public class UserServiceImpl implements UserService {
         Cookie[] cookies = req.getCookies();
         String jwt = getJwtFromCookie(cookies);
         try {
-            Claims claims = JwtUtil.parseJWT(jwtProperties.getUserSecretKey(), jwt);
+            Claims claims = jwtUtil.parseJWT(jwt);
             long userId = Long.parseLong(claims.get(JwtClaimsConstant.USER_ID).toString());
             User user = userMapper.getUser(userId);
             UserVO userVO = mapStruct.userToUserVO(user);
@@ -181,7 +182,7 @@ public class UserServiceImpl implements UserService {
         claims.put(JwtClaimsConstant.USER_ID, user.getId());
         claims.put(JwtClaimsConstant.USERNAME, user.getUsername());
         claims.put(JwtClaimsConstant.NAME, user.getName());
-        String jwt = JwtUtil.createJWT(jwtProperties.getUserSecretKey(), jwtProperties.getUserTtl(), claims);
+        String jwt = jwtUtil.createJWT(claims);
 
         // 存入Cookie
         Cookie cookie = new Cookie("jwt_token", jwt);
