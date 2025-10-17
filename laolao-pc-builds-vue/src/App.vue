@@ -194,7 +194,7 @@
     </header>
 
     <!-- 主要内容区域 -->
-    <main class="flex-grow container mx-auto px-4 py-8 border-l border-r border-gray-200">
+    <main class="flex-grow container mx-auto border-l border-r border-gray-200">
       <RouterView></RouterView>
     </main>
 

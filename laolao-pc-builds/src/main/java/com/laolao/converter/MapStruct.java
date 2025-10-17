@@ -1,10 +1,8 @@
 package com.laolao.converter;
 
 import com.laolao.pojo.dto.CartProductDTO;
-import com.laolao.pojo.entity.Bundle;
-import com.laolao.pojo.entity.CartItem;
-import com.laolao.pojo.entity.Category;
-import com.laolao.pojo.entity.User;
+import com.laolao.pojo.entity.*;
+import com.laolao.pojo.vo.AddressVO;
 import com.laolao.pojo.vo.CategoryVO;
 import com.laolao.pojo.vo.ProductVO;
 import com.laolao.pojo.vo.UserVO;
@@ -24,4 +22,6 @@ public interface MapStruct {
     ProductVO BundleToComponentVO(Bundle bundle);
 
     CartItem cartProductDTOToCartItem(CartProductDTO cartProductDTO);
+
+    AddressVO addressToAddressVO(Address address);
 }

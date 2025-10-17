@@ -38,11 +38,13 @@
                     <div class="text-center mb-2 h-30">
                         <h4 class="font-medium">{{ product.name }}</h4>
                         <span v-if="product.productType === 1" class="text-sm block mt-1">{{ product.commonDescription
-                        }}</span>
+                            }}</span>
                     </div>
                     <div class="flex items-center justify-between w-full mt-auto">
-                        <span v-if="product.productType === 1" class="font-bold text-red-500">{{ product.price }}起</span>
-                        <span v-else-if="product.productType === 2" class="font-bold text-red-500">{{ product.price }}</span>
+                        <span v-if="product.productType === 1" class="font-bold text-red-500">{{ product.price
+                            }}起</span>
+                        <span v-else-if="product.productType === 2" class="font-bold text-red-500">{{ product.price
+                            }}</span>
                         <Dialog>
                             <DialogTrigger as-child>
                                 <span class="icon-[material-symbols--shopping-cart-outline] text-4xl hover:bg-red-500"
@@ -72,10 +74,12 @@
                                             </Button>
                                         </div>
                                         <DialogFooter class="mt-auto">
-                                            <Button type="button" class="w-full"
-                                                @click="addToCart(product.productType, selectedVariant?.id)">
-                                                买！ - {{ selectedVariant?.price || currentVariants[0]?.price }}元
-                                            </Button>
+                                            <DialogClose as-child>
+                                                <Button type="button" class="w-full"
+                                                    @click="addToCart(product.productType, selectedVariant?.id)">
+                                                    买！ - {{ selectedVariant?.price || currentVariants[0]?.price }}元
+                                                </Button>
+                                            </DialogClose>
                                         </DialogFooter>
                                     </div>
                                 </div>
@@ -92,7 +96,7 @@
                                             </div>
                                             <div class="ml-auto">
                                                 原价:<span class="text-lg font-bold text-red-600">{{ variant.price
-                                                    }}元</span>
+                                                }}元</span>
                                             </div>
                                         </div>
 
@@ -102,10 +106,12 @@
                                             <p class="text-sm text-gray-600">{{ product.description }}</p>
                                         </div>
                                         <DialogFooter class="mt-auto">
-                                            <Button type="button" class="w-full"
-                                                @click="addToCart(product.productType, product.id)">
-                                                买！ - {{ selectedVariant?.price || currentVariants[0]?.price }}元
-                                            </Button>
+                                            <DialogClose as-child>
+                                                <Button type="button" class="w-full"
+                                                    @click="addToCart(product.productType, product.id)">
+                                                    买！ - {{ selectedVariant?.price || currentVariants[0]?.price }}元
+                                                </Button>
+                                            </DialogClose>
                                         </DialogFooter>
                                     </div>
                                 </div>
@@ -124,7 +130,7 @@
     import axios from "@/utils/myAxios"
     import { onMounted, ref } from "vue"
     import { Button } from "@/components/ui/button"
-    import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+    import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog"
     import { Input } from "@/components/ui/input"
     import 'vue-sonner/style.css'
     import { toast } from "vue-sonner"

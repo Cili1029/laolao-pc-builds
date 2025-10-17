@@ -23,7 +23,7 @@ public class AMAPUtil {
         return amapProperties.getKey();
     }
 
-    public List<DistrictVO> getDistrict(Integer adcode) {
+    public List<DistrictVO> getDistrictByAdcade(Integer adcode) {
         String uri = UriComponentsBuilder.fromUriString("https://restapi.amap.com/v3/config/district")
                 .queryParam("key", getKey())
                 .queryParam("keywords", adcode)
@@ -31,6 +31,22 @@ public class AMAPUtil {
                 .queryParam("extensions", "base")
                 .toUriString();
 
+        return getDistrictVO(uri);
+    }
+
+    public List<DistrictVO> getDistrictByName(String name) {
+        String uri = UriComponentsBuilder.fromUriString("https://restapi.amap.com/v3/config/district")
+                .queryParam("key", getKey())
+                .queryParam("keywords", name)
+                .queryParam("subdistrict", 1)
+                .queryParam("extensions", "base")
+                .build(false)
+                .toUriString();
+
+        return getDistrictVO(uri);
+    }
+
+    private List<DistrictVO> getDistrictVO(String uri) {
         return webClientBuilder.build().get()
                 .uri(uri)
                 .retrieve()
