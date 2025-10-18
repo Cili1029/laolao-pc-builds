@@ -221,6 +221,8 @@
 <script setup lang="ts">
     import axios from "@/utils/myAxios"
     import { onMounted, ref, reactive } from "vue"
+    import { useRoute } from 'vue-router'
+    const route = useRoute()
     import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
     import { Button } from "@/components/ui/button"
     import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog"
@@ -230,7 +232,7 @@
     onMounted(() => {
         getProvinces()
         getAddress()
-        showCart()
+        showProduct()
     })
 
     interface District {
@@ -402,9 +404,9 @@
     }
 
     // 订单
+    const orderId = route.params.id
     interface Product {
         id: number,
-        productType: number,
         name: string
         variantName: string,
         image: string,
@@ -413,10 +415,13 @@
     }
     const products = ref<Product[]>([])
 
-
-    const showCart = async () => {
+    const showProduct = async () => {
         try {
-            const response = await axios.get("/user/cart/list")
+            const response = await axios.get("/user/order/list", {
+                params: {
+                    id: orderId
+                }
+            })
             products.value = response.data.data || []
         } catch (error) {
             console.log(error)
@@ -424,5 +429,4 @@
     }
 
     // 付款详细
-
 </script>

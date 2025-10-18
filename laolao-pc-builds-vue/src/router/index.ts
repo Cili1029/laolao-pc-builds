@@ -3,6 +3,7 @@ import { createRouter, createWebHistory} from 'vue-router'
 import Hello from '@/components/HelloWorld.vue'
 import Home from '../components/Home.vue'
 import Buy from '../components/Buy.vue';
+import Order from '@/components/Order.vue';
 
 // 使用 RouteRecordRaw 类型定义路由
 const routes = [
@@ -24,6 +25,11 @@ const routes = [
     path: '/hello',
     name: 'Hello',
     component: Hello
+  },
+  {
+    path: '/order/:id',
+    name: 'Order',
+    component: Order
   }
 ]
 

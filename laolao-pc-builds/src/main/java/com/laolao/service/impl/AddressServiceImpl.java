@@ -52,12 +52,19 @@ public class AddressServiceImpl implements AddressService {
             // 为新增
             address.setUserId(BaseContext.getCurrentId());
             addressMapper.insert(address);
-            return Result.success("新增成功！");
+
+            Result<List<AddressVO>> addressList = getAddressList();
+            addressList.setMsg("新增成功！");
+            return addressList;
+//            return Result.success("新增成功！");
         }
 
         // 有，更新
         addressMapper.update(address);
-        return Result.success("修改成功！");
+        Result<List<AddressVO>> addressList = getAddressList();
+        addressList.setMsg("修改成功！");
+        return addressList;
+//        return Result.success("修改成功！");
     }
 
 }

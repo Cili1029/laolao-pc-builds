@@ -23,4 +23,5 @@ public interface CartMapper {
 
     @Delete("delete from cart_items where user_id = #{userId}")
     void clear(int userId);
+
 }

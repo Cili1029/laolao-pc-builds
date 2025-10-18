@@ -1,5 +1,5 @@
 <template>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+    <div class="grid grid-cols-1 pt-10 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
         <!-- 配件 -->
         <div class="bg-white rounded-xl shadow-lg p-8 border-2 border-accent relative transform hover:-translate-y-2 transition-transform duration-300">
             <div class="w-16 h-16 bg-blue-100 rounded-xl flex items-center justify-center mb-6">

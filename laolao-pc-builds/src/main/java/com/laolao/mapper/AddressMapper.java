@@ -10,15 +10,15 @@ import java.util.List;
 
 @Mapper
 public interface AddressMapper {
-    @Select("select * from user_address where user_id = #{userId}")
+    @Select("select * from address where user_id = #{userId}")
     List<Address> getList(int userId);
 
-    @Insert("insert into user_address(user_id, consignee, phone, province, city, district, detail_address) " +
+    @Insert("insert into address(user_id, consignee, phone, province, city, district, detail_address) " +
             "values (#{userId}, #{consignee}, #{phone}, #{province}, #{city}, #{district}, #{detailAddress})")
     void insert(Address address);
 
 
-    @Update("update user_address set consignee = #{consignee}, phone = #{phone}, " +
+    @Update("update address set consignee = #{consignee}, phone = #{phone}, " +
             "province = #{province}, city = #{city}, district = #{district}, detail_address = #{detailAddress} " +
             "where id = #{id} and user_id = #{userId}")
     void update(Address address);

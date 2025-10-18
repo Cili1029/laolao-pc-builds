@@ -2,11 +2,9 @@ package com.laolao.converter;
 
 import com.laolao.pojo.dto.CartProductDTO;
 import com.laolao.pojo.entity.*;
-import com.laolao.pojo.vo.AddressVO;
-import com.laolao.pojo.vo.CategoryVO;
-import com.laolao.pojo.vo.ProductVO;
-import com.laolao.pojo.vo.UserVO;
+import com.laolao.pojo.vo.*;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 
 /**
@@ -24,4 +22,7 @@ public interface MapStruct {
     CartItem cartProductDTOToCartItem(CartProductDTO cartProductDTO);
 
     AddressVO addressToAddressVO(Address address);
+
+    @Mapping(target = "id", ignore = true)
+    OrderDetail CartProductVOToOrderDetail(CartProductVO cartProductVO);
 }

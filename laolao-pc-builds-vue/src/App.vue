@@ -33,7 +33,7 @@
                         {{ product.variantName }}
                       </div>
                       <div class="ml-auto mx-10">
-                        <span class="text-lg font-bold text-red-600">{{ product.price }}元</span>
+                        <span class="text-lg font-bold text-red-600">￥{{ product.price }}</span>
                       </div>
                       <div class="ml-auto mx-10">
                         <Button variant="outline" size="icon" class="h-8 w-8 shrink-0 rounded-full"
@@ -52,8 +52,8 @@
                   </div>
                 </div>
                 <DrawerFooter>
-                  <div class="text-xl ml-auto font-bold text-red-600">总价: {{ totalPrice.toFixed(2) }}元</div>
-                  <Button class="h-15">提交订单</Button>
+                  <div class="text-xl ml-auto font-bold text-red-600">总价（未算优惠券）: ￥{{ totalPrice.toFixed(2)}}</div>
+                  <Button class="h-15" @click="order()">去结算</Button>
                 </DrawerFooter>
               </DrawerContent>
 
@@ -66,7 +66,7 @@
                   购物车是空的！
                 </div>
                 <DrawerFooter>
-                  <Button class="h-15" disabled>提交订单</Button>
+                  <Button class="h-15" disabled>去结算</Button>
                 </DrawerFooter>
               </DrawerContent>
             </Drawer>
@@ -176,10 +176,6 @@
                     <ShoppingBag class="mr-2 h-4 w-4" />
                     <span>我的订单</span>
                   </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <MapPinHouse class="mr-2 h-4 w-4" />
-                    <span>我的地址</span>
-                  </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem @click="logout" class="text-red-600 focus:text-red-600">
                     <LogOut class="mr-2 h-4 w-4" />
@@ -234,7 +230,7 @@
   import { toast } from "vue-sonner"
   import 'vue-sonner/style.css'
   import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-  import { ShoppingBag, MapPinHouse, LogOut, User, Smile } from "lucide-vue-next"
+  import { ShoppingBag, LogOut, User, Smile } from "lucide-vue-next"
   import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
   import { Button } from "@/components/ui/button"
   import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
@@ -557,6 +553,17 @@
       console.log(error)
     }
   } 
+
+  const order = async() => {
+    try {
+      const response =  await axios.post("/user/order/create")
+      const id = response.data.data
+      // 跳转到订单页面并传递id
+      router.push(`/order/${id}`)
+    } catch(error) {
+      console.log(error)
+    }
+  }
 </script>
 
 <style scoped>

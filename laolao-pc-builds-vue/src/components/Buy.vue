@@ -41,9 +41,9 @@
                             }}</span>
                     </div>
                     <div class="flex items-center justify-between w-full mt-auto">
-                        <span v-if="product.productType === 1" class="font-bold text-red-500">{{ product.price
+                        <span v-if="product.productType === 1" class="font-bold text-red-500">￥{{ product.price
                             }}起</span>
-                        <span v-else-if="product.productType === 2" class="font-bold text-red-500">{{ product.price
+                        <span v-else-if="product.productType === 2" class="font-bold text-red-500">￥{{ product.price
                             }}</span>
                         <Dialog>
                             <DialogTrigger as-child>
@@ -70,14 +70,14 @@
                                                 :key="`${variant.id}-${variant.variantName}`"
                                                 @click="selectVariant(variant)"
                                                 :variant="(selectedVariant?.variantName === variant.variantName || (!selectedVariant && variant === currentVariants[0])) ? 'default' : 'outline'">
-                                                {{ variant.variantName }} - {{ variant.price }}元
+                                                {{ variant.variantName }} - ￥{{ variant.price }}
                                             </Button>
                                         </div>
                                         <DialogFooter class="mt-auto">
                                             <DialogClose as-child>
                                                 <Button type="button" class="w-full"
                                                     @click="addToCart(product.productType, selectedVariant?.id)">
-                                                    买！ - {{ selectedVariant?.price || currentVariants[0]?.price }}元
+                                                    买！ - ￥{{ selectedVariant?.price || currentVariants[0]?.price }}
                                                 </Button>
                                             </DialogClose>
                                         </DialogFooter>
@@ -95,8 +95,7 @@
                                                 {{ variant.variantName }}
                                             </div>
                                             <div class="ml-auto">
-                                                原价:<span class="text-lg font-bold text-red-600">{{ variant.price
-                                                }}元</span>
+                                                原价:<span class="text-lg font-bold text-red-600">￥{{ variant.price }}</span>
                                             </div>
                                         </div>
 
@@ -109,7 +108,7 @@
                                             <DialogClose as-child>
                                                 <Button type="button" class="w-full"
                                                     @click="addToCart(product.productType, product.id)">
-                                                    买！ - {{ selectedVariant?.price || currentVariants[0]?.price }}元
+                                                    买！ - ￥{{ selectedVariant?.price || currentVariants[0]?.price }}
                                                 </Button>
                                             </DialogClose>
                                         </DialogFooter>
