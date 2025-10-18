@@ -3,7 +3,6 @@ package com.laolao.pojo.entity;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-// 用户
 public class User implements Serializable {
     /**
      * 主键

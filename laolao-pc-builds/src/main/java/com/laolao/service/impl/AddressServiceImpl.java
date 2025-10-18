@@ -11,6 +11,7 @@ import com.laolao.pojo.vo.DistrictVO;
 import com.laolao.service.AddressService;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +57,6 @@ public class AddressServiceImpl implements AddressService {
             Result<List<AddressVO>> addressList = getAddressList();
             addressList.setMsg("新增成功！");
             return addressList;
-//            return Result.success("新增成功！");
         }
 
         // 有，更新
@@ -64,7 +64,29 @@ public class AddressServiceImpl implements AddressService {
         Result<List<AddressVO>> addressList = getAddressList();
         addressList.setMsg("修改成功！");
         return addressList;
-//        return Result.success("修改成功！");
+    }
+
+    @Override
+    public Result<List<AddressVO>> delAddress(int id) {
+        int userId = BaseContext.getCurrentId();
+        addressMapper.delete(id, userId);
+        Result<List<AddressVO>> addressList = getAddressList();
+        addressList.setMsg("删除成功！");
+        return addressList;
+    }
+
+    @Transactional
+    @Override
+    public Result<List<AddressVO>> setDefault(int id) {
+        int userId = BaseContext.getCurrentId();
+        // 取消旧默认
+        addressMapper.setDefault(0, null, userId);
+        // 设置新默认
+        addressMapper.setDefault(1, id, userId);
+
+        Result<List<AddressVO>> addressList = getAddressList();
+        addressList.setMsg("设置成功！");
+        return addressList;
     }
 
 }

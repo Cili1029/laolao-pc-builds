@@ -1,10 +1,7 @@
 package com.laolao.mapper;
 
 import com.laolao.pojo.entity.Address;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -22,4 +19,13 @@ public interface AddressMapper {
             "province = #{province}, city = #{city}, district = #{district}, detail_address = #{detailAddress} " +
             "where id = #{id} and user_id = #{userId}")
     void update(Address address);
+
+    @Delete("delete from address where id = #{id} and user_id = #{userId}")
+    void delete(int id, int userId);
+
+
+    void setDefault(int isDefault, Integer id, int userId);
+
+    @Select("select * from address where user_id = #{userId} order by is_default desc, id desc limit 1")
+    Address getDefault(int userId);
 }

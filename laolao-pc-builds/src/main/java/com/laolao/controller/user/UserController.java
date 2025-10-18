@@ -14,7 +14,6 @@ import java.util.Map;
 /**
  * 用户相关
  */
-
 @RestController
 @RequestMapping("/user/user")
 public class UserController {

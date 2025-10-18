@@ -3,9 +3,10 @@ package com.laolao.service.impl;
 import com.laolao.common.context.BaseContext;
 import com.laolao.common.result.Result;
 import com.laolao.converter.MapStruct;
+import com.laolao.mapper.AddressMapper;
 import com.laolao.mapper.CartMapper;
-import com.laolao.mapper.ComponentMapper;
 import com.laolao.mapper.OrderMapper;
+import com.laolao.pojo.entity.Address;
 import com.laolao.pojo.entity.Order;
 import com.laolao.pojo.entity.OrderDetail;
 import com.laolao.pojo.vo.CartProductVO;
@@ -29,6 +30,10 @@ public class OrderServiceImpl implements OrderService {
     private CartService cartService;
     @Resource
     private MapStruct mapStruct;
+    @Resource
+    private CartMapper cartMapper;
+    @Resource
+    private AddressMapper addressMapper;
 
     @Transactional
     @Override
@@ -52,6 +57,12 @@ public class OrderServiceImpl implements OrderService {
                 .map(item -> item.getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         order.setAmount(amount);
+
+        //设置收货人，有默认用默认，无默认用最新的
+        Address address = addressMapper.getDefault(userId);
+        order.setConsignee(address.getConsignee());
+        order.setPhone(address.getPhone());
+        order.setAddress(address.getProvince() + address.getCity() + address.getDistrict() + address.getDetailAddress());
         orderMapper.insert(order);
         int id = order.getId();
 
@@ -64,6 +75,9 @@ public class OrderServiceImpl implements OrderService {
         }
 
         orderMapper.insertToDetail(orderDetails);
+
+        // 清空购物车
+        cartMapper.clear(userId);
 
         return Result.success(id, "创建订单成功");
     }

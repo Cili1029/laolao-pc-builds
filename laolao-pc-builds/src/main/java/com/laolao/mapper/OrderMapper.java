@@ -12,7 +12,7 @@ import java.util.List;
 
 @Mapper
 public interface OrderMapper {
-    @Insert("insert into orders(number, user_id, amount) value (#{number}, #{userId}, #{amount})")
+    @Insert("insert into orders(number, user_id, amount, consignee, phone, address) value (#{number}, #{userId}, #{amount}, #{consignee}, #{phone}, #{address})")
     @Options(useGeneratedKeys = true, keyProperty = "id")
     void insert(Order order);
 

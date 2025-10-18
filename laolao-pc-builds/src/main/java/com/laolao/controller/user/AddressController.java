@@ -46,10 +46,30 @@ public class AddressController {
      * id为1则为更新，为0则为新增
      *
      * @param address 基础信息
-     * @return 返回最新地址信息
+     * @return 最新地址信息
      */
     @PostMapping("/update")
     public Result<List<AddressVO>> updateAddress(@RequestBody Address address) {
         return addressService.updateAddress(address);
+    }
+
+    /**根据Id删除地址
+     *
+     * @param id 地址主键
+     * @return 最新的地址信息
+     */
+    @DeleteMapping("/del")
+    public Result<List<AddressVO>> delAddress(int id) {
+        return addressService.delAddress(id);
+    }
+
+    /**根据Id设置默认地址
+     *
+     * @param id 地址主键
+     * @return 最新的地址信息
+     */
+    @GetMapping("/default")
+    public Result<List<AddressVO>> setDefault(int id) {
+        return addressService.setDefault(id);
     }
 }

@@ -13,4 +13,8 @@ public interface AddressService {
     Result<List<AddressVO>> updateAddress(Address address);
 
     Result<List<AddressVO>> getAddressList();
+
+    Result<List<AddressVO>> delAddress(int id);
+
+    Result<List<AddressVO>> setDefault(int id);
 }

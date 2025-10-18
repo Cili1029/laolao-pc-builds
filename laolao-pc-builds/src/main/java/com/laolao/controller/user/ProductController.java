@@ -14,7 +14,6 @@ import java.util.List;
 /**
  * 商品相关
  */
-
 @RestController
 @RequestMapping("/user/products")
 public class ProductController {

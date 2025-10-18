@@ -4,4 +4,13 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.laolao.mapper.AddressMapper">
 
+    <update id="setDefault">
+        update address set is_default = #{isDefault}
+        <where>
+            user_id = #{userId}
+            <if test="id != null and id != ''">
+                and id = #{id}
+            </if>
+        </where>
+    </update>
 </mapper>

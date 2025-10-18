@@ -100,7 +100,10 @@
                     <p class="p-1 font-bold">{{ address.detailAddress }}</p>
                     <p class="text-xs p-1">{{ address.consignee }} {{ address.phone }}</p>
                     <div class="flex justify-between">
-                        <p class="text-xs pl-1 hover:text-orange-500">默认</p>
+                        <p class="text-xs pl-1 hover:text-orange-500" @click="setDefault(address.id)">
+                            默认
+                            <span v-show="address.isDefault === 1">✔</span>
+                        </p>
                         <Dialog>
                             <DialogTrigger as-child>
                                 <p class="text-xs pl-1 hover:text-orange-500" @click="copy(address)">编辑</p>
@@ -186,6 +189,26 @@
                                 </DialogFooter>
                             </DialogContent>
                         </Dialog>
+                        <Dialog>
+                            <DialogTrigger as-child>
+                                <p class="text-xs pl-1 hover:text-orange-500">删除</p>
+                            </DialogTrigger>
+                            <DialogContent class="sm:max-w-[425px]">
+                                <DialogHeader>
+                                    <DialogTitle>删除此地址</DialogTitle>
+                                    <DialogDescription>
+                                        删了就再也找不回来了！
+                                    </DialogDescription>
+                                </DialogHeader>
+                                <DialogFooter>
+                                    <DialogClose as-child>
+                                        <Button type="button" variant="destructive" @click="deleteAddress(address.id)">
+                                            我已知晓
+                                        </Button>
+                                    </DialogClose>
+                                </DialogFooter>
+                            </DialogContent>
+                        </Dialog>
                     </div>
                 </div>
             </div>
@@ -204,8 +227,7 @@
                         {{ product.variantName }}
                     </div>
                     <div class="ml-auto">
-                        <span class="text-lg font-bold text-red-600">￥{{ product.price }}×{{ product.quantity
-                        }}</span>
+                        <span class="text-lg font-bold text-red-600">￥{{ product.price }}×{{ product.quantity }}</span>
                     </div>
                 </div>
             </div>
@@ -401,6 +423,35 @@
     // 改变收货地址
     const changeAddress = (id: number) => {
         selectAddress.value = id
+    }
+
+    const setDefault = async (id: number) => {
+        try {
+            const response = await axios.get("/user/address/default", {
+                params: {
+                    id: id
+                }
+            })
+            addressList.value = response.data.data
+
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    // 删除地址
+    const deleteAddress = async (id: number) => {
+        try {
+            const response = await axios.delete("/user/address/del", {
+                params: {
+                    id: id
+                }
+            })
+            addressList.value = response.data.data
+
+        } catch (error) {
+            console.log(error)
+        }
     }
 
     // 订单

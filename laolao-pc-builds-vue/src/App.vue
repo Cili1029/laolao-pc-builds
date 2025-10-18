@@ -52,8 +52,10 @@
                   </div>
                 </div>
                 <DrawerFooter>
-                  <div class="text-xl ml-auto font-bold text-red-600">总价（未算优惠券）: ￥{{ totalPrice.toFixed(2)}}</div>
-                  <Button class="h-15" @click="order()">去结算</Button>
+                  <div class="text-xl ml-auto font-bold text-red-600">总价（未算优惠券）: ￥{{ totalPrice.toFixed(2) }}</div>
+                  <DrawerClose as-child>
+                    <Button class="h-15" @click="order()">去结算</Button>
+                  </DrawerClose>
                 </DrawerFooter>
               </DrawerContent>
 
@@ -473,7 +475,7 @@
     } finally {
       isLoggedIn.value = false
       user.value = {
-        avatar:'',
+        avatar: '',
         username: '',
         name: ''
       }
@@ -481,7 +483,7 @@
   }
 
   // 以下是购物车模块
-  import { Drawer, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer"
+  import { Drawer, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger,DrawerClose } from "@/components/ui/drawer"
 
   interface Product {
     id: number,
@@ -549,18 +551,21 @@
       await axios.delete("/user/cart/clear")
 
       products.value = []
-    } catch(error) {
+    } catch (error) {
       console.log(error)
     }
-  } 
+  }
 
-  const order = async() => {
+  const order = async () => {
     try {
-      const response =  await axios.post("/user/order/create")
+      const response = await axios.post("/user/order/create")
       const id = response.data.data
       // 跳转到订单页面并传递id
-      router.push(`/order/${id}`)
-    } catch(error) {
+      if (response.data.code === 1) {
+        router.push(`/order/${id}`)
+        products.value = []
+      }
+    } catch (error) {
       console.log(error)
     }
   }
