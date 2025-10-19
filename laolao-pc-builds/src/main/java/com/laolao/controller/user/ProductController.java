@@ -26,7 +26,7 @@ public class ProductController {
      * 如显卡，CPU。。。
      *
      * @param categoryId 商品分类id
-     * @return 组件信息
+     * @return 组件数据
      */
     @GetMapping("/components")
     public Result<List<ProductVO>> Components(int categoryId) {
@@ -35,12 +35,12 @@ public class ProductController {
     }
 
     /**
-     * 获取组件的各种版本
+     * 获取组件版本数据
      * 8G，16G，，，
      *
      * @param id 组件Id
      * @param productType 商品类型
-     * @return 版本信息
+     * @return 版本数据
      */
     @GetMapping("/variants")
     public Result<List<ComponentVariantVO>> Variants(int id, int productType) {
@@ -54,7 +54,7 @@ public class ProductController {
      *
      * @param categoryId 商品分类Id
      * @param searchContent 搜索内容
-     * @return 符合的商品信息
+     * @return 符合的商品数据
      */
     @GetMapping("/search")
     public Result<List<ProductVO>> SearchComponentByName(int categoryId, String searchContent) {
@@ -62,11 +62,11 @@ public class ProductController {
     }
 
 
-    /**获取套餐
+    /**获取整机
      * 如站长推荐，网友推荐
      *
      * @param categoryId 商品分类Id
-     * @return 套餐信息
+     * @return 整机数据
      */
     @GetMapping("/bundles")
     public Result<List<ProductVO>> Bundles(int categoryId) {

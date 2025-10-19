@@ -25,5 +25,4 @@ public interface MapStruct {
 
     @Mapping(target = "id", ignore = true)
     OrderDetail CartProductVOToOrderDetail(CartProductVO cartProductVO);
-
 }

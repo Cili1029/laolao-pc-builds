@@ -176,7 +176,7 @@
                   </DropdownMenuItem>
                   <DropdownMenuItem>
                     <ShoppingBag class="mr-2 h-4 w-4" />
-                    <span>我的订单</span>
+                    <RouterLink to="/my-orders">我的订单</RouterLink>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem @click="logout" class="text-red-600 focus:text-red-600">
@@ -502,9 +502,11 @@
   )
 
   const showCart = async () => {
+    products.value = []
     try {
       const response = await axios.get("/user/cart/list")
       products.value = response.data.data || []
+      console.log(products.value)
     } catch (error) {
       console.log(error)
     }

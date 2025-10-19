@@ -25,9 +25,14 @@ public class Order {
     private Integer userId;
 
     /**
-     * 实收金额
+     * 商品原金额
      */
-    private BigDecimal amount;
+    private BigDecimal originalAmount;
+
+    /**
+     * 商品优惠金额
+     */
+    private BigDecimal discountAmount;
 
     /**
      * 收货人
@@ -121,12 +126,20 @@ public class Order {
         this.userId = userId;
     }
 
-    public BigDecimal getAmount() {
-        return amount;
+    public BigDecimal getOriginalAmount() {
+        return originalAmount;
     }
 
-    public void setAmount(BigDecimal amount) {
-        this.amount = amount;
+    public void setOriginalAmount(BigDecimal originalAmount) {
+        this.originalAmount = originalAmount;
+    }
+
+    public BigDecimal getDiscountAmount() {
+        return discountAmount;
+    }
+
+    public void setDiscountAmount(BigDecimal discountAmount) {
+        this.discountAmount = discountAmount;
     }
 
     public String getConsignee() {
@@ -228,12 +241,13 @@ public class Order {
     public Order() {
     }
 
-    public Order(Integer id, String number, Integer status, Integer userId, BigDecimal amount, String consignee, String phone, String address, String cancelReason, String rejectionReason, LocalDateTime checkoutTime, LocalDateTime cancelTime, LocalDateTime deliveryTime, LocalDateTime receiveTime, LocalDateTime createdAt, String updatedBy, LocalDateTime updatedAt) {
+    public Order(Integer id, String number, Integer status, Integer userId, BigDecimal originalAmount, BigDecimal discountAmount, String consignee, String phone, String address, String cancelReason, String rejectionReason, LocalDateTime checkoutTime, LocalDateTime cancelTime, LocalDateTime deliveryTime, LocalDateTime receiveTime, LocalDateTime createdAt, String updatedBy, LocalDateTime updatedAt) {
         this.id = id;
         this.number = number;
         this.status = status;
         this.userId = userId;
-        this.amount = amount;
+        this.originalAmount = originalAmount;
+        this.discountAmount = discountAmount;
         this.consignee = consignee;
         this.phone = phone;
         this.address = address;
@@ -255,7 +269,8 @@ public class Order {
                 ", number='" + number + '\'' +
                 ", status=" + status +
                 ", userId=" + userId +
-                ", amount=" + amount +
+                ", originalAmount=" + originalAmount +
+                ", discountAmount=" + discountAmount +
                 ", consignee='" + consignee + '\'' +
                 ", phone='" + phone + '\'' +
                 ", address='" + address + '\'' +

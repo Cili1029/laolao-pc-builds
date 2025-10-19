@@ -4,6 +4,7 @@ import Hello from '@/components/HelloWorld.vue'
 import Home from '../components/Home.vue'
 import Buy from '../components/Buy.vue';
 import Order from '@/components/Order.vue';
+import MyOrders from '@/components/MyOrders.vue';
 
 // 使用 RouteRecordRaw 类型定义路由
 const routes = [
@@ -30,7 +31,12 @@ const routes = [
     path: '/order/:id',
     name: 'Order',
     component: Order
-  }
+  },
+  {
+    path: '/my-orders',
+    name: 'MyOrders',
+    component: MyOrders
+  },
 ]
 
 const router = createRouter({

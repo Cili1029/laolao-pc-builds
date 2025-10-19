@@ -26,6 +26,9 @@ public interface AddressMapper {
 
     void setDefault(int isDefault, Integer id, int userId);
 
-    @Select("select * from address where user_id = #{userId} order by is_default desc, id desc limit 1")
+    @Select("select * from address where user_id = #{userId} and is_default = 1")
     Address getDefault(int userId);
+
+    @Select("select * from address where user_id = #{userId} and id = #{id}")
+    Address get(int userId, int id);
 }

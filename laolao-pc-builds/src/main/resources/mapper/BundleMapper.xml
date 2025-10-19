@@ -26,5 +26,6 @@
         <foreach collection="productIds" item="productId" open="(" separator="," close=")">
             #{productId}
         </foreach>
+        and cart_items.product_type = 2
     </select>
 </mapper>

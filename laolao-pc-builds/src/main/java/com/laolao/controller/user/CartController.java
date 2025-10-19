@@ -20,10 +20,10 @@ public class CartController {
     private CartService cartService;
 
     /**
-     * 添加商品进购物车
+     * 添加商品到购物车
      *
      * @param cartProductDTO 商品类型和id
-     * @return 结果消息
+     * @return 结果信息
      */
     @PostMapping("/plus")
     public Result<String> addToCart(@RequestBody CartProductDTO cartProductDTO) {
@@ -31,9 +31,9 @@ public class CartController {
     }
 
     /**
-     * 显示购物车清单
+     * 获取购物车中的商品
      *
-     * @return 商品列表
+     * @return 商品数据
      */
     @GetMapping("/list")
     public Result<List<CartProductVO>> getCartProductList() {
@@ -46,7 +46,7 @@ public class CartController {
      * 大于1则-1，等于1则删除
      *
      * @param cartProductDTO 商品类型和id
-     * @return 结果消息
+     * @return 结果信息
      */
     @DeleteMapping("/minus")
     public Result<String> deleteFromCart(@RequestBody CartProductDTO cartProductDTO) {
@@ -56,7 +56,7 @@ public class CartController {
     /**
      * 清空购物车
      *
-     * @return 结果消息
+     * @return 结果信息
      */
     @DeleteMapping("/clear")
     public Result<String> clearCart() {

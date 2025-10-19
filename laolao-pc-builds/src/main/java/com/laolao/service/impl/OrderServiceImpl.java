@@ -6,10 +6,13 @@ import com.laolao.converter.MapStruct;
 import com.laolao.mapper.AddressMapper;
 import com.laolao.mapper.CartMapper;
 import com.laolao.mapper.OrderMapper;
+import com.laolao.pojo.dto.ChangeOrderAddressDTO;
 import com.laolao.pojo.entity.Address;
 import com.laolao.pojo.entity.Order;
 import com.laolao.pojo.entity.OrderDetail;
 import com.laolao.pojo.vo.CartProductVO;
+import com.laolao.pojo.vo.OrdersVO;
+import com.laolao.pojo.vo.OrderVO;
 import com.laolao.service.CartService;
 import com.laolao.service.OrderService;
 import jakarta.annotation.Resource;
@@ -53,16 +56,18 @@ public class OrderServiceImpl implements OrderService {
         // 计算总价
         Result<List<CartProductVO>> cartProductList = cartService.getCartProductList();
         List<CartProductVO> data = cartProductList.getData();
-        BigDecimal amount = data.stream()
+        BigDecimal originalAmount = data.stream()
                 .map(item -> item.getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
-        order.setAmount(amount);
+        order.setOriginalAmount(originalAmount);
 
-        //设置收货人，有默认用默认，无默认用最新的
+        //设置收货人，有默认用默认，无默认不填
         Address address = addressMapper.getDefault(userId);
-        order.setConsignee(address.getConsignee());
-        order.setPhone(address.getPhone());
-        order.setAddress(address.getProvince() + address.getCity() + address.getDistrict() + address.getDetailAddress());
+        if (address != null) {
+            order.setConsignee(address.getConsignee());
+            order.setPhone(address.getPhone());
+            order.setAddress(address.getProvince() + address.getCity() + address.getDistrict() + address.getDetailAddress());
+        }
         orderMapper.insert(order);
         int id = order.getId();
 
@@ -83,8 +88,37 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Result<List<OrderDetail>> grtOrderProduct(int id) {
-        List<OrderDetail> orderDetailList = orderMapper.select(id);
-        return Result.success(orderDetailList);
+    public Result<OrderVO> getOrderProduct(int id) {
+        List<OrderDetail> orderDetailList = orderMapper.selectDetail(id);
+        OrderVO orderVO = new OrderVO();
+        orderVO.setOrderDetails(orderDetailList);
+        // 获取金额
+        Order order = orderMapper.selectAmount(id);
+        orderVO.setOriginalAmount(order.getOriginalAmount());
+        orderVO.setDiscountAmount(order.getDiscountAmount());
+        return Result.success(orderVO);
+    }
+
+    @Override
+    public Result<String> changeAddress(ChangeOrderAddressDTO changeOrderAddressDTO) {
+        // 查找地址
+        int userId = BaseContext.getCurrentId();
+        Address address = addressMapper.get(userId, changeOrderAddressDTO.getAddressId());
+        // 更新地址
+        Order order = new Order();
+        order.setId(changeOrderAddressDTO.getOrderId());
+        order.setUserId(userId);
+        order.setConsignee(address.getConsignee());
+        order.setPhone(address.getPhone());
+        order.setAddress(address.getProvince() + address.getCity() + address.getDistrict() + address.getDetailAddress());
+        orderMapper.update(order);
+        return Result.success("修改成功！");
+    }
+    @Override
+    public Result<List<OrdersVO>> getOrders() {
+        int userId = BaseContext.getCurrentId();
+        // 订单获取基础数据 并且只获取一张图片
+        List<OrdersVO> orderList = orderMapper.selectOrders(userId);
+        return Result.success(orderList);
     }
 }

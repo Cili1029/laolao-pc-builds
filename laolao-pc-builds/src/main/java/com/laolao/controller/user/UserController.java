@@ -21,7 +21,7 @@ public class UserController {
     private UserService userService;
 
     /**
-     * 获取验证码
+     * 获取邮箱验证码
      *
      * @param request 请求
      * @return 结果信息
@@ -38,7 +38,7 @@ public class UserController {
      *
      * @param userLoginOrRegisterDTO 登录所需的基本信息
      * @param res 响应
-     * @return 登陆后的基本信息
+     * @return 用户基本数据
      */
     @PostMapping("/login")
     public Result<UserVO> login(@RequestBody UserLoginOrRegisterDTO userLoginOrRegisterDTO, HttpServletResponse res) {
@@ -51,7 +51,7 @@ public class UserController {
      *
      * @param userLoginOrRegisterDTO 注册所需的基本信息
      * @param res 响应
-     * @return 登陆后的基本信息
+     * @return 用户基本数据
      */
     @PostMapping("/register")
     public Result<UserVO> register(@RequestBody UserLoginOrRegisterDTO userLoginOrRegisterDTO, HttpServletResponse res) {
@@ -64,7 +64,7 @@ public class UserController {
      * 从jwt里获取userId
      *
      * @param req 请求
-     * @return 登陆后的基本信息
+     * @return 用户基本数据
      */
     @GetMapping("/profile")
     public Result<UserVO> getProfile(HttpServletRequest req) {

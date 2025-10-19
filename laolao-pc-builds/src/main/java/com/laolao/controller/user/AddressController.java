@@ -20,11 +20,11 @@ public class AddressController {
     private AddressService addressService;
 
     /**
-     * 获取行政区划分
-     * 高德地图的api
+     * 行政区域查询
+     * 使用高德地图的api
      *
      * @param adcode 城市编码
-     * @return 行政区信息
+     * @return 行政区域数据
      */
     @GetMapping("/district")
     public Result<List<DistrictVO>> getDistrictList(Integer adcode, String name) {
@@ -32,9 +32,9 @@ public class AddressController {
     }
 
     /**
-     * 获取用户的收货地址
+     * 获取收货地址
      *
-     * @return 地址信息
+     * @return 最新收货地址数据
      */
     @GetMapping("/get")
     public Result<List<AddressVO>> getAddressList() {
@@ -46,30 +46,30 @@ public class AddressController {
      * id为1则为更新，为0则为新增
      *
      * @param address 基础信息
-     * @return 最新地址信息
+     * @return 最新地址数据
      */
     @PostMapping("/update")
     public Result<List<AddressVO>> updateAddress(@RequestBody Address address) {
         return addressService.updateAddress(address);
     }
 
-    /**根据Id删除地址
+    /**根据Id删除收货地址
      *
-     * @param id 地址主键
-     * @return 最新的地址信息
+     * @param id 收货地址Id
+     * @return 最新地址数据
      */
-    @DeleteMapping("/del")
-    public Result<List<AddressVO>> delAddress(int id) {
+    @DeleteMapping("/del/{id}")
+    public Result<List<AddressVO>> delAddress(@PathVariable int id) {
         return addressService.delAddress(id);
     }
 
-    /**根据Id设置默认地址
+    /**根据Id设置默认收货地址
      *
-     * @param id 地址主键
-     * @return 最新的地址信息
+     * @param id 收货地址Id
+     * @return 最新地址数据
      */
-    @GetMapping("/default")
-    public Result<List<AddressVO>> setDefault(int id) {
+    @PatchMapping("/default/{id}")
+    public Result<List<AddressVO>> setDefault(@PathVariable int id) {
         return addressService.setDefault(id);
     }
 }
