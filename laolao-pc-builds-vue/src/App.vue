@@ -174,10 +174,12 @@
                     <Smile class="mr-2 h-4 w-4" />
                     <span>签到/优惠券</span>
                   </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <ShoppingBag class="mr-2 h-4 w-4" />
-                    <RouterLink to="/my-orders">我的订单</RouterLink>
-                  </DropdownMenuItem>
+                  <RouterLink to="/my-orders">
+                    <DropdownMenuItem>
+                      <ShoppingBag class="mr-2 h-4 w-4" />
+                      <RouterLink to="/my-orders">我的订单</RouterLink>
+                    </DropdownMenuItem>
+                  </RouterLink>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem @click="logout" class="text-red-600 focus:text-red-600">
                     <LogOut class="mr-2 h-4 w-4" />
@@ -193,7 +195,9 @@
 
     <!-- 主要内容区域 -->
     <main class="flex-grow container mx-auto border-l border-r border-gray-200">
-      <RouterView></RouterView>
+      <transition name="fade" mode="out-in">
+        <RouterView></RouterView>
+      </transition>
     </main>
 
     <!-- Footer区域 -->
@@ -203,9 +207,16 @@
           <div class="mb-4 md:mb-0">
             <div class="flex items-center space-x-2">
               <img :src="logo" alt="Company Logo" class="w-6 h-6 rounded-md">
-              <span class="text-lg font-bold">我的网站</span>
+              <span class="text-lg font-bold">劳劳的网站</span>
             </div>
-            <p class="text-gray-400 text-sm mt-2">© 2025 我的网站. 保留所有权利.</p>
+            <div class="text-gray-400 text-sm mt-2">
+              <p class="mt-1">
+                <a href="https://beian.miit.gov.cn" target="_blank"
+                  class="text-gray-400 hover:text-white transition-colors">
+                  闽ICP备2025117246号-1
+                </a>
+              </p>
+            </div>
           </div>
 
           <div class="flex space-x-6">
@@ -483,7 +494,7 @@
   }
 
   // 以下是购物车模块
-  import { Drawer, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger,DrawerClose } from "@/components/ui/drawer"
+  import { Drawer, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger, DrawerClose } from "@/components/ui/drawer"
 
   interface Product {
     id: number,
@@ -561,10 +572,10 @@
   const order = async () => {
     try {
       const response = await axios.post("/user/order/create")
-      const id = response.data.data
+      const number = response.data.data
       // 跳转到订单页面并传递id
       if (response.data.code === 1) {
-        router.push(`/order/${id}`)
+        router.push(`/order/${number}`)
         products.value = []
       }
     } catch (error) {
@@ -581,4 +592,16 @@
     background-attachment: fixed;
     background-repeat: no-repeat;
   }
+
+  /* 过渡样式 */
+  .fade-enter-active,
+  .fade-leave-active {
+    transition: opacity 0.3s ease;
+  }
+
+  .fade-enter-from,
+  .fade-leave-to {
+    opacity: 0;
+  }
+
 </style>

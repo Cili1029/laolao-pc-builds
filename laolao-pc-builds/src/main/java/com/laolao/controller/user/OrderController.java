@@ -1,7 +1,10 @@
 package com.laolao.controller.user;
 
 import com.laolao.common.result.Result;
+import com.laolao.pojo.dto.CancelDTO;
 import com.laolao.pojo.dto.ChangeOrderAddressDTO;
+import com.laolao.pojo.dto.PayDTO;
+import com.laolao.pojo.vo.OrderDetailVO;
 import com.laolao.pojo.vo.OrdersVO;
 import com.laolao.pojo.vo.OrderVO;
 import com.laolao.service.OrderService;
@@ -25,19 +28,32 @@ public class OrderController {
      * @return 结果信息
      */
     @PostMapping("/create")
-    public Result<Integer> createOrder() {
+    public Result<String> createOrder() {
         return orderService.createOrder();
+    }
+
+
+    /**
+     * 获取订单状态
+     * 为1才能进入结算页面
+     *
+     * @param number 订单号
+     * @return 结果信息
+     */
+    @GetMapping("/status")
+    public Result<Integer> getStatus(String number) {
+        return orderService.getStatus(number);
     }
 
     /**
      * 获取订单详细
      *
-     * @param id 订单Id
+     * @param number 订单号
      * @return 订单详细数据
      */
     @GetMapping("/list")
-    public Result<OrderVO> getOrderProduct(int id) {
-        return orderService.getOrderProduct(id);
+    public Result<OrderVO> getOrderProduct(String number) {
+        return orderService.getOrderProduct(number);
     }
 
     /**
@@ -59,4 +75,39 @@ public class OrderController {
     public Result<List<OrdersVO>> getOrders() {
         return orderService.getOrders();
     }
+
+    /**
+     * 获取某个的订单详情
+     *
+     * @param number 订单号
+     * @return 订单详情数据
+     */
+    @GetMapping("/detail")
+    public Result<OrderDetailVO> getOrderDetail(String number) {
+        return orderService.getOrderDetail(number);
+    }
+
+    /**
+     * 取消订单
+     *
+     * @param cancelDTO 订单号和原因
+     * @return 结果信息
+     */
+    @PatchMapping("/cancel")
+    public Result<String> cancelOrder(@RequestBody CancelDTO cancelDTO) {
+        return orderService.cancelOrder(cancelDTO);
+    }
+
+    /**
+     *
+     * 付款
+     * @param payDTO 订单号
+     * @return 结果信息
+     */
+    @PatchMapping("/pay")
+    public Result<String> pay(@RequestBody PayDTO payDTO) {
+        return orderService.pay(payDTO);
+    }
+
+
 }

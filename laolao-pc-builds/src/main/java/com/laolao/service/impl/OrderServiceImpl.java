@@ -1,18 +1,20 @@
 package com.laolao.service.impl;
 
+import com.laolao.common.constant.MessageConstant;
 import com.laolao.common.context.BaseContext;
+import com.laolao.common.exception.UnknownError;
 import com.laolao.common.result.Result;
 import com.laolao.converter.MapStruct;
 import com.laolao.mapper.AddressMapper;
 import com.laolao.mapper.CartMapper;
 import com.laolao.mapper.OrderMapper;
+import com.laolao.pojo.dto.CancelDTO;
 import com.laolao.pojo.dto.ChangeOrderAddressDTO;
+import com.laolao.pojo.dto.PayDTO;
 import com.laolao.pojo.entity.Address;
 import com.laolao.pojo.entity.Order;
 import com.laolao.pojo.entity.OrderDetail;
-import com.laolao.pojo.vo.CartProductVO;
-import com.laolao.pojo.vo.OrdersVO;
-import com.laolao.pojo.vo.OrderVO;
+import com.laolao.pojo.vo.*;
 import com.laolao.service.CartService;
 import com.laolao.service.OrderService;
 import jakarta.annotation.Resource;
@@ -40,17 +42,17 @@ public class OrderServiceImpl implements OrderService {
 
     @Transactional
     @Override
-    public Result<Integer> createOrder() {
+    public Result<String> createOrder() {
         // 订单表
         // 生成订单号
         String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
         String random = String.valueOf((int) ((Math.random() * 900) + 100));
-        String orderNumber = "ORD" + date + random;
+        String number = "ORD" + date + random;
         // 下单用户
         int userId = BaseContext.getCurrentId();
 
         Order order = new Order();
-        order.setNumber(orderNumber);
+        order.setNumber(number);
         order.setUserId(userId);
 
         // 计算总价
@@ -74,7 +76,7 @@ public class OrderServiceImpl implements OrderService {
         // 商品详细表
         ArrayList<OrderDetail> orderDetails = new ArrayList<>();
         for (CartProductVO cartProductVO : data) {
-            OrderDetail orderDetail = mapStruct.CartProductVOToOrderDetail(cartProductVO);
+            OrderDetail orderDetail = mapStruct.cartProductVOToOrderDetail(cartProductVO);
             orderDetail.setOrderId(id);
             orderDetails.add(orderDetail);
         }
@@ -84,16 +86,27 @@ public class OrderServiceImpl implements OrderService {
         // 清空购物车
         cartMapper.clear(userId);
 
-        return Result.success(id, "创建订单成功");
+        return Result.success(number, "创建订单成功");
     }
 
     @Override
-    public Result<OrderVO> getOrderProduct(int id) {
-        List<OrderDetail> orderDetailList = orderMapper.selectDetail(id);
+    public Result<Integer> getStatus(String number) {
+        int userId = BaseContext.getCurrentId();
+        Order order = orderMapper.selectOrder(userId, number);
+        if (order.getStatus() != 1) {
+            throw new UnknownError(MessageConstant.UNKNOWN_ERROR);
+        }
+
+        return Result.success(order.getStatus());
+    }
+
+    @Override
+    public Result<OrderVO> getOrderProduct(String number) {
+        List<OrderDetail> orderDetailList = orderMapper.selectDetail(number);
         OrderVO orderVO = new OrderVO();
         orderVO.setOrderDetails(orderDetailList);
         // 获取金额
-        Order order = orderMapper.selectAmount(id);
+        Order order = orderMapper.selectAmount(orderDetailList.get(0).getId());
         orderVO.setOriginalAmount(order.getOriginalAmount());
         orderVO.setDiscountAmount(order.getDiscountAmount());
         return Result.success(orderVO);
@@ -106,13 +119,13 @@ public class OrderServiceImpl implements OrderService {
         Address address = addressMapper.get(userId, changeOrderAddressDTO.getAddressId());
         // 更新地址
         Order order = new Order();
-        order.setId(changeOrderAddressDTO.getOrderId());
+        order.setNumber(changeOrderAddressDTO.getNumber());
         order.setUserId(userId);
         order.setConsignee(address.getConsignee());
         order.setPhone(address.getPhone());
         order.setAddress(address.getProvince() + address.getCity() + address.getDistrict() + address.getDetailAddress());
         orderMapper.update(order);
-        return Result.success("修改成功！");
+        return Result.success("成功！");
     }
     @Override
     public Result<List<OrdersVO>> getOrders() {
@@ -120,5 +133,50 @@ public class OrderServiceImpl implements OrderService {
         // 订单获取基础数据 并且只获取一张图片
         List<OrdersVO> orderList = orderMapper.selectOrders(userId);
         return Result.success(orderList);
+    }
+
+    @Override
+    public Result<OrderDetailVO> getOrderDetail(String number) {
+        // 获取的订单信息
+        int userId = BaseContext.getCurrentId();
+        Order order = orderMapper.selectOrder(userId, number);
+        // 获取所包含的商品
+        List<OrderDetail> orderDetailList = orderMapper.selectDetail(order.getNumber());
+        List<OrderProductVO> orderProductVOList = new ArrayList<>();
+        for (OrderDetail orderDetail : orderDetailList) {
+            OrderProductVO orderProductVO = mapStruct.orderDeatilToOrderProductVO(orderDetail);
+            orderProductVOList.add(orderProductVO);
+        }
+
+        OrderDetailVO orderDetailVO = mapStruct.orderToOrderDetailVO(order);
+        orderDetailVO.setProducts(orderProductVOList);
+        return Result.success(orderDetailVO);
+    }
+
+    @Override
+    public Result<String> cancelOrder(CancelDTO cancelDTO) {
+        int userId = BaseContext.getCurrentId();
+        Order order = new Order();
+        order.setUserId(userId);
+        order.setNumber(cancelDTO.getNumber());
+        order.setStatus(6);
+        order.setCancelReason(cancelDTO.getCancelReason());
+        order.setCancelTime(LocalDateTime.now());
+        System.out.println(order);
+        orderMapper.update(order);
+        return Result.success("取消成功");
+    }
+
+    @Override
+    public Result<String> pay(PayDTO payDTO) {
+        // 付款流程省去。。。
+        int userId = BaseContext.getCurrentId();
+        Order order = new Order();
+        order.setUserId(userId);
+        order.setNumber(payDTO.getNumber());
+        order.setStatus(2);
+        order.setCheckoutTime(LocalDateTime.now());
+        orderMapper.update(order);
+        return Result.success("付款成功");
     }
 }

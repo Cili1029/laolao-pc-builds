@@ -1,7 +1,7 @@
 package com.laolao.common.exception;
 
 /**
- * 账号已存在异常
+ * 未知异常
  */
 public class UnknownError extends BaseException {
     public UnknownError() {

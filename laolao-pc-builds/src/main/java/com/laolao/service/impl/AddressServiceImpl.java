@@ -47,19 +47,18 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
+    public Result<List<AddressVO>> addAddress(Address address) {
+        address.setUserId(BaseContext.getCurrentId());
+        addressMapper.insert(address);
+
+        Result<List<AddressVO>> addressList = getAddressList();
+        addressList.setMsg("新增成功！");
+        return addressList;
+    }
+
+    @Override
     public Result<List<AddressVO>> updateAddress(Address address) {
         address.setUserId(BaseContext.getCurrentId());
-        if (address.getId() == 0) {
-            // 为新增
-            address.setUserId(BaseContext.getCurrentId());
-            addressMapper.insert(address);
-
-            Result<List<AddressVO>> addressList = getAddressList();
-            addressList.setMsg("新增成功！");
-            return addressList;
-        }
-
-        // 有，更新
         addressMapper.update(address);
         Result<List<AddressVO>> addressList = getAddressList();
         addressList.setMsg("修改成功！");

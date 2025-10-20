@@ -13,7 +13,6 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        System.out.println("注册拦截器");
         registry.addInterceptor(loginInterceptor)
                 .addPathPatterns("/**")
                 .excludePathPatterns("/user/user/email-code")

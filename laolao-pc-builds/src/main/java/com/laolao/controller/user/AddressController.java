@@ -42,8 +42,18 @@ public class AddressController {
     }
 
     /**
-     * 新增/更新收货地址
-     * id为1则为更新，为0则为新增
+     * 添加收货地址
+     *
+     * @param address 基础信息
+     * @return 最新地址数据
+     */
+    @PostMapping("/add")
+    public Result<List<AddressVO>> addAddress(@RequestBody Address address) {
+        return addressService.addAddress(address);
+    }
+
+    /**
+     * 更新收货地址
      *
      * @param address 基础信息
      * @return 最新地址数据

@@ -28,7 +28,7 @@ const routes = [
     component: Hello
   },
   {
-    path: '/order/:id',
+    path: '/order/:number',
     name: 'Order',
     component: Order
   },

@@ -9,9 +9,9 @@ public class ChangeOrderAddressDTO implements Serializable {
     private int addressId;
 
     /**
-     * 订单Id
+     * 订单号
      */
-    private int orderId;
+    private String number;
 
     public int getAddressId() {
         return addressId;
@@ -21,11 +21,27 @@ public class ChangeOrderAddressDTO implements Serializable {
         this.addressId = addressId;
     }
 
-    public int getOrderId() {
-        return orderId;
+    public String getNumber() {
+        return number;
     }
 
-    public void setOrderId(int orderId) {
-        this.orderId = orderId;
+    public void setNumber(String number) {
+        this.number = number;
+    }
+
+    public ChangeOrderAddressDTO() {
+    }
+
+    public ChangeOrderAddressDTO(int addressId, String number) {
+        this.addressId = addressId;
+        this.number = number;
+    }
+
+    @Override
+    public String toString() {
+        return "ChangeOrderAddressDTO{" +
+                "addressId=" + addressId +
+                ", number='" + number + '\'' +
+                '}';
     }
 }

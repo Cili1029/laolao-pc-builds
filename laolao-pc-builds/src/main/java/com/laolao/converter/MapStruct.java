@@ -17,12 +17,16 @@ public interface MapStruct {
 
     CategoryVO categoryToCategoryVO(Category category);
 
-    ProductVO BundleToComponentVO(Bundle bundle);
+    ProductVO bundleToComponentVO(Bundle bundle);
 
     CartItem cartProductDTOToCartItem(CartProductDTO cartProductDTO);
 
     AddressVO addressToAddressVO(Address address);
 
     @Mapping(target = "id", ignore = true)
-    OrderDetail CartProductVOToOrderDetail(CartProductVO cartProductVO);
+    OrderDetail cartProductVOToOrderDetail(CartProductVO cartProductVO);
+
+    OrderDetailVO orderToOrderDetailVO(Order order);
+
+    OrderProductVO orderDeatilToOrderProductVO(OrderDetail orderDetail);
 }

@@ -44,11 +44,14 @@
             <if test="cancelReason != null and cancelReason != ''">
                 cancel_reason=#{cancelReason},
             </if>
+            <if test="checkoutTime != null">
+                checkout_time=#{checkoutTime},
+            </if>
             <if test="cancelTime != null">
                 cancel_time=#{cancelTime},
             </if>
         </set>
-                where user_id = #{userId} and id = #{id}
+                where user_id = #{userId} and number = #{number}
     </update>
 
     <select id="selectOrders" resultType="com.laolao.pojo.vo.OrdersVO" parameterType="OrdersVO">
@@ -62,7 +65,7 @@
                      ROW_NUMBER() OVER (PARTITION BY o.number ORDER BY od.id) as rn
               FROM orders o
                        JOIN order_detail od ON o.id = od.order_id
-              WHERE user_id = 1) t
+              WHERE user_id = 1 order by created_at desc) t
         WHERE rn = 1;
     </select>
 </mapper>

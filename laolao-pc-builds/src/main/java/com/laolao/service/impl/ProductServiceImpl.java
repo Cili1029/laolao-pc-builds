@@ -33,7 +33,7 @@ public class ProductServiceImpl implements ProductService {
         } else {
             List<Bundle> bundles = bundleMapper.getByConditions(categoryId, null);
             for (Bundle bundle : bundles) {
-                ProductVO productVO = mapStruct.BundleToComponentVO(bundle);
+                ProductVO productVO = mapStruct.bundleToComponentVO(bundle);
                 productVoList.add(productVO);
             }
         }
@@ -61,7 +61,7 @@ public class ProductServiceImpl implements ProductService {
         } else {
             List<Bundle> bundles = bundleMapper.getByConditions(categoryId, searchContent);
             for (Bundle bundle : bundles) {
-                ProductVO productVO = mapStruct.BundleToComponentVO(bundle);
+                ProductVO productVO = mapStruct.bundleToComponentVO(bundle);
                 productVoList.add(productVO);
             }
         }

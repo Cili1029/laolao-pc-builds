@@ -86,7 +86,7 @@
                             </div>
                             <DialogFooter>
                                 <DialogClose as-child>
-                                    <Button type="button" @click="update()"
+                                    <Button type="button" @click="add()"
                                         :disabled="!currentAddress.consignee || !currentAddress.phone || !currentAddress.province || !currentAddress.city || !currentAddress.district || !currentAddress.detailAddress">
                                         保存
                                     </Button>
@@ -195,27 +195,23 @@
                                     </DialogFooter>
                                 </DialogContent>
                             </Dialog>
-                            <Dialog>
-                                <DialogTrigger as-child>
+                            <AlertDialog>
+                                <AlertDialogTrigger as-child>
                                     <p class="text-xs pl-1 hover:text-orange-500" @click.stop>删除</p>
-                                </DialogTrigger>
-                                <DialogContent class="sm:max-w-[425px]">
-                                    <DialogHeader>
-                                        <DialogTitle>删除此地址</DialogTitle>
-                                        <DialogDescription>
-                                            删了就再也找不回来了！
-                                        </DialogDescription>
-                                    </DialogHeader>
-                                    <DialogFooter>
-                                        <DialogClose as-child>
-                                            <Button type="button" variant="destructive"
-                                                @click="deleteAddress(address.id)">
-                                                我知道了
-                                            </Button>
-                                        </DialogClose>
-                                    </DialogFooter>
-                                </DialogContent>
-                            </Dialog>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                        <AlertDialogTitle>确定要删除吗？</AlertDialogTitle>
+                                        <AlertDialogDescription>
+                                            点错了就关，别真删除了，在被窝里偷偷听反方向的钟
+                                        </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                        <AlertDialogCancel>点错了</AlertDialogCancel>
+                                        <AlertDialogAction @click="deleteAddress(address.id)">故意的</AlertDialogAction>
+                                    </AlertDialogFooter>
+                                </AlertDialogContent>
+                            </AlertDialog>
                         </div>
                     </div>
                 </div>
@@ -262,8 +258,8 @@
                 </div>
                 <button
                     class="bg-orange-500 hover:bg-orange-600 text-white font-medium py-3 px-6 rounded-lg transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
-                    :disabled="!selectAddress">
-                    提交订单
+                    :disabled="!selectAddress" @click="pay()">
+                    我要付款
                 </button>
             </div>
         </div>
@@ -273,20 +269,40 @@
 <script setup lang="ts">
     import axios from "@/utils/myAxios"
     import { onMounted, ref, reactive } from "vue"
-    import { useRoute } from 'vue-router'
+    import { useRoute, useRouter } from 'vue-router'
     const route = useRoute()
+    const router = useRouter()
     import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
     import { Button } from "@/components/ui/button"
     import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog"
     import { Input } from "@/components/ui/input"
+    import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger, } from '@/components/ui/alert-dialog'
     import { Label } from "@/components/ui/label"
 
     onMounted(() => {
-        // 获取用户的地址
-        getAddress()
-        // 获取订单信息
-        showOrder()
+        // 判断订单是否为待付款再进行下一步
+        getStatus()
     })
+
+    const getStatus = async () => {
+        try {
+            const response = await axios.get('/user/order/status', {
+                params: {
+                    number: number
+                }
+            })
+            if (response.data.code === 1) {
+                // 获取用户的地址
+                getAddress()
+                // 获取订单信息
+                showOrder()
+            } else {
+                router.push('/home');
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
 
     interface District {
         level: string
@@ -352,7 +368,7 @@
         currentAddress.district = res?.name || ''
     }
 
-    // 新增或修改地址
+    // 新增,修改地址
     // 当前收件人信息
     const currentAddress = reactive({
         id: 0,
@@ -372,6 +388,24 @@
         currentAddress.city = ""
         currentAddress.district = ""
         currentAddress.detailAddress = ""
+    }
+
+    const add = async () => {
+        try {
+            const response = await axios.post("/user/address/add",
+                currentAddress
+            )
+
+            currentAddress.consignee = ""
+            currentAddress.phone = ""
+            currentAddress.province = ""
+            currentAddress.city = ""
+            currentAddress.district = ""
+            currentAddress.detailAddress = ""
+            addressList.value = response.data.data
+        } catch (error) {
+            console.log(error)
+        }
     }
 
     const update = async () => {
@@ -415,7 +449,6 @@
             if (!(defaultId === undefined)) {
                 selectAddress.value = defaultId
             }
-            console.log(defaultId)
         } catch (error) {
             console.log(error)
         }
@@ -432,7 +465,7 @@
         currentAddress.detailAddress = address.detailAddress
         try {
             getProvinces()
-            
+
             const res1 = await axios.get("/user/address/district", {
                 params: {
                     name: address.province
@@ -457,7 +490,7 @@
         try {
             await axios.patch("/user/order/address", {
                 addressId: AddressId,
-                orderId: orderId
+                number: number
             })
             selectAddress.value = AddressId
 
@@ -488,7 +521,7 @@
     }
 
     // 订单
-    const orderId = route.params.id
+    const number = route.params.number
     interface Product {
         id: number,
         name: string
@@ -507,7 +540,7 @@
         try {
             const response = await axios.get("/user/order/list", {
                 params: {
-                    id: orderId
+                    number: number
                 }
             })
             products.value = response.data.data.orderDetails || []
@@ -518,5 +551,18 @@
         }
     }
 
-    // 付款详细
+    // 提交订单
+    const pay = async () => {
+        try {
+            const response = await axios.patch("/user/order/pay", {
+                number: number
+            })
+            if (response.data.code === 1) {
+                router.push('/my-orders');
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
 </script>

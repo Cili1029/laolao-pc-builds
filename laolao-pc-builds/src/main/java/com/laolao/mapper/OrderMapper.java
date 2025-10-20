@@ -17,8 +17,9 @@ public interface OrderMapper {
 
     void insertToDetail(ArrayList<OrderDetail> orderDetails);
 
-    @Select("select * from order_detail where order_id = #{id}")
-    List<OrderDetail> selectDetail(int id);
+    // 获取的id是订单号
+    @Select("select o.id, name, variant_name, image, order_id, quantity, price from order_detail od join orders o on o.id = od.order_id where o.number = #{number}")
+    List<OrderDetail> selectDetail(String number);
 
     void update(Order order);
 
@@ -29,4 +30,7 @@ public interface OrderMapper {
     List<Order> getExpireOrders(int i, LocalDateTime expire);
 
     List<OrdersVO> selectOrders(int userId);
+
+    @Select("select * from orders where user_id = ${userId} and number = #{number}")
+    Order selectOrder(int userId, String number);
 }

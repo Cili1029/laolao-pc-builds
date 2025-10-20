@@ -21,8 +21,7 @@ public class OrderTask {
         List<Order> orders =  orderMapper.getExpireOrders(1, expire);
         if (!orders.isEmpty()) {
             for (Order order : orders) {
-                System.out.println(order);
-                order.setStatus(5);
+                order.setStatus(6);
                 order.setCancelReason("订单超时");
                 order.setCancelTime(LocalDateTime.now());
                 orderMapper.update(order);
