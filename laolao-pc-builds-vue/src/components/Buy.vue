@@ -172,7 +172,7 @@
 
     const ShowCategory = async () => {
         try {
-            const response = await axios.get('/user/category/list')
+            const response = await axios.get('/user/shop/category/list')
 
             // 默认第一页
             ShowComponent(1, 1)
@@ -189,14 +189,14 @@
             categoryIndex.value = id
 
             if (productType === 1) {
-                const response = await axios.get('/user/products/components', {
+                const response = await axios.get('/user/shop/products/components', {
                     params: {
                         categoryId: id
                     }
                 })
                 products.value = response.data.data
             } else {
-                const response = await axios.get('/user/products/bundles', {
+                const response = await axios.get('/user/shop/products/bundles', {
                     params: {
                         categoryId: id
                     }
@@ -222,7 +222,7 @@
         // 设置新商品
 
         try {
-            const response = await axios.get('/user/products/variants', {
+            const response = await axios.get('/user/shop/products/variants', {
                 params: {
                     id: product.id,
                     productType: product.productType
@@ -244,7 +244,7 @@
 
     const addToCart = async (productType: number, id: number | undefined) => {
         try {
-            await axios.post('/user/cart/plus', {
+            await axios.post('/user/shop/cart/plus', {
                 productType: productType,
                 productId: id
             })
@@ -257,7 +257,7 @@
 
     const search = async (categoryId: number | undefined) => {
         try {
-            const response = await axios.get('/user/products/search', {
+            const response = await axios.get('/user/shop/products/search', {
                 params: {
                     searchContent: searchContent.value,
                     categoryId: categoryId

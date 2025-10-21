@@ -515,7 +515,7 @@
   const showCart = async () => {
     products.value = []
     try {
-      const response = await axios.get("/user/cart/list")
+      const response = await axios.get("/user/shop/cart/list")
       products.value = response.data.data || []
       console.log(products.value)
     } catch (error) {
@@ -526,7 +526,7 @@
   const quantity = async (product: Product, type: number) => {
     try {
       if (type === 0) {
-        await axios.delete("/user/cart/minus", {
+        await axios.delete("/user/shop/cart/minus", {
           data: {
             productType: product.productType,
             productId: product.id
@@ -543,7 +543,7 @@
         console.log(products.value)
 
       } else {
-        await axios.post("/user/cart/plus", {
+        await axios.post("/user/shop/cart/plus", {
           productType: product.productType,
           productId: product.id
         })
@@ -561,7 +561,7 @@
 
   const clear = async () => {
     try {
-      await axios.delete("/user/cart/clear")
+      await axios.delete("/user/shop/cart/clear")
 
       products.value = []
     } catch (error) {
@@ -571,7 +571,7 @@
 
   const order = async () => {
     try {
-      const response = await axios.post("/user/order/create")
+      const response = await axios.post("/user/shop/order/create")
       const number = response.data.data
       // 跳转到订单页面并传递id
       if (response.data.code === 1) {

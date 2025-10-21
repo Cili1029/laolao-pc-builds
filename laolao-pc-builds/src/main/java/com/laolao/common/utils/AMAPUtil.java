@@ -2,7 +2,7 @@ package com.laolao.common.utils;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.laolao.common.properties.AMAPProperties;
-import com.laolao.pojo.vo.DistrictVO;
+import com.laolao.pojo.shop.vo.DistrictVO;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;

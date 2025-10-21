@@ -14,7 +14,7 @@
                             <img :src="order.image" class="w-15 h-15 object-cover rounded-md mr-4" />
                             <div class="flex-1">
                                 <h3 class="font-medium text-gray-900">{{ order.name }}</h3>
-                                <span v-if="order.productCount > 1">等{{ order.productCount }}个商品</span>
+                                <span v-if="order.productCount > 1">等{{ order.productCount-1 }}个商品</span>
                             </div>
                             <div class="ml-auto">
                                 <span class="text-m">实付款￥
@@ -176,7 +176,7 @@
 
     const getOrders = async () => {
         try {
-            const response = await axios.get('/user/order/my-orders')
+            const response = await axios.get('/user/shop/order/my-orders')
             orders.value = response.data.data
         } catch (error) {
             console.log(error)
@@ -218,7 +218,7 @@
         }
         detail.value = undefined
         try {
-            const response = await axios.get('/user/order/detail', {
+            const response = await axios.get('/user/shop/order/detail', {
                 params: {
                     number: number
                 }
@@ -243,7 +243,7 @@
             return
         }
         try {
-            const response = await axios.patch('/user/order/cancel', {
+            const response = await axios.patch('/user/shop/order/cancel', {
                 number: number,
                 cancelReason: reason.value
             })

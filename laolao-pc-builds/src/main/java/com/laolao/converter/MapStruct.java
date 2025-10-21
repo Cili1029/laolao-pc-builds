@@ -1,8 +1,12 @@
 package com.laolao.converter;
 
-import com.laolao.pojo.dto.CartProductDTO;
-import com.laolao.pojo.entity.*;
-import com.laolao.pojo.vo.*;
+import com.laolao.pojo.forum.entity.ForumCategory;
+import com.laolao.pojo.forum.vo.ForumCategoryVO;
+import com.laolao.pojo.shop.dto.CartProductDTO;
+import com.laolao.pojo.shop.entity.*;
+import com.laolao.pojo.shop.vo.*;
+import com.laolao.pojo.user.entity.User;
+import com.laolao.pojo.user.vo.UserVO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
@@ -15,7 +19,8 @@ import org.mapstruct.MappingConstants;
 public interface MapStruct {
     UserVO userToUserVO(User user);
 
-    CategoryVO categoryToCategoryVO(Category category);
+    // 商品的
+    ShopCategoryVO ShopCategoryToCategoryVO(ShopCategory shopCategory);
 
     ProductVO bundleToComponentVO(Bundle bundle);
 
@@ -29,4 +34,7 @@ public interface MapStruct {
     OrderDetailVO orderToOrderDetailVO(Order order);
 
     OrderProductVO orderDeatilToOrderProductVO(OrderDetail orderDetail);
+
+    // 论坛的
+    ForumCategoryVO ForumCategoryToCategoryVO(ForumCategory forumCategory);
 }

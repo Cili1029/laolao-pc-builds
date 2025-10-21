@@ -256,11 +256,27 @@
                     <p class="text-gray-600">实付款</p>
                     <p class="text-xl font-bold text-orange-500">￥{{ originalAmount - discountAmount }}</p>
                 </div>
-                <button
-                    class="bg-orange-500 hover:bg-orange-600 text-white font-medium py-3 px-6 rounded-lg transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
-                    :disabled="!selectAddress" @click="pay()">
-                    我要付款
-                </button>
+                <AlertDialog>
+                    <AlertDialogTrigger as-child>
+                        <button
+                            class="bg-orange-500 hover:bg-orange-600 text-white font-medium py-3 px-6 rounded-lg transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+                            :disabled="!selectAddress">
+                            我要付款
+                        </button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                        <AlertDialogHeader>
+                            <AlertDialogTitle>确定付款吗？</AlertDialogTitle>
+                            <AlertDialogDescription>
+                                未接入微信支付宝支付接口，点击付款视为付款成功
+                            </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                            <AlertDialogCancel>等一下</AlertDialogCancel>
+                            <AlertDialogAction @click="pay()">付款</AlertDialogAction>
+                        </AlertDialogFooter>
+                    </AlertDialogContent>
+                </AlertDialog>
             </div>
         </div>
     </div>
@@ -286,7 +302,7 @@
 
     const getStatus = async () => {
         try {
-            const response = await axios.get('/user/order/status', {
+            const response = await axios.get('/user/shop/order/status', {
                 params: {
                     number: number
                 }
@@ -320,7 +336,7 @@
 
     const getProvinces = async () => {
         try {
-            const response = await axios.get('/user/address/district', {
+            const response = await axios.get('/user/shop/address/district', {
                 params: {
                     adcode: null
                 }
@@ -336,7 +352,7 @@
         currentAddress.city = ''
         currentAddress.district = ''
         try {
-            const response = await axios.get('/user/address/district', {
+            const response = await axios.get('/user/shop/address/district', {
                 params: {
                     adcode: adcode
                 }
@@ -351,7 +367,7 @@
     const getDistricts = async (adcode: any) => {
         currentAddress.district = ''
         try {
-            const response = await axios.get('/user/address/district', {
+            const response = await axios.get('/user/shop/address/district', {
                 params: {
                     adcode: adcode
                 }
@@ -392,7 +408,7 @@
 
     const add = async () => {
         try {
-            const response = await axios.post("/user/address/add",
+            const response = await axios.post("/user/shop/address/add",
                 currentAddress
             )
 
@@ -410,7 +426,7 @@
 
     const update = async () => {
         try {
-            const response = await axios.post("/user/address/update",
+            const response = await axios.post("/user/shop/address/update",
                 currentAddress
             )
             currentAddress.consignee = ""
@@ -443,7 +459,7 @@
     // 选择收货地址
     const getAddress = async () => {
         try {
-            const response = await axios.get("/user/address/get")
+            const response = await axios.get("/user/shop/address/get")
             addressList.value = response.data.data
             const defaultId = addressList.value.find(a => a.isDefault === 1)?.id
             if (!(defaultId === undefined)) {
@@ -466,7 +482,7 @@
         try {
             getProvinces()
 
-            const res1 = await axios.get("/user/address/district", {
+            const res1 = await axios.get("/user/shop/address/district", {
                 params: {
                     name: address.province
                 }
@@ -474,7 +490,7 @@
             cities.value = res1.data.data
 
 
-            const res2 = await axios.get("/user/address/district", {
+            const res2 = await axios.get("/user/shop/address/district", {
                 params: {
                     name: address.city
                 }
@@ -488,7 +504,7 @@
     // 改变收货地址
     const changeAddress = async (AddressId: number) => {
         try {
-            await axios.patch("/user/order/address", {
+            await axios.patch("/user/shop/order/address", {
                 addressId: AddressId,
                 number: number
             })
@@ -501,7 +517,7 @@
 
     const setDefault = async (id: number) => {
         try {
-            const response = await axios.patch(`/user/address/default/${id}`)
+            const response = await axios.patch(`/user/shop/address/default/${id}`)
             addressList.value = response.data.data
 
         } catch (error) {
@@ -512,7 +528,7 @@
     // 删除地址
     const deleteAddress = async (id: number) => {
         try {
-            const response = await axios.delete(`/user/address/del/${id}`)
+            const response = await axios.delete(`/user/shop/address/del/${id}`)
             addressList.value = response.data.data
 
         } catch (error) {
@@ -538,7 +554,7 @@
 
     const showOrder = async () => {
         try {
-            const response = await axios.get("/user/order/list", {
+            const response = await axios.get("/user/shop/order/list", {
                 params: {
                     number: number
                 }
@@ -554,7 +570,7 @@
     // 提交订单
     const pay = async () => {
         try {
-            const response = await axios.patch("/user/order/pay", {
+            const response = await axios.patch("/user/shop/order/pay", {
                 number: number
             })
             if (response.data.code === 1) {
