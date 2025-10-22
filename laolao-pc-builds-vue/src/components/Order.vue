@@ -106,7 +106,7 @@
                         <div class="flex justify-between">
                             <p class="text-xs pl-1 hover:text-orange-500" @click.stop="setDefault(address.id)">
                                 默认
-                                <span v-show="address.isDefault === 1">✔</span>
+                                <span v-show="address.defaultAddress === 1">✔</span>
                             </p>
                             <Dialog>
                                 <DialogTrigger as-child>
@@ -449,7 +449,7 @@
         city: string,
         district: string,
         detailAddress: string
-        isDefault: number
+        defaultAddress: number
     }
 
     const addressList = ref<AddressList[]>([])
@@ -461,7 +461,7 @@
         try {
             const response = await axios.get("/user/shop/address/get")
             addressList.value = response.data.data
-            const defaultId = addressList.value.find(a => a.isDefault === 1)?.id
+            const defaultId = addressList.value.find(a => a.defaultAddress === 1)?.id
             if (!(defaultId === undefined)) {
                 selectAddress.value = defaultId
             }

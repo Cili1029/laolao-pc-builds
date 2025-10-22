@@ -40,13 +40,11 @@ public class CartServiceImpl implements CartService {
                 .filter(cartItem -> cartItem.getProductType() == 1)
                 .map(CartItem::getProductId)
                 .toList();
-
         // 整机的id
         List<Integer> bundleIds = cartItemList.stream()
                 .filter(cartItem -> cartItem.getProductType() == 2)
                 .map(CartItem::getProductId)
                 .toList();
-
         if (componentIds.isEmpty() && bundleIds.isEmpty()) {
             return Result.success(null);
         }

@@ -1,27 +1,15 @@
 package com.laolao.pojo.shop.dto;
 
+import lombok.*;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
 public class PayDTO {
+    /**
+     * 订单号
+     */
     private String number;
-
-    public String getNumber() {
-        return number;
-    }
-
-    public void setNumber(String number) {
-        this.number = number;
-    }
-
-    public PayDTO() {
-    }
-
-    public PayDTO(String number) {
-        this.number = number;
-    }
-
-    @Override
-    public String toString() {
-        return "PayDTO{" +
-                "number='" + number + '\'' +
-                '}';
-    }
 }

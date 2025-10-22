@@ -1,8 +1,15 @@
 package com.laolao.pojo.shop.vo;
 
+import lombok.*;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
 public class CartProductVO implements Serializable {
     /**
      * 商品Id
@@ -38,86 +45,4 @@ public class CartProductVO implements Serializable {
      * 数量
      */
     private int quantity;
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public int getProductType() {
-        return productType;
-    }
-
-    public void setProductType(int productType) {
-        this.productType = productType;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getVariantName() {
-        return variantName;
-    }
-
-    public void setVariantName(String variantName) {
-        this.variantName = variantName;
-    }
-
-    public String getImage() {
-        return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
-    }
-
-    public BigDecimal getPrice() {
-        return price;
-    }
-
-    public void setPrice(BigDecimal price) {
-        this.price = price;
-    }
-
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
-
-    public CartProductVO() {
-    }
-
-    public CartProductVO(int id, int productType, String name, String variantName, String image, BigDecimal price, int quantity) {
-        this.id = id;
-        this.productType = productType;
-        this.name = name;
-        this.variantName = variantName;
-        this.image = image;
-        this.price = price;
-        this.quantity = quantity;
-    }
-
-    @Override
-    public String toString() {
-        return "CartProductVO{" +
-                "id=" + id +
-                ", productType=" + productType +
-                ", name='" + name + '\'' +
-                ", variantName='" + variantName + '\'' +
-                ", image='" + image + '\'' +
-                ", price=" + price +
-                ", quantity=" + quantity +
-                '}';
-    }
 }

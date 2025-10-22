@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class ForumForumCategoryServiceImpl implements ForumCategoryService {
+public class ForumCategoryServiceImpl implements ForumCategoryService {
     @Resource
     private ForumCategoryMapper forumCategoryMapper;
     @Resource

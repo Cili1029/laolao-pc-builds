@@ -5,7 +5,7 @@
 <mapper namespace="com.laolao.mapper.shop.AddressMapper">
 
     <update id="setDefault">
-        update shop_address set is_default = #{isDefault}
+        update shop_address set default_address = #{defaultAddress}
         <where>
             user_id = #{userId}
             <if test="id != null and id != ''">

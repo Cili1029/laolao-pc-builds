@@ -24,9 +24,9 @@ public interface AddressMapper {
     void delete(int id, int userId);
 
 
-    void setDefault(int isDefault, Integer id, int userId);
+    void setDefault(int defaultAddress, Integer id, int userId);
 
-    @Select("select * from shop_address where user_id = #{userId} and is_default = 1")
+    @Select("select * from shop_address where user_id = #{userId} and default_address = 1")
     Address getDefault(int userId);
 
     @Select("select * from shop_address where user_id = #{userId} and id = #{id}")

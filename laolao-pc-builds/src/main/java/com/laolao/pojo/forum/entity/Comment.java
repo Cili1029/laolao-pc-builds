@@ -1,7 +1,14 @@
 package com.laolao.pojo.forum.entity;
 
+import lombok.*;
+
 import java.time.LocalDateTime;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
 public class Comment {
     /**
      * 主键
@@ -47,106 +54,4 @@ public class Comment {
      * 创建时间
      */
     private LocalDateTime createdAt;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public Integer getPostId() {
-        return postId;
-    }
-
-    public void setPostId(Integer postId) {
-        this.postId = postId;
-    }
-
-    public Integer getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Integer userId) {
-        this.userId = userId;
-    }
-
-    public Integer getReplyToUserId() {
-        return replyToUserId;
-    }
-
-    public void setReplyToUserId(Integer replyToUserId) {
-        this.replyToUserId = replyToUserId;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public String getImage() {
-        return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
-    }
-
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(Integer status) {
-        this.status = status;
-    }
-
-    public Integer getLikeCount() {
-        return likeCount;
-    }
-
-    public void setLikeCount(Integer likeCount) {
-        this.likeCount = likeCount;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public Comment() {
-    }
-
-    public Comment(Integer id, Integer postId, Integer userId, Integer replyToUserId, String content, String image, Integer status, Integer likeCount, LocalDateTime createdAt) {
-        this.id = id;
-        this.postId = postId;
-        this.userId = userId;
-        this.replyToUserId = replyToUserId;
-        this.content = content;
-        this.image = image;
-        this.status = status;
-        this.likeCount = likeCount;
-        this.createdAt = createdAt;
-    }
-
-    @Override
-    public String toString() {
-        return "ForumComment{" +
-                "id=" + id +
-                ", postId=" + postId +
-                ", userId=" + userId +
-                ", replyToUserId=" + replyToUserId +
-                ", content='" + content + '\'' +
-                ", image='" + image + '\'' +
-                ", status=" + status +
-                ", likeCount=" + likeCount +
-                ", createdAt=" + createdAt +
-                '}';
-    }
 }

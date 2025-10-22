@@ -177,7 +177,7 @@
                   <RouterLink to="/my-orders">
                     <DropdownMenuItem>
                       <ShoppingBag class="mr-2 h-4 w-4" />
-                      <RouterLink to="/my-orders">我的订单</RouterLink>
+                      <span>我的订单</span>
                     </DropdownMenuItem>
                   </RouterLink>
                   <DropdownMenuSeparator />
@@ -195,9 +195,11 @@
 
     <!-- 主要内容区域 -->
     <main class="flex-grow container mx-auto border-l border-r border-gray-200">
-      <transition name="fade" mode="out-in">
-        <RouterView></RouterView>
-      </transition>
+      <RouterView v-slot="{ Component }">
+        <transition name="fade" mode="out-in">
+          <component :is="Component" />
+        </transition>
+      </RouterView>
     </main>
 
     <!-- Footer区域 -->
@@ -596,7 +598,7 @@
   /* 过渡样式 */
   .fade-enter-active,
   .fade-leave-active {
-    transition: opacity 0.3s ease;
+    transition: opacity 0.1s ease;
   }
 
   .fade-enter-from,

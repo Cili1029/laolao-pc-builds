@@ -14,12 +14,12 @@ const routes = [
   },
   {
     path: '/home',
-    name: 'home',
+    name: 'Home',
     component: Home
   },
   {
     path: '/buy',
-    name: 'buy',
+    name: 'Buy',
     component: Buy
   },
   {
