@@ -1,7 +1,9 @@
 package com.laolao.converter;
 
 import com.laolao.pojo.forum.entity.ForumCategory;
+import com.laolao.pojo.forum.entity.Post;
 import com.laolao.pojo.forum.vo.ForumCategoryVO;
+import com.laolao.pojo.forum.vo.PostSimpleVO;
 import com.laolao.pojo.shop.dto.CartProductDTO;
 import com.laolao.pojo.shop.entity.*;
 import com.laolao.pojo.shop.vo.*;
@@ -37,4 +39,6 @@ public interface MapStruct {
 
     // 论坛的
     ForumCategoryVO ForumCategoryToCategoryVO(ForumCategory forumCategory);
+
+    PostSimpleVO PostToSimpleVO(Post post);
 }

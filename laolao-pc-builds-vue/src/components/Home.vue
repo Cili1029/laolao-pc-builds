@@ -34,9 +34,9 @@
             </div>
             <h3 class="text-2xl font-bold text-gray-800 mb-4">带的动XXX不？</h3>
             <p class="text-gray-600 mb-6">与其他DIY玩家一起吹牛，分享装机经验，解决技术难题</p>
-            <button class="w-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium py-3 rounded-lg transition-colors">
+            <router-link to="/forum" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium py-3 rounded-lg transition-colors block text-center">
                 进入论坛
-            </button>
+            </router-link>
         </div>
     </div>
 </template>

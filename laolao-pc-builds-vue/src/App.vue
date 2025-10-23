@@ -1,9 +1,8 @@
 <template>
-  <div class="min-h-screen bg-gray-50 flex flex-col">
+  <div class="min-h-screen flex flex-col">
     <!-- 固定导航条 -->
-    <header class="bg-white sticky top-0 z-50 shadow-md">
-      <div class="w-full">
-        <div class="container mx-auto px-4 py-3 flex justify-between items-center border-l border-r border-gray-200">
+    <header class="bg-white sticky top-0 z-50 shadow-md h-16">
+        <div class="container mx-auto p-3 flex justify-between items-center border-l border-r border-gray-200">
           <div class="flex items-center space-x-2">
             <img :src="logo" class="w-9 h-9 rounded-md" @click="goHome" />
             <span class="text-xl font-bold">劳劳的装机工坊</span>
@@ -190,7 +189,6 @@
             </div>
           </div>
         </div>
-      </div>
     </header>
 
     <!-- 主要内容区域 -->
@@ -203,7 +201,7 @@
     </main>
 
     <!-- Footer区域 -->
-    <footer class="bg-gray-800 text-white">
+    <footer v-if="route.meta.showFooter" class="bg-gray-800 text-white">
       <div class="container mx-auto px-4 py-6 border-l border-r border-gray-700">
         <div class="flex flex-col md:flex-row justify-between items-center">
           <div class="mb-4 md:mb-0">
@@ -239,6 +237,8 @@
 <script setup lang="ts">
   import { ref, onMounted, computed, reactive } from 'vue'
   import axios from './utils/myAxios'
+  import { useRoute } from 'vue-router'
+  const route = useRoute()
   import { useRouter } from 'vue-router'
   import logo from '@/assets/logo.jpg'
   import { Toaster } from '@/components/ui/sonner'

@@ -25,7 +25,7 @@ public class FormCategoryController {
      *
      * @return 帖子分类数据
      */
-    @GetMapping("list")
+    @GetMapping
     public Result<List<ForumCategoryVO>> list() {
         return forumCategoryService.list();
     }
