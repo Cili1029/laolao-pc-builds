@@ -14,14 +14,14 @@ public class UserVO {
     private int id;
 
     /**
-     * 头像
-     */
-    private String avatar;
-
-    /**
      * 账号
      */
     private String username;
+
+    /**
+     * 头像
+     */
+    private String avatar;
 
     /**
      * 用户名

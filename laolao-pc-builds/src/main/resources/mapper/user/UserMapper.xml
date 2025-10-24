@@ -16,4 +16,12 @@
         </where>
         limit 1
     </select>
+    <select id="selectUser" resultType="com.laolao.pojo.user.entity.User" parameterType="com.laolao.pojo.user.entity.User">
+        select *
+        from user
+        where id in
+        <foreach collection="userIdList1" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
 </mapper>

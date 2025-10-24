@@ -1,0 +1,69 @@
+<template>
+    <!-- 板块描述 -->
+    <div class="h-24 m-5 pl-5 bg-white shadow-sm rounded-sm flex items-center">
+        <span class="items-center text-6xl" :class="categoryStore.getIconClass(categoryStore.category.id)"></span>
+        <div class="p-3">
+            <p class="text-2xl font-bold">{{ categoryStore.category.name }}</p>
+            <p>{{ categoryStore.category.description }}</p>
+        </div>
+    </div>
+    <div class="border-t-4"></div>
+    <div>
+        <div class="flex m-2 justify-between items-center">
+            <div class="text-l text-gray-500">帖子</div>
+            <div class="text-l flex justify-between items-center text-gray-500">
+                <div class="w-22 font-bold text-center">浏览量</div>
+                <div class="w-22 font-bold text-center">回复</div>
+                <div class="w-22 font-bold text-center">点赞</div>
+            </div>
+        </div>
+        <div class="border-t-2"></div>
+    </div>
+    <div v-for="simple in postSimple" :key="simple.id">
+        <div class="flex mx-2 my-4 justify-between items-center">
+            <router-link :to="`/forum/post/${simple.id}`" class="text-xl cursor-pointer">
+                {{ simple.title }}
+            </router-link>
+            <div class="flex text-gray-600">
+                <div class="w-22 font-bold text-center">{{ simple.viewCount }}</div>
+                <div class="w-22 font-bold text-center">{{ simple.commentCount }}</div>
+                <div class="w-22 font-bold text-center">{{ simple.likeCount }}</div>
+            </div>
+        </div>
+        <div class="border-t-2"></div>
+    </div>
+</template>
+
+<script setup lang="ts">
+    import axios from '@/utils/myAxios'
+    import { ref, watchEffect } from 'vue'
+    import { useForumCategoryStore } from '@/stores/ForumCategoryStore'
+    const categoryStore = useForumCategoryStore()
+
+    // 帖子简单信息
+    interface PostSimple {
+        id: number
+        title: string
+        viewCount: number
+        likeCount: number
+        commentCount: number
+    }
+    const postSimple = ref<PostSimple[]>([])
+
+    const getPost = async () => {
+        const response = await axios.get("/user/forum/post/simple", {
+            params: {
+                categoryId: categoryStore.category.id
+            }
+        })
+        postSimple.value = response.data.data
+    }
+    // 监听路由变化
+    watchEffect(() => {
+        if (categoryStore.category.id) {
+            getPost()
+        }
+    })
+</script>
+
+<style scoped></style>

@@ -239,7 +239,6 @@
   import axios from './utils/myAxios'
   import { useRoute } from 'vue-router'
   const route = useRoute()
-  import { useRouter } from 'vue-router'
   import logo from '@/assets/logo.jpg'
   import { Toaster } from '@/components/ui/sonner'
   import { toast } from "vue-sonner"
@@ -253,6 +252,7 @@
   import { Label } from "@/components/ui/label"
   import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
   import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+  import { useRouter } from 'vue-router'
   const router = useRouter()
 
   // 组件挂载时检查登录状态

@@ -1,4 +1,4 @@
-package com.laolao.pojo.forum.entity;
+package com.laolao.pojo.forum.vo;
 
 import com.laolao.pojo.user.vo.UserVO;
 import lombok.*;
@@ -10,21 +10,11 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class Comment {
+public class CommentReplyVO {
     /**
-     * 主键
+     * 用户
      */
-    private Integer id;
-
-    /**
-     * 关联帖子ID
-     */
-    private Integer postId;
-
-    /**
-     * 评论用户ID
-     */
-    private Integer userId;
+    private UserVO user;
 
     /**
      * 回复给哪个用户ID,0则为直接评论
@@ -37,14 +27,9 @@ public class Comment {
     private String content;
 
     /**
-     * 评论图片，最多一张
+     * 图片
      */
     private String image;
-
-    /**
-     * 状态：1正常，2删除
-     */
-    private Integer status;
 
     /**
      * 点赞数
@@ -55,11 +40,4 @@ public class Comment {
      * 创建时间
      */
     private LocalDateTime createdAt;
-
-
-    // 封装VO用
-    /**
-     * 用户
-     */
-    private UserVO user;
 }

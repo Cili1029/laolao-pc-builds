@@ -7,6 +7,8 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Select;
 
+import java.util.List;
+
 @Mapper
 public interface UserMapper {
     User checkUserExists(UserLoginOrRegisterDTO userLoginOrRegisterDTO);
@@ -19,4 +21,6 @@ public interface UserMapper {
 
     @Select("select * from user where id = #{userId}")
     User getUser(long userId);
+
+    List<User> selectUser(List<Integer> userIdList1);
 }
