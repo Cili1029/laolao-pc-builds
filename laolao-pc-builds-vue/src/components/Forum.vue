@@ -1,11 +1,11 @@
 <template>
     <div class="flex">
         <!-- 侧栏 -->
-        <div class="w-1/5 h-screen bg-white rounded-lg shadow-sm p-2">
+        <div class="sticky top-16 w-1/5 h-2/3 bg-white rounded-lg shadow-sm p-2">
             <div class="p-2 text-base flex rounded-lg">类别</div>
             <div @click="changeCategory(category)" v-for="category in categories" :key="category.id"
-                class="p-2 text-lg cursor-pointer hover:bg-gray-100 flex rounded-lg"
-                :class="category.id === currentCategory ? 'bg-gray-100' : ''">
+                class="p-2 text-lg cursor-pointer hover:bg-sky-100 flex rounded-lg"
+                :class="category.id === currentCategory ? 'bg-sky-100' : ''">
                 <span :class="categoryStore.getIconClass(category.id)"></span>
                 <p class="pl-3">{{ category.name }}</p>
             </div>
@@ -13,7 +13,11 @@
 
         <!-- 内容区域 - 使用 router-view 显示子路由 -->
         <div class="w-4/5 mx-3 bg-white rounded-lg">
-            <router-view></router-view>
+            <RouterView v-slot="{ Component }">
+                <transition name="fade" mode="out-in">
+                    <component :is="Component" />
+                </transition>
+            </RouterView>
         </div>
     </div>
 </template>
@@ -56,3 +60,17 @@
         router.push('/forum')
     }
 </script>
+
+<style scoped>
+  /* 过渡样式 */
+  .fade-enter-active,
+  .fade-leave-active {
+    transition: opacity 0.1s ease;
+  }
+
+  .fade-enter-from,
+  .fade-leave-to {
+    opacity: 0;
+  }
+
+</style>

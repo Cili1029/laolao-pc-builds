@@ -14,6 +14,11 @@ import java.util.List;
 @ToString
 public class PostVO {
     /**
+     * 帖子Id
+     */
+    private int id;
+
+    /**
      * 发帖用户
      */
     private UserVO user;

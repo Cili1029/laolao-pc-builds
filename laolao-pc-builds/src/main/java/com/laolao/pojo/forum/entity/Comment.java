@@ -27,9 +27,9 @@ public class Comment {
     private Integer userId;
 
     /**
-     * 回复给哪个用户ID,0则为直接评论
+     * 回复指向的评论Id,0则为直接评论
      */
-    private Integer replyToUserId;
+    private Integer parent;
 
     /**
      * 评论内容

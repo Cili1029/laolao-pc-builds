@@ -64,7 +64,7 @@ public class PostServiceImpl implements PostService {
         postVO.setUser(userVO);
 
         // 将帖子分为直接回复和回复的回复
-        Map<Boolean, List<Comment>> collect = allCommentList.stream().collect(Collectors.partitioningBy(comment -> comment.getReplyToUserId() == 0));
+        Map<Boolean, List<Comment>> collect = allCommentList.stream().collect(Collectors.partitioningBy(comment -> comment.getParent() == 0));
 
         // 直接评论
         List<Comment> commentList = collect.get(true);
@@ -91,11 +91,11 @@ public class PostServiceImpl implements PostService {
         // 至此评论的评论完成
 
         // 将id根据回复对象进行分组
-        Map<Integer, List<CommentReplyVO>> replyGroup = replyVOList.stream().collect(Collectors.groupingBy(CommentReplyVO::getReplyToUserId));
+        Map<Integer, List<CommentReplyVO>> replyGroup = replyVOList.stream().collect(Collectors.groupingBy(CommentReplyVO::getParent));
         // 根据id配对合并
         for (CommentVO commentVO : commentVOList) {
             // 没有就null
-            List<CommentReplyVO> list = replyGroup.getOrDefault(commentVO.getUser().getId(), Collections.emptyList());
+            List<CommentReplyVO> list = replyGroup.getOrDefault(commentVO.getId(), Collections.emptyList());
             // 写入
             commentVO.setReply(list);
         }

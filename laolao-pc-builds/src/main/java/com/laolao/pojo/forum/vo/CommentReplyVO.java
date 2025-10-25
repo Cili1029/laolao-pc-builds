@@ -12,14 +12,19 @@ import java.time.LocalDateTime;
 @ToString
 public class CommentReplyVO {
     /**
+     * 帖子Id
+     */
+    private int id;
+
+    /**
      * 用户
      */
     private UserVO user;
 
     /**
-     * 回复给哪个用户ID,0则为直接评论
+     * 回复指向的评论Id,0则为直接评论
      */
-    private Integer replyToUserId;
+    private Integer parent;
 
     /**
      * 评论内容
