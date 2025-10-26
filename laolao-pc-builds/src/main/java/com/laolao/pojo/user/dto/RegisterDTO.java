@@ -7,7 +7,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class UserLoginOrRegisterDTO {
+public class RegisterDTO {
     /**
      * 账号
      */

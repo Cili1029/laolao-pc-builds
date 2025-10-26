@@ -16,7 +16,8 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addInterceptor(loginInterceptor)
                 .addPathPatterns("/**")
                 .excludePathPatterns("/user/user/email-code")
-                .excludePathPatterns("/user/user/login")
+                .excludePathPatterns("/user/user/login-username")
+                .excludePathPatterns("/user/user/login-email")
                 .excludePathPatterns("/user/user/register")
                 .excludePathPatterns("/user/user/profile");
     }

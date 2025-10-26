@@ -74,7 +74,7 @@ public class PostServiceImpl implements PostService {
             return Result.success(postVO);
         } else {
             // 有，设置用户信息并转换写入
-            setUser(userMap, commentList, commentVOList, null, 1);
+            setUserToComment(userMap, commentList, commentVOList, null, 1);
             // 至此直接评论完成
         }
 
@@ -87,7 +87,7 @@ public class PostServiceImpl implements PostService {
         }
         // 有评论 查询用户信息
         List<CommentReplyVO> replyVOList = new ArrayList<>();
-        setUser(userMap, replyList, null, replyVOList, 2);
+        setUserToComment(userMap, replyList, null, replyVOList, 2);
         // 至此评论的评论完成
 
         // 将id根据回复对象进行分组
@@ -105,7 +105,7 @@ public class PostServiceImpl implements PostService {
     }
 
     // 用于设置评论的用户信息
-    private void setUser(Map<Integer, User> userMap, List<Comment> commentList, List<CommentVO> commentVOList, List<CommentReplyVO> replyVOList, int type) {
+    void setUserToComment(Map<Integer, User> userMap, List<Comment> commentList, List<CommentVO> commentVOList, List<CommentReplyVO> replyVOList, int type) {
         // 遍历，写入
         for (Comment comment : commentList) {
             // 获取对应用户

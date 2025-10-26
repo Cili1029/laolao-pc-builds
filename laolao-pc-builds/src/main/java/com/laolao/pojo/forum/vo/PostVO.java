@@ -1,6 +1,5 @@
 package com.laolao.pojo.forum.vo;
 
-import com.laolao.pojo.user.entity.User;
 import com.laolao.pojo.user.vo.UserVO;
 import lombok.*;
 

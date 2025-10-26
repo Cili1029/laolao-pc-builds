@@ -1,13 +1,13 @@
 <template>
-    <div>
+    <div class="h-full overflow-y-auto">
         <!-- 板块描述 -->
         <div class="m-5 pl-5 py-1 bg-sky-100 shadow-sm flex items-center">
-            <span class="items-center text-xl">
+            <span class="text-xl">
                 <span class="font-bold">真诚、友善、团结、专业</span>，共建你我引以为荣之社区。
             </span>
         </div>
         <div class="h-24 m-5 pl-5 bg-white shadow-sm rounded-sm flex items-center">
-            <span class="items-center text-6xl" :class="categoryStore.getIconClass(categoryStore.category.id)"></span>
+            <span class="text-6xl" :class="categoryStore.getIconClass(categoryStore.category.id)"></span>
             <div class="p-3">
                 <p class="text-2xl font-bold">{{ categoryStore.category.name }}</p>
                 <p>{{ categoryStore.category.description }}</p>

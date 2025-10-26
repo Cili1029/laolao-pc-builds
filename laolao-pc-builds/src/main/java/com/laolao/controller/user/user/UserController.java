@@ -1,6 +1,8 @@
 package com.laolao.controller.user.user;
 
-import com.laolao.pojo.user.dto.UserLoginOrRegisterDTO;
+import com.laolao.pojo.user.dto.LoginByEmailDTO;
+import com.laolao.pojo.user.dto.LoginByUsernameDTO;
+import com.laolao.pojo.user.dto.RegisterDTO;
 import com.laolao.pojo.user.vo.UserVO;
 import com.laolao.common.result.Result;
 import com.laolao.service.user.UserService;
@@ -29,33 +31,44 @@ public class UserController {
      */
     @PostMapping("/email-code")
     public Result<String> getEmailCode(@RequestBody Map<String, String> request) throws Exception {
-        userService.getEmailCode(request.get("email"));
-        return Result.success("发送成功！");
+        return userService.getEmailCode(request.get("email"));
     }
 
     /**
-     * 用户登录
+     * 账号密码登录
      *
-     * @param userLoginOrRegisterDTO 登录所需的基本信息
+     * @param loginByUsernameDTO 登录所需的基本信息
      * @param res 响应
      * @return 用户基本数据
      */
-    @PostMapping("/login")
-    public Result<UserVO> login(@RequestBody UserLoginOrRegisterDTO userLoginOrRegisterDTO, HttpServletResponse res) {
-        return userService.login(userLoginOrRegisterDTO, res);
+    @PostMapping("/login-username")
+    public Result<UserVO> loginByUsername(@RequestBody LoginByUsernameDTO loginByUsernameDTO, HttpServletResponse res) {
+        return userService.loginByUsername(loginByUsernameDTO, res);
+    }
+
+    /**
+     * 账号密码登录
+     *
+     * @param loginByEmailDTO 登录所需的基本信息
+     * @param res 响应
+     * @return 用户基本数据
+     */
+    @PostMapping("/login-email")
+    public Result<UserVO> loginByUsername(@RequestBody LoginByEmailDTO loginByEmailDTO, HttpServletResponse res) {
+        return userService.loginByEmail(loginByEmailDTO, res);
     }
 
     /**
      * 用户注册
      * 注册成功后自动登录
      *
-     * @param userLoginOrRegisterDTO 注册所需的基本信息
+     * @param registerDTO 注册所需的基本信息
      * @param res 响应
      * @return 用户基本数据
      */
     @PostMapping("/register")
-    public Result<UserVO> register(@RequestBody UserLoginOrRegisterDTO userLoginOrRegisterDTO, HttpServletResponse res) {
-        return userService.register(userLoginOrRegisterDTO, res);
+    public Result<UserVO> register(@RequestBody RegisterDTO registerDTO, HttpServletResponse res) {
+        return userService.register(registerDTO, res);
     }
 
 

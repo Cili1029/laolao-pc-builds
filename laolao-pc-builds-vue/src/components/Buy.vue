@@ -1,8 +1,8 @@
 <template>
-    <div class="flex">
-        <div class="w-1/5 bg-white rounded-xl shadow-sm p-6 mr-4">
+    <div class="flex h-full">
+        <div class="w-1/5 bg-white rounded-xl shadow-sm p-6 mr-4 h-full overflow-y-auto">
             <div class="flex justify-between items-center mb-6">
-                <h3 class="text-xl font-bold text-gray-800 flex items-center">
+                <h3 class="text-xl font-bold text-gray-800">
                     <i class="fas fa-fire text-red-500 mr-2"></i> 分类
                 </h3>
             </div>
@@ -18,9 +18,9 @@
             </div>
         </div>
 
-        <div class="w-4/5 bg-white rounded-xl shadow-sm p-6">
+        <div class="w-4/5 bg-white rounded-xl shadow-sm p-6 h-full overflow-y-auto">
             <div class="flex justify-between items-center mb-6">
-                <h3 class="text-xl font-bold text-gray-800 flex items-center">
+                <h3 class="text-xl font-bold text-gray-800">
                     <i class="fas fa-fire text-red-500 mr-2"></i> {{ category[categoryIndex - 1]?.name }}
                 </h3>
                 <div class="flex w-full max-w-sm items-center gap-1.5">
@@ -264,7 +264,6 @@
                 }
             })
 
-            console.log(response.data.data)
             if (response.data.data.length === 0) {
                 toast("嗨！", {
                     description: "什么也没有",

@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="h-full overflow-y-auto p-4">
         <Dialog>
             <DialogTrigger as-child>
                 <div class="bg-white flex border border-gray-200 p-2 rounded-lg">

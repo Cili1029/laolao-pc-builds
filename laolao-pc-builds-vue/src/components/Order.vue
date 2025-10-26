@@ -1,8 +1,9 @@
 <template>
-    <div class="w-full p-3">
-        <h3 class="text-xl font-bold text-gray-800">确认订单</h3>
-    </div>
-    <div class="flex space-x-2">
+    <div class="h-full overflow-y-auto">
+        <div class="w-full p-3">
+            <h3 class="text-xl font-bold text-gray-800">确认订单</h3>
+        </div>
+        <div class="flex space-x-2">
         <!-- 左边地址，订单 -->
         <div class="w-5/7 space-y-2">
             <!-- 确认收货地址 -->
@@ -279,6 +280,7 @@
                 </AlertDialog>
             </div>
         </div>
+    </div>
     </div>
 </template>
 

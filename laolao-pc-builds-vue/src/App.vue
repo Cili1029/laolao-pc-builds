@@ -1,8 +1,10 @@
 <template>
-  <div class="min-h-screen flex flex-col">
+  <div class="min-h-screen flex flex-col h-screen">
     <!-- 固定导航条 -->
-    <header class="sticky top-0 z-50 bg-white/30 backdrop-blur-md shadow-md h-16">
-        <div class="container mx-auto p-3 flex justify-between items-center border-l border-r border-gray-200">
+    <div class="sticky top-0 z-50 bg-white/30 backdrop-blur-md shadow-md h-16">
+      <div class="grid grid-cols-[1fr_min(1200px,100%)_1fr] h-full">
+        <div class="border-r border-gray-200"></div>
+        <div class="p-3 flex justify-between items-center">
           <div class="flex items-center space-x-2">
             <img :src="logo" class="w-9 h-9 rounded-md" @click="goHome" />
             <span class="text-xl font-bold">劳劳的装机工坊</span>
@@ -73,81 +75,12 @@
             </Drawer>
 
             <!-- 未登录，点击登录 -->
-            <div v-if="!isLoggedIn">
-              <Dialog :open="showLoginModal" @update:open="(value) => {
-                showLoginModal = value
-                if (value) {
-                  // 打开登陆注册框时重置到密码登录
-                  status = 'loginA'
-                  resetLoginForm()
-                }
-              }">
-                <DialogTrigger as-child>
-                  <Avatar class="cursor-pointer hover:ring-2 hover:ring-blue-500 transition-all">
-                    <AvatarFallback>登录</AvatarFallback>
-                  </Avatar>
-                </DialogTrigger>
-                <DialogContent class="sm:max-w-[425px]">
-                  <DialogHeader>
-                    <DialogTitle>登录或注册</DialogTitle>
-                  </DialogHeader>
-                  <DialogDescription></DialogDescription>
-                  <Tabs default-value="loginA" class="w-full">
-                    <TabsList class="grid w-full grid-cols-3">
-                      <TabsTrigger value="loginA" @click="status = 'loginA', resetLoginForm()">
-                        密码登录
-                      </TabsTrigger>
-                      <TabsTrigger value="loginB" @click="status = 'loginB', resetLoginForm()">
-                        验证码登录
-                      </TabsTrigger>
-                      <TabsTrigger value="register" @click="status = 'register', resetLoginForm()">
-                        注册
-                      </TabsTrigger>
-                    </TabsList>
-                    <TabsContent v-for="tab in tabs" :key="tab.value" :value="tab.value">
-                      <Card>
-                        <CardHeader>
-                          <CardTitle>{{ tab.title }}</CardTitle>
-                          <CardDescription>
-                            {{ tab.description }}
-                          </CardDescription>
-                        </CardHeader>
-                        <CardContent class="space-y-2">
-                          <div class="space-y-1" v-if="status === 'loginA' || status === 'register'">
-                            <Label for="Username">用户名</Label>
-                            <Input id="username" v-model="loginUser.username" />
-                          </div>
-                          <div class="space-y-1" v-if="status === 'loginA' || status === 'register'">
-                            <Label for="Password">密码</Label>
-                            <Input id="password" type="password" v-model="loginUser.password" />
-                          </div>
-                          <div class="space-y-1" v-if="status === 'loginB' || status === 'register'">
-                            <Label for="Password">邮箱号</Label>
-                            <Input id="email" v-model="loginUser.email" />
-                          </div>
-                          <div class="space-y-1" v-if="status === 'loginB' || status === 'register'">
-                            <Label for="Code">验证码</Label>
-                            <div class="flex gap-2">
-                              <Input id="code" v-model="loginUser.emailCode" class="flex-1" placeholder="请输入验证码" />
-                              <Button :disabled="countDown > 0 || isSendingCode" @click="getEmailCode()" class="w-1/4">
-                                <span v-if="isSendingCode">发送中...</span>
-                                <span v-else>{{ countDown > 0 ? countDown + 's' : "发送验证码" }}</span>
-                              </Button>
-                            </div>
-                          </div>
-                        </CardContent>
-                        <CardFooter>
-                          <Button class="w-full" :disabled="isLoading"
-                            @click="loginOrRegister(tab.value as 'login' | 'register')">
-                            <span v-if="isLoading && currentAction === tab.value">{{ tab.buttonText }}中...</span>
-                            <span v-else>{{ tab.buttonText }}</span>
-                          </Button>
-                        </CardFooter>
-                      </Card>
-                    </TabsContent>
-                  </Tabs>
-                </DialogContent>
-              </Dialog>
+            <div v-if="!userStore.login">
+              <RouterLink to="/hello">
+                <Avatar class="cursor-pointer hover:ring-2 hover:ring-blue-500 transition-all">
+                  <AvatarFallback>登录</AvatarFallback>
+                </Avatar>
+              </RouterLink>
             </div>
 
             <!-- 已登录，显示用户数据 -->
@@ -155,13 +88,13 @@
               <DropdownMenu>
                 <DropdownMenuTrigger as-child>
                   <Avatar class="cursor-pointer hover:ring-2 hover:ring-blue-500 transition-all rounded-md">
-                    <AvatarImage :src="user?.avatar" alt="用户头像" />
-                    <AvatarFallback>{{ userInitials }}</AvatarFallback>
+                    <AvatarImage :src="userStore.user.avatar" alt="用户头像" />
+                    <AvatarFallback>{{ userStore.user.name.substring(0, 1) }}</AvatarFallback>
                   </Avatar>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent class="w-56" align="end">
                   <DropdownMenuLabel class="flex flex-col">
-                    <span class="font-semibold">{{ user.name }}</span>
+                    <span class="font-semibold">{{ userStore.user.name }}</span>
                     <span class="text-xs text-gray-500 font-normal">欢迎回来！</span>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
@@ -189,53 +122,64 @@
             </div>
           </div>
         </div>
-    </header>
+        <div class="border-l border-gray-200"></div>
+      </div>
+    </div>
 
-    <!-- 主要内容区域 -->
-    <main class="flex-grow container mx-auto border-l border-r border-gray-200">
-      <RouterView v-slot="{ Component }">
-        <transition name="fade" mode="out-in">
-          <component :is="Component" />
-        </transition>
-      </RouterView>
-    </main>
+    <div class="flex-grow overflow-hidden">
+      <div class="grid grid-cols-[1fr_min(1200px,100%)_1fr] h-full">
+        <div class="border-r border-gray-200"></div>
+        <div class="overflow-y-auto scrollbar-edge">
+          <RouterView v-slot="{ Component }">
+            <transition name="fade" mode="out-in">
+              <component :is="Component" />
+            </transition>
+          </RouterView>
+        </div>
+        <div class="border-l border-gray-200"></div>
+      </div>
+    </div>
 
     <!-- Footer区域 -->
-    <footer v-if="route.meta.showFooter" class="bg-gray-800 text-white">
-      <div class="container mx-auto px-4 py-6 border-l border-r border-gray-700">
-        <div class="flex flex-col md:flex-row justify-between items-center">
-          <div class="mb-4 md:mb-0">
-            <div class="flex items-center space-x-2">
-              <img :src="logo" alt="Company Logo" class="w-6 h-6 rounded-md">
-              <span class="text-lg font-bold">劳劳的网站</span>
+    <div v-if="route.meta.showFooter" class="bg-gray-800 text-white">
+      <div class="grid grid-cols-[1fr_min(1200px,100%)_1fr]">
+        <div class="border-r border-gray-700"></div>
+        <div class="px-4 py-6">
+          <div class="flex flex-col md:flex-row justify-between items-center">
+            <div class="mb-4 md:mb-0">
+              <div class="flex items-center space-x-2">
+                <img :src="logo" alt="Company Logo" class="w-6 h-6 rounded-md">
+                <span class="text-lg font-bold">劳劳的网站</span>
+              </div>
+              <div class="text-gray-400 text-sm mt-2">
+                <p class="mt-1">
+                  <a href="https://beian.miit.gov.cn" target="_blank"
+                    class="text-gray-400 hover:text-white transition-colors">
+                    闽ICP备2025117246号-1
+                  </a>
+                </p>
+              </div>
             </div>
-            <div class="text-gray-400 text-sm mt-2">
-              <p class="mt-1">
-                <a href="https://beian.miit.gov.cn" target="_blank"
-                  class="text-gray-400 hover:text-white transition-colors">
-                  闽ICP备2025117246号-1
-                </a>
-              </p>
-            </div>
-          </div>
 
-          <div class="flex space-x-6">
-            <a href="#" class="text-gray-300 hover:text-white transition-colors">假如再也见不到你</a>
-            <a href="#" class="text-gray-300 hover:text-white transition-colors">祝你</a>
-            <a href="#" class="text-gray-300 hover:text-white transition-colors">早安</a>
-            <a href="#" class="text-gray-300 hover:text-white transition-colors">午安</a>
-            <a href="#" class="text-gray-300 hover:text-white transition-colors">晚安</a>
+            <div class="flex space-x-6">
+              <a href="#" class="text-gray-300 hover:text-white transition-colors">假如再也见不到你</a>
+              <a href="#" class="text-gray-300 hover:text-white transition-colors">祝你</a>
+              <a href="#" class="text-gray-300 hover:text-white transition-colors">早安</a>
+              <a href="#" class="text-gray-300 hover:text-white transition-colors">午安</a>
+              <a href="#" class="text-gray-300 hover:text-white transition-colors">晚安</a>
+            </div>
           </div>
         </div>
+        <div class="border-l border-gray-700"></div>
       </div>
-    </footer>
+    </div>
     <!-- 全局消息弹窗 -->
     <Toaster position="top-right" />
   </div>
 </template>
 
 <script setup lang="ts">
-  import { ref, onMounted, computed, reactive } from 'vue'
+  import { ref, onMounted, computed } from 'vue'
   import axios from './utils/myAxios'
   import { useRoute } from 'vue-router'
   const route = useRoute()
@@ -247,13 +191,10 @@
   import { ShoppingBag, LogOut, User, Smile } from "lucide-vue-next"
   import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
   import { Button } from "@/components/ui/button"
-  import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-  import { Input } from "@/components/ui/input"
-  import { Label } from "@/components/ui/label"
-  import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-  import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
   import { useRouter } from 'vue-router'
   const router = useRouter()
+  import { useUserStore } from '@/stores/UserStore'
+  const userStore = useUserStore()
 
   // 组件挂载时检查登录状态
   onMounted(() => {
@@ -265,212 +206,39 @@
     router.push('/home');
   }
 
-  // 登陆注册显示问题
-  const status = ref('loginA')
-  const tabs = [
-    {
-      value: 'loginA',
-      title: '自己人？快进来！',
-      description: '输入您的账户（用户名），密码',
-      buttonText: '登录'
-    },
-    {
-      value: 'loginB',
-      title: '自己人？快进来！',
-      description: '输入您的邮箱号，验证码',
-      buttonText: '登录'
-    },
-    {
-      value: 'register',
-      title: '没有号？整一个！',
-      description: '填写您的账户（用户名），密码以及验证码',
-      buttonText: '注册'
+  interface User {
+        id: number
+        avatar: string
+        username: string
+        name: string
     }
-  ]
 
-  // 登录框状态
-  const showLoginModal = ref(false)
-  // 判断是否登陆用
-  const isLoggedIn = ref(false)
-
-  // 登录表单数据
-  const loginUser = reactive({
-    username: "",
-    password: "",
-    email: "",
-    emailCode: ""
-  })
-
-  // 验证码相关状态
-  const countDown = ref(0)
-  const isLoading = ref(false)
-  const isSendingCode = ref(false)
-  const currentAction = ref<"login" | "register" | null>(null)
-  let timer: number | null = null
-
-
-
-  // 图片加载失败显示用户名字首字母
-  const userInitials = computed(() => {
-    if (!user.value) return '用户'
-    return user.value.name.substring(0, 2).toUpperCase()
-  })
-
-  // 切换注册登录选项重置表单
-  const resetLoginForm = () => {
-    Object.assign(loginUser, {
-      username: "",
-      password: "",
-      email: "",
-      emailCode: ""
+    const user = ref<User>({
+        id: 0,
+        avatar: '',
+        username: '',
+        name: '',
     })
-  }
 
   const getProfile = async () => {
     try {
       const response = await axios.get('/user/user/profile')
+
       if (response.data.code === 1) {
         user.value = response.data.data
-        // 设置已登录
-        isLoggedIn.value = true
+        userStore.setUser(user.value)
       }
-
     } catch (error) {
       console.log(error)
     }
   }
 
   // 当前登录的用户昵称
-  const user = ref({
-    avatar: '',
-    username: '',
-    name: '',
-  })
-
-  // 发送验证码
-  const getEmailCode = async () => {
-    if (!loginUser.email) {
-      toast("嗨！", {
-        description: "邮箱号不得为空！",
-        action: {
-          label: '我知道了',
-        },
-      })
-      return
-    }
-
-    isSendingCode.value = true
-
-    try {
-      await axios.post('/user/user/email-code', {
-        email: loginUser.email
-      })
-
-      countDown.value = 60
-      timer = setInterval(() => {
-        countDown.value--
-        if (countDown.value <= 0 && timer) {
-          clearInterval(timer)
-          timer = null
-        }
-      }, 1000)
-
-    } catch (error) {
-      console.error(error)
-      toast("嗨！", {
-        description: "发送验证码失败，请重试",
-        action: {
-          label: '我知道了',
-        },
-      })
-    } finally {
-      isSendingCode.value = false
-    }
-  }
-
-  // 登录和注册
-  const loginOrRegister = async (type: "login" | "register") => {
-    // 验证字段
-    if (type === 'register') {
-      // 注册验证
-      if (!loginUser.username || !loginUser.password || !loginUser.emailCode || !loginUser.email) {
-        toast("嗨！", {
-          description: "所有字段都不得为空！",
-          action: {
-            label: '我知道了',
-          },
-        })
-        return
-      }
-    } else {
-      // 登录验证 - 根据当前状态区分密码登录和验证码登录
-      if (status.value === 'loginA') {
-        // 密码登录验证
-        if (!loginUser.username || !loginUser.password) {
-          toast("嗨！", {
-            description: "用户名和密码不能为空！",
-            action: {
-              label: '我知道了',
-            },
-          })
-          return
-        }
-      } else if (status.value === 'loginB') {
-        // 验证码登录验证
-        if (!loginUser.email || !loginUser.emailCode) {
-          toast("嗨！", {
-            description: "邮箱号和验证码不能为空！",
-            action: {
-              label: '我知道了',
-            },
-          })
-          return
-        }
-      }
-    }
-
-    isLoading.value = true
-    currentAction.value = type
-
-    try {
-      let response
-
-      if (type === 'register') {
-        // 注册逻辑
-        response = await axios.post('/user/user/register', {
-          username: loginUser.username,
-          password: loginUser.password,
-          email: loginUser.email,
-          emailCode: loginUser.emailCode
-        })
-      } else {
-        // 登录逻辑 - 根据状态发送不同的数据
-        if (status.value === 'loginA') {
-          // 密码登录
-          response = await axios.post('/user/user/login', {
-            username: loginUser.username,
-            password: loginUser.password
-          })
-        } else {
-          // 验证码登录
-          response = await axios.post('/user/user/login', {
-            email: loginUser.email,
-            emailCode: loginUser.emailCode
-          })
-        }
-      }
-
-      if (response.data.code === 1) {
-        user.value = response.data.data
-        showLoginModal.value = false
-        isLoggedIn.value = true
-      }
-    } catch (error) {
-      console.log(error)
-    } finally {
-      isLoading.value = false
-      currentAction.value = null
-    }
+  interface User {
+    id: number
+    avatar: string
+    username: string
+    name: string
   }
 
   // 退出登录
@@ -486,12 +254,7 @@
         },
       })
     } finally {
-      isLoggedIn.value = false
-      user.value = {
-        avatar: '',
-        username: '',
-        name: ''
-      }
+      userStore.clearUser()
     }
   }
 
@@ -519,7 +282,6 @@
     try {
       const response = await axios.get("/user/shop/cart/list")
       products.value = response.data.data || []
-      console.log(products.value)
     } catch (error) {
       console.log(error)
     }
@@ -542,7 +304,6 @@
             products.value = products.value.filter(p => p.id !== product?.id)
           }
         }
-        console.log(products.value)
 
       } else {
         await axios.post("/user/shop/cart/plus", {

@@ -1,17 +1,17 @@
 <template>
-    <div class="pb-20">
+    <div class="h-full overflow-y-auto p-4">
         <!-- 贴主 -->
         <div>
             <!-- 标题 -->
             <div class="px-3 mt-5 pl-5 py-1 bg-sky-100 shadow-sm flex items-center">
-                <span class="items-center text-xl">
+                <span class="text-xl">
                     <span class="font-bold">真诚、友善、团结、专业</span>，共建你我引以为荣之社区。
                 </span>
             </div>
             <div class="h-24 px-3 bg-white flex flex-col justify-center">
                 <p class="text-2xl font-bold">{{ post?.title }}</p>
                 <div class="flex">
-                    <span class="items-center text-xl"
+                    <span class="text-xl"
                         :class="categoryStore.getIconClass(categoryStore.category.id)"></span>
                     <p class="text-l">{{ categoryStore.category.name }}</p>
                 </div>
@@ -75,12 +75,30 @@
                         <!-- 还有图片 -->
                     </div>
                     <div class="pb-4 flex justify-between items-center">
-                        <div v-if="replyMap.has(comment.id)">
-                            <Button v-if="!replyMap.get(comment.id)" variant="secondary"
-                                @click="openReply(comment.id)">展开回复</Button>
-                            <Button v-else variant="secondary" @click="openReply(comment.id)">收起回复</Button>
+                        <div class="flex">
+                            <div v-if="replyMap.has(comment.id)">
+                                <Button v-if="!replyMap.get(comment.id)" variant="secondary"
+                                    @click="openReply(comment.id)">展开回复</Button>
+                                <Button v-else variant="secondary" @click="openReply(comment.id)">收起回复</Button>
+                            </div>
+                            <AlertDialog>
+                                <AlertDialogTrigger as-child>
+                                    <Button class="ml-2" variant="secondary">回复层主</Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                        <AlertDialogTitle>回复层主</AlertDialogTitle>
+                                        <AlertDialogDescription></AlertDialogDescription>
+                                        <Textarea class="h-32" v-model="myComment" placeholder="说点什么..."></Textarea>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                        <AlertDialogCancel>算了</AlertDialogCancel>
+                                        <AlertDialogAction :disabled="!myComment" @click="submitReply(comment.id)">
+                                            发送</AlertDialogAction>
+                                    </AlertDialogFooter>
+                                </AlertDialogContent>
+                            </AlertDialog>
                         </div>
-                        <div v-else></div>
                         <div class="flex items-center">
                             <p class="pr-2">{{ comment.likeCount }}</p>
                             <span class="icon-[streamline--hearts-symbol-remix]"></span>
@@ -125,6 +143,12 @@
             </div>
 
         </div>
+        <!-- 回复 -->
+        <div class="border-t-3"></div>
+        <div class="grid w-full gap-2 pb-15 pt-2">
+            <Textarea v-model="myComment" class="h-32" placeholder="说点什么..."></Textarea>
+            <Button @click="submitComment()" :disabled="!myComment">发送</Button>
+        </div>
     </div>
 </template>
 
@@ -133,12 +157,15 @@
     import { onMounted, ref } from 'vue'
     import { useRoute } from 'vue-router'
     import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+    import { Textarea } from "@/components/ui/textarea"
     import { Button } from "@/components/ui/button"
+    import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger, } from '@/components/ui/alert-dialog'
     import dayjs from 'dayjs'
     import relativeTime from 'dayjs/plugin/relativeTime'
     import 'dayjs/locale/zh-cn'
     import { useForumCategoryStore } from '@/stores/ForumCategoryStore'
     const categoryStore = useForumCategoryStore()
+    
 
     // 初始化dayjs
     dayjs.extend(relativeTime)
@@ -200,7 +227,6 @@
         })
         post.value = response.data.data
         setReply(post.value?.comment.flatMap(comment => comment.reply))
-        console.log(replyMap.value)
     }
 
     // 时间格式化
@@ -220,6 +246,35 @@
     // 打开回复
     const openReply = (id: number) => {
         replyMap.value.set(id, !replyMap.value.get(id))
+    }
+
+    // 评论
+    const myComment = ref('')
+
+    // 直接评论
+    const submitComment = async () => {
+        // 之后追加最新消息
+        const response = await axios.post("/user/forum/comment", {
+            id: post.value?.id,
+            content: myComment.value
+        })
+        myComment.value = ''
+        post.value?.comment.push(response.data.data)
+    }
+    // 评论的回复
+    const submitReply = async (parent: number) => {
+        // 之后追加最新消息
+        const response = await axios.post("/user/forum/comment/reply", {
+            id: post.value?.id,
+            parent: parent,
+            content: myComment.value
+        })
+        const res = post.value?.comment.find(comment => comment.id === parent)
+        if (response.data.code === 1 && res) {
+            res.reply.push(response.data.data)
+            replyMap.value.set(parent, true)
+        }
+        myComment.value = ''
     }
 
 </script>

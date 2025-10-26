@@ -1,6 +1,5 @@
 package com.laolao.mapper.user;
 
-import com.laolao.pojo.user.dto.UserLoginOrRegisterDTO;
 import com.laolao.pojo.user.entity.User;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
@@ -11,7 +10,7 @@ import java.util.List;
 
 @Mapper
 public interface UserMapper {
-    User checkUserExists(UserLoginOrRegisterDTO userLoginOrRegisterDTO);
+    User checkUserExists(String username, String email);
 
     @Insert("insert into user (id, username, password, name, email) " +
             "values (#{id}, #{username}, #{password}, #{name}, #{email})")

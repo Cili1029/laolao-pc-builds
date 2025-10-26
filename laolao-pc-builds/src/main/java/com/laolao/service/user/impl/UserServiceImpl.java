@@ -8,7 +8,9 @@ import com.laolao.common.utils.AliyunDirectMailUtil;
 import com.laolao.converter.MapStruct;
 import com.laolao.common.exception.UnknownError;
 import com.laolao.mapper.user.UserMapper;
-import com.laolao.pojo.user.dto.UserLoginOrRegisterDTO;
+import com.laolao.pojo.user.dto.LoginByEmailDTO;
+import com.laolao.pojo.user.dto.LoginByUsernameDTO;
+import com.laolao.pojo.user.dto.RegisterDTO;
 import com.laolao.pojo.user.entity.User;
 import com.laolao.pojo.user.vo.UserVO;
 import com.laolao.common.result.Result;
@@ -43,7 +45,7 @@ public class UserServiceImpl implements UserService {
     private AliyunDirectMailUtil aliyunDirectMailUtil;
 
     @Override
-    public void getEmailCode(String email) throws Exception {
+    public Result<String> getEmailCode(String email) throws Exception {
         // 手机号位数验证待开发 应该先验证用户是否存在，在验证验证码
         if (!StringUtils.hasText(email)) {
             throw new UnknownError(MessageConstant.UNKNOWN_ERROR);
@@ -58,13 +60,12 @@ public class UserServiceImpl implements UserService {
 
         // 验证码存入Redis用于验证
         stringRedisTemplate.opsForValue().set(RedisConstant.LOGIN_CODE_KEY + email, code, RedisConstant.LOGIN_CODE_TTL, TimeUnit.MINUTES);
+        return Result.success("已发送！");
     }
 
     @Override
-    public Result<UserVO> login(UserLoginOrRegisterDTO userLoginOrRegisterDTO, HttpServletResponse res) {
-        if (StringUtils.hasText(userLoginOrRegisterDTO.getUsername()) && StringUtils.hasText(userLoginOrRegisterDTO.getPassword())) {
-            // 账户密码登录
-            User user = userMapper.checkUserExists(userLoginOrRegisterDTO);
+    public Result<UserVO> loginByUsername(LoginByUsernameDTO loginByUsernameDTO, HttpServletResponse res) {
+            User user = userMapper.checkUserExists(loginByUsernameDTO.getUsername(), null);
 
             // 用户不存在
             if (user == null) {
@@ -72,49 +73,49 @@ public class UserServiceImpl implements UserService {
             }
 
             // 加密密码进行比对，错误则密码错误
-            String password = DigestUtils.md5DigestAsHex(userLoginOrRegisterDTO.getPassword().getBytes());
+            String password = DigestUtils.md5DigestAsHex(loginByUsernameDTO.getPassword().getBytes());
             if (!password.equals(user.getPassword())) {
                 return Result.error(MessageConstant.PASSWORD_ERROR);
             }
 
             // 设置jwt令牌并返回前端
             return setJwtToLogin(user, res);
-        } else if (StringUtils.hasText(userLoginOrRegisterDTO.getEmail()) && StringUtils.hasText(userLoginOrRegisterDTO.getEmailCode())) {
-            // 电话验证码登录
-            Result<String> result = email(userLoginOrRegisterDTO);
+    }
+
+    @Override
+    public Result<UserVO> loginByEmail(LoginByEmailDTO loginByEmailDTO, HttpServletResponse res) {
+            Result<String> result = email(loginByEmailDTO.getEmail(), loginByEmailDTO.getEmailCode());
             if (result != null) {
                 return Result.error(result.getMsg());
             }
-            User user = userMapper.checkUserExists(userLoginOrRegisterDTO);
+            User user = userMapper.checkUserExists(null,loginByEmailDTO.getEmail());
             // 用户不存在
             if (user == null) {
                 return Result.error(MessageConstant.USER_NOT_FOUND);
             }
             return setJwtToLogin(user, res);
-        }
-        return Result.error(MessageConstant.UNKNOWN_ERROR);
     }
 
     @Override
-    public Result<UserVO> register(UserLoginOrRegisterDTO userLoginOrRegisterDTO, HttpServletResponse res) {
-        if (!StringUtils.hasText(userLoginOrRegisterDTO.getUsername()) || !StringUtils.hasText(userLoginOrRegisterDTO.getPassword()) || !StringUtils.hasText(userLoginOrRegisterDTO.getEmail()) || !StringUtils.hasText(userLoginOrRegisterDTO.getEmailCode())) {
+    public Result<UserVO> register(RegisterDTO registerDTO, HttpServletResponse res) {
+        if (!StringUtils.hasText(registerDTO.getUsername()) || !StringUtils.hasText(registerDTO.getPassword()) || !StringUtils.hasText(registerDTO.getEmail()) || !StringUtils.hasText(registerDTO.getEmailCode())) {
             return Result.error(MessageConstant.UNKNOWN_ERROR);
         }
 
-        Result<String> result = email(userLoginOrRegisterDTO);
+        Result<String> result = email(registerDTO.getEmail(), registerDTO.getEmailCode());
         if (result != null) {
             return Result.error(result.getMsg());
         }
 
-        if (userMapper.checkUserExists(userLoginOrRegisterDTO) != null) {
+        if (userMapper.checkUserExists(registerDTO.getUsername(), registerDTO.getEmail()) != null) {
             return Result.error(MessageConstant.USER_ALREADY_EXISTS);
         }
 
         User user = new User();
         user.setName("user_" + RandomUtil.randomString(10));
-        user.setUsername(userLoginOrRegisterDTO.getUsername());
-        user.setPassword(DigestUtils.md5DigestAsHex(userLoginOrRegisterDTO.getPassword().getBytes()));
-        user.setEmail(userLoginOrRegisterDTO.getEmail());
+        user.setUsername(registerDTO.getUsername());
+        user.setPassword(DigestUtils.md5DigestAsHex(registerDTO.getPassword().getBytes()));
+        user.setEmail(registerDTO.getEmail());
         // 写入数据库
         userMapper.addUser(user);
 
@@ -160,12 +161,12 @@ public class UserServiceImpl implements UserService {
     }
 
     // 电话合理性以及验证码验证
-    private Result<String> email(UserLoginOrRegisterDTO userLoginOrRegisterDTO) {
+    private Result<String> email(String email, String code) {
         // 手机号位数验证待开发
 
         // 验证验证码
-        String emailCode = stringRedisTemplate.opsForValue().get(RedisConstant.LOGIN_CODE_KEY + userLoginOrRegisterDTO.getEmail());
-        if (emailCode == null || !emailCode.equals(userLoginOrRegisterDTO.getEmailCode())) {
+        String emailCode = stringRedisTemplate.opsForValue().get(RedisConstant.LOGIN_CODE_KEY + email);
+        if (emailCode == null || !emailCode.equals(code)) {
             return Result.error(MessageConstant.EMAILCODE_ERROR);
         }
 
