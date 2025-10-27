@@ -7,7 +7,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class LoginByEmailDTO {
+public class SignInWithEmailDTO {
     /**
      * 邮箱
      */

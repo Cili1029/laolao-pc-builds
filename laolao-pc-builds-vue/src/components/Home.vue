@@ -22,7 +22,7 @@
             <h3 class="text-2xl font-bold text-gray-800 mb-4">该怎么配呢？</h3>
             <p class="text-gray-600 mb-6">智能兼容性检查，一键生成专属配置方案，小白也能轻松装机</p>
             <button class="w-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium py-3 rounded-lg transition-colors">
-                开始装机
+                开始装机(还没写)
             </button>
         </div>
 

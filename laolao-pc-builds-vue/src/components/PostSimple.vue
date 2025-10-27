@@ -14,6 +14,15 @@
             </div>
         </div>
         <div class="border-t-4"></div>
+        <div class="flex justify-between items-center p-2">
+            <div></div>
+            <div class="flex w-1/3 max-w-sm items-center gap-1.5">
+                <Button v-if="back" @click="getPost()">返回</Button>
+                <Input type="text" placeholder="搜索帖子..." v-model="searchContent" />
+                <Button type="submit" @click="search()" :disabled="!searchContent">搜索</Button>
+            </div>
+        </div>
+        <div class="border-t-4"></div>
         <div>
             <div class="flex m-2 justify-between items-center">
                 <div class="text-l text-gray-500">帖子</div>
@@ -45,6 +54,8 @@
 <script setup lang="ts">
     import axios from '@/utils/myAxios'
     import { ref, watchEffect } from 'vue'
+    import { Input } from "@/components/ui/input"
+    import { Button } from "@/components/ui/button"
     import { useForumCategoryStore } from '@/stores/ForumCategoryStore'
     const categoryStore = useForumCategoryStore()
 
@@ -58,7 +69,10 @@
     }
     const postSimple = ref<PostSimple[]>([])
 
+    const back = ref<boolean>(false)
     const getPost = async () => {
+        console.log("bbbbbbb")
+        back.value = false
         const response = await axios.get("/user/forum/post/simple", {
             params: {
                 categoryId: categoryStore.category.id
@@ -72,6 +86,21 @@
             getPost()
         }
     })
+
+    // 搜索
+    const searchContent = ref()
+    
+    const search = async () => {
+        const response = await axios.get("/user/forum/post/search", {
+            params: {
+                categoryId: categoryStore.category.id,
+                searchContent: searchContent.value
+            }
+        })
+        postSimple.value = response.data.data
+        searchContent.value = null
+        back.value = true
+    }
 </script>
 
 <style scoped></style>

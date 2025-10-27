@@ -11,8 +11,7 @@
             <div class="h-24 px-3 bg-white flex flex-col justify-center">
                 <p class="text-2xl font-bold">{{ post?.title }}</p>
                 <div class="flex">
-                    <span class="text-xl"
-                        :class="categoryStore.getIconClass(categoryStore.category.id)"></span>
+                    <span class="text-xl" :class="categoryStore.getIconClass(categoryStore.category.id)"></span>
                     <p class="text-l">{{ categoryStore.category.name }}</p>
                 </div>
             </div>
@@ -35,9 +34,28 @@
                         <p class="pb-20">{{ post?.content }}</p>
                         <!-- 还有图片 -->
                     </div>
-                    <div class="pb-4 flex justify-end items-center">
-                        <p class="pr-2">{{ post?.likeCount }}</p>
-                        <span class="icon-[streamline--hearts-symbol-remix]"></span>
+                    <div class="flex flex-col items-end gap-1">
+                        <div class="flex items-center">
+                            <p class="pr-2">{{ post?.likeCount }}</p>
+                            <span class="icon-[streamline--hearts-symbol-remix]"></span>
+                        </div>
+                        <AlertDialog v-if="post?.user.id === userStore.user.id">
+                            <AlertDialogTrigger as-child>
+                                <p class="text-xs hover:text-orange-500">删除帖子</p>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                                <AlertDialogHeader>
+                                    <AlertDialogTitle>确定要删除吗？</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                        点错了就关，别真删除了，在被窝里偷偷听反方向的钟
+                                    </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                    <AlertDialogCancel>点错了</AlertDialogCancel>
+                                    <AlertDialogAction @click="deletePost(post?.id)">故意的</AlertDialogAction>
+                                </AlertDialogFooter>
+                            </AlertDialogContent>
+                        </AlertDialog>
                     </div>
                 </div>
             </div>
@@ -99,9 +117,28 @@
                                 </AlertDialogContent>
                             </AlertDialog>
                         </div>
-                        <div class="flex items-center">
-                            <p class="pr-2">{{ comment.likeCount }}</p>
-                            <span class="icon-[streamline--hearts-symbol-remix]"></span>
+                        <div class="flex flex-col items-end gap-1">
+                            <div class="flex items-center">
+                                <p class="pr-2">{{ comment.likeCount }}</p>
+                                <span class="icon-[streamline--hearts-symbol-remix]"></span>
+                            </div>
+                            <AlertDialog v-if="comment.user.id === userStore.user.id">
+                                <AlertDialogTrigger as-child>
+                                    <p class="text-xs hover:text-orange-500">删除评论</p>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                        <AlertDialogTitle>确定要删除吗？</AlertDialogTitle>
+                                        <AlertDialogDescription>
+                                            点错了就关，别真删除了，在被窝里偷偷听反方向的钟
+                                        </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                        <AlertDialogCancel>点错了</AlertDialogCancel>
+                                        <AlertDialogAction @click="deleteComment(comment.id)">故意的</AlertDialogAction>
+                                    </AlertDialogFooter>
+                                </AlertDialogContent>
+                            </AlertDialog>
                         </div>
                     </div>
                     <div class="border-t-2"></div>
@@ -127,15 +164,29 @@
                             <p>{{ reply.content }}</p>
                             <!-- 还有图片 -->
                         </div>
-                        <div class="pb-4 flex justify-between items-center">
-                            <div v-if="replyMap.has(reply.id)">
-                                <Button variant="secondary" @click="openReply(reply.id)">展开回复</Button>
-                            </div>
-                            <div v-else></div>
+                        <div class="flex flex-col items-end gap-1 pb-4">
                             <div class="flex items-center">
                                 <p class="pr-2">{{ reply.likeCount }}</p>
                                 <span class="icon-[streamline--hearts-symbol-remix]"></span>
                             </div>
+                            <AlertDialog v-if="reply.user.id === userStore.user.id">
+                                <AlertDialogTrigger as-child>
+                                    <p class="text-xs hover:text-orange-500">删除回复</p>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                        <AlertDialogTitle>确定要删除吗？</AlertDialogTitle>
+                                        <AlertDialogDescription>
+                                            点错了就关，别真删除了，在被窝里偷偷听反方向的钟
+                                        </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                        <AlertDialogCancel>点错了</AlertDialogCancel>
+                                        <AlertDialogAction @click="deleteReply(comment.id, reply.id)">故意的
+                                        </AlertDialogAction>
+                                    </AlertDialogFooter>
+                                </AlertDialogContent>
+                            </AlertDialog>
                         </div>
                         <div class="border-t-2"></div>
                     </div>
@@ -165,7 +216,10 @@
     import 'dayjs/locale/zh-cn'
     import { useForumCategoryStore } from '@/stores/ForumCategoryStore'
     const categoryStore = useForumCategoryStore()
-    
+    import { useUserStore } from '@/stores/UserStore'
+    const userStore = useUserStore()
+    import router from '@/router'
+
 
     // 初始化dayjs
     dayjs.extend(relativeTime)
@@ -226,7 +280,10 @@
             }
         })
         post.value = response.data.data
-        setReply(post.value?.comment.flatMap(comment => comment.reply))
+        if (post.value?.comment) {
+            // 提取所有回复
+            setReply(post.value?.comment.flatMap(comment => comment.reply || []))
+        }
     }
 
     // 时间格式化
@@ -240,7 +297,9 @@
     const setReply = (replyList: ReplyVO[] | undefined) => {
         if (!replyList) return null
         replyList.forEach(reply => {
-            replyMap.value.set(reply.parent, false)
+            if (reply.parent) {
+                replyMap.value.set(reply.parent, false)
+            }
         })
     }
     // 打开回复
@@ -259,8 +318,14 @@
             content: myComment.value
         })
         myComment.value = ''
-        post.value?.comment.push(response.data.data)
+        if (post.value && response.data.data) {
+            if (!post.value.comment) {
+                post.value.comment = []
+            }
+            post.value.comment.push(response.data.data)
+        }
     }
+
     // 评论的回复
     const submitReply = async (parent: number) => {
         // 之后追加最新消息
@@ -271,10 +336,42 @@
         })
         const res = post.value?.comment.find(comment => comment.id === parent)
         if (response.data.code === 1 && res) {
+            if (!res.reply) {
+                res.reply = [] // 如果reply不存在，初始化为空数组
+            }
             res.reply.push(response.data.data)
             replyMap.value.set(parent, true)
         }
         myComment.value = ''
+    }
+
+    // 删除帖子
+    const deletePost = async (id: number) => {
+        await axios.delete(`/user/forum/post/${id}`)
+        post.value = undefined
+        router.back()
+    }
+
+    // 删除评论
+    const deleteComment = async (id: number) => {
+        await axios.delete(`/user/forum/comment/${id}`)
+        if (post.value) {
+            post.value.comment = post.value.comment.filter(comment => comment.id !== id)
+        }
+    }
+
+    // 删除楼中楼评论
+    const deleteReply = async (commentId: number, replyId: number) => {
+        await axios.delete(`/user/forum/comment/reply/${replyId}`)
+        if (post.value) {
+            const comment = post.value.comment.find(c => c.id === commentId)
+            if (comment && comment.reply) {
+                comment.reply = comment.reply.filter(reply => reply.id !== replyId)
+                if (replyMap.value.has(replyId)) {
+                    replyMap.value.delete(replyId)
+                }
+            }
+        }
     }
 
 </script>

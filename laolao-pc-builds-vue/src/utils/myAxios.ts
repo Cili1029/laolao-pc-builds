@@ -20,7 +20,16 @@ request.interceptors.request.use(
 // 响应拦截器
 request.interceptors.response.use(
     response => {
-        if (response.data.msg != null) {
+        // 如果业务代码为0（失败），显示消息并结束
+        if (response.data.code === 0) {
+            toast("错误！", {
+                description: response.data.msg,
+                action: {
+                    label: '我知道了',
+                },
+            })
+            return Promise.reject(new Error(response.data.msg || '操作失败'))
+        } else if (response.data.msg != null) {
             toast("嗨！", {
                 description: response.data.msg,
                 action: {
@@ -38,7 +47,7 @@ request.interceptors.response.use(
             switch (status) {
                 case 401:
                     // 跳转到登录页
-                    router.push('/home')
+                    router.push('/sign')
                     msg = '该功能需要登录，请先登录'
                     break
                 default:

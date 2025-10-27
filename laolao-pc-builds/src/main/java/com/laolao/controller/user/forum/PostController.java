@@ -1,6 +1,7 @@
 package com.laolao.controller.user.forum;
 
 import com.laolao.common.result.Result;
+import com.laolao.pojo.forum.dto.CreatePostDTO;
 import com.laolao.pojo.forum.vo.PostSimpleVO;
 import com.laolao.pojo.forum.vo.PostVO;
 import com.laolao.service.forum.PostService;
@@ -37,5 +38,39 @@ public class PostController {
     @GetMapping
     public Result<PostVO> getPost(int id) {
         return postService.getPost(id);
+    }
+
+    /**
+     * 搜索各类别的帖子
+     *
+     * @param categoryId 类别Id
+     * @param searchContent 内容
+     * @return 帖子简略数据
+     */
+    @GetMapping("/search")
+    public Result<List<PostSimpleVO>> search(int categoryId, String searchContent) {
+        return postService.search(categoryId, searchContent);
+    }
+
+    /**
+     * 发布帖子
+     *
+     * @param createPostDTO 内容
+     * @return 结果信息
+     */
+    @PostMapping("/create")
+    public Result<String> createPost(@RequestBody CreatePostDTO createPostDTO) {
+        return postService.createPost(createPostDTO);
+    }
+
+    /**
+     * 删除帖子
+     *
+     * @param id 帖子Id
+     * @return 结果信息
+     */
+    @DeleteMapping("/{id}")
+    public Result<String> deletePost(@PathVariable int id) {
+        return postService.deletePost(id);
     }
 }

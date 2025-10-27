@@ -1,6 +1,7 @@
 package com.laolao.service.forum;
 
 import com.laolao.common.result.Result;
+import com.laolao.pojo.forum.dto.CreatePostDTO;
 import com.laolao.pojo.forum.vo.PostSimpleVO;
 import com.laolao.pojo.forum.vo.PostVO;
 
@@ -10,4 +11,10 @@ public interface PostService {
     Result<List<PostSimpleVO>> getPostSimple(int categoryId);
 
     Result<PostVO> getPost(int id);
+
+    Result<List<PostSimpleVO>> search(int categoryId, String searchContent);
+
+    Result<String> createPost(CreatePostDTO createPostDTO);
+
+    Result<String> deletePost(int id);
 }

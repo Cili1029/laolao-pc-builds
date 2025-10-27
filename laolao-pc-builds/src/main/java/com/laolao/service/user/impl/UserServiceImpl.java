@@ -8,9 +8,9 @@ import com.laolao.common.utils.AliyunDirectMailUtil;
 import com.laolao.converter.MapStruct;
 import com.laolao.common.exception.UnknownError;
 import com.laolao.mapper.user.UserMapper;
-import com.laolao.pojo.user.dto.LoginByEmailDTO;
-import com.laolao.pojo.user.dto.LoginByUsernameDTO;
-import com.laolao.pojo.user.dto.RegisterDTO;
+import com.laolao.pojo.user.dto.SignInWithEmailDTO;
+import com.laolao.pojo.user.dto.SignInWithUsernameDTO;
+import com.laolao.pojo.user.dto.SignUpDTO;
 import com.laolao.pojo.user.entity.User;
 import com.laolao.pojo.user.vo.UserVO;
 import com.laolao.common.result.Result;
@@ -59,13 +59,13 @@ public class UserServiceImpl implements UserService {
         }
 
         // 验证码存入Redis用于验证
-        stringRedisTemplate.opsForValue().set(RedisConstant.LOGIN_CODE_KEY + email, code, RedisConstant.LOGIN_CODE_TTL, TimeUnit.MINUTES);
+        stringRedisTemplate.opsForValue().set(RedisConstant.SIGN_IN_CODE_KEY + email, code, RedisConstant.SIGN_IN_CODE_TTL, TimeUnit.MINUTES);
         return Result.success("已发送！");
     }
 
     @Override
-    public Result<UserVO> loginByUsername(LoginByUsernameDTO loginByUsernameDTO, HttpServletResponse res) {
-            User user = userMapper.checkUserExists(loginByUsernameDTO.getUsername(), null);
+    public Result<UserVO> signInWithUsername(SignInWithUsernameDTO signInWithUsernameDTO, HttpServletResponse res) {
+            User user = userMapper.checkUserExists(signInWithUsernameDTO.getUsername(), null);
 
             // 用户不存在
             if (user == null) {
@@ -73,58 +73,58 @@ public class UserServiceImpl implements UserService {
             }
 
             // 加密密码进行比对，错误则密码错误
-            String password = DigestUtils.md5DigestAsHex(loginByUsernameDTO.getPassword().getBytes());
+            String password = DigestUtils.md5DigestAsHex(signInWithUsernameDTO.getPassword().getBytes());
             if (!password.equals(user.getPassword())) {
                 return Result.error(MessageConstant.PASSWORD_ERROR);
             }
 
             // 设置jwt令牌并返回前端
-            return setJwtToLogin(user, res);
+            return setJwtToSignIn(user, res);
     }
 
     @Override
-    public Result<UserVO> loginByEmail(LoginByEmailDTO loginByEmailDTO, HttpServletResponse res) {
-            Result<String> result = email(loginByEmailDTO.getEmail(), loginByEmailDTO.getEmailCode());
+    public Result<UserVO> signInWithEmail(SignInWithEmailDTO signInWithEmailDTO, HttpServletResponse res) {
+            Result<String> result = email(signInWithEmailDTO.getEmail(), signInWithEmailDTO.getEmailCode());
             if (result != null) {
                 return Result.error(result.getMsg());
             }
-            User user = userMapper.checkUserExists(null,loginByEmailDTO.getEmail());
+            User user = userMapper.checkUserExists(null, signInWithEmailDTO.getEmail());
             // 用户不存在
             if (user == null) {
                 return Result.error(MessageConstant.USER_NOT_FOUND);
             }
-            return setJwtToLogin(user, res);
+            return setJwtToSignIn(user, res);
     }
 
     @Override
-    public Result<UserVO> register(RegisterDTO registerDTO, HttpServletResponse res) {
-        if (!StringUtils.hasText(registerDTO.getUsername()) || !StringUtils.hasText(registerDTO.getPassword()) || !StringUtils.hasText(registerDTO.getEmail()) || !StringUtils.hasText(registerDTO.getEmailCode())) {
+    public Result<UserVO> signUp(SignUpDTO signUpDTO, HttpServletResponse res) {
+        if (!StringUtils.hasText(signUpDTO.getUsername()) || !StringUtils.hasText(signUpDTO.getPassword()) || !StringUtils.hasText(signUpDTO.getEmail()) || !StringUtils.hasText(signUpDTO.getEmailCode())) {
             return Result.error(MessageConstant.UNKNOWN_ERROR);
         }
 
-        Result<String> result = email(registerDTO.getEmail(), registerDTO.getEmailCode());
+        Result<String> result = email(signUpDTO.getEmail(), signUpDTO.getEmailCode());
         if (result != null) {
             return Result.error(result.getMsg());
         }
 
-        if (userMapper.checkUserExists(registerDTO.getUsername(), registerDTO.getEmail()) != null) {
+        if (userMapper.checkUserExists(signUpDTO.getUsername(), signUpDTO.getEmail()) != null) {
             return Result.error(MessageConstant.USER_ALREADY_EXISTS);
         }
 
         User user = new User();
         user.setName("user_" + RandomUtil.randomString(10));
-        user.setUsername(registerDTO.getUsername());
-        user.setPassword(DigestUtils.md5DigestAsHex(registerDTO.getPassword().getBytes()));
-        user.setEmail(registerDTO.getEmail());
+        user.setUsername(signUpDTO.getUsername());
+        user.setPassword(DigestUtils.md5DigestAsHex(signUpDTO.getPassword().getBytes()));
+        user.setEmail(signUpDTO.getEmail());
         // 写入数据库
         userMapper.addUser(user);
 
         // 设置jwt令牌并返回前端
-        return setJwtToLogin(user, res);
+        return setJwtToSignIn(user, res);
     }
 
     @Override
-    public Result<String> logout(HttpServletResponse res) {
+    public Result<String> signOut(HttpServletResponse res) {
         Cookie cookie = new Cookie("jwt_token", null);
         cookie.setHttpOnly(true);        // 防止 XSS 攻击
         cookie.setSecure(false);         // 本地开发用 false，生产环境用 true (HTTPS)
@@ -165,7 +165,7 @@ public class UserServiceImpl implements UserService {
         // 手机号位数验证待开发
 
         // 验证验证码
-        String emailCode = stringRedisTemplate.opsForValue().get(RedisConstant.LOGIN_CODE_KEY + email);
+        String emailCode = stringRedisTemplate.opsForValue().get(RedisConstant.SIGN_IN_CODE_KEY + email);
         if (emailCode == null || !emailCode.equals(code)) {
             return Result.error(MessageConstant.EMAILCODE_ERROR);
         }
@@ -174,7 +174,7 @@ public class UserServiceImpl implements UserService {
         return null;
     }
 
-    private Result<UserVO> setJwtToLogin(User user, HttpServletResponse res) {
+    private Result<UserVO> setJwtToSignIn(User user, HttpServletResponse res) {
         // 转换为VO
         UserVO userVO = mapStruct.userToUserVO(user);
 

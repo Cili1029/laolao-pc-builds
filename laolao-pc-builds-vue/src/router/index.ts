@@ -8,6 +8,8 @@ import MyOrders from '@/components/MyOrders.vue';
 import Forum from '@/components/Forum.vue';
 import Post from '@/components/Post.vue';
 import PostSimple from '@/components/PostSimple.vue';
+import Sign from '@/components/sign.vue';
+
 
 // 使用 RouteRecordRaw 类型定义路由
 const routes = [
@@ -20,6 +22,12 @@ const routes = [
     path: '/home',
     name: 'Home',
     component: Home,
+    meta: { showFooter: true }
+  },
+  {
+    path: '/sign',
+    name: 'Sign',
+    component: Sign,
     meta: { showFooter: true }
   },
   {

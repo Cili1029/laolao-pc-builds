@@ -75,8 +75,8 @@
             </Drawer>
 
             <!-- 未登录，点击登录 -->
-            <div v-if="!userStore.login">
-              <RouterLink to="/hello">
+            <div v-if="!userStore.signedIn">
+              <RouterLink to="/sign">
                 <Avatar class="cursor-pointer hover:ring-2 hover:ring-blue-500 transition-all">
                   <AvatarFallback>登录</AvatarFallback>
                 </Avatar>
@@ -100,11 +100,11 @@
                   <DropdownMenuSeparator />
                   <DropdownMenuItem>
                     <User class="mr-2 h-4 w-4" />
-                    <span>个人信息</span>
+                    <span>个人信息(还没写)</span>
                   </DropdownMenuItem>
                   <DropdownMenuItem>
                     <Smile class="mr-2 h-4 w-4" />
-                    <span>签到/优惠券</span>
+                    <span>签到/优惠券(还没写)</span>
                   </DropdownMenuItem>
                   <RouterLink to="/my-orders">
                     <DropdownMenuItem>
@@ -113,7 +113,7 @@
                     </DropdownMenuItem>
                   </RouterLink>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem @click="logout" class="text-red-600 focus:text-red-600">
+                  <DropdownMenuItem @click="signOut" class="text-red-600 focus:text-red-600">
                     <LogOut class="mr-2 h-4 w-4" />
                     <span>退出登录</span>
                   </DropdownMenuItem>
@@ -190,6 +190,7 @@
   import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
   import { ShoppingBag, LogOut, User, Smile } from "lucide-vue-next"
   import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+  import { Drawer, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger, DrawerClose } from "@/components/ui/drawer"
   import { Button } from "@/components/ui/button"
   import { useRouter } from 'vue-router'
   const router = useRouter()
@@ -233,18 +234,10 @@
     }
   }
 
-  // 当前登录的用户昵称
-  interface User {
-    id: number
-    avatar: string
-    username: string
-    name: string
-  }
-
   // 退出登录
-  const logout = async () => {
+  const signOut = async () => {
     try {
-      await axios.get('/user/user/logout')
+      await axios.get('/user/user/sign-out')
       goHome()
     } catch (error) {
       toast("嗨！", {
@@ -259,8 +252,6 @@
   }
 
   // 以下是购物车模块
-  import { Drawer, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger, DrawerClose } from "@/components/ui/drawer"
-
   interface Product {
     id: number,
     productType: number,
@@ -287,6 +278,7 @@
     }
   }
 
+  // 商品数量改变
   const quantity = async (product: Product, type: number) => {
     try {
       if (type === 0) {
@@ -316,7 +308,6 @@
           update.quantity = update.quantity + 1
         }
       }
-
     } catch (error) {
       console.log(error)
     }

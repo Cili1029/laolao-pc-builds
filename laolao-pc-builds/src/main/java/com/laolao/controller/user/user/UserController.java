@@ -1,8 +1,8 @@
 package com.laolao.controller.user.user;
 
-import com.laolao.pojo.user.dto.LoginByEmailDTO;
-import com.laolao.pojo.user.dto.LoginByUsernameDTO;
-import com.laolao.pojo.user.dto.RegisterDTO;
+import com.laolao.pojo.user.dto.SignInWithEmailDTO;
+import com.laolao.pojo.user.dto.SignInWithUsernameDTO;
+import com.laolao.pojo.user.dto.SignUpDTO;
 import com.laolao.pojo.user.vo.UserVO;
 import com.laolao.common.result.Result;
 import com.laolao.service.user.UserService;
@@ -37,38 +37,38 @@ public class UserController {
     /**
      * 账号密码登录
      *
-     * @param loginByUsernameDTO 登录所需的基本信息
+     * @param signInWithUsernameDTO 登录所需的基本信息
      * @param res 响应
      * @return 用户基本数据
      */
-    @PostMapping("/login-username")
-    public Result<UserVO> loginByUsername(@RequestBody LoginByUsernameDTO loginByUsernameDTO, HttpServletResponse res) {
-        return userService.loginByUsername(loginByUsernameDTO, res);
+    @PostMapping("/sign-in/username")
+    public Result<UserVO> signInWithUsername(@RequestBody SignInWithUsernameDTO signInWithUsernameDTO, HttpServletResponse res) {
+        return userService.signInWithUsername(signInWithUsernameDTO, res);
     }
 
     /**
      * 账号密码登录
      *
-     * @param loginByEmailDTO 登录所需的基本信息
+     * @param signInWithEmailDTO 登录所需的基本信息
      * @param res 响应
      * @return 用户基本数据
      */
-    @PostMapping("/login-email")
-    public Result<UserVO> loginByUsername(@RequestBody LoginByEmailDTO loginByEmailDTO, HttpServletResponse res) {
-        return userService.loginByEmail(loginByEmailDTO, res);
+    @PostMapping("/sign-in/email")
+    public Result<UserVO> signInWithEmail(@RequestBody SignInWithEmailDTO signInWithEmailDTO, HttpServletResponse res) {
+        return userService.signInWithEmail(signInWithEmailDTO, res);
     }
 
     /**
      * 用户注册
      * 注册成功后自动登录
      *
-     * @param registerDTO 注册所需的基本信息
+     * @param signUpDTO 注册所需的基本信息
      * @param res 响应
      * @return 用户基本数据
      */
-    @PostMapping("/register")
-    public Result<UserVO> register(@RequestBody RegisterDTO registerDTO, HttpServletResponse res) {
-        return userService.register(registerDTO, res);
+    @PostMapping("/sign-up")
+    public Result<UserVO> signUp(@RequestBody SignUpDTO signUpDTO, HttpServletResponse res) {
+        return userService.signUp(signUpDTO, res);
     }
 
 
@@ -91,8 +91,8 @@ public class UserController {
      * @param res 响应
      * @return 结果信息
      */
-    @GetMapping("/logout")
-    public Result<String> logout(HttpServletResponse res) {
-        return userService.logout(res);
+    @GetMapping("/sign-out")
+    public Result<String> signOut(HttpServletResponse res) {
+        return userService.signOut(res);
     }
 }

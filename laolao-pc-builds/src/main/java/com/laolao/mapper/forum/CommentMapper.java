@@ -7,7 +7,7 @@ import java.util.List;
 
 @Mapper
 public interface CommentMapper {
-    @Select("select * from forum_comment where post_id = #{id}")
+    @Select("select * from forum_comment where post_id = #{id} and status = 1")
     List<Comment> selectComment(int id);
 
     @Insert("insert into forum_comment(post_id, user_id, content, created_at) value (#{postId}, #{userId}, #{content}, #{createdAt})")
@@ -23,4 +23,7 @@ public interface CommentMapper {
 
     @Update("update forum_comment set status = 2 where parent = #{id}")
     void deleteReplyByParent(int id);
+
+    @Update("update forum_comment set status = 2 where post_id = #{id} and user_id = #{userId}")
+    void deleteCommentByPostId(int id, int userId);
 }

@@ -1,10 +1,12 @@
 package com.laolao.service.forum.impl;
 
+import com.laolao.common.context.BaseContext;
 import com.laolao.common.result.Result;
 import com.laolao.converter.MapStruct;
 import com.laolao.mapper.forum.CommentMapper;
 import com.laolao.mapper.forum.PostMapper;
 import com.laolao.mapper.user.UserMapper;
+import com.laolao.pojo.forum.dto.CreatePostDTO;
 import com.laolao.pojo.forum.entity.Comment;
 import com.laolao.pojo.forum.entity.Post;
 import com.laolao.pojo.forum.vo.CommentReplyVO;
@@ -16,7 +18,9 @@ import com.laolao.pojo.user.vo.UserVO;
 import com.laolao.service.forum.PostService;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -102,6 +106,45 @@ public class PostServiceImpl implements PostService {
         // 写入
         postVO.setComment(commentVOList);
         return Result.success(postVO);
+    }
+
+    @Override
+    public Result<List<PostSimpleVO>> search(int categoryId, String searchContent) {
+        List<Post> postList = postMapper.searchPostSimple(categoryId, searchContent);
+        if (postList.isEmpty()) {
+            return Result.success(Collections.emptyList(),"什么也没找到...");
+        }
+        List<PostSimpleVO> postSimpleVOList = new ArrayList<>();
+        for (Post post : postList) {
+            PostSimpleVO postSimpleVO = mapStruct.PostToSimpleVO(post);
+            postSimpleVOList.add(postSimpleVO);
+        }
+        return Result.success(postSimpleVOList, "找到东西了！");
+    }
+
+    @Override
+    public Result<String> createPost(CreatePostDTO createPostDTO) {
+        Post post = Post.builder()
+                .userId(BaseContext.getCurrentId())
+                .categoryId(createPostDTO.getCategoryId())
+                .title(createPostDTO.getTitle())
+                .content(createPostDTO.getContent())
+                .images(createPostDTO.getImages())
+                .createdAt(LocalDateTime.now())
+                .build();
+        postMapper.insertPost(post);
+        return Result.success("发布成功");
+    }
+
+    @Override
+    @Transactional
+    public Result<String> deletePost(int id) {
+        int userId = BaseContext.getCurrentId();
+        // 先删评论
+        commentMapper.deleteCommentByPostId(id, userId);
+        // 删帖子
+        postMapper.delete(id, userId);
+        return Result.success("删除成功");
     }
 
     // 用于设置评论的用户信息

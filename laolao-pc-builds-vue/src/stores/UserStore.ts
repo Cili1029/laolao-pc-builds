@@ -15,7 +15,7 @@ export const useUserStore = defineStore('user', {
             username: '',
             name: ''
         } as User,
-        login: false
+        signedIn: false
     }),
 
     actions: {
@@ -24,7 +24,7 @@ export const useUserStore = defineStore('user', {
             this.user.avatar = category.avatar
             this.user.username = category.username
             this.user.name = category.name
-            this.login = true
+            this.signedIn = true
         },
 
         clearUser() {
@@ -32,7 +32,7 @@ export const useUserStore = defineStore('user', {
             this.user.avatar = ''
             this.user.username = ''
             this.user.name = ''
-            this.login = false
+            this.signedIn = false
         }
     }
 })

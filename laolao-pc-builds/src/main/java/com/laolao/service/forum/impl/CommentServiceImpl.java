@@ -89,6 +89,6 @@ public class CommentServiceImpl implements CommentService {
     public Result<String> deleteReply(int id) {
         int userId = BaseContext.getCurrentId();
         commentMapper.deleteComment(id, userId);
-        return null;
+        return Result.success("删除成功");
     }
 }
