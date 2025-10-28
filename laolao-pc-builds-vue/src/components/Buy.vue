@@ -8,8 +8,8 @@
             </div>
             <div class="space-y-4">
                 <div class="flex items-center p-3 rounded-lg transition-colors"
-                    :class="cat.id === categoryIndex ? 'bg-gray-100' : 'hover:bg-gray-50'" v-for="cat in category"
-                    :key="cat.id" @click="ShowComponent(cat.id, cat.productType)">
+                    :class="cat.id === currentCategory.id ? 'bg-gray-100' : 'hover:bg-gray-50'" v-for="cat in category"
+                    :key="cat.id" @click="ShowComponent(cat)">
                     <span class="icon-[streamline-cyber--smiley-sigh] text-3xl"></span>
                     <div class="ml-4 flex-1">
                         <h4 class="font-medium">{{ cat.name }}</h4>
@@ -21,11 +21,11 @@
         <div class="w-4/5 bg-white rounded-xl shadow-sm p-6 h-full overflow-y-auto">
             <div class="flex justify-between items-center mb-6">
                 <h3 class="text-xl font-bold text-gray-800">
-                    <i class="fas fa-fire text-red-500 mr-2"></i> {{ category[categoryIndex - 1]?.name }}
+                    <i class="fas fa-fire text-red-500 mr-2"></i> {{ currentCategory?.name || '' }}
                 </h3>
                 <div class="flex w-full max-w-sm items-center gap-1.5">
                     <Input type="text" placeholder="搜索点什么..." v-model="searchContent" />
-                    <Button type="submit" @click="search(category[categoryIndex - 1]?.id)">搜索</Button>
+                    <Button type="submit" @click="search(currentCategory?.id)">搜索</Button>
                 </div>
             </div>
 
@@ -38,13 +38,13 @@
                     <div class="text-center mb-2 h-30">
                         <h4 class="font-medium">{{ product.name }}</h4>
                         <span v-if="product.productType === 1" class="text-sm block mt-1">{{ product.commonDescription
-                            }}</span>
+                        }}</span>
                     </div>
                     <div class="flex items-center justify-between w-full mt-auto">
                         <span v-if="product.productType === 1" class="font-bold text-red-500">￥{{ product.price
-                            }}起</span>
+                        }}起</span>
                         <span v-else-if="product.productType === 2" class="font-bold text-red-500">￥{{ product.price
-                            }}</span>
+                        }}</span>
                         <Dialog>
                             <DialogTrigger as-child>
                                 <span class="icon-[material-symbols--shopping-cart-outline] text-4xl hover:bg-red-500"
@@ -95,7 +95,8 @@
                                                 {{ variant.variantName }}
                                             </div>
                                             <div class="ml-auto">
-                                                原价:<span class="text-lg font-bold text-red-600">￥{{ variant.price }}</span>
+                                                原价:<span class="text-lg font-bold text-red-600">￥{{ variant.price
+                                                    }}</span>
                                             </div>
                                         </div>
 
@@ -108,7 +109,7 @@
                                             <DialogClose as-child>
                                                 <Button type="button" class="w-full"
                                                     @click="addToCart(product.productType, product.id)">
-                                                    买！ - ￥{{ selectedVariant?.price || currentVariants[0]?.price }}
+                                                    买！ - ￥{{ selectedVariant?.price || currentVariants[0]?.price || 0 }}
                                                 </Button>
                                             </DialogClose>
                                         </DialogFooter>
@@ -149,7 +150,7 @@
         productType: number
         name: string
     }
-    interface variant {
+    interface Variant {
         id: number
         componentId: number
         variantName: string
@@ -163,8 +164,11 @@
 
     const products = ref<Product[]>([])
     const category = ref<category[]>([])
-
-    const categoryIndex = ref(1)
+    const currentCategory = ref<category>({
+        id: 0,
+        productType: 0,
+        name: ''
+    })
 
     onMounted(() => {
         ShowCategory()
@@ -172,33 +176,31 @@
 
     const ShowCategory = async () => {
         try {
-            const response = await axios.get('/user/shop/category/list')
-
-            // 默认第一页
-            ShowComponent(1, 1)
-
+            const response = await axios.get('/api/user/shop/category/list')
             category.value = response.data.data
-
+            if (category.value && category.value.length > 0) {
+                currentCategory.value = category.value[0]!
+                ShowComponent(category.value[0]!)
+            }
         } catch (error) {
             console.log(error)
         }
     }
 
-    const ShowComponent = async (id: number, productType: number) => {
+    const ShowComponent = async (category: category) => {
         try {
-            categoryIndex.value = id
-
-            if (productType === 1) {
-                const response = await axios.get('/user/shop/products/components', {
+            currentCategory.value = category
+            if (category.productType === 1) {
+                const response = await axios.get('/api/user/shop/products/components', {
                     params: {
-                        categoryId: id
+                        categoryId: category.id
                     }
                 })
                 products.value = response.data.data
             } else {
-                const response = await axios.get('/user/shop/products/bundles', {
+                const response = await axios.get('/api/user/shop/products/bundles', {
                     params: {
-                        categoryId: id
+                        categoryId: category.id
                     }
                 })
                 products.value = response.data.data
@@ -209,9 +211,9 @@
     }
 
     // 后端获得的所有数据
-    const currentVariants = ref<variant[]>([])
+    const currentVariants = ref<Variant[]>([])
     // 用户选择的版本  进去默认选择第一个版本  下单版本
-    const selectedVariant = ref<variant | null>(null)
+    const selectedVariant = ref<Variant | null>(null)
 
     // 打开商品对话框
     const openVariantDialog = async (product: Product) => {
@@ -222,7 +224,7 @@
         // 设置新商品
 
         try {
-            const response = await axios.get('/user/shop/products/variants', {
+            const response = await axios.get('/api/user/shop/products/variants', {
                 params: {
                     id: product.id,
                     productType: product.productType
@@ -238,13 +240,13 @@
     }
 
     // 选择部件版本的方法
-    const selectVariant = (edi: variant) => {
+    const selectVariant = (edi: Variant) => {
         selectedVariant.value = edi
     }
 
     const addToCart = async (productType: number, id: number | undefined) => {
         try {
-            await axios.post('/user/shop/cart/plus', {
+            await axios.post('/api/user/shop/cart/plus', {
                 productType: productType,
                 productId: id
             })
@@ -257,7 +259,7 @@
 
     const search = async (categoryId: number | undefined) => {
         try {
-            const response = await axios.get('/user/shop/products/search', {
+            const response = await axios.get('/api/user/shop/products/search', {
                 params: {
                     searchContent: searchContent.value,
                     categoryId: categoryId

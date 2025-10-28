@@ -21,15 +21,7 @@ request.interceptors.request.use(
 request.interceptors.response.use(
     response => {
         // 如果业务代码为0（失败），显示消息并结束
-        if (response.data.code === 0) {
-            toast("错误！", {
-                description: response.data.msg,
-                action: {
-                    label: '我知道了',
-                },
-            })
-            return Promise.reject(new Error(response.data.msg || '操作失败'))
-        } else if (response.data.msg != null) {
+        if (response.data.msg != null) {
             toast("嗨！", {
                 description: response.data.msg,
                 action: {

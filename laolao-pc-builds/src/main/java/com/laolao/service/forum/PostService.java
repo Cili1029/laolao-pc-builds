@@ -14,7 +14,7 @@ public interface PostService {
 
     Result<List<PostSimpleVO>> search(int categoryId, String searchContent);
 
-    Result<String> createPost(CreatePostDTO createPostDTO);
+    Result<PostSimpleVO> createPost(CreatePostDTO createPostDTO);
 
     Result<String> deletePost(int id);
 }

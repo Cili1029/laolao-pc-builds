@@ -56,10 +56,10 @@ public class PostController {
      * 发布帖子
      *
      * @param createPostDTO 内容
-     * @return 结果信息
+     * @return 帖子简略数据
      */
     @PostMapping("/create")
-    public Result<String> createPost(@RequestBody CreatePostDTO createPostDTO) {
+    public Result<PostSimpleVO> createPost(@RequestBody CreatePostDTO createPostDTO) {
         return postService.createPost(createPostDTO);
     }
 

@@ -123,7 +123,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Result<String> createPost(CreatePostDTO createPostDTO) {
+    public Result<PostSimpleVO> createPost(CreatePostDTO createPostDTO) {
         Post post = Post.builder()
                 .userId(BaseContext.getCurrentId())
                 .categoryId(createPostDTO.getCategoryId())
@@ -133,7 +133,8 @@ public class PostServiceImpl implements PostService {
                 .createdAt(LocalDateTime.now())
                 .build();
         postMapper.insertPost(post);
-        return Result.success("发布成功");
+        PostSimpleVO postSimpleVO = mapStruct.PostToSimpleVO(post);
+        return Result.success(postSimpleVO,"发布成功");
     }
 
     @Override

@@ -274,7 +274,7 @@
     const post = ref<PostVO>()
 
     const getPost = async (id: number) => {
-        const response = await axios.get("/user/forum/post", {
+        const response = await axios.get("/api/user/forum/post", {
             params: {
                 id: id
             }
@@ -313,7 +313,7 @@
     // 直接评论
     const submitComment = async () => {
         // 之后追加最新消息
-        const response = await axios.post("/user/forum/comment", {
+        const response = await axios.post("/api/user/forum/comment", {
             id: post.value?.id,
             content: myComment.value
         })
@@ -329,7 +329,7 @@
     // 评论的回复
     const submitReply = async (parent: number) => {
         // 之后追加最新消息
-        const response = await axios.post("/user/forum/comment/reply", {
+        const response = await axios.post("/api/user/forum/comment/reply", {
             id: post.value?.id,
             parent: parent,
             content: myComment.value
@@ -347,14 +347,14 @@
 
     // 删除帖子
     const deletePost = async (id: number) => {
-        await axios.delete(`/user/forum/post/${id}`)
+        await axios.delete(`/api/user/forum/post/${id}`)
         post.value = undefined
         router.back()
     }
 
     // 删除评论
     const deleteComment = async (id: number) => {
-        await axios.delete(`/user/forum/comment/${id}`)
+        await axios.delete(`/api/user/forum/comment/${id}`)
         if (post.value) {
             post.value.comment = post.value.comment.filter(comment => comment.id !== id)
         }
@@ -362,7 +362,7 @@
 
     // 删除楼中楼评论
     const deleteReply = async (commentId: number, replyId: number) => {
-        await axios.delete(`/user/forum/comment/reply/${replyId}`)
+        await axios.delete(`/api/user/forum/comment/reply/${replyId}`)
         if (post.value) {
             const comment = post.value.comment.find(c => c.id === commentId)
             if (comment && comment.reply) {

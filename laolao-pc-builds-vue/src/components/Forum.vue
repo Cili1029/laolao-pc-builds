@@ -96,6 +96,8 @@
     import { useForumCategoryStore } from '@/stores/ForumCategoryStore'
     import { useRouter } from 'vue-router'
     const router = useRouter()
+    import { usePostStore } from '@/stores/PostStore'
+    const postStore = usePostStore()
 
     const categoryStore = useForumCategoryStore()
 
@@ -114,7 +116,7 @@
 
     // 获取分类
     const getCategory = async () => {
-        const response = await axios.get("/user/forum/category")
+        const response = await axios.get("/api/user/forum/category")
         categories.value = response.data.data
 
         currentCategory.value = response.data.data[0].id
@@ -134,11 +136,16 @@
     const content = ref('')
 
     const create = async () => {
-        await axios.post("/user/forum/post/create", {
+        const response = await axios.post("/api/user/forum/post/create", {
             categoryId: categoryId.value,
             title: title.value,
             content: content.value
         })
+
+        // 在当前分类的发布
+        if (categoryId.value == currentCategory.value) {
+            postStore.setPostSimple(response.data.data)
+        }
         const res = categories.value.find(category => category.id === categoryId.value) as Category
         changeCategory(res)
         categoryId.value = 0

@@ -1,10 +1,7 @@
 package com.laolao.mapper.forum;
 
 import com.laolao.pojo.forum.entity.Post;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -20,6 +17,7 @@ public interface PostMapper {
     List<Post> searchPostSimple(int categoryId, String searchContent);
 
     @Insert("insert into forum_post(user_id, category_id, title, content, images, created_at) value (#{userId}, #{categoryId}, #{title}, #{content}, #{images}, #{createdAt})")
+    @Options(useGeneratedKeys = true, keyProperty = "id")
     void insertPost(Post post);
 
     @Update("update forum_post set status = 2 where id = #{id} and user_id = #{userId}")

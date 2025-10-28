@@ -8,7 +8,7 @@ import MyOrders from '@/components/MyOrders.vue';
 import Forum from '@/components/Forum.vue';
 import Post from '@/components/Post.vue';
 import PostSimple from '@/components/PostSimple.vue';
-import Sign from '@/components/sign.vue';
+import Sign from '@/components/Sign.vue';
 
 
 // 使用 RouteRecordRaw 类型定义路由

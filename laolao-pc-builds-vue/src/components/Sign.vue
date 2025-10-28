@@ -156,7 +156,7 @@
 
     const SignInWithUsername = async () => {
         isLoading.value = true
-        const response = await axios.post("/user/user/sign-in/username", {
+        const response = await axios.post("/api/user/user/sign-in/username", {
             username: signDetails.value.username,
             password: signDetails.value.password
         })
@@ -178,7 +178,7 @@
     // 发送验证码
     const getEmailCode = async () => {
         isSendingCode.value = true
-        await axios.post('/user/user/email-code', {
+        await axios.post('/api/user/user/email-code', {
             email: signDetails.value.email
         })
 
@@ -196,7 +196,7 @@
 
     const signInWithEmail = async () => {
         isLoading.value = true
-        const response = await axios.post("/user/user/sign-in/email", {
+        const response = await axios.post("/api/user/user/sign-in/email", {
             email: signDetails.value.email,
             emailCode: signDetails.value.emailCode
         })
@@ -211,7 +211,7 @@
 
     const signUp = async () => {
         isLoading.value = true
-        const response = await axios.post("/user/user/sign-up", {
+        const response = await axios.post("/api/user/user/sign-up", {
             username: signDetails.value.username,
             password: signDetails.value.password,
             email: signDetails.value.email,

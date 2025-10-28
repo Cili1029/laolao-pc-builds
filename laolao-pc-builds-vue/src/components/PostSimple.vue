@@ -58,6 +58,8 @@
     import { Button } from "@/components/ui/button"
     import { useForumCategoryStore } from '@/stores/ForumCategoryStore'
     const categoryStore = useForumCategoryStore()
+    import { usePostStore } from '@/stores/PostStore'
+    const postStore = usePostStore()
 
     // 帖子简单信息
     interface PostSimple {
@@ -71,9 +73,8 @@
 
     const back = ref<boolean>(false)
     const getPost = async () => {
-        console.log("bbbbbbb")
         back.value = false
-        const response = await axios.get("/user/forum/post/simple", {
+        const response = await axios.get("/api/user/forum/post/simple", {
             params: {
                 categoryId: categoryStore.category.id
             }
@@ -85,13 +86,16 @@
         if (categoryStore.category.id) {
             getPost()
         }
+        if (postStore.postSimple.id) {
+            postSimple.value.push(postStore.postSimple)
+        }
     })
 
     // 搜索
     const searchContent = ref()
     
     const search = async () => {
-        const response = await axios.get("/user/forum/post/search", {
+        const response = await axios.get("/api/user/forum/post/search", {
             params: {
                 categoryId: categoryStore.category.id,
                 searchContent: searchContent.value
