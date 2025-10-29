@@ -31,15 +31,15 @@
                                         </AlertDialogTrigger>
                                         <AlertDialogContent>
                                             <AlertDialogHeader>
-                                                <AlertDialogTitle>确定要取消吗？</AlertDialogTitle>
+                                                <AlertDialogTitle>确定要取消该订单吗</AlertDialogTitle>
                                                 <AlertDialogDescription>
-                                                    点错了就关，别真取消了，在被窝里偷偷听反方向的钟
+                                                    操作一旦完成无法撤回，请谨慎选择
                                                 </AlertDialogDescription>
                                                 <Textarea v-model="reason" placeholder="取消原因？"></Textarea>
                                             </AlertDialogHeader>
                                             <AlertDialogFooter>
-                                                <AlertDialogCancel>点错了</AlertDialogCancel>
-                                                <AlertDialogAction @click.stop="cancel(order.number)">故意的
+                                                <AlertDialogCancel>算了</AlertDialogCancel>
+                                                <AlertDialogAction @click.stop="cancel(order.number)">取消
                                                 </AlertDialogAction>
                                             </AlertDialogFooter>
                                         </AlertDialogContent>

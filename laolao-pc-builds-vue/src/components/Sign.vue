@@ -22,12 +22,20 @@
                     </CardHeader>
                     <CardContent class="space-y-2">
                         <div class="space-y-1" v-if="currentMethod !== 2">
-                            <Label for="Username">用户名</Label>
-                            <Input id="username" v-model="signDetails.username" />
+                            <div class="flex justify-between">
+                                <Label for="Username">账号</Label>
+                                <p class="text-xs text-red-500">{{ usernameMessage }}</p>
+                            </div>
+                            <Input id="username" v-model="signDetails.username" @input="checkInput(signDetails)"
+                                @compositionend="checkInput(signDetails)" />
                         </div>
                         <div class="space-y-1" v-if="currentMethod !== 2">
-                            <Label for="Password">密码</Label>
-                            <Input id="password" type="password" v-model="signDetails.password" />
+                            <div class="flex justify-between">
+                                <Label for="Password">密码</Label>
+                                <p class="text-xs text-red-500">{{ passwordMessage }}</p>
+                            </div>
+                            <Input id="password" v-model="signDetails.password" @input="checkInput(signDetails)"
+                                @compositionend="checkInput(signDetails)" />
                         </div>
                         <div class="space-y-1" v-if="currentMethod !== 1">
                             <Label for="Password">邮箱号</Label>
@@ -48,7 +56,7 @@
                     <CardFooter>
                         <!-- 账号密码登录 -->
                         <Button v-if="currentMethod === 1" class="w-full"
-                            :disabled="isLoading || !signDetails.username || !signDetails.password"
+                            :disabled="isLoading || !signDetails.username || !signDetails.password || !allValid"
                             @click="SignInWithUsername()">
                             <span v-if="isLoading">{{ tab.buttonText }}中...</span>
                             <span v-else>{{ tab.buttonText }}</span>
@@ -62,7 +70,7 @@
                         </Button>
                         <!-- 注册 -->
                         <Button v-else class="w-full"
-                            :disabled="isLoading || !signDetails.username || !signDetails.password || !signDetails.email || !signDetails.emailCode"
+                            :disabled="isLoading || !signDetails.username || !signDetails.password || !signDetails.email || !signDetails.emailCode || !allValid"
                             @click="signUp()">
                             <span v-if="isLoading">{{ tab.buttonText }}中...</span>
                             <span v-else>{{ tab.buttonText }}</span>
@@ -77,7 +85,7 @@
 <script setup lang="ts">
     import axios from '@/utils/myAxios'
     import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-    import { ref, watchEffect } from 'vue'
+    import { ref, watchEffect, computed } from 'vue'
     import 'vue-sonner/style.css'
     import { Button } from "@/components/ui/button"
     import { Input } from "@/components/ui/input"
@@ -92,30 +100,37 @@
     const tabs = [
         {
             value: 'A',
-            title: '自己人？快进来！',
-            description: '输入您的账户（用户名），密码',
+            title: '欢迎回家！',
+            description: '输入您的账户，密码',
             buttonText: '登录'
         },
         {
             value: 'B',
-            title: '自己人？快进来！',
+            title: '欢迎回家！',
             description: '输入您的邮箱号，验证码',
             buttonText: '登录'
         },
         {
             value: 'C',
             title: '没有号？整一个！',
-            description: '填写您的账户（用户名），密码以及验证码',
+            description: '填写您的账户，密码，邮箱以及验证码',
             buttonText: '注册'
         }
     ]
 
+    interface SignDetails {
+        username: string,
+        password: string,
+        email: string,
+        emailCode: number | undefined
+    }
+
     // 登录表单数据
-    const signDetails = ref({
+    const signDetails = ref<SignDetails>({
         username: "",
         password: "",
         email: "",
-        emailCode: ""
+        emailCode: undefined 
     })
 
     const currentMethod = ref(1)
@@ -126,9 +141,31 @@
             signDetails.value.username = ""
             signDetails.value.password = ""
             signDetails.value.email = ""
-            signDetails.value.emailCode = ""
+            signDetails.value.emailCode = undefined
         }
     })
+
+
+    // 格式验证
+    const isUsernameValid = computed(() => /^[a-zA-Z0-9]*$/.test(signDetails.value.username))
+    const isPasswordValid = computed(() => !/[\u4e00-\u9fa5\u3000-\u303f\uff00-\uffef]/.test(signDetails.value.password))
+    const allValid = computed(() => isUsernameValid.value && isPasswordValid.value)
+
+    const usernameMessage = ref('')
+    const passwordMessage = ref('')
+    const checkInput = (signDetails: SignDetails) => {
+        if (/[^a-zA-Z0-9]/.test(signDetails.username)) {
+            usernameMessage.value = '账户只能为数字或字母组合！'
+        } else {
+            usernameMessage.value = ''
+        }
+
+        if (/[\u4e00-\u9fa5\u3000-\u303f\uff00-\uffef]/.test(signDetails.password)) {
+            passwordMessage.value = '密码不能为中文！'
+        } else {
+            passwordMessage.value = ''
+        }
+    }
 
     // 当前登录的用户昵称
 
@@ -155,19 +192,21 @@
     }
 
     const SignInWithUsername = async () => {
-        isLoading.value = true
-        const response = await axios.post("/api/user/user/sign-in/username", {
-            username: signDetails.value.username,
-            password: signDetails.value.password
-        })
-
-        user.value = response.data.data
-        
-        isLoading.value = false
-        if (response.data.code === 1) {
-            setUser(user.value)
-            router.push('/');
+        try {
+            isLoading.value = true
+            const response = await axios.post("/api/user/user/sign-in/username", {
+                username: signDetails.value.username,
+                password: signDetails.value.password
+            })
+            user.value = response.data.data
+            if (response.data.code === 1) {
+                setUser(user.value)
+                router.push('/');
+            }
+        } finally {
+            isLoading.value = false
         }
+        
     }
 
     // 验证码相关
@@ -195,34 +234,41 @@
     }
 
     const signInWithEmail = async () => {
-        isLoading.value = true
-        const response = await axios.post("/api/user/user/sign-in/email", {
-            email: signDetails.value.email,
-            emailCode: signDetails.value.emailCode
-        })
+        try {
+            isLoading.value = true
+            const response = await axios.post("/api/user/user/sign-in/email", {
+                email: signDetails.value.email,
+                emailCode: signDetails.value.emailCode
+            })
 
-        user.value = response.data.data
-        isLoading.value = false
-        if (response.data.code === 1) {
-            setUser(user.value)
-            router.push('/home');
+            user.value = response.data.data
+            
+            if (response.data.code === 1) {
+                setUser(user.value)
+                router.push('/home');
+            }
+        } finally {
+            isLoading.value = false
         }
     }
 
     const signUp = async () => {
-        isLoading.value = true
-        const response = await axios.post("/api/user/user/sign-up", {
-            username: signDetails.value.username,
-            password: signDetails.value.password,
-            email: signDetails.value.email,
-            emailCode: signDetails.value.emailCode
-        })
+        try {
+            isLoading.value = true
+            const response = await axios.post("/api/user/user/sign-up", {
+                username: signDetails.value.username,
+                password: signDetails.value.password,
+                email: signDetails.value.email,
+                emailCode: signDetails.value.emailCode
+            })
 
-        user.value = response.data.data
-        isLoading.value = false
-        if (response.data.code === 1) {
-            setUser(user.value)
-            router.push('/home');
+            user.value = response.data.data
+            if (response.data.code === 1) {
+                setUser(user.value)
+                router.push('/home');
+            }
+        } finally {
+            isLoading.value = false
         }
     }
 </script>

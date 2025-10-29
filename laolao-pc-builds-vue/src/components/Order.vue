@@ -202,14 +202,14 @@
                                     </AlertDialogTrigger>
                                     <AlertDialogContent>
                                         <AlertDialogHeader>
-                                            <AlertDialogTitle>确定要删除吗？</AlertDialogTitle>
+                                            <AlertDialogTitle>确定要删除该地址吗？</AlertDialogTitle>
                                             <AlertDialogDescription>
-                                                点错了就关，别真删除了，在被窝里偷偷听反方向的钟
+                                                操作一旦完成无法撤回，请谨慎选择
                                             </AlertDialogDescription>
                                         </AlertDialogHeader>
                                         <AlertDialogFooter>
-                                            <AlertDialogCancel>点错了</AlertDialogCancel>
-                                            <AlertDialogAction @click="deleteAddress(address.id)">故意的
+                                            <AlertDialogCancel>算了</AlertDialogCancel>
+                                            <AlertDialogAction @click="deleteAddress(address.id)">删除
                                             </AlertDialogAction>
                                         </AlertDialogFooter>
                                     </AlertDialogContent>
@@ -262,7 +262,7 @@
                         <AlertDialogTrigger as-child>
                             <button
                                 class="bg-orange-500 hover:bg-orange-600 text-white font-medium py-3 px-6 rounded-lg transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
-                                :disabled="!selectAddress">
+                                :disabled="selectAddress === 0">
                                 我要付款
                             </button>
                         </AlertDialogTrigger>
@@ -392,7 +392,9 @@
         province: "",
         city: "",
         district: "",
-        detailAddress: ""
+        detailAddress: "",
+        // 添加用
+        number: route.params.number
     })
 
     const addAddress = () => {
@@ -406,11 +408,11 @@
     }
 
     const add = async () => {
+        const {id, ...res} = currentAddress
         try {
             const response = await axios.post("/api/user/shop/address/add",
-                currentAddress
+                res
             )
-
             currentAddress.consignee = ""
             currentAddress.phone = ""
             currentAddress.province = ""
@@ -418,15 +420,17 @@
             currentAddress.district = ""
             currentAddress.detailAddress = ""
             addressList.value = response.data.data
+            showOrder()
         } catch (error) {
             console.log(error)
         }
     }
 
     const update = async () => {
+        const {number, ...res} = currentAddress
         try {
             const response = await axios.post("/api/user/shop/address/update",
-                currentAddress
+                res
             )
             currentAddress.consignee = ""
             currentAddress.phone = ""
@@ -453,7 +457,7 @@
 
     const addressList = ref<AddressList[]>([])
 
-    const selectAddress = ref() || undefined
+    const selectAddress = ref(0)
 
     // 选择收货地址
     const getAddress = async () => {
@@ -502,6 +506,9 @@
 
     // 改变收货地址
     const changeAddress = async (AddressId: number) => {
+        if(AddressId === selectAddress.value) {
+            return
+        }
         try {
             await axios.patch("/api/user/shop/order/address", {
                 addressId: AddressId,
@@ -529,6 +536,9 @@
         try {
             const response = await axios.delete(`/api/user/shop/address/del/${id}`)
             addressList.value = response.data.data
+            if(id === selectAddress.value) {
+                selectAddress.value = 0
+            }
 
         } catch (error) {
             console.log(error)
@@ -561,6 +571,10 @@
             products.value = response.data.data.orderDetails || []
             originalAmount.value = response.data.data.originalAmount
             discountAmount.value = response.data.data.discountAmount
+            if(!selectAddress.value) {
+                selectAddress.value = response.data.data.addressId
+            }
+            
         } catch (error) {
             console.log(error)
         }

@@ -1,5 +1,6 @@
 package com.laolao.mapper.shop;
 
+import com.laolao.pojo.shop.dto.AddressDTO;
 import com.laolao.pojo.shop.entity.Address;
 import org.apache.ibatis.annotations.*;
 
@@ -12,13 +13,14 @@ public interface AddressMapper {
 
     @Insert("insert into shop_address(user_id, consignee, phone, province, city, district, detail_address) " +
             "values (#{userId}, #{consignee}, #{phone}, #{province}, #{city}, #{district}, #{detailAddress})")
-    void insert(Address address);
+    @Options(useGeneratedKeys = true, keyProperty = "id")
+    void insert(AddressDTO addressDTO);
 
 
     @Update("update shop_address set consignee = #{consignee}, phone = #{phone}, " +
             "province = #{province}, city = #{city}, district = #{district}, detail_address = #{detailAddress} " +
             "where id = #{id} and user_id = #{userId}")
-    void update(Address address);
+    void update(AddressDTO addressDTO);
 
     @Delete("delete from shop_address where id = #{id} and user_id = #{userId}")
     void delete(int id, int userId);

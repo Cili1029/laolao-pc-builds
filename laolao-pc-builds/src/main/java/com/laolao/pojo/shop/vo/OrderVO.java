@@ -23,6 +23,11 @@ public class OrderVO {
     private BigDecimal discountAmount;
 
     /**
+     * 选中的地址id
+     */
+    private int addressId;
+
+    /**
      * 商品信息
      */
     List<OrderDetail> orderDetails;

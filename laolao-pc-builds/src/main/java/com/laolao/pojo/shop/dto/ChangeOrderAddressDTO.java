@@ -9,6 +9,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
+@Builder
 public class ChangeOrderAddressDTO implements Serializable {
     /**
      * 收货人地址主键

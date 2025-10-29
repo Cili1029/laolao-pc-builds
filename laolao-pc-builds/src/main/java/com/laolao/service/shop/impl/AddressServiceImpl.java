@@ -5,7 +5,10 @@ import com.laolao.common.result.Result;
 import com.laolao.common.utils.AMAPUtil;
 import com.laolao.converter.MapStruct;
 import com.laolao.mapper.shop.AddressMapper;
+import com.laolao.mapper.shop.OrderMapper;
+import com.laolao.pojo.shop.dto.AddressDTO;
 import com.laolao.pojo.shop.entity.Address;
+import com.laolao.pojo.shop.entity.Order;
 import com.laolao.pojo.shop.vo.AddressVO;
 import com.laolao.pojo.shop.vo.DistrictVO;
 import com.laolao.service.shop.AddressService;
@@ -24,6 +27,8 @@ public class AddressServiceImpl implements AddressService {
     private AddressMapper addressMapper;
     @Resource
     private AMAPUtil amapUtil;
+    @Resource
+    private OrderMapper orderMapper;
 
     public Result<List<DistrictVO>> getDistrictList(Integer adcode, String name) {
         List<DistrictVO> district;
@@ -47,9 +52,16 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
-    public Result<List<AddressVO>> addAddress(Address address) {
-        address.setUserId(BaseContext.getCurrentId());
-        addressMapper.insert(address);
+    public Result<List<AddressVO>> addAddress(AddressDTO addressDTO) {
+        addressDTO.setUserId(BaseContext.getCurrentId());
+        // 添加并设置为当前订单选择的地址
+        addressMapper.insert(addressDTO);
+        // 更新地址
+        String address = addressDTO.getProvince() + addressDTO.getCity() + addressDTO.getDistrict() + addressDTO.getDetailAddress();
+        Order order = mapStruct.addressDTOToOrder(addressDTO);
+        order.setAddress(address);
+        order.setAddressId(addressDTO.getId());
+        orderMapper.update(order);
 
         Result<List<AddressVO>> addressList = getAddressList();
         addressList.setMsg("新增成功！");
@@ -57,9 +69,9 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
-    public Result<List<AddressVO>> updateAddress(Address address) {
-        address.setUserId(BaseContext.getCurrentId());
-        addressMapper.update(address);
+    public Result<List<AddressVO>> updateAddress(AddressDTO addressDTO) {
+        addressDTO.setUserId(BaseContext.getCurrentId());
+        addressMapper.update(addressDTO);
         Result<List<AddressVO>> addressList = getAddressList();
         addressList.setMsg("修改成功！");
         return addressList;

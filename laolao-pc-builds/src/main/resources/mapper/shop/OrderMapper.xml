@@ -35,6 +35,9 @@
             <if test="phone != null and phone != ''">
                 phone=#{phone},
             </if>
+            <if test="addressId != null">
+                address_id=#{addressId},
+            </if>
             <if test="address != null and address != ''">
                 address=#{address},
             </if>

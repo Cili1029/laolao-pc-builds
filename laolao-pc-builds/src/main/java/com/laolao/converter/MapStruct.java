@@ -4,6 +4,7 @@ import com.laolao.pojo.forum.entity.Comment;
 import com.laolao.pojo.forum.entity.ForumCategory;
 import com.laolao.pojo.forum.entity.Post;
 import com.laolao.pojo.forum.vo.*;
+import com.laolao.pojo.shop.dto.AddressDTO;
 import com.laolao.pojo.shop.dto.CartProductDTO;
 import com.laolao.pojo.shop.entity.*;
 import com.laolao.pojo.shop.vo.*;
@@ -36,6 +37,9 @@ public interface MapStruct {
     OrderDetailVO orderToOrderDetailVO(Order order);
 
     OrderProductVO orderDeatilToOrderProductVO(OrderDetail orderDetail);
+
+    @Mapping(target = "id", ignore = true)
+    Order addressDTOToOrder(AddressDTO addressDTO);
 
     // 论坛的
     ForumCategoryVO ForumCategoryToCategoryVO(ForumCategory forumCategory);

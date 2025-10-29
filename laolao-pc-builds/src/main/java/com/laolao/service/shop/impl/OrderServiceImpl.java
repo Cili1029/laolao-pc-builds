@@ -69,6 +69,7 @@ public class OrderServiceImpl implements OrderService {
             order.setConsignee(address.getConsignee());
             order.setPhone(address.getPhone());
             order.setAddress(address.getProvince() + address.getCity() + address.getDistrict() + address.getDetailAddress());
+            order.setAddressId(address.getId());
         }
         orderMapper.insert(order);
         int id = order.getId();
@@ -106,9 +107,11 @@ public class OrderServiceImpl implements OrderService {
         OrderVO orderVO = new OrderVO();
         orderVO.setOrderDetails(orderDetailList);
         // 获取金额
-        Order order = orderMapper.selectAmount(orderDetailList.get(0).getId());
+        Order order = orderMapper.selectOrderById(orderDetailList.get(0).getId());
         orderVO.setOriginalAmount(order.getOriginalAmount());
         orderVO.setDiscountAmount(order.getDiscountAmount());
+        // 获取已选择的地址
+        orderVO.setAddressId(order.getAddressId());
         return Result.success(orderVO);
     }
 
@@ -123,6 +126,7 @@ public class OrderServiceImpl implements OrderService {
         order.setUserId(userId);
         order.setConsignee(address.getConsignee());
         order.setPhone(address.getPhone());
+        order.setAddressId(changeOrderAddressDTO.getAddressId());
         order.setAddress(address.getProvince() + address.getCity() + address.getDistrict() + address.getDetailAddress());
         orderMapper.update(order);
         return Result.success("成功！");

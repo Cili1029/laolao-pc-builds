@@ -52,7 +52,12 @@ public class Order {
     private String phone;
 
     /**
-     * 收货地址
+     * 当前选择的地址Id
+     */
+    private int addressId;
+
+    /**
+     * 收货地址（用于存入固定订单信息）
      */
     private String address;
 

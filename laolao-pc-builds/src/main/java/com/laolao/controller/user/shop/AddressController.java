@@ -1,7 +1,7 @@
 package com.laolao.controller.user.shop;
 
 import com.laolao.common.result.Result;
-import com.laolao.pojo.shop.entity.Address;
+import com.laolao.pojo.shop.dto.AddressDTO;
 import com.laolao.pojo.shop.vo.AddressVO;
 import com.laolao.pojo.shop.vo.DistrictVO;
 import com.laolao.service.shop.AddressService;
@@ -44,23 +44,23 @@ public class AddressController {
     /**
      * 添加收货地址
      *
-     * @param address 基础信息
+     * @param addressDTO 基础信息
      * @return 最新地址数据
      */
     @PostMapping("/add")
-    public Result<List<AddressVO>> addAddress(@RequestBody Address address) {
-        return addressService.addAddress(address);
+    public Result<List<AddressVO>> addAddress(@RequestBody AddressDTO addressDTO) {
+        return addressService.addAddress(addressDTO);
     }
 
     /**
      * 更新收货地址
      *
-     * @param address 基础信息
+     * @param addressDTO 基础信息
      * @return 最新地址数据
      */
     @PostMapping("/update")
-    public Result<List<AddressVO>> updateAddress(@RequestBody Address address) {
-        return addressService.updateAddress(address);
+    public Result<List<AddressVO>> updateAddress(@RequestBody AddressDTO addressDTO) {
+        return addressService.updateAddress(addressDTO);
     }
 
     /**根据Id删除收货地址

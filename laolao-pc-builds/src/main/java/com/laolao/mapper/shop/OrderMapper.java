@@ -11,7 +11,7 @@ import java.util.List;
 
 @Mapper
 public interface OrderMapper {
-    @Insert("insert into shop_order(number, user_id, original_amount, consignee, phone, address) value (#{number}, #{userId}, #{originalAmount}, #{consignee}, #{phone}, #{address})")
+    @Insert("insert into shop_order(number, user_id, original_amount, consignee, phone,address_id, address) value (#{number}, #{userId}, #{originalAmount}, #{consignee}, #{phone},#{addressId}, #{address})")
     @Options(useGeneratedKeys = true, keyProperty = "id")
     void insert(Order order);
 
@@ -24,7 +24,7 @@ public interface OrderMapper {
     void update(Order order);
 
     @Select("select * from shop_order where id = #{id}")
-    Order selectAmount(int id);
+    Order selectOrderById(int id);
 
     @Select("select * from shop_order where status = 1 and created_at < #{expire}")
     List<Order> getExpireOrders(int i, LocalDateTime expire);

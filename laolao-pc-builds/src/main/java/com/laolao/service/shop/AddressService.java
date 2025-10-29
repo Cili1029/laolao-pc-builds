@@ -1,7 +1,7 @@
 package com.laolao.service.shop;
 
 import com.laolao.common.result.Result;
-import com.laolao.pojo.shop.entity.Address;
+import com.laolao.pojo.shop.dto.AddressDTO;
 import com.laolao.pojo.shop.vo.AddressVO;
 import com.laolao.pojo.shop.vo.DistrictVO;
 
@@ -10,7 +10,7 @@ import java.util.List;
 public interface AddressService {
     Result<List<DistrictVO>> getDistrictList(Integer adcode, String name);
 
-    Result<List<AddressVO>> updateAddress(Address address);
+    Result<List<AddressVO>> updateAddress(AddressDTO addressDTO);
 
     Result<List<AddressVO>> getAddressList();
 
@@ -18,5 +18,5 @@ public interface AddressService {
 
     Result<List<AddressVO>> setDefault(int id);
 
-    Result<List<AddressVO>> addAddress(Address address);
+    Result<List<AddressVO>> addAddress(AddressDTO addressDTO);
 }

@@ -45,14 +45,14 @@
                             </AlertDialogTrigger>
                             <AlertDialogContent>
                                 <AlertDialogHeader>
-                                    <AlertDialogTitle>确定要删除吗？</AlertDialogTitle>
+                                    <AlertDialogTitle>确定要删除该帖子吗？</AlertDialogTitle>
                                     <AlertDialogDescription>
-                                        点错了就关，别真删除了，在被窝里偷偷听反方向的钟
+                                        操作一旦完成无法撤回，请谨慎选择
                                     </AlertDialogDescription>
                                 </AlertDialogHeader>
                                 <AlertDialogFooter>
-                                    <AlertDialogCancel>点错了</AlertDialogCancel>
-                                    <AlertDialogAction @click="deletePost(post?.id)">故意的</AlertDialogAction>
+                                    <AlertDialogCancel>算了</AlertDialogCancel>
+                                    <AlertDialogAction @click="deletePost(post?.id)">删除</AlertDialogAction>
                                 </AlertDialogFooter>
                             </AlertDialogContent>
                         </AlertDialog>
@@ -128,14 +128,14 @@
                                 </AlertDialogTrigger>
                                 <AlertDialogContent>
                                     <AlertDialogHeader>
-                                        <AlertDialogTitle>确定要删除吗？</AlertDialogTitle>
+                                        <AlertDialogTitle>确定要删除该评论吗？</AlertDialogTitle>
                                         <AlertDialogDescription>
-                                            点错了就关，别真删除了，在被窝里偷偷听反方向的钟
+                                            操作一旦完成无法撤回，请谨慎选择
                                         </AlertDialogDescription>
                                     </AlertDialogHeader>
                                     <AlertDialogFooter>
-                                        <AlertDialogCancel>点错了</AlertDialogCancel>
-                                        <AlertDialogAction @click="deleteComment(comment.id)">故意的</AlertDialogAction>
+                                        <AlertDialogCancel>算了</AlertDialogCancel>
+                                        <AlertDialogAction @click="deleteComment(comment.id)">删除</AlertDialogAction>
                                     </AlertDialogFooter>
                                 </AlertDialogContent>
                             </AlertDialog>
@@ -175,14 +175,14 @@
                                 </AlertDialogTrigger>
                                 <AlertDialogContent>
                                     <AlertDialogHeader>
-                                        <AlertDialogTitle>确定要删除吗？</AlertDialogTitle>
+                                        <AlertDialogTitle>确定要删除该回复吗？</AlertDialogTitle>
                                         <AlertDialogDescription>
-                                            点错了就关，别真删除了，在被窝里偷偷听反方向的钟
+                                            操作一旦完成无法撤回，请谨慎选择
                                         </AlertDialogDescription>
                                     </AlertDialogHeader>
                                     <AlertDialogFooter>
-                                        <AlertDialogCancel>点错了</AlertDialogCancel>
-                                        <AlertDialogAction @click="deleteReply(comment.id, reply.id)">故意的
+                                        <AlertDialogCancel>算了</AlertDialogCancel>
+                                        <AlertDialogAction @click="deleteReply(comment.id, reply.id)">删除
                                         </AlertDialogAction>
                                     </AlertDialogFooter>
                                 </AlertDialogContent>
