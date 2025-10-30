@@ -96,8 +96,9 @@
                         <div class="flex">
                             <div v-if="replyMap.has(comment.id)">
                                 <Button v-if="!replyMap.get(comment.id)" variant="secondary"
-                                    @click="openReply(comment.id)">展开回复</Button>
-                                <Button v-else variant="secondary" @click="openReply(comment.id)">收起回复</Button>
+                                    @click="openReply(comment.id), getReply(comment.id)">{{ comment.replyCount }}条回复▼</Button>
+                                <Button v-else variant="secondary"
+                                    @click="openReply(comment.id)">{{ comment.replyCount }}条回复▲</Button>
                             </div>
                             <AlertDialog>
                                 <AlertDialogTrigger as-child>
@@ -256,6 +257,7 @@
         image: string
         likeCount: number
         createdAt: string
+        replyCount: number
         reply: ReplyVO[]
     }
     interface PostVO {
@@ -281,10 +283,26 @@
         })
         post.value = response.data.data
         if (post.value?.comment) {
-            // 提取所有回复
-            setReply(post.value?.comment.flatMap(comment => comment.reply || []))
+            // 设置为有回复
+            setReply(post.value.comment)
         }
     }
+
+    const getReply = async (id: number) => {
+
+        const res = post.value?.comment.find(Comment => Comment.id === id)
+        // 有就不加载了
+        if (res?.reply) {
+            return
+        }
+        const response = await axios.get("/api/user/forum/post/reply", {
+            params: {
+                id: id
+            }
+        })
+        res!.reply = response.data.data
+    }
+
 
     // 时间格式化
     const formatTime = (timeStr: string | undefined) => {
@@ -294,11 +312,10 @@
 
     // 评论的回复
     const replyMap = ref(new Map<number, boolean>())
-    const setReply = (replyList: ReplyVO[] | undefined) => {
-        if (!replyList) return null
-        replyList.forEach(reply => {
-            if (reply.parent) {
-                replyMap.value.set(reply.parent, false)
+    const setReply = (commentList: CommentVO[]) => {
+        commentList.forEach(comment => {
+            if (comment.replyCount != 0) {
+                replyMap.value.set(comment.id, false)
             }
         })
     }
@@ -341,6 +358,7 @@
             }
             res.reply.push(response.data.data)
             replyMap.value.set(parent, true)
+            res.replyCount += 1
         }
         myComment.value = ''
     }
@@ -366,10 +384,17 @@
         if (post.value) {
             const comment = post.value.comment.find(c => c.id === commentId)
             if (comment && comment.reply) {
+                // 删掉那条信息
                 comment.reply = comment.reply.filter(reply => reply.id !== replyId)
-                if (replyMap.value.has(replyId)) {
-                    replyMap.value.delete(replyId)
+                comment.replyCount -= 1
+                // 判断这是唯一一条就删除
+                if (comment.reply.length === 0) {
+                    if (replyMap.value.has(commentId)) {
+                        replyMap.value.delete(commentId)
+                    }
+                    comment.replyCount = 0
                 }
+
             }
         }
     }

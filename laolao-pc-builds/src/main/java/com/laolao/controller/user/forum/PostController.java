@@ -2,6 +2,7 @@ package com.laolao.controller.user.forum;
 
 import com.laolao.common.result.Result;
 import com.laolao.pojo.forum.dto.CreatePostDTO;
+import com.laolao.pojo.forum.vo.CommentReplyVO;
 import com.laolao.pojo.forum.vo.PostSimpleVO;
 import com.laolao.pojo.forum.vo.PostVO;
 import com.laolao.service.forum.PostService;
@@ -32,12 +33,25 @@ public class PostController {
 
     /**
      * 获取帖子详细
+     * 只获取直接评论
+     *
      * @param id 帖子id
      * @return 帖子数据
      */
     @GetMapping
     public Result<PostVO> getPost(int id) {
         return postService.getPost(id);
+    }
+
+    /**
+     * 获取回复详细
+     *
+     * @param id 帖子id
+     * @return 回复数据
+     */
+    @GetMapping("/reply")
+    public Result<List<CommentReplyVO>> getReply(int id) {
+        return postService.getReply(id);
     }
 
     /**

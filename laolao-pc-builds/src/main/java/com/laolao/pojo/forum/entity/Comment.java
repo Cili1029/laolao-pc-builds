@@ -57,6 +57,11 @@ public class Comment {
      */
     private LocalDateTime createdAt;
 
+    /**
+     * 回复数
+     */
+    private int replyCount;
+
 
     // 封装VO用
     /**

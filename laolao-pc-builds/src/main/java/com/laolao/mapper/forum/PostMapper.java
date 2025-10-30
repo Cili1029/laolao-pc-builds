@@ -22,4 +22,7 @@ public interface PostMapper {
 
     @Update("update forum_post set status = 2 where id = #{id} and user_id = #{userId}")
     void delete(int id, int userId);
+
+    @Update("update forum_post set like_count = like_count + #{delta} where id = #{likeId}")
+    void updateLikeCount(int likeId, int delta);
 }

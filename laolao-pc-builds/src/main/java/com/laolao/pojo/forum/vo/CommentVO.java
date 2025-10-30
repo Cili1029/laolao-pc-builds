@@ -4,7 +4,6 @@ import com.laolao.pojo.user.vo.UserVO;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Getter
 @Setter
@@ -43,12 +42,18 @@ public class CommentVO {
     private int likeCount;
 
     /**
+     * 是否已经点赞
+     * 1-点了 0-没点
+     */
+    private int like = 0;
+
+    /**
+     * 回复数
+     */
+    private int replyCount;
+
+    /**
      * 创建时间
      */
     private LocalDateTime createdAt;
-
-    /**
-     * 评论的回复
-     */
-    private List<CommentReplyVO> reply;
 }

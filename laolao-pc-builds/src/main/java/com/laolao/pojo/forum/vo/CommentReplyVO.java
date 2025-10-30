@@ -42,6 +42,12 @@ public class CommentReplyVO {
     private Integer likeCount;
 
     /**
+     * 是否已经点赞
+     * 1-点了 2-没点
+     */
+    private int like;
+
+    /**
      * 创建时间
      */
     private LocalDateTime createdAt;

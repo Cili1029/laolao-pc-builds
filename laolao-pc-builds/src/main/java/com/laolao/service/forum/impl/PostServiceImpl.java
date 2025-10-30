@@ -4,10 +4,13 @@ import com.laolao.common.context.BaseContext;
 import com.laolao.common.result.Result;
 import com.laolao.converter.MapStruct;
 import com.laolao.mapper.forum.CommentMapper;
+import com.laolao.mapper.forum.LikeMapper;
 import com.laolao.mapper.forum.PostMapper;
 import com.laolao.mapper.user.UserMapper;
 import com.laolao.pojo.forum.dto.CreatePostDTO;
+import com.laolao.pojo.forum.dto.LikeTarget;
 import com.laolao.pojo.forum.entity.Comment;
+import com.laolao.pojo.forum.entity.Like;
 import com.laolao.pojo.forum.entity.Post;
 import com.laolao.pojo.forum.vo.CommentReplyVO;
 import com.laolao.pojo.forum.vo.CommentVO;
@@ -34,6 +37,8 @@ public class PostServiceImpl implements PostService {
     private UserMapper userMapper;
     @Resource
     private CommentMapper commentMapper;
+    @Resource
+    private LikeMapper likeMapper;
 
     @Override
     public Result<List<PostSimpleVO>> getPostSimple(int categoryId) {
@@ -53,66 +58,112 @@ public class PostServiceImpl implements PostService {
         Post post = postMapper.selectPost(id);
         PostVO postVO = mapStruct.PostToPostVO(post);
 
-        // 获取所有这个帖子评论
+        // 获取所有这个帖子评论(直接评论)
         List<Comment> allCommentList = commentMapper.selectComment(id);
         // 获取所有评论的用户信息(set去重，看可能会有用户重复评论)
         Set<Integer> allUserIdSet = allCommentList.stream().map(Comment::getUserId).collect(Collectors.toCollection(LinkedHashSet::new));
         // 将贴主放进去
         allUserIdSet.add(post.getUserId());
         List<User> allUserList = userMapper.selectUser(new ArrayList<>(allUserIdSet));
-        // 将要用户转为id为key的索引
+        // 将用户转为id为key的索引
         Map<Integer, User> userMap = allUserList.stream().collect(Collectors.toMap(User::getId, user -> user));
         // 获取贴主
-        UserVO userVO = mapStruct.userToUserVO(userMap.get(post.getUserId()));
+        UserVO poster = mapStruct.userToUserVO(userMap.get(post.getUserId()));
         // 写入帖子VO
-        postVO.setUser(userVO);
+        postVO.setUser(poster);
 
-        // 将帖子分为直接回复和回复的回复
-        Map<Boolean, List<Comment>> collect = allCommentList.stream().collect(Collectors.partitioningBy(comment -> comment.getParent() == 0));
+        // 判断是否点赞
+        ArrayList<LikeTarget> likeTargets = new ArrayList<>();
+        likeTargets.add(new LikeTarget(1, id));
 
-        // 直接评论
-        List<Comment> commentList = collect.get(true);
+        // 评论
         List<CommentVO> commentVOList = new ArrayList<>();
-        // 无评论
-        if (commentList.isEmpty()) {
+        if (allCommentList.isEmpty()) {
+            // 无评论
+            List<Like> likes = likeMapper.queryLike(BaseContext.getCurrentId(), likeTargets);
+            if (!likes.isEmpty()) {
+                // 点赞了
+                postVO.setLike(1);
+            }
             return Result.success(postVO);
         } else {
             // 有，设置用户信息并转换写入
-            setUserToComment(userMap, commentList, commentVOList, null, 1);
+
+            // 帖子
+            likeTargets.addAll(allCommentList.stream().map(comment -> new LikeTarget(2, comment.getId())).collect(Collectors.toCollection(ArrayList::new)));
+
+            List<Like> likes = likeMapper.queryLike(BaseContext.getCurrentId(), likeTargets);
+            //转为Map
+            Map<String, Like> likeMap = likes.stream().collect(Collectors.toMap(
+                    like -> like.getLikeType() + "_" + like.getLikeId(),
+                    like -> like
+            ));
+
+            for (Comment comment : allCommentList) {
+                // 获取对应用户
+                User user = userMap.get(comment.getUserId());
+                // 转换
+                UserVO userVO = mapStruct.userToUserVO(user);
+                // 写入
+                comment.setUser(userVO);
+                CommentVO commentVO = mapStruct.commentToCommentVO(comment);
+
+                if (likeMap.get("2_" + commentVO.getId()) != null) {
+                    // 点赞了
+                    commentVO.setLike(1);
+                }
+
+                if (likeMap.get("1_" + id) != null) {
+                    // 点赞了
+                    postVO.setLike(1);
+                }
+                commentVOList.add(commentVO);
+            }
             // 至此直接评论完成
         }
-
-        // 判断是否有评论的评论
-        List<Comment> replyList = collect.get(false);
-        if (replyList.isEmpty()) {
-            //没有,只写入直接评论返回
-            postVO.setComment(commentVOList);
-            return Result.success(postVO);
-        }
-        // 有评论 查询用户信息
-        List<CommentReplyVO> replyVOList = new ArrayList<>();
-        setUserToComment(userMap, replyList, null, replyVOList, 2);
-        // 至此评论的评论完成
-
-        // 将id根据回复对象进行分组
-        Map<Integer, List<CommentReplyVO>> replyGroup = replyVOList.stream().collect(Collectors.groupingBy(CommentReplyVO::getParent));
-        // 根据id配对合并
-        for (CommentVO commentVO : commentVOList) {
-            // 没有就null
-            List<CommentReplyVO> list = replyGroup.getOrDefault(commentVO.getId(), Collections.emptyList());
-            // 写入
-            commentVO.setReply(list);
-        }
-        // 写入
         postVO.setComment(commentVOList);
         return Result.success(postVO);
+    }
+
+    public Result<List<CommentReplyVO>> getReply(int id) {
+        // 获得所有回复
+        List<Comment> replyList = commentMapper.selectReply(id);
+        // 获取所有评论的用户信息(set去重，看可能会有用户重复评论)
+        Set<Integer> allUserIdSet = replyList.stream().map(Comment::getUserId).collect(Collectors.toCollection(LinkedHashSet::new));
+        List<User> allUserList = userMapper.selectUser(new ArrayList<>(allUserIdSet));
+        // 将用户转为id为key的索引
+        Map<Integer, User> userMap = allUserList.stream().collect(Collectors.toMap(User::getId, user -> user));
+        // 写入头像
+        List<CommentReplyVO> commentReplyVOList = new ArrayList<>();
+
+        // 获取点赞信息
+        ArrayList<LikeTarget> likeTargets = replyList.stream().map(reply -> new LikeTarget(2, reply.getId())).collect(Collectors.toCollection(ArrayList::new));
+        List<Like> likes = likeMapper.queryLike(BaseContext.getCurrentId(), likeTargets);
+        //转为Map
+        Map<Integer, Like> likeMap = likes.stream().collect(Collectors.toMap(
+                Like::getLikeId,
+                like -> like
+        ));
+
+        for (Comment reply : replyList) {
+            User user = userMap.get(reply.getUserId());
+            UserVO userVO = mapStruct.userToUserVO(user);
+            reply.setUser(userVO);
+            CommentReplyVO commentReplyVO = mapStruct.commentToCommentReplyVO(reply);
+            if (likeMap.get(commentReplyVO.getId()) != null) {
+                // 点赞了
+                commentReplyVO.setLike(1);
+            }
+            commentReplyVOList.add(commentReplyVO);
+        }
+        return Result.success(commentReplyVOList);
     }
 
     @Override
     public Result<List<PostSimpleVO>> search(int categoryId, String searchContent) {
         List<Post> postList = postMapper.searchPostSimple(categoryId, searchContent);
         if (postList.isEmpty()) {
-            return Result.success(Collections.emptyList(),"什么也没找到...");
+            return Result.success(Collections.emptyList(), "什么也没找到...");
         }
         List<PostSimpleVO> postSimpleVOList = new ArrayList<>();
         for (Post post : postList) {
@@ -134,7 +185,7 @@ public class PostServiceImpl implements PostService {
                 .build();
         postMapper.insertPost(post);
         PostSimpleVO postSimpleVO = mapStruct.PostToSimpleVO(post);
-        return Result.success(postSimpleVO,"发布成功");
+        return Result.success(postSimpleVO, "发布成功");
     }
 
     @Override
@@ -146,26 +197,5 @@ public class PostServiceImpl implements PostService {
         // 删帖子
         postMapper.delete(id, userId);
         return Result.success("删除成功");
-    }
-
-    // 用于设置评论的用户信息
-    void setUserToComment(Map<Integer, User> userMap, List<Comment> commentList, List<CommentVO> commentVOList, List<CommentReplyVO> replyVOList, int type) {
-        // 遍历，写入
-        for (Comment comment : commentList) {
-            // 获取对应用户
-            User user = userMap.get(comment.getUserId());
-            // 转换
-            UserVO userVO = mapStruct.userToUserVO(user);
-            // 写入
-            comment.setUser(userVO);
-            // 分为直接评论和评论的评论
-            if (type == 1) {
-                CommentVO commentVO = mapStruct.commentToCommentVO(comment);
-                commentVOList.add(commentVO);
-            } else {
-                CommentReplyVO commentReplyVO = mapStruct.commentToCommentReplyVO(comment);
-                replyVOList.add(commentReplyVO);
-            }
-        }
     }
 }
