@@ -122,26 +122,26 @@
   body {
     @apply bg-background text-foreground;
   }
-  
+
   /* 自定义滚动条样式 - 让滚动条贴着屏幕边缘 */
   .scrollbar-edge {
     scrollbar-width: thin;
     scrollbar-color: rgb(156 163 175) transparent;
   }
-  
+
   .scrollbar-edge::-webkit-scrollbar {
     width: 8px;
   }
-  
+
   .scrollbar-edge::-webkit-scrollbar-track {
     background: transparent;
   }
-  
+
   .scrollbar-edge::-webkit-scrollbar-thumb {
     background-color: rgb(156 163 175);
     border-radius: 4px;
   }
-  
+
   .scrollbar-edge::-webkit-scrollbar-thumb:hover {
     background-color: rgb(107 114 128);
   }

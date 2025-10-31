@@ -19,7 +19,7 @@ public class LikeController {
     private LikeService likeService;
 
     @PostMapping
-    public Result<String> like(@RequestBody LikeDTO likeDTO) {
+    public Result<Integer> like(@RequestBody LikeDTO likeDTO) {
         return likeService.like(likeDTO);
     }
 

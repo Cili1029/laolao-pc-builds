@@ -1,5 +1,5 @@
 <template>
-    <div class="h-full overflow-y-auto">
+    <div class="h-full overflow-y-auto scrollbar-edge">
         <!-- 板块描述 -->
         <div class="m-5 pl-5 py-1 bg-sky-100 shadow-sm flex items-center">
             <span class="text-xl">

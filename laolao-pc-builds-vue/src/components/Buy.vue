@@ -1,6 +1,6 @@
 <template>
     <div class="flex h-full">
-        <div class="w-1/5 bg-white rounded-xl shadow-sm p-6 mr-4 h-full overflow-y-auto">
+        <div class="w-1/5 bg-white rounded-xl shadow-sm p-6 mr-4 h-full overflow-y-auto scrollbar-edge">
             <div class="flex justify-between items-center mb-6">
                 <h3 class="text-xl font-bold text-gray-800">
                     <i class="fas fa-fire text-red-500 mr-2"></i> 分类
@@ -18,7 +18,7 @@
             </div>
         </div>
 
-        <div class="w-4/5 bg-white rounded-xl shadow-sm p-6 h-full overflow-y-auto">
+        <div class="w-4/5 bg-white rounded-xl shadow-sm p-6 h-full overflow-y-auto scrollbar-edge">
             <div class="flex justify-between items-center mb-6">
                 <h3 class="text-xl font-bold text-gray-800">
                     <i class="fas fa-fire text-red-500 mr-2"></i> {{ currentCategory?.name || '' }}

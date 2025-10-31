@@ -25,4 +25,7 @@ public interface PostMapper {
 
     @Update("update forum_post set like_count = like_count + #{delta} where id = #{likeId}")
     void updateLikeCount(int likeId, int delta);
+
+    @Update("update forum_post set comment_count = comment_count + #{delta} where id = #{id}")
+    void updateCommentCount(int id, int delta);
 }

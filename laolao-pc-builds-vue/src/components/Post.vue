@@ -1,5 +1,5 @@
 <template>
-    <div class="h-full overflow-y-auto p-4">
+    <div class="h-full overflow-y-auto scrollbar-edge p-4">
         <!-- 贴主 -->
         <div>
             <!-- 标题 -->
@@ -37,7 +37,13 @@
                     <div class="flex flex-col items-end gap-1">
                         <div class="flex items-center">
                             <p class="pr-2">{{ post?.likeCount }}</p>
-                            <span class="icon-[streamline--hearts-symbol-remix]"></span>
+
+                            <div @click="like(1, post!.id, 0)">
+                                <span v-if="post?.like === 0"
+                                    class="icon-[material-symbols--thumb-up-outline] text-xl"></span>
+                                <span v-else class="icon-[material-symbols--thumb-up] text-xl"></span>
+                            </div>
+
                         </div>
                         <AlertDialog v-if="post?.user.id === userStore.user.id">
                             <AlertDialogTrigger as-child>
@@ -96,9 +102,10 @@
                         <div class="flex">
                             <div v-if="replyMap.has(comment.id)">
                                 <Button v-if="!replyMap.get(comment.id)" variant="secondary"
-                                    @click="openReply(comment.id), getReply(comment.id)">{{ comment.replyCount }}条回复▼</Button>
-                                <Button v-else variant="secondary"
-                                    @click="openReply(comment.id)">{{ comment.replyCount }}条回复▲</Button>
+                                    @click="openReply(comment.id), getReply(comment.id)">{{ comment.replyCount
+                                    }}条回复▼</Button>
+                                <Button v-else variant="secondary" @click="openReply(comment.id)">{{ comment.replyCount
+                                }}条回复▲</Button>
                             </div>
                             <AlertDialog>
                                 <AlertDialogTrigger as-child>
@@ -121,7 +128,11 @@
                         <div class="flex flex-col items-end gap-1">
                             <div class="flex items-center">
                                 <p class="pr-2">{{ comment.likeCount }}</p>
-                                <span class="icon-[streamline--hearts-symbol-remix]"></span>
+                                <div @click="like(2, comment?.id, 0)">
+                                    <span v-if="comment?.like === 0"
+                                        class="icon-[material-symbols--thumb-up-outline] text-xl"></span>
+                                    <span v-else class="icon-[material-symbols--thumb-up] text-xl"></span>
+                                </div>
                             </div>
                             <AlertDialog v-if="comment.user.id === userStore.user.id">
                                 <AlertDialogTrigger as-child>
@@ -168,7 +179,11 @@
                         <div class="flex flex-col items-end gap-1 pb-4">
                             <div class="flex items-center">
                                 <p class="pr-2">{{ reply.likeCount }}</p>
-                                <span class="icon-[streamline--hearts-symbol-remix]"></span>
+                                <div @click="like(2, reply?.id, reply.parent)">
+                                    <span v-if="reply?.like === 0"
+                                        class="icon-[material-symbols--thumb-up-outline] text-xl"></span>
+                                    <span v-else class="icon-[material-symbols--thumb-up] text-xl"></span>
+                                </div>
                             </div>
                             <AlertDialog v-if="reply.user.id === userStore.user.id">
                                 <AlertDialogTrigger as-child>
@@ -247,6 +262,7 @@
         content: string
         image: string
         likeCount: number
+        like: number
         createdAt: string
     }
     interface CommentVO {
@@ -256,6 +272,7 @@
         content: string
         image: string
         likeCount: number
+        like: number
         createdAt: string
         replyCount: number
         reply: ReplyVO[]
@@ -268,6 +285,7 @@
         image: string
         viewCount: number
         likeCount: number
+        like: number
         commentCount: number
         createdAt: string
         comment: CommentVO[]
@@ -340,6 +358,7 @@
                 post.value.comment = []
             }
             post.value.comment.push(response.data.data)
+            post.value.commentCount += 1
         }
     }
 
@@ -359,6 +378,7 @@
             res.reply.push(response.data.data)
             replyMap.value.set(parent, true)
             res.replyCount += 1
+            post.value!.commentCount += 1
         }
         myComment.value = ''
     }
@@ -372,15 +392,31 @@
 
     // 删除评论
     const deleteComment = async (id: number) => {
-        await axios.delete(`/api/user/forum/comment/${id}`)
+        await axios.delete("/api/user/forum/comment", {
+            params: {
+                postId: post.value?.id,
+                commentId: id
+            }
+        })
         if (post.value) {
+            const comment = post.value.comment.find(comment => comment.id === id)
             post.value.comment = post.value.comment.filter(comment => comment.id !== id)
+            if (!comment?.reply) {
+                post.value.commentCount -= 1
+            } else {
+                post.value.commentCount -= (comment.reply.length + 1)
+            }
         }
     }
 
     // 删除楼中楼评论
     const deleteReply = async (commentId: number, replyId: number) => {
-        await axios.delete(`/api/user/forum/comment/reply/${replyId}`)
+        await axios.delete("/api/user/forum/comment/reply", {
+            params: {
+                postId: post.value?.id,
+                replyId: replyId
+            }
+        })
         if (post.value) {
             const comment = post.value.comment.find(c => c.id === commentId)
             if (comment && comment.reply) {
@@ -394,8 +430,50 @@
                     }
                     comment.replyCount = 0
                 }
-
+                post.value.commentCount -= 1
             }
+        }
+    }
+
+    // 点赞
+    const like = async (likeType: number, likeId: number, parentId: number) => {
+        try {
+            const response = await axios.post("/api/user/forum/like", {
+                likeType: likeType,
+                likeId: likeId
+            })
+            if (response.data.code === 1) {
+                const delta = response.data.data // 1 或 -1
+                const newLikeStatus = delta === 1 ? 1 : 0
+                switch (likeType) {
+                    case 1: // 帖子
+                        if (post.value) {
+                            post.value.likeCount += delta
+                            post.value.like = newLikeStatus
+                        }
+                        break
+                    case 2: // 评论或回复
+                        if (parentId === 0) {
+                            // 直接评论
+                            const comment = post.value?.comment.find(c => c.id === likeId)
+                            if (comment) {
+                                comment.likeCount += delta
+                                comment.like = newLikeStatus
+                            }
+                        } else {
+                            // 回复
+                            const parentComment = post.value?.comment.find(c => c.id === parentId)
+                            const reply = parentComment?.reply.find(r => r.id === likeId)
+                            if (reply) {
+                                reply.likeCount += delta
+                                reply.like = newLikeStatus
+                            }
+                        }
+                        break
+                }
+            }
+        } catch (error) {
+            console.error('点赞失败:', error)
         }
     }
 

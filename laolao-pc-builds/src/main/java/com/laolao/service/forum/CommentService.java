@@ -11,7 +11,7 @@ public interface CommentService {
 
     Result<CommentReplyVO> addReply(AddReplyDTO addReplyDTO);
 
-    Result<String> deleteComment(int id);
+    Result<String> deleteComment(int postId, int commentId);
 
-    Result<String> deleteReply(int id);
+    Result<String> deleteReply(int postId, int id);
 }

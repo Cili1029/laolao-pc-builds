@@ -4,5 +4,5 @@ import com.laolao.common.result.Result;
 import com.laolao.pojo.forum.dto.LikeDTO;
 
 public interface LikeService {
-    Result<String> like(LikeDTO likeDTO);
+    Result<Integer> like(LikeDTO likeDTO);
 }

@@ -1,176 +1,159 @@
 <template>
   <div class="min-h-screen flex flex-col h-screen">
     <!-- 固定导航条 -->
-    <div class="sticky top-0 z-50 bg-white/30 backdrop-blur-md shadow-md h-16">
-      <div class="grid grid-cols-[1fr_min(1200px,100%)_1fr] h-full">
-        <div class="border-r border-gray-200"></div>
-        <div class="p-3 flex justify-between items-center">
-          <div class="flex items-center space-x-2">
-            <img :src="logo" class="w-9 h-9 rounded-md" @click="goHome" />
-            <span class="text-xl font-bold">劳劳的装机工坊</span>
-          </div>
+    <div class="sticky top-0 z-50 bg-white/30 backdrop-blur-md shadow-md">
+      <div class="flex justify-between items-center px-4 sm:px-6 lg:px-40 h-16">
+        <div class="flex items-center space-x-1">
+          <img :src="logo" class="w-9 h-9 rounded-md" @click="goHome" />
+          <span class="text-xl font-bold">劳劳的装机工坊</span>
+        </div>
+        <!-- 导航链接 -->
+        <div class="flex space-x-6 items-center">
+          <RouterLink to="/hello" class="text-gray-600 hover:text-blue-500 transition-colors">功能测试</RouterLink>
 
-          <!-- 导航链接 -->
-          <div class="hidden md:flex space-x-6 items-center">
-            <RouterLink to="/hello" class="text-gray-600 hover:text-blue-500 transition-colors">功能测试</RouterLink>
-
-            <!-- 购物车 -->
-            <Drawer>
-              <DrawerTrigger class="text-gray-600 hover:text-blue-500" @click="showCart()">购物车</DrawerTrigger>
-              <DrawerContent v-if="products && products.length > 0" class="h-3/4">
-                <DrawerHeader>
-                  <DrawerTitle class="text-3xl">我的购物车</DrawerTitle>
-                  <DrawerDescription>
-                    <p class="text-xl hover:text-blue-500" @click="clear()">清空购物车</p>
-                  </DrawerDescription>
-                </DrawerHeader>
-                <div class="flex gap-6 py-4 overflow-y-auto">
-                  <div class="w-full flex flex-col space-y-2">
-                    <div v-for="product in products" :key="product.name"
-                      class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 flex items-center">
-                      <img :src="product.image" class="w-15 h-15 object-cover rounded-md mr-4" />
-                      <div class="flex-1">
-                        <h3 class="font-medium text-gray-900">{{ product.name }}</h3>
-                        {{ product.variantName }}
-                      </div>
-                      <div class="ml-auto mx-10">
-                        <span class="text-lg font-bold text-red-600">￥{{ product.price }}</span>
-                      </div>
-                      <div class="ml-auto mx-10">
-                        <Button variant="outline" size="icon" class="h-8 w-8 shrink-0 rounded-full"
-                          @click="quantity(product, 0)">
-                          <span class="icon-[mdi--minus] h-4 w-4"></span>
-                          <span class="sr-only">Decrease</span>
-                        </Button>
-                        <span class="text-lg font-bold mx-1">{{ product.quantity }}</span>
-                        <Button variant="outline" size="icon" class="h-8 w-8 shrink-0 rounded-full"
-                          @click="quantity(product, 1)">
-                          <span class="icon-[mdi--plus] h-4 w-4"></span>
-                          <span class="sr-only">Increase</span>
-                        </Button>
-                      </div>
+          <!-- 购物车 -->
+          <Drawer>
+            <DrawerTrigger class="text-gray-600 hover:text-blue-500" @click="showCart()">购物车</DrawerTrigger>
+            <DrawerContent v-if="products && products.length > 0" class="h-3/4">
+              <DrawerHeader>
+                <DrawerTitle class="text-3xl">我的购物车</DrawerTitle>
+                <DrawerDescription>
+                  <p class="text-xl hover:text-blue-500" @click="clear()">清空购物车</p>
+                </DrawerDescription>
+              </DrawerHeader>
+              <div class="flex gap-6 py-4 overflow-y-auto scrollbar-edge">
+                <div class="w-full flex flex-col space-y-2">
+                  <div v-for="product in products" :key="product.name"
+                    class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 flex items-center">
+                    <img :src="product.image" class="w-15 h-15 object-cover rounded-md mr-4" />
+                    <div class="flex-1">
+                      <h3 class="font-medium text-gray-900">{{ product.name }}</h3>
+                      {{ product.variantName }}
+                    </div>
+                    <div class="ml-auto mx-10">
+                      <span class="text-lg font-bold text-red-600">￥{{ product.price }}</span>
+                    </div>
+                    <div class="ml-auto mx-10">
+                      <Button variant="outline" size="icon" class="h-8 w-8 shrink-0 rounded-full"
+                        @click="quantity(product, 0)">
+                        <span class="icon-[mdi--minus] h-4 w-4"></span>
+                        <span class="sr-only">Decrease</span>
+                      </Button>
+                      <span class="text-lg font-bold mx-1">{{ product.quantity }}</span>
+                      <Button variant="outline" size="icon" class="h-8 w-8 shrink-0 rounded-full"
+                        @click="quantity(product, 1)">
+                        <span class="icon-[mdi--plus] h-4 w-4"></span>
+                        <span class="sr-only">Increase</span>
+                      </Button>
                     </div>
                   </div>
                 </div>
-                <DrawerFooter>
-                  <div class="text-xl ml-auto font-bold text-red-600">总价（未算优惠券）: ￥{{ totalPrice.toFixed(2) }}</div>
-                  <DrawerClose as-child>
-                    <Button class="h-15" @click="order()">去结算</Button>
-                  </DrawerClose>
-                </DrawerFooter>
-              </DrawerContent>
+              </div>
+              <DrawerFooter>
+                <div class="text-xl ml-auto font-bold text-red-600">总价（未算优惠券）: ￥{{ totalPrice.toFixed(2) }}</div>
+                <DrawerClose as-child>
+                  <Button class="h-15" @click="order()">去结算</Button>
+                </DrawerClose>
+              </DrawerFooter>
+            </DrawerContent>
 
-              <DrawerContent v-else class="h-3/4">
-                <DrawerHeader>
-                  <DrawerTitle class="text-3xl">我的购物车</DrawerTitle>
-                  <DrawerDescription></DrawerDescription>
-                </DrawerHeader>
-                <div class="text-4xl text-center">
-                  购物车是空的！
-                </div>
-                <DrawerFooter>
-                  <Button class="h-15" disabled>去结算</Button>
-                </DrawerFooter>
-              </DrawerContent>
-            </Drawer>
+            <DrawerContent v-else class="h-3/4">
+              <DrawerHeader>
+                <DrawerTitle class="text-3xl">我的购物车</DrawerTitle>
+                <DrawerDescription></DrawerDescription>
+              </DrawerHeader>
+              <div class="text-4xl text-center">
+                购物车是空的！
+              </div>
+              <DrawerFooter>
+                <Button class="h-15" disabled>去结算</Button>
+              </DrawerFooter>
+            </DrawerContent>
+          </Drawer>
 
-            <!-- 未登录，点击登录 -->
-            <div v-if="!userStore.signedIn">
-              <RouterLink to="/sign">
-                <Avatar class="cursor-pointer hover:ring-2 hover:ring-blue-500 transition-all">
-                  <AvatarFallback>登录</AvatarFallback>
+          <!-- 未登录，点击登录 -->
+          <div v-if="!userStore.signedIn">
+            <RouterLink to="/sign">
+              <Avatar class="cursor-pointer hover:ring-2 hover:ring-blue-500 transition-all">
+                <AvatarFallback>登录</AvatarFallback>
+              </Avatar>
+            </RouterLink>
+          </div>
+
+          <!-- 已登录，显示用户数据 -->
+          <div v-else>
+            <DropdownMenu>
+              <DropdownMenuTrigger as-child>
+                <Avatar class="cursor-pointer hover:ring-2 hover:ring-blue-500 transition-all rounded-md">
+                  <AvatarImage :src="userStore.user.avatar" alt="用户头像" />
+                  <AvatarFallback>{{ userStore.user.name.substring(0, 1) }}</AvatarFallback>
                 </Avatar>
-              </RouterLink>
-            </div>
-
-            <!-- 已登录，显示用户数据 -->
-            <div v-else>
-              <DropdownMenu>
-                <DropdownMenuTrigger as-child>
-                  <Avatar class="cursor-pointer hover:ring-2 hover:ring-blue-500 transition-all rounded-md">
-                    <AvatarImage :src="userStore.user.avatar" alt="用户头像" />
-                    <AvatarFallback>{{ userStore.user.name.substring(0, 1) }}</AvatarFallback>
-                  </Avatar>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent class="w-56" align="end">
-                  <DropdownMenuLabel class="flex flex-col">
-                    <span class="font-semibold">{{ userStore.user.name }}</span>
-                    <span class="text-xs text-gray-500 font-normal">欢迎回来！</span>
-                  </DropdownMenuLabel>
-                  <DropdownMenuSeparator />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent class="w-56" align="end">
+                <DropdownMenuLabel class="flex flex-col">
+                  <span class="font-semibold">{{ userStore.user.name }}</span>
+                  <span class="text-xs text-gray-500 font-normal">欢迎回来！</span>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>
+                  <User class="mr-2 h-4 w-4" />
+                  <span>个人信息(还没写)</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Smile class="mr-2 h-4 w-4" />
+                  <span>签到/优惠券(还没写)</span>
+                </DropdownMenuItem>
+                <RouterLink to="/my-orders">
                   <DropdownMenuItem>
-                    <User class="mr-2 h-4 w-4" />
-                    <span>个人信息(还没写)</span>
+                    <ShoppingBag class="mr-2 h-4 w-4" />
+                    <span>我的订单</span>
                   </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <Smile class="mr-2 h-4 w-4" />
-                    <span>签到/优惠券(还没写)</span>
-                  </DropdownMenuItem>
-                  <RouterLink to="/my-orders">
-                    <DropdownMenuItem>
-                      <ShoppingBag class="mr-2 h-4 w-4" />
-                      <span>我的订单</span>
-                    </DropdownMenuItem>
-                  </RouterLink>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem @click="signOut" class="text-red-600 focus:text-red-600">
-                    <LogOut class="mr-2 h-4 w-4" />
-                    <span>退出登录</span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
+                </RouterLink>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem @click="signOut" class="text-red-600 focus:text-red-600">
+                  <LogOut class="mr-2 h-4 w-4" />
+                  <span>退出登录</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
-        <div class="border-l border-gray-200"></div>
       </div>
     </div>
 
     <div class="flex-grow overflow-hidden">
-      <div class="grid grid-cols-[1fr_min(1200px,100%)_1fr] h-full">
-        <div class="border-r border-gray-200"></div>
-        <div class="overflow-y-auto scrollbar-edge">
-          <RouterView v-slot="{ Component }">
-            <transition name="fade" mode="out-in">
-              <component :is="Component" />
-            </transition>
-          </RouterView>
-        </div>
-        <div class="border-l border-gray-200"></div>
-      </div>
-    </div>
-
-    <!-- Footer区域 -->
-    <div v-if="route.meta.showFooter" class="bg-gray-800 text-white">
-      <div class="grid grid-cols-[1fr_min(1200px,100%)_1fr]">
-        <div class="border-r border-gray-700"></div>
-        <div class="px-4 py-6">
-          <div class="flex flex-col md:flex-row justify-between items-center">
-            <div class="mb-4 md:mb-0">
-              <div class="flex items-center space-x-2">
+      <div class="overflow-y-auto scrollbar-edge h-full">
+        <RouterView v-slot="{ Component }" class="px-4 sm:px-6 lg:px-40">
+          <transition name="fade" mode="out-in">
+            <component :is="Component" />
+          </transition>
+        </RouterView>
+        <div v-if="route.meta.showFooter" class="bg-gray-800 text-white mt-auto px-4 sm:px-6 lg:px-40 py-6">
+          <div class="flex flex-col lg:flex-row justify-between items-center space-y-4 lg:space-y-0">
+            <!-- 左侧logo和备案信息 -->
+            <div class="flex flex-col items-center lg:items-start text-center lg:text-left">
+              <div class="flex items-center space-x-2 mb-2">
                 <img :src="logo" alt="Company Logo" class="w-6 h-6 rounded-md">
                 <span class="text-lg font-bold">劳劳的网站</span>
               </div>
-              <div class="text-gray-400 text-sm mt-2">
-                <p class="mt-1">
-                  <a href="https://beian.miit.gov.cn" target="_blank"
-                    class="text-gray-400 hover:text-white transition-colors">
-                    闽ICP备2025117246号-1
-                  </a>
-                </p>
+              <div class="text-gray-400 text-sm">
+                <a href="https://beian.miit.gov.cn" target="_blank"
+                  class="text-gray-400 hover:text-white transition-colors">
+                  闽ICP备2025117246号-1
+                </a>
               </div>
             </div>
 
-            <div class="flex space-x-6">
-              <a href="#" class="text-gray-300 hover:text-white transition-colors">假如再也见不到你</a>
-              <a href="#" class="text-gray-300 hover:text-white transition-colors">祝你</a>
-              <a href="#" class="text-gray-300 hover:text-white transition-colors">早安</a>
-              <a href="#" class="text-gray-300 hover:text-white transition-colors">午安</a>
-              <a href="#" class="text-gray-300 hover:text-white transition-colors">晚安</a>
+            <!-- 右侧链接 -->
+            <div class="flex flex-wrap justify-center gap-3 sm:gap-4 lg:gap-6">
+              <a href="#" class="text-gray-300 hover:text-white transition-colors text-sm sm:text-base">假如再也见不到你</a>
+              <a href="#" class="text-gray-300 hover:text-white transition-colors text-sm sm:text-base">祝你</a>
+              <a href="#" class="text-gray-300 hover:text-white transition-colors text-sm sm:text-base">早安</a>
+              <a href="#" class="text-gray-300 hover:text-white transition-colors text-sm sm:text-base">午安</a>
+              <a href="#" class="text-gray-300 hover:text-white transition-colors text-sm sm:text-base">晚安</a>
             </div>
           </div>
         </div>
-        <div class="border-l border-gray-700"></div>
       </div>
     </div>
     <!-- 全局消息弹窗 -->
@@ -208,18 +191,18 @@
   }
 
   interface User {
-        id: number
-        avatar: string
-        username: string
-        name: string
-    }
+    id: number
+    avatar: string
+    username: string
+    name: string
+  }
 
-    const user = ref<User>({
-        id: 0,
-        avatar: '',
-        username: '',
-        name: '',
-    })
+  const user = ref<User>({
+    id: 0,
+    avatar: '',
+    username: '',
+    name: '',
+  })
 
   const getProfile = async () => {
     try {

@@ -1,5 +1,5 @@
 <template>
-    <div class="flex h-full">
+    <div class="flex h-full space-x-2">
         <!-- 侧栏 -->
         <div class="sticky top-16 w-1/5 h-full bg-white rounded-lg shadow-sm p-2">
             <div>
@@ -75,7 +75,7 @@
         </div>
 
         <!-- 内容区域 - 使用 router-view 显示子路由 -->
-        <div class="w-4/5 mx-3 bg-white rounded-lg h-full overflow-y-auto">
+        <div class="w-4/5 px-3 bg-white rounded-lg shadow-sm h-full overflow-y-auto scrollbar-edge">
             <RouterView v-slot="{ Component }">
                 <transition name="fade" mode="out-in">
                     <component :is="Component" />

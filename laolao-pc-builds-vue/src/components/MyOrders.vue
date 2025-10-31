@@ -1,5 +1,5 @@
 <template>
-    <div class="h-full overflow-y-auto p-4">
+    <div class="h-full overflow-y-auto scrollbar-edge p-4">
         <div v-if="orders.length">
             <Dialog>
                 <DialogTrigger as-child>
@@ -68,7 +68,8 @@
                                     {{ product.variantName }}
                                 </div>
                                 <div class="ml-auto">
-                                    原价:<span class="text-lg font-bold text-red-600">￥{{ product.price }}</span>
+                                    原价:<span class="text-lg font-bold text-red-600">￥{{ product.price }}×{{
+                                        product.quantity}}</span>
                                 </div>
                             </div>
 
@@ -108,19 +109,19 @@
                             </p>
                             <p v-if="detail?.cancelTime != null" class="flex justify-between">
                                 <span>取消时间</span>
-                                <span>{{ detail?.cancelTime }}</span>
+                                <span>{{ dayjs(detail?.cancelTime).format('YYYY-MM-DD HH:mm:ss') }}</span>
                             </p>
                             <p v-if="detail?.checkoutTime != null" class="flex justify-between">
                                 <span>支付时间</span>
-                                <span>{{ detail?.checkoutTime }}</span>
+                                <span>{{ dayjs(detail?.checkoutTime).format('YYYY-MM-DD HH:mm:ss') }}</span>
                             </p>
                             <p v-if="detail?.deliveryTime != null" class="flex justify-between">
                                 <span>发货时间</span>
-                                <span>{{ detail?.deliveryTime }}</span>
+                                <span>{{ dayjs(detail?.deliveryTime).format('YYYY-MM-DD HH:mm:ss') }}</span>
                             </p>
                             <p v-if="detail?.receiveTime != null" class="flex justify-between">
                                 <span>确认收货时间</span>
-                                <span>{{ detail?.receiveTime }}</span>
+                                <span>{{ dayjs(detail?.receiveTime).format('YYYY-MM-DD HH:mm:ss') }}</span>
                             </p>
                             <DialogFooter class="">
                                 <DialogClose as-child>
@@ -154,6 +155,8 @@
     import 'vue-sonner/style.css'
     import { useRouter } from 'vue-router'
     const router = useRouter()
+    import dayjs from 'dayjs'
+    import 'dayjs/locale/zh-cn'
 
     onMounted(() => {
         getOrders()
@@ -188,9 +191,7 @@
     const getOrders = async () => {
         try {
             const response = await axios.get('/api/user/shop/order/my-orders')
-            console.log(response.data.data)
             orders.value = response.data.data
-            console.log(orders.value)
         } catch (error) {
             console.log(error)
         }
@@ -224,7 +225,6 @@
     const detail = ref<Detail>()
 
     const showDetail = async (number: string, status: number) => {
-        console.log(number)
         if (status === 1) {
             router.push(`/order/${number}`)
             return

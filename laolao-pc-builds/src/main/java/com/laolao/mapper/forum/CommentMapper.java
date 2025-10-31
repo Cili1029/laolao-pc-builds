@@ -7,7 +7,7 @@ import java.util.List;
 
 @Mapper
 public interface CommentMapper {
-    @Select("SELECT fc1.*, (SELECT COUNT(*) FROM forum_comment fc2 WHERE fc2.parent = fc1.id AND fc2.status = 1) as reply_count FROM forum_comment fc1 WHERE fc1.post_id = 1 AND fc1.status = 1 AND fc1.parent = 0;")
+    @Select("SELECT fc1.*, (SELECT COUNT(*) FROM forum_comment fc2 WHERE fc2.parent = fc1.id AND fc2.status = 1) as reply_count FROM forum_comment fc1 WHERE fc1.post_id = #{id} AND fc1.status = 1 AND fc1.parent = 0;")
     List<Comment> selectComment(int id);
 
     @Select("select * from forum_comment where parent = #{id} and status = 1")
@@ -25,7 +25,7 @@ public interface CommentMapper {
     int deleteComment(int id, int userId);
 
     @Update("update forum_comment set status = 2 where parent = #{id}")
-    void deleteReplyByParent(int id);
+    int deleteReplyByParent(int id);
 
     @Update("update forum_comment set status = 2 where post_id = #{id} and user_id = #{userId}")
     void deleteCommentByPostId(int id, int userId);

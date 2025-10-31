@@ -21,12 +21,10 @@ public class LikeServiceImpl implements LikeService {
     private CommentMapper commentMapper;
 
     @Override
-    public Result<String> like(LikeDTO likeDTO) {
+    public Result<Integer> like(LikeDTO likeDTO) {
         int userId = BaseContext.getCurrentId();
-
         // 先查询当前状态
         Integer currentStatus = likeMapper.getStatus(userId, likeDTO.getLikeType(), likeDTO.getLikeId());
-
         if (currentStatus == null) {
             // 首次点赞
             Like like = Like.builder()
@@ -36,14 +34,14 @@ public class LikeServiceImpl implements LikeService {
                     .build();
             likeMapper.like(like);
             updateLikeCount(likeDTO, 1);
-            return Result.success("点赞成功");
+            return Result.success(1,"点赞成功");
         } else {
             // 更新状态：1->0 或 0->1
             int newStatus = 1 - currentStatus;
             likeMapper.updateStatus(userId, likeDTO.getLikeType(),
                     likeDTO.getLikeId(), newStatus);
             updateLikeCount(likeDTO, newStatus == 1 ? 1 : -1);
-            return Result.success(newStatus == 1 ? "点赞成功" : "取消成功");
+            return Result.success(newStatus == 1 ? 1 : -1,newStatus == 1 ? "点赞！" : "取消点赞！");
         }
     }
 

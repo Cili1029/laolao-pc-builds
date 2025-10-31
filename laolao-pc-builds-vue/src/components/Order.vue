@@ -1,5 +1,5 @@
 <template>
-    <div class="h-full overflow-y-auto">
+    <div class="h-full overflow-y-auto scrollbar-edge">
         <div class="w-full p-3">
             <h3 class="text-xl font-bold text-gray-800">确认订单</h3>
         </div>

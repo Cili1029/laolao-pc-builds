@@ -43,22 +43,24 @@ public class CommentController {
     /**
      * 删除评论
      *
-     * @param id 品论Id
+     * @param postId 帖子id
+     * @param commentId 评论Id
      * @return 结果信息
      */
-    @DeleteMapping("/{id}")
-    public Result<String> deleteComment(@PathVariable int id) {
-        return commentService.deleteComment(id);
+    @DeleteMapping
+    public Result<String> deleteComment(int postId, int commentId) {
+        return commentService.deleteComment(postId, commentId);
     }
 
     /**
      * 删除评论回复
      *
-     * @param id 回复id
+     * @param postId 帖子id
+     * @param replyId 回复id
      * @return 结果信息
      */
-    @DeleteMapping("/reply/{id}")
-    public Result<String> deleteReply(@PathVariable int id) {
-        return commentService.deleteReply(id);
+    @DeleteMapping("/reply")
+    public Result<String> deleteReply(int postId, int replyId) {
+        return commentService.deleteReply(postId, replyId);
     }
 }
