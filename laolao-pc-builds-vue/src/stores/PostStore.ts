@@ -5,9 +5,9 @@ import { defineStore } from 'pinia'
 interface PostSimple {
     id: number
     title: string
-    viewCount: number
     likeCount: number
     commentCount: number
+    updatedAt: string
 }
 
 export const usePostStore = defineStore('post', {
@@ -15,9 +15,9 @@ export const usePostStore = defineStore('post', {
         postSimple: {
             id: 0,
             title: '',
-            viewCount: 0,
             likeCount: 0,
             commentCount: 0,
+            updatedAt: ''
         } as PostSimple,
         signedIn: false
     }),
@@ -27,9 +27,9 @@ export const usePostStore = defineStore('post', {
             const postSimple = any as PostSimple
             this.postSimple.id = postSimple.id
             this.postSimple.title = postSimple.title
-            this.postSimple.viewCount = postSimple.viewCount
             this.postSimple.likeCount = postSimple.likeCount
             this.postSimple.commentCount = postSimple.commentCount
+            this.postSimple.updatedAt = postSimple.updatedAt
         }
     }
 })

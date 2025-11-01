@@ -27,9 +27,9 @@
             <div class="flex m-2 justify-between items-center">
                 <div class="text-l text-gray-500">帖子</div>
                 <div class="text-l flex justify-between items-center text-gray-500">
-                    <div class="w-22 font-bold text-center">浏览量</div>
                     <div class="w-22 font-bold text-center">回复</div>
                     <div class="w-22 font-bold text-center">点赞</div>
+                    <div class="w-22 font-bold text-center">最后回复</div>
                 </div>
             </div>
             <div class="border-t-2"></div>
@@ -40,9 +40,9 @@
                     {{ simple.title }}
                 </router-link>
                 <div class="flex text-gray-600">
-                    <div class="w-22 font-bold text-center">{{ simple.viewCount }}</div>
                     <div class="w-22 font-bold text-center">{{ simple.commentCount }}</div>
                     <div class="w-22 font-bold text-center">{{ simple.likeCount }}</div>
+                    <div class="w-22 font-bold text-center">{{ formatTime(simple.updatedAt) }}</div>
                 </div>
             </div>
             <div class="border-t-2"></div>
@@ -60,14 +60,17 @@
     const categoryStore = useForumCategoryStore()
     import { usePostStore } from '@/stores/PostStore'
     const postStore = usePostStore()
+    import dayjs from 'dayjs'
+    import relativeTime from 'dayjs/plugin/relativeTime'
+    import 'dayjs/locale/zh-cn'
 
     // 帖子简单信息
     interface PostSimple {
         id: number
         title: string
-        viewCount: number
         likeCount: number
         commentCount: number
+        updatedAt: string
     }
     const postSimple = ref<PostSimple[]>([])
 
@@ -81,6 +84,17 @@
         })
         postSimple.value = response.data.data
     }
+
+    // 初始化dayjs
+    dayjs.extend(relativeTime)
+    dayjs.locale('zh-cn')
+
+    // 时间格式化
+    const formatTime = (timeStr: string | undefined) => {
+        if (!timeStr) return '无效日期'
+        return dayjs(timeStr).fromNow()
+    }
+
     // 监听路由变化
     watchEffect(() => {
         if (categoryStore.category.id) {

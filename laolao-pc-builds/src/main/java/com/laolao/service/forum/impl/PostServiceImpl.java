@@ -182,6 +182,7 @@ public class PostServiceImpl implements PostService {
                 .content(createPostDTO.getContent())
                 .images(createPostDTO.getImages())
                 .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
                 .build();
         postMapper.insertPost(post);
         PostSimpleVO postSimpleVO = mapStruct.PostToSimpleVO(post);

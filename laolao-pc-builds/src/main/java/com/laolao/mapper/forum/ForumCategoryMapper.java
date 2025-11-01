@@ -8,6 +8,6 @@ import java.util.List;
 
 @Mapper
 public interface ForumCategoryMapper {
-    @Select("select * from forum_category")
+    @Select("select * from forum_category order by sort desc")
     List<ForumCategory> get();
 }

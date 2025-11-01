@@ -71,10 +71,6 @@
                     <p class="text-blue-500">{{ post?.commentCount }}</p>
                     <p>评论量</p>
                 </div>
-                <div class="px-5 flex w-fit flex-col items-center">
-                    <p class="text-blue-500">{{ post?.viewCount }}</p>
-                    <p>浏览量</p>
-                </div>
             </div>
             <div class="border-t-3"></div>
         </div>
@@ -283,7 +279,6 @@
         title: string
         content: string
         image: string
-        viewCount: number
         likeCount: number
         like: number
         commentCount: number

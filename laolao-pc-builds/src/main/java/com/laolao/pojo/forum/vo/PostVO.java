@@ -38,11 +38,6 @@ public class PostVO {
     private String images;
 
     /**
-     * 浏览数
-     */
-    private Integer viewCount;
-
-    /**
      * 点赞数
      */
     private Integer likeCount;

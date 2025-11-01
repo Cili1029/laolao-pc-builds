@@ -48,7 +48,7 @@ public class CommentServiceImpl implements CommentService {
                 .build();
         // 写入数据库
         commentMapper.insertComment(comment);
-        postMapper.updateCommentCount(addCommentDTO.getId(), 1);
+        postMapper.updateCommentCount(addCommentDTO.getId(), 1, LocalDateTime.now());
         List<CommentVO> commentVOList = new ArrayList<>();
         setUserToComment(userMap, Collections.singletonList(comment), commentVOList, null, 1);
         return Result.success(commentVOList.get(0), "发表成功！");
@@ -70,7 +70,7 @@ public class CommentServiceImpl implements CommentService {
                 .build();
         // 写入数据库
         commentMapper.insertReply(comment);
-        postMapper.updateCommentCount(addReplyDTO.getId(), 1);
+        postMapper.updateCommentCount(addReplyDTO.getId(), 1, LocalDateTime.now());
         List<CommentReplyVO> commentReplyVOList = new ArrayList<>();
         setUserToComment(userMap, Collections.singletonList(comment), null, commentReplyVOList, 2);
         return Result.success(commentReplyVOList.get(0), "发表成功！");
@@ -89,9 +89,9 @@ public class CommentServiceImpl implements CommentService {
         // 删除该评论下的所有回复
         int delta = commentMapper.deleteReplyByParent(commentId);
         if (delta > 0) {
-            postMapper.updateCommentCount(postId, -(1 + delta));
+            postMapper.updateCommentCount(postId, -(1 + delta), null);
         } else {
-            postMapper.updateCommentCount(postId, -1);
+            postMapper.updateCommentCount(postId, -1, null);
         }
         return Result.success("删除成功");
     }
@@ -100,7 +100,7 @@ public class CommentServiceImpl implements CommentService {
     public Result<String> deleteReply(int postId, int id) {
         int userId = BaseContext.getCurrentId();
         commentMapper.deleteComment(id, userId);
-        postMapper.updateCommentCount(postId, -1);
+        postMapper.updateCommentCount(postId, -1, null);
         return Result.success("删除成功");
     }
 

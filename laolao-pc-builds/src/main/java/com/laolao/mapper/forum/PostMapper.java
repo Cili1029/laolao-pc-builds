@@ -3,6 +3,7 @@ package com.laolao.mapper.forum;
 import com.laolao.pojo.forum.entity.Post;
 import org.apache.ibatis.annotations.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Mapper
@@ -16,7 +17,7 @@ public interface PostMapper {
     @Select("select * from forum_post where category_id = #{categoryId} and title like concat('%',#{searchContent},'%')")
     List<Post> searchPostSimple(int categoryId, String searchContent);
 
-    @Insert("insert into forum_post(user_id, category_id, title, content, images, created_at) value (#{userId}, #{categoryId}, #{title}, #{content}, #{images}, #{createdAt})")
+    @Insert("insert into forum_post(user_id, category_id, title, content, images, created_at, updated_at) value (#{userId}, #{categoryId}, #{title}, #{content}, #{images}, #{createdAt}, #{updatedAt})")
     @Options(useGeneratedKeys = true, keyProperty = "id")
     void insertPost(Post post);
 
@@ -26,6 +27,5 @@ public interface PostMapper {
     @Update("update forum_post set like_count = like_count + #{delta} where id = #{likeId}")
     void updateLikeCount(int likeId, int delta);
 
-    @Update("update forum_post set comment_count = comment_count + #{delta} where id = #{id}")
-    void updateCommentCount(int id, int delta);
+    void updateCommentCount(int id, int delta, LocalDateTime now);
 }

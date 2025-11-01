@@ -42,11 +42,6 @@ public class Post {
     private String images;
 
     /**
-     * 浏览数
-     */
-    private Integer viewCount;
-
-    /**
      * 点赞数
      */
     private Integer likeCount;
@@ -70,4 +65,9 @@ public class Post {
      * 创建时间
      */
     private LocalDateTime createdAt;
+
+    /**
+     * 最后更新时间（最后评论）
+     */
+    private LocalDateTime updatedAt;
 }
