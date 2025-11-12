@@ -31,8 +31,12 @@
                         <p>{{ formatTime(post?.createdAt) }}</p>
                     </div>
                     <div>
-                        <p class="pb-20">{{ post?.content }}</p>
-                        <!-- 还有图片 -->
+                        <p class="pb-2">{{ post?.content }}</p>
+                        <div class="flex flex-col items-start">
+                            <img :src="image" v-for="image in post?.images" :key="image"
+                                class="max-h-150 object-contain rounded-md shadow-sm cursor-pointer hover:shadow-md transition-shadow mb-5"
+                                alt="帖子图片">
+                        </div>
                     </div>
                     <div class="flex flex-col items-end gap-1">
                         <div class="flex items-center">
@@ -91,8 +95,12 @@
                         <p>{{ formatTime(comment.createdAt) }}</p>
                     </div>
                     <div>
-                        <p class="pb-10">{{ comment.content }}</p>
-                        <!-- 还有图片 -->
+                        <p class="pb-2">{{ comment.content }}</p>
+                        <div class="flex flex-col items-start">
+                            <img :src="image" v-for="image in comment.images" :key="image"
+                                class="max-h-150 object-contain rounded-md shadow-sm cursor-pointer hover:shadow-md transition-shadow mb-5"
+                                alt="评论图片">
+                        </div>
                     </div>
                     <div class="pb-4 flex justify-between items-center">
                         <div class="flex">
@@ -169,8 +177,12 @@
                             <p>{{ formatTime(reply.createdAt) }}</p>
                         </div>
                         <div>
-                            <p>{{ reply.content }}</p>
-                            <!-- 还有图片 -->
+                            <p class="pb-2">{{ reply.content }}</p>
+                            <div class="flex flex-col items-start">
+                                <img :src="image" v-for="image in reply.images" :key="image"
+                                    class="max-h-150 object-contain rounded-md shadow-sm cursor-pointer hover:shadow-md transition-shadow mb-5"
+                                    alt="回复图片">
+                            </div>
                         </div>
                         <div class="flex flex-col items-end gap-1 pb-4">
                             <div class="flex items-center">
@@ -204,13 +216,39 @@
                     </div>
                 </div>
             </div>
-
         </div>
         <!-- 回复 -->
         <div class="border-t-3"></div>
         <div class="grid w-full gap-2 pb-15 pt-2">
             <Textarea v-model="myComment" class="h-32" placeholder="说点什么..."></Textarea>
-            <Button @click="submitComment()" :disabled="!myComment">发送</Button>
+            <div class="flex justify-between">
+                <Dialog>
+                    <DialogTrigger as-child>
+                        <Button :disabled="uploading">
+                            {{ uploading ? "上传中" : fileCount > 0 ? `上传了${fileCount}张图片` : "上传图片（可选）" }}
+                        </Button>
+                    </DialogTrigger>
+                    <DialogContent class="md:max-w-4xl">
+                        <DialogHeader>
+                            <DialogTitle>上传图片</DialogTitle>
+                            <DialogDescription>
+                            </DialogDescription>
+                        </DialogHeader>
+                        <div>
+                            <FileUpload v-model:data="images" :max-files="1" />
+                        </div>
+                        <DialogFooter class="sm:justify-start">
+                            <DialogClose as-child>
+                                <Button type="button" class="w-full" @click="uploadFiles()">
+                                    提交
+                                </Button>
+                            </DialogClose>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
+                <Button @click="submitComment()" :disabled="!myComment || uploading">发送！</Button>
+            </div>
+
         </div>
     </div>
 </template>
@@ -223,9 +261,11 @@
     import { Textarea } from "@/components/ui/textarea"
     import { Button } from "@/components/ui/button"
     import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger, } from '@/components/ui/alert-dialog'
+    import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog"
     import dayjs from 'dayjs'
     import relativeTime from 'dayjs/plugin/relativeTime'
     import 'dayjs/locale/zh-cn'
+    import FileUpload from '@/components/Upload.vue';
     import { useForumCategoryStore } from '@/stores/ForumCategoryStore'
     const categoryStore = useForumCategoryStore()
     import { useUserStore } from '@/stores/UserStore'
@@ -256,7 +296,7 @@
         user: UserVO
         parent: number
         content: string
-        image: string
+        images: string[]
         likeCount: number
         like: number
         createdAt: string
@@ -266,7 +306,7 @@
         postId: number
         user: UserVO
         content: string
-        image: string
+        images: string[]
         likeCount: number
         like: number
         createdAt: string
@@ -278,7 +318,7 @@
         user: UserVO
         title: string
         content: string
-        image: string
+        images: string[]
         likeCount: number
         like: number
         commentCount: number
@@ -345,7 +385,8 @@
         // 之后追加最新消息
         const response = await axios.post("/api/user/forum/comment", {
             id: post.value?.id,
-            content: myComment.value
+            content: myComment.value,
+            images : url.value
         })
         myComment.value = ''
         if (post.value && response.data.data) {
@@ -469,6 +510,42 @@
             }
         } catch (error) {
             console.error('点赞失败:', error)
+        }
+    }
+
+    // 图片上传
+    const images = ref<File[]>([])
+    const fileCount = ref(0)
+    const uploading = ref<boolean>(false)
+    const url = ref([])
+
+    const uploadFiles = async () => {
+        if (images.value.length === 0) {
+            alert('请先选择文件')
+            return;
+        }
+
+        try {
+            // 创建 FormData 对象
+            const formData = new FormData()
+            // 将每个文件添加到 FormData 中
+            images.value.forEach(image => {
+                formData.append('images', image)
+            });
+
+            // 发送 POST 请求
+            uploading.value = true
+            const response = await axios.post("/api/user/forum/post/upload", formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+            fileCount.value = fileCount.value + response.data.data.count
+            url.value = response.data.data.images
+        } catch (error) {
+            console.error('上传失败:', error)
+        } finally {
+            uploading.value = false
         }
     }
 

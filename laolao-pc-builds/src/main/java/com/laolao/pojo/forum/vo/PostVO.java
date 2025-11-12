@@ -35,7 +35,7 @@ public class PostVO {
     /**
      * 帖子图片
      */
-    private String images;
+    private List<String> images;
 
     /**
      * 点赞数

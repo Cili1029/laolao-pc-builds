@@ -1,4 +1,4 @@
-package com.laolao.pojo.forum.dto;
+package com.laolao.pojo.forum.vo;
 
 import lombok.*;
 
@@ -9,19 +9,15 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class AddCommentDTO {
+@Builder
+public class ImageVO {
     /**
-     * 帖子Id
+     * 图片数量
      */
-    private int id;
+    private int count;
 
     /**
-     * 内容
-     */
-    private String content;
-
-    /**
-     * 图片
+     * 结果字符串
      */
     private List<String> images;
 }

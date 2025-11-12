@@ -1,10 +1,10 @@
 package com.laolao.service.user.impl;
 
-import cn.hutool.core.util.RandomUtil;
 import com.laolao.common.constant.JwtClaimsConstant;
 import com.laolao.common.constant.MessageConstant;
 import com.laolao.common.constant.RedisConstant;
-import com.laolao.common.utils.AliyunDirectMailUtil;
+import com.laolao.common.utils.AliDirectMailUtil;
+import com.laolao.common.utils.NameUtil;
 import com.laolao.converter.MapStruct;
 import com.laolao.common.exception.UnknownError;
 import com.laolao.mapper.user.UserMapper;
@@ -42,7 +42,7 @@ public class UserServiceImpl implements UserService {
     @Resource
     private StringRedisTemplate stringRedisTemplate;
     @Resource
-    private AliyunDirectMailUtil aliyunDirectMailUtil;
+    private AliDirectMailUtil aliDirectMailUtil;
 
     @Override
     public Result<String> getEmailCode(String email) throws Exception {
@@ -53,7 +53,7 @@ public class UserServiceImpl implements UserService {
 
         String code = String.format("%06d", ThreadLocalRandom.current().nextInt(0, 1000000));
 
-        Boolean result =aliyunDirectMailUtil.sendEmail(email, "您的验证码是<strong>" + code + "</strong>");
+        Boolean result = aliDirectMailUtil.sendEmail(email, "您的验证码是<strong>" + code + "</strong>");
         if (!result) {
             throw new UnknownError(MessageConstant.UNKNOWN_ERROR);
         }
@@ -112,7 +112,7 @@ public class UserServiceImpl implements UserService {
         }
 
         User user = new User();
-        user.setName("user_" + RandomUtil.randomString(10));
+        user.setName(NameUtil.generateName());
         user.setUsername(signUpDTO.getUsername());
         user.setPassword(DigestUtils.md5DigestAsHex(signUpDTO.getPassword().getBytes()));
         user.setEmail(signUpDTO.getEmail());

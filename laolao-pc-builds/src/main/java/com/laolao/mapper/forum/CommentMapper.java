@@ -13,7 +13,7 @@ public interface CommentMapper {
     @Select("select * from forum_comment where parent = #{id} and status = 1")
     List<Comment> selectReply(int id);
 
-    @Insert("insert into forum_comment(post_id, user_id, content, created_at) value (#{postId}, #{userId}, #{content}, #{createdAt})")
+    @Insert("insert into forum_comment(post_id, user_id, content, images, created_at) value (#{postId}, #{userId}, #{content}, #{images}, #{createdAt})")
     @Options(useGeneratedKeys = true, keyProperty = "id")
     void insertComment(Comment comment);
 

@@ -44,8 +44,12 @@ public class CommentServiceImpl implements CommentService {
                 .postId(addCommentDTO.getId())
                 .userId(userId)
                 .content(addCommentDTO.getContent())
+                .images(addCommentDTO.getImages())
                 .createdAt(LocalDateTime.now())
                 .build();
+        if (comment.getImages() == null || comment.getImages().isEmpty()) {
+            comment.setImages(null);
+        }
         // 写入数据库
         commentMapper.insertComment(comment);
         postMapper.updateCommentCount(addCommentDTO.getId(), 1, LocalDateTime.now());

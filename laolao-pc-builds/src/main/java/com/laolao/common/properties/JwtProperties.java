@@ -1,8 +1,12 @@
 package com.laolao.common.properties;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
+@Getter
+@Setter
 @Component
 @ConfigurationProperties(prefix = "laolao.jwt")
 public class JwtProperties {
@@ -11,20 +15,4 @@ public class JwtProperties {
      */
     private String userSecretKey;
     private long userTtl;
-
-    public String getUserSecretKey() {
-        return userSecretKey;
-    }
-
-    public void setUserSecretKey(String userSecretKey) {
-        this.userSecretKey = userSecretKey;
-    }
-
-    public long getUserTtl() {
-        return userTtl;
-    }
-
-    public void setUserTtl(long userTtl) {
-        this.userTtl = userTtl;
-    }
 }

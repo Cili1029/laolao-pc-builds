@@ -3,6 +3,7 @@ package com.laolao.pojo.forum.entity;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -39,7 +40,7 @@ public class Post {
     /**
      * 帖子图片
      */
-    private String images;
+    private List<String> images;
 
     /**
      * 点赞数

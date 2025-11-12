@@ -2,6 +2,7 @@ package com.laolao.service.forum.impl;
 
 import com.laolao.common.context.BaseContext;
 import com.laolao.common.result.Result;
+import com.laolao.common.utils.AliOSSUtil;
 import com.laolao.converter.MapStruct;
 import com.laolao.mapper.forum.CommentMapper;
 import com.laolao.mapper.forum.LikeMapper;
@@ -12,16 +13,14 @@ import com.laolao.pojo.forum.dto.LikeTarget;
 import com.laolao.pojo.forum.entity.Comment;
 import com.laolao.pojo.forum.entity.Like;
 import com.laolao.pojo.forum.entity.Post;
-import com.laolao.pojo.forum.vo.CommentReplyVO;
-import com.laolao.pojo.forum.vo.CommentVO;
-import com.laolao.pojo.forum.vo.PostSimpleVO;
-import com.laolao.pojo.forum.vo.PostVO;
+import com.laolao.pojo.forum.vo.*;
 import com.laolao.pojo.user.entity.User;
 import com.laolao.pojo.user.vo.UserVO;
 import com.laolao.service.forum.PostService;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -39,6 +38,8 @@ public class PostServiceImpl implements PostService {
     private CommentMapper commentMapper;
     @Resource
     private LikeMapper likeMapper;
+    @Resource
+    private AliOSSUtil ossUtil;
 
     @Override
     public Result<List<PostSimpleVO>> getPostSimple(int categoryId) {
@@ -56,6 +57,7 @@ public class PostServiceImpl implements PostService {
     public Result<PostVO> getPost(int id) {
         // 先获取帖子基本信息
         Post post = postMapper.selectPost(id);
+        System.out.println(post);
         PostVO postVO = mapStruct.PostToPostVO(post);
 
         // 获取所有这个帖子评论(直接评论)
@@ -184,6 +186,9 @@ public class PostServiceImpl implements PostService {
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .build();
+        if (post.getImages() == null || post.getImages().isEmpty()) {
+            post.setImages(null);
+        }
         postMapper.insertPost(post);
         PostSimpleVO postSimpleVO = mapStruct.PostToSimpleVO(post);
         return Result.success(postSimpleVO, "发布成功");
@@ -198,5 +203,15 @@ public class PostServiceImpl implements PostService {
         // 删帖子
         postMapper.delete(id, userId);
         return Result.success("删除成功");
+    }
+
+    @Override
+    public Result<ImageVO> uploadImages(MultipartFile[] images) throws Exception {
+        List<String> upload = ossUtil.upload(images, "PostImage");
+        ImageVO imageVO = ImageVO.builder()
+                .count(upload.size())
+                .images(upload)
+                .build();
+        return Result.success(imageVO, "上传成功！");
     }
 }

@@ -3,8 +3,10 @@ package com.laolao.service.forum;
 import com.laolao.common.result.Result;
 import com.laolao.pojo.forum.dto.CreatePostDTO;
 import com.laolao.pojo.forum.vo.CommentReplyVO;
+import com.laolao.pojo.forum.vo.ImageVO;
 import com.laolao.pojo.forum.vo.PostSimpleVO;
 import com.laolao.pojo.forum.vo.PostVO;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -20,4 +22,6 @@ public interface PostService {
     Result<String> deletePost(int id);
 
     Result<List<CommentReplyVO>> getReply(int id);
+
+    Result<ImageVO> uploadImages(MultipartFile[] images) throws Exception;
 }

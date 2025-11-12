@@ -2,22 +2,22 @@ package com.laolao.common.utils;
 
 import com.aliyun.credentials.models.Config;
 import com.aliyun.tea.TeaException;
-import com.laolao.common.properties.AliyunDirectMailProperties;
+import com.laolao.common.properties.AliProperties;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Component;
 
 @Component
-public class AliyunDirectMailUtil {
+public class AliDirectMailUtil {
 
     @Resource
-    private AliyunDirectMailProperties properties;
+    private AliProperties properties;
 
     private String getAccessKeyId() {
-        return properties.getAccessKeyId();
+        return properties.getAccessKey().getAccessKeyId();
     }
 
     private String getAccessKeySecret() {
-        return properties.getAccessKeySecret();
+        return properties.getAccessKey().getAccessKeySecret();
     }
 
     public com.aliyun.dm20151123.Client createClient() throws Exception {

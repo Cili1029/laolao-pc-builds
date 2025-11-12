@@ -49,10 +49,34 @@
                                 <label class="text-sm font-medium w-20 mt-2">内容</label>
                                 <Textarea v-model="content" class="w-full h-32" placeholder="说点什么..."></Textarea>
                             </div>
+                            <Dialog>
+                                <DialogTrigger as-child>
+                                    <Button :disabled="uploading">
+                                        {{ uploading ? "上传中" : fileCount > 0 ? `上传了${fileCount}张图片` : "上传图片（可选）" }}
+                                    </Button>
+                                </DialogTrigger>
+                                <DialogContent class="md:max-w-4xl">
+                                    <DialogHeader>
+                                        <DialogTitle>上传图片</DialogTitle>
+                                        <DialogDescription>
+                                        </DialogDescription>
+                                    </DialogHeader>
+                                    <div>
+                                        <FileUpload v-model:data="images" :max-files="5" />
+                                    </div>
+                                    <DialogFooter class="sm:justify-start">
+                                        <DialogClose as-child>
+                                            <Button type="button" class="w-full" @click="uploadFiles()">
+                                                提交
+                                            </Button>
+                                        </DialogClose>
+                                    </DialogFooter>
+                                </DialogContent>
+                            </Dialog>
                         </div>
                         <DialogFooter>
                             <DialogClose as-child>
-                                <Button type="submit" :disabled="!title || !content || !(categoryId !== 0)"
+                                <Button type="submit" :disabled="!title || !content || !(categoryId !== 0) || uploading"
                                     @click="create()">
                                     发布！
                                 </Button>
@@ -93,6 +117,7 @@
     import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
     import { Input } from "@/components/ui/input"
     import { Textarea } from "@/components/ui/textarea"
+    import FileUpload from '@/components/Upload.vue';
     import { useForumCategoryStore } from '@/stores/ForumCategoryStore'
     import { useRouter } from 'vue-router'
     const router = useRouter()
@@ -134,12 +159,14 @@
     const categoryId = ref(0)
     const title = ref('')
     const content = ref('')
+    const url = ref([])
 
     const create = async () => {
         const response = await axios.post("/api/user/forum/post/create", {
             categoryId: categoryId.value,
             title: title.value,
-            content: content.value
+            content: content.value,
+            images: url.value
         })
 
         // 在当前分类的发布
@@ -151,6 +178,44 @@
         categoryId.value = 0
         title.value = ''
         content.value = ''
+        url.value = []
+        images.value = []
+    }
+
+    // 图片上传
+    const images = ref<File[]>([])
+    const fileCount = ref(0)
+    const uploading = ref<boolean>(false)
+
+    const uploadFiles = async () => {
+        if (images.value.length === 0) {
+            alert('请先选择文件')
+            return;
+        }
+
+        try {
+            // 创建 FormData 对象
+            const formData = new FormData()
+            // 将每个文件添加到 FormData 中
+            images.value.forEach(image => {
+                formData.append('images', image)
+            });
+
+            // 发送 POST 请求
+            uploading.value = true
+            const response = await axios.post("/api/user/forum/post/upload", formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+            fileCount.value = fileCount.value + response.data.data.count
+            url.value = response.data.data.images
+            console.log(url.value)
+        } catch (error) {
+            console.error('上传失败:', error)
+        } finally {
+            uploading.value = false
+        }
     }
 </script>
 

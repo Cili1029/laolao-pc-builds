@@ -20,6 +20,10 @@ spring:
       host: ${laolao.redis.host}
       port: ${laolao.redis.port}
       database: ${laolao.redis.database}
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 25MB
 
 mybatis:
   #mapper配置文件
@@ -27,10 +31,16 @@ mybatis:
   configuration:
     #开启驼峰命名
     map-underscore-to-camel-case: true
+  type-handlers-package: com.laolao.common.handler
 
-aliyun-direct-mail:
-  accessKey-id: ${laolao.aliyun-direct-mail.accessKey-id}
-  accessKeySecret: ${laolao.aliyun-direct-mail.accessKeySecret}
+aliyun:
+  access-key:
+    accessKey-id: ${laolao.aliyun.access-key.accessKey-id}
+    accessKey-secret: ${laolao.aliyun.access-key.accessKey-secret}
+  oss:
+    endpoint: ${laolao.aliyun.oss.endpoint}
+    bucket-name: ${laolao.aliyun.oss.bucket-name}
+
 
 laolao:
   jwt:
@@ -38,7 +48,5 @@ laolao:
     user-secret-key: laolaolaolaolaolaolaolaolaolaolao
     # 设置jwt过期时间
     user-ttl: 604800000
-    # 设置前端传递过来的令牌名称
-    user-token-name: authentication
 amap:
   key: ${laolao.amap.key}

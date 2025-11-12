@@ -4,6 +4,7 @@ import com.laolao.pojo.user.vo.UserVO;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -40,7 +41,7 @@ public class Comment {
     /**
      * 评论图片，最多一张
      */
-    private String image;
+    private List<String> images;
 
     /**
      * 状态：1正常，2删除

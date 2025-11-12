@@ -10,7 +10,7 @@
 			</div>
 		</div>
 
-		<div v-else class="flex flex-col items-center justify-center h-full py-8">
+		<div v-else class="h-full py-8 flex flex-col">
 			<!-- 文件列表 -->
 			<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
 				<div v-for="(file, index) in files" :key="index"

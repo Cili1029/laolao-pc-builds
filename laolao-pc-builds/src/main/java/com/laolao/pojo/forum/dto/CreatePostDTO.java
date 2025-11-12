@@ -1,10 +1,7 @@
 package com.laolao.pojo.forum.dto;
 
-import com.laolao.pojo.forum.vo.CommentVO;
-import com.laolao.pojo.user.vo.UserVO;
 import lombok.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -32,5 +29,5 @@ public class CreatePostDTO {
     /**
      * 帖子图片
      */
-    private String images;
+    private List<String> images;
 }
