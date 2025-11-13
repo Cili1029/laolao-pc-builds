@@ -2,7 +2,6 @@ package com.laolao.service.forum.impl;
 
 import com.laolao.common.context.BaseContext;
 import com.laolao.common.result.Result;
-import com.laolao.common.utils.AliOSSUtil;
 import com.laolao.converter.MapStruct;
 import com.laolao.mapper.forum.CommentMapper;
 import com.laolao.mapper.forum.LikeMapper;
@@ -15,12 +14,11 @@ import com.laolao.pojo.forum.entity.Like;
 import com.laolao.pojo.forum.entity.Post;
 import com.laolao.pojo.forum.vo.*;
 import com.laolao.pojo.user.entity.User;
-import com.laolao.pojo.user.vo.UserVO;
+import com.laolao.pojo.user.vo.UserSimpleVO;
 import com.laolao.service.forum.PostService;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -38,8 +36,6 @@ public class PostServiceImpl implements PostService {
     private CommentMapper commentMapper;
     @Resource
     private LikeMapper likeMapper;
-    @Resource
-    private AliOSSUtil ossUtil;
 
     @Override
     public Result<List<PostSimpleVO>> getPostSimple(int categoryId) {
@@ -57,7 +53,6 @@ public class PostServiceImpl implements PostService {
     public Result<PostVO> getPost(int id) {
         // 先获取帖子基本信息
         Post post = postMapper.selectPost(id);
-        System.out.println(post);
         PostVO postVO = mapStruct.PostToPostVO(post);
 
         // 获取所有这个帖子评论(直接评论)
@@ -70,7 +65,7 @@ public class PostServiceImpl implements PostService {
         // 将用户转为id为key的索引
         Map<Integer, User> userMap = allUserList.stream().collect(Collectors.toMap(User::getId, user -> user));
         // 获取贴主
-        UserVO poster = mapStruct.userToUserVO(userMap.get(post.getUserId()));
+        UserSimpleVO poster = mapStruct.userToUserSimpleVO(userMap.get(post.getUserId()));
         // 写入帖子VO
         postVO.setUser(poster);
 
@@ -105,9 +100,9 @@ public class PostServiceImpl implements PostService {
                 // 获取对应用户
                 User user = userMap.get(comment.getUserId());
                 // 转换
-                UserVO userVO = mapStruct.userToUserVO(user);
+                UserSimpleVO userSimpleVO = mapStruct.userToUserSimpleVO(user);
                 // 写入
-                comment.setUser(userVO);
+                comment.setUser(userSimpleVO);
                 CommentVO commentVO = mapStruct.commentToCommentVO(comment);
 
                 if (likeMap.get("2_" + commentVO.getId()) != null) {
@@ -149,8 +144,8 @@ public class PostServiceImpl implements PostService {
 
         for (Comment reply : replyList) {
             User user = userMap.get(reply.getUserId());
-            UserVO userVO = mapStruct.userToUserVO(user);
-            reply.setUser(userVO);
+            UserSimpleVO userSimpleVO = mapStruct.userToUserSimpleVO(user);
+            reply.setUser(userSimpleVO);
             CommentReplyVO commentReplyVO = mapStruct.commentToCommentReplyVO(reply);
             if (likeMap.get(commentReplyVO.getId()) != null) {
                 // 点赞了
@@ -203,15 +198,5 @@ public class PostServiceImpl implements PostService {
         // 删帖子
         postMapper.delete(id, userId);
         return Result.success("删除成功");
-    }
-
-    @Override
-    public Result<ImageVO> uploadImages(MultipartFile[] images) throws Exception {
-        List<String> upload = ossUtil.upload(images, "PostImage");
-        ImageVO imageVO = ImageVO.builder()
-                .count(upload.size())
-                .images(upload)
-                .build();
-        return Result.success(imageVO, "上传成功！");
     }
 }

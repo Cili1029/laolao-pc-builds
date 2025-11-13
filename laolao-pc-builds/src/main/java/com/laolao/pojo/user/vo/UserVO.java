@@ -1,30 +1,29 @@
 package com.laolao.pojo.user.vo;
 
+import com.laolao.pojo.forum.vo.PostSimpleVO;
 import lombok.*;
+
+import java.util.List;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
+@Builder
 public class UserVO {
     /**
-     * 主键
+     * 用户信息
      */
-    private int id;
+    private UserSimpleVO user;
 
     /**
-     * 账号
+     * 用户的帖子
      */
-    private String username;
+    private List<PostSimpleVO> userPostList;
 
     /**
-     * 头像
+     * 喜欢的帖子
      */
-    private String avatar;
-
-    /**
-     * 用户名
-     */
-    private String name;
+    private List<PostSimpleVO> likePostList;
 }

@@ -17,7 +17,7 @@ public interface CommentMapper {
     @Options(useGeneratedKeys = true, keyProperty = "id")
     void insertComment(Comment comment);
 
-    @Insert("insert into forum_comment(post_id, user_id, parent, content, created_at) value (#{postId}, #{userId}, #{parent}, #{content}, #{createdAt})")
+    @Insert("insert into forum_comment(post_id, user_id, parent, content, images, created_at) value (#{postId}, #{userId}, #{parent}, #{content}, #{images}, #{createdAt})")
     @Options(useGeneratedKeys = true, keyProperty = "id")
     void insertReply(Comment comment);
 

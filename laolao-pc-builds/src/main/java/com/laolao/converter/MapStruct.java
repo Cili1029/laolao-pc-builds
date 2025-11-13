@@ -9,7 +9,7 @@ import com.laolao.pojo.shop.dto.CartProductDTO;
 import com.laolao.pojo.shop.entity.*;
 import com.laolao.pojo.shop.vo.*;
 import com.laolao.pojo.user.entity.User;
-import com.laolao.pojo.user.vo.UserVO;
+import com.laolao.pojo.user.vo.UserSimpleVO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
@@ -20,7 +20,7 @@ import org.mapstruct.MappingConstants;
  */
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface MapStruct {
-    UserVO userToUserVO(User user);
+    UserSimpleVO userToUserSimpleVO(User user);
 
     // 商品的
     ShopCategoryVO ShopCategoryToCategoryVO(ShopCategory shopCategory);

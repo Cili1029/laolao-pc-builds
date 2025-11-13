@@ -19,11 +19,13 @@
             <!-- 内容 -->
             <div class="flex px-3 pt-3">
                 <!-- 头像 -->
-                <Avatar
-                    class="w-14 h-14 text-2xl cursor-pointer hover:ring-2 hover:ring-blue-500 transition-all rounded-full">
-                    <AvatarImage :src="post?.user.avatar || ''" alt="用户头像" />
-                    <AvatarFallback>{{ post?.user.name.substring(0, 1) }}</AvatarFallback>
-                </Avatar>
+                <RouterLink :to="`/user/${post?.user.id}`">
+                    <Avatar
+                        class="w-14 h-14 text-2xl cursor-pointer hover:ring-2 hover:ring-blue-500 transition-all rounded-full">
+                        <AvatarImage :src="post?.user.avatar || ''" alt="用户头像" />
+                        <AvatarFallback>{{ post?.user.name.substring(0, 1) }}</AvatarFallback>
+                    </Avatar>
+                </RouterLink>
                 <!-- 内容 -->
                 <div class="p-2 w-full">
                     <div class="flex justify-between">
@@ -83,11 +85,14 @@
             <!-- 直接评论 -->
             <div class="flex w-full">
                 <!-- 头像 -->
-                <Avatar
-                    class="w-14 h-14 text-2xl cursor-pointer hover:ring-2 hover:ring-blue-500 transition-all rounded-full">
-                    <AvatarImage :src="comment.user.avatar || ''" alt="用户头像" />
-                    <AvatarFallback>{{ comment.user.name.substring(0, 1) }}</AvatarFallback>
-                </Avatar>
+                <RouterLink :to="`/user/${comment.user.id}`">
+                    <Avatar
+                        class="w-14 h-14 text-2xl cursor-pointer hover:ring-2 hover:ring-blue-500 transition-all rounded-full">
+                        <AvatarImage :src="comment.user.avatar || ''" alt="用户头像" />
+                        <AvatarFallback>{{ comment.user.name.substring(0, 1) }}</AvatarFallback>
+                    </Avatar>
+                </RouterLink>
+
                 <!-- 内容 -->
                 <div class="p-2 w-full">
                     <div class="flex justify-between">
@@ -109,25 +114,52 @@
                                     @click="openReply(comment.id), getReply(comment.id)">{{ comment.replyCount
                                     }}条回复▼</Button>
                                 <Button v-else variant="secondary" @click="openReply(comment.id)">{{ comment.replyCount
-                                }}条回复▲</Button>
+                                    }}条回复▲</Button>
                             </div>
-                            <AlertDialog>
-                                <AlertDialogTrigger as-child>
+                            <Dialog>
+                                <DialogTrigger as-child>
                                     <Button class="ml-2" variant="secondary">回复层主</Button>
-                                </AlertDialogTrigger>
-                                <AlertDialogContent>
-                                    <AlertDialogHeader>
-                                        <AlertDialogTitle>回复层主</AlertDialogTitle>
-                                        <AlertDialogDescription></AlertDialogDescription>
-                                        <Textarea class="h-32" v-model="myComment" placeholder="说点什么..."></Textarea>
-                                    </AlertDialogHeader>
-                                    <AlertDialogFooter>
-                                        <AlertDialogCancel>算了</AlertDialogCancel>
-                                        <AlertDialogAction :disabled="!myComment" @click="submitReply(comment.id)">
-                                            发送</AlertDialogAction>
-                                    </AlertDialogFooter>
-                                </AlertDialogContent>
-                            </AlertDialog>
+                                </DialogTrigger>
+                                <DialogContent class="sm:max-w-[600px]">
+                                    <DialogHeader>
+                                        <DialogTitle>回复层主</DialogTitle>
+                                        <DialogDescription></DialogDescription>
+                                    </DialogHeader>
+                                    <Textarea class="h-32" v-model="myComment" placeholder="说点什么..."></Textarea>
+                                    <DialogFooter class="flex justify-start gap-2">
+                                        <Dialog>
+                                            <DialogTrigger as-child>
+                                                <Button :disabled="uploading">
+                                                    {{ uploading ? "上传中" : fileCount > 0 ? `上传了${fileCount}张图片` :
+                                                    "上传图片（可选）" }}
+                                                </Button>
+                                            </DialogTrigger>
+                                            <DialogContent class="md:max-w-4xl">
+                                                <DialogHeader>
+                                                    <DialogTitle>上传图片</DialogTitle>
+                                                    <DialogDescription>
+                                                    </DialogDescription>
+                                                </DialogHeader>
+                                                <div>
+                                                    <FileUpload v-model:data="images" :max-files="1" />
+                                                </div>
+                                                <DialogFooter>
+                                                    <DialogClose as-child>
+                                                        <Button type="button" class="w-full" @click="uploadFiles()">
+                                                            提交
+                                                        </Button>
+                                                    </DialogClose>
+                                                </DialogFooter>
+                                            </DialogContent>
+                                        </Dialog>
+                                        <DialogClose as-child class="ml-auto">
+                                            <Button :disabled="!myComment" @click="submitReply(comment.id)">
+                                                发送
+                                            </Button>
+                                        </DialogClose>
+                                    </DialogFooter>
+                                </DialogContent>
+                            </Dialog>
                         </div>
                         <div class="flex flex-col items-end gap-1">
                             <div class="flex items-center">
@@ -165,11 +197,13 @@
                 <div class="px-10 flex w-full" v-if="replyMap.get(comment.id)" v-for="reply in comment.reply"
                     :key="reply.id">
                     <!-- 头像 -->
-                    <Avatar
-                        class="w-14 h-14 text-2xl cursor-pointer hover:ring-2 hover:ring-blue-500 transition-all rounded-full">
-                        <AvatarImage :src="reply.user.avatar || ''" alt="用户头像" />
-                        <AvatarFallback>{{ reply.user.name.substring(0, 1) }}</AvatarFallback>
-                    </Avatar>
+                    <RouterLink :to="`/user/${reply.user.id}`">
+                        <Avatar
+                            class="w-14 h-14 text-2xl cursor-pointer hover:ring-2 hover:ring-blue-500 transition-all rounded-full">
+                            <AvatarImage :src="reply.user.avatar || ''" alt="用户头像" />
+                            <AvatarFallback>{{ reply.user.name.substring(0, 1) }}</AvatarFallback>
+                        </Avatar>
+                    </RouterLink>
                     <!-- 内容 -->
                     <div class="p-2 w-full">
                         <div class="flex justify-between">
@@ -386,9 +420,12 @@
         const response = await axios.post("/api/user/forum/comment", {
             id: post.value?.id,
             content: myComment.value,
-            images : url.value
+            images: url.value
         })
         myComment.value = ''
+        images.value = []
+        fileCount.value = 0
+        url.value = []
         if (post.value && response.data.data) {
             if (!post.value.comment) {
                 post.value.comment = []
@@ -404,7 +441,8 @@
         const response = await axios.post("/api/user/forum/comment/reply", {
             id: post.value?.id,
             parent: parent,
-            content: myComment.value
+            content: myComment.value,
+            images: url.value
         })
         const res = post.value?.comment.find(comment => comment.id === parent)
         if (response.data.code === 1 && res) {
@@ -417,6 +455,9 @@
             post.value!.commentCount += 1
         }
         myComment.value = ''
+        images.value = []
+        fileCount.value = 0
+        url.value = []
     }
 
     // 删除帖子
@@ -531,11 +572,12 @@
             // 将每个文件添加到 FormData 中
             images.value.forEach(image => {
                 formData.append('images', image)
+                formData.append('type', "postImages")
             });
 
             // 发送 POST 请求
             uploading.value = true
-            const response = await axios.post("/api/user/forum/post/upload", formData, {
+            const response = await axios.post("/api/common/upload", formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }

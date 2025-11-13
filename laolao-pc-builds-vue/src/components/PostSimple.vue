@@ -25,7 +25,9 @@
         <div class="border-t-4"></div>
         <div>
             <div class="flex m-2 justify-between items-center">
-                <div class="text-l text-gray-500">帖子</div>
+                <div class="text-l justify-between items-center text-gray-500">
+                    <div class="w-22 font-bold">帖子</div>
+                </div>
                 <div class="text-l flex justify-between items-center text-gray-500">
                     <div class="w-22 font-bold text-center">回复</div>
                     <div class="w-22 font-bold text-center">点赞</div>
@@ -53,7 +55,7 @@
 
 <script setup lang="ts">
     import axios from '@/utils/myAxios'
-    import { ref, watchEffect } from 'vue'
+    import { ref, watch } from 'vue'
     import { Input } from "@/components/ui/input"
     import { Button } from "@/components/ui/button"
     import { useForumCategoryStore } from '@/stores/ForumCategoryStore'
@@ -96,18 +98,23 @@
     }
 
     // 监听路由变化
-    watchEffect(() => {
-        if (categoryStore.category.id) {
-            getPost()
-        }
-        if (postStore.postSimple.id) {
-            postSimple.value.push(postStore.postSimple)
-        }
-    })
+    watch(
+        [() => categoryStore.category.id, () => postStore.postSimple.id], // 只监听这两个特定值
+        () => {
+            if (categoryStore.category.id) {
+                getPost() // 分类变化时获取帖子
+            }
+            if (postStore.postSimple.id) {
+                postSimple.value.push(postStore.postSimple) // 有新帖子时添加
+                postStore.setPostSimple({} as PostSimple) // 立即清空，避免重复添加
+            }
+        },
+        { immediate: true }
+    )
 
     // 搜索
     const searchContent = ref()
-    
+
     const search = async () => {
         const response = await axios.get("/api/user/forum/post/search", {
             params: {

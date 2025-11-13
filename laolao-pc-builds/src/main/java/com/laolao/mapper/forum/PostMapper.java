@@ -24,8 +24,13 @@ public interface PostMapper {
     @Update("update forum_post set status = 2 where id = #{id} and user_id = #{userId}")
     void delete(int id, int userId);
 
-    @Update("update forum_post set like_count = like_count + #{delta} where id = #{likeId}")
+    @Update("update forum_post set like_count = like_count + #{delta}, updated_at = updated_at where id = #{likeId}")
     void updateLikeCount(int likeId, int delta);
 
     void updateCommentCount(int id, int delta, LocalDateTime now);
+
+    @Select("select * from forum_post where user_id = #{id} and status = 1")
+    List<Post> selectPostByUserid(Integer id);
+
+    List<Post> getPostBatch(List<Integer> postIdList);
 }

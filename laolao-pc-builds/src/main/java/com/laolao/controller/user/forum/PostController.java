@@ -3,13 +3,11 @@ package com.laolao.controller.user.forum;
 import com.laolao.common.result.Result;
 import com.laolao.pojo.forum.dto.CreatePostDTO;
 import com.laolao.pojo.forum.vo.CommentReplyVO;
-import com.laolao.pojo.forum.vo.ImageVO;
 import com.laolao.pojo.forum.vo.PostSimpleVO;
 import com.laolao.pojo.forum.vo.PostVO;
 import com.laolao.service.forum.PostService;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -88,16 +86,5 @@ public class PostController {
     @DeleteMapping("/{id}")
     public Result<String> deletePost(@PathVariable int id) {
         return postService.deletePost(id);
-    }
-
-    /**
-     * 图片上传
-     *
-     * @param images 图片
-     * @return 消息结果
-     */
-    @PostMapping("/upload")
-    public Result<ImageVO> uploadImages(@RequestParam("images") MultipartFile[] images) throws Exception {
-        return postService.uploadImages(images);
     }
 }

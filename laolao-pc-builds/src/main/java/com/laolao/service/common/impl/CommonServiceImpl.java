@@ -1,0 +1,27 @@
+package com.laolao.service.common.impl;
+
+import com.laolao.common.result.Result;
+import com.laolao.common.utils.AliOSSUtil;
+import com.laolao.pojo.forum.vo.ImageVO;
+import com.laolao.service.common.CommonService;
+import jakarta.annotation.Resource;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
+
+@Service
+public class CommonServiceImpl implements CommonService {
+    @Resource
+    private AliOSSUtil ossUtil;
+
+    @Override
+    public Result<ImageVO> uploadImages(MultipartFile[] images, String type) throws Exception {
+        List<String> upload = ossUtil.upload(images, type);
+        ImageVO imageVO = ImageVO.builder()
+                .count(upload.size())
+                .images(upload)
+                .build();
+        return Result.success(imageVO, "上传成功！");
+    }
+}

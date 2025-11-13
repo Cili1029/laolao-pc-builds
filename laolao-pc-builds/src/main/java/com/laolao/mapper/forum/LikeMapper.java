@@ -18,7 +18,9 @@ public interface LikeMapper {
 
     @Update("update forum_like set status = #{newStatus} where user_id = #{userId} and like_type = #{likeType} and like_id = #{likeId}")
     void updateStatus(int userId, int likeType, int likeId, int newStatus);
-
-
+    
     List<Like> queryLike(@Param("userId") int currentId, @Param("targets") ArrayList<LikeTarget> likeTargets);
+
+    @Select("select like_id from forum_like where status = 1 and like_type = 1 and user_id = #{id}")
+    List<Integer> getLikePost(Integer id);
 }

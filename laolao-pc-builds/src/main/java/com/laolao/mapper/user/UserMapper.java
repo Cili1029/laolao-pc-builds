@@ -1,10 +1,8 @@
 package com.laolao.mapper.user;
 
 import com.laolao.pojo.user.entity.User;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Options;
-import org.apache.ibatis.annotations.Select;
+import com.laolao.pojo.user.vo.UpdateUserVO;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -22,4 +20,6 @@ public interface UserMapper {
     User getUser(long userId);
 
     List<User> selectUser(List<Integer> userIdList1);
+
+    void updateUser(UpdateUserVO updateUserVO);
 }

@@ -3,17 +3,24 @@ package com.laolao.service.user.impl;
 import com.laolao.common.constant.JwtClaimsConstant;
 import com.laolao.common.constant.MessageConstant;
 import com.laolao.common.constant.RedisConstant;
+import com.laolao.common.context.BaseContext;
 import com.laolao.common.utils.AliDirectMailUtil;
 import com.laolao.common.utils.NameUtil;
 import com.laolao.converter.MapStruct;
 import com.laolao.common.exception.UnknownError;
+import com.laolao.mapper.forum.LikeMapper;
+import com.laolao.mapper.forum.PostMapper;
 import com.laolao.mapper.user.UserMapper;
+import com.laolao.pojo.forum.entity.Post;
+import com.laolao.pojo.forum.vo.PostSimpleVO;
 import com.laolao.pojo.user.dto.SignInWithEmailDTO;
 import com.laolao.pojo.user.dto.SignInWithUsernameDTO;
 import com.laolao.pojo.user.dto.SignUpDTO;
 import com.laolao.pojo.user.entity.User;
-import com.laolao.pojo.user.vo.UserVO;
+import com.laolao.pojo.user.vo.UpdateUserVO;
+import com.laolao.pojo.user.vo.UserSimpleVO;
 import com.laolao.common.result.Result;
+import com.laolao.pojo.user.vo.UserVO;
 import com.laolao.service.user.UserService;
 import com.laolao.common.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
@@ -26,7 +33,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
@@ -43,6 +52,10 @@ public class UserServiceImpl implements UserService {
     private StringRedisTemplate stringRedisTemplate;
     @Resource
     private AliDirectMailUtil aliDirectMailUtil;
+    @Resource
+    private PostMapper postMapper;
+    @Resource
+    private LikeMapper likeMapper;
 
     @Override
     public Result<String> getEmailCode(String email) throws Exception {
@@ -64,7 +77,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Result<UserVO> signInWithUsername(SignInWithUsernameDTO signInWithUsernameDTO, HttpServletResponse res) {
+    public Result<UserSimpleVO> signInWithUsername(SignInWithUsernameDTO signInWithUsernameDTO, HttpServletResponse res) {
             User user = userMapper.checkUserExists(signInWithUsernameDTO.getUsername(), null);
 
             // 用户不存在
@@ -83,7 +96,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Result<UserVO> signInWithEmail(SignInWithEmailDTO signInWithEmailDTO, HttpServletResponse res) {
+    public Result<UserSimpleVO> signInWithEmail(SignInWithEmailDTO signInWithEmailDTO, HttpServletResponse res) {
             Result<String> result = email(signInWithEmailDTO.getEmail(), signInWithEmailDTO.getEmailCode());
             if (result != null) {
                 return Result.error(result.getMsg());
@@ -97,7 +110,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Result<UserVO> signUp(SignUpDTO signUpDTO, HttpServletResponse res) {
+    public Result<UserSimpleVO> signUp(SignUpDTO signUpDTO, HttpServletResponse res) {
         if (!StringUtils.hasText(signUpDTO.getUsername()) || !StringUtils.hasText(signUpDTO.getPassword()) || !StringUtils.hasText(signUpDTO.getEmail()) || !StringUtils.hasText(signUpDTO.getEmailCode())) {
             return Result.error(MessageConstant.UNKNOWN_ERROR);
         }
@@ -135,18 +148,56 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Result<UserVO> getProfile(HttpServletRequest req) {
+    public Result<UserSimpleVO> getProfile(HttpServletRequest req) {
         Cookie[] cookies = req.getCookies();
         String jwt = getJwtFromCookie(cookies);
         try {
             Claims claims = jwtUtil.parseJWT(jwt);
             long userId = Long.parseLong(claims.get(JwtClaimsConstant.USER_ID).toString());
             User user = userMapper.getUser(userId);
-            UserVO userVO = mapStruct.userToUserVO(user);
-            return Result.success(userVO);
+            UserSimpleVO userSimpleVO = mapStruct.userToUserSimpleVO(user);
+            return Result.success(userSimpleVO);
         }  catch (Exception e) {
             return Result.error();
         }
+    }
+
+    @Override
+    public Result<UserVO> getUser(Integer id) {
+        // 获取用户的信息
+        User user = userMapper.getUser(id);
+        UserSimpleVO userSimpleVO = mapStruct.userToUserSimpleVO(user);
+        // 获取用户的帖子
+        List<Post> postList = postMapper.selectPostByUserid(id);
+        ArrayList<PostSimpleVO> userPostList = new ArrayList<>();
+        for (Post post : postList) {
+            PostSimpleVO postSimpleVO = mapStruct.PostToSimpleVO(post);
+            userPostList.add(postSimpleVO);
+        }
+        // 获取喜欢的帖子
+        List<Integer> postIdList = likeMapper.getLikePost(id);
+        ArrayList<PostSimpleVO> likePostList = new ArrayList<>();
+        if (!postIdList.isEmpty()) {
+            postList = postMapper.getPostBatch(postIdList);
+            for (Post post : postList) {
+                PostSimpleVO postSimpleVO = mapStruct.PostToSimpleVO(post);
+                likePostList.add(postSimpleVO);
+            }
+        }
+        // 组装
+        UserVO userVO = UserVO.builder()
+                .user(userSimpleVO)
+                .userPostList(userPostList)
+                .likePostList(likePostList)
+                .build();
+        return Result.success(userVO);
+    }
+
+    @Override
+    public Result<String> update(UpdateUserVO updateUserVO) {
+        updateUserVO.setId(BaseContext.getCurrentId());
+        userMapper.updateUser(updateUserVO);
+        return Result.success("修改成功！");
     }
 
     public String getJwtFromCookie(Cookie[] cookies) {
@@ -174,9 +225,9 @@ public class UserServiceImpl implements UserService {
         return null;
     }
 
-    private Result<UserVO> setJwtToSignIn(User user, HttpServletResponse res) {
+    private Result<UserSimpleVO> setJwtToSignIn(User user, HttpServletResponse res) {
         // 转换为VO
-        UserVO userVO = mapStruct.userToUserVO(user);
+        UserSimpleVO userSimpleVO = mapStruct.userToUserSimpleVO(user);
 
         //设置jwt
         HashMap<String, Object> claims = new HashMap<>();
@@ -193,7 +244,7 @@ public class UserServiceImpl implements UserService {
         cookie.setMaxAge(7 * 24 * 60 * 60); // 7天过期
         res.addCookie(cookie);
 
-        return Result.success(userVO, "登陆/注册成功！");
+        return Result.success(userSimpleVO, "登陆/注册成功！");
     }
 
 }

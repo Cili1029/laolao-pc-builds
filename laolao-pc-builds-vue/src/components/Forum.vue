@@ -49,6 +49,8 @@
                                 <label class="text-sm font-medium w-20 mt-2">内容</label>
                                 <Textarea v-model="content" class="w-full h-32" placeholder="说点什么..."></Textarea>
                             </div>
+                        </div>
+                        <DialogFooter class="flex justify-start gap-2">
                             <Dialog>
                                 <DialogTrigger as-child>
                                     <Button :disabled="uploading">
@@ -73,9 +75,7 @@
                                     </DialogFooter>
                                 </DialogContent>
                             </Dialog>
-                        </div>
-                        <DialogFooter>
-                            <DialogClose as-child>
+                            <DialogClose as-child class="ml-auto">
                                 <Button type="submit" :disabled="!title || !content || !(categoryId !== 0) || uploading"
                                     @click="create()">
                                     发布！
@@ -152,7 +152,7 @@
         currentCategory.value = category.id
         categoryStore.setCategory(category)
         // 切换分类时回到帖子列表
-        router.push('/forum')
+        router.push("/forum")
     }
 
     // 发布帖子
@@ -180,6 +180,7 @@
         content.value = ''
         url.value = []
         images.value = []
+        fileCount.value = 0
     }
 
     // 图片上传
@@ -199,11 +200,12 @@
             // 将每个文件添加到 FormData 中
             images.value.forEach(image => {
                 formData.append('images', image)
+                formData.append('type', "postImages")
             });
 
             // 发送 POST 请求
             uploading.value = true
-            const response = await axios.post("/api/user/forum/post/upload", formData, {
+            const response = await axios.post("/api/common/upload", formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }

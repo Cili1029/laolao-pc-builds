@@ -2,6 +2,8 @@ package com.laolao.pojo.forum.dto;
 
 import lombok.*;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -22,4 +24,9 @@ public class AddReplyDTO {
      * 内容
      */
     private String content;
+
+    /**
+     * 图片
+     */
+    private List<String> images;
 }

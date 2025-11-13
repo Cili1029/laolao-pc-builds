@@ -15,4 +15,13 @@
         </set>
         WHERE id = #{id}
     </update>
+    <select id="getPostBatch" resultType="com.laolao.pojo.forum.entity.Post" parameterType="com.laolao.pojo.forum.entity.Post">
+        select *
+        from forum_post
+        where status = 1
+        and id in
+        <foreach collection="postIdList" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
 </mapper>

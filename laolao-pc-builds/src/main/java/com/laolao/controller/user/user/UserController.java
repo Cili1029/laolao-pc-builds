@@ -3,8 +3,10 @@ package com.laolao.controller.user.user;
 import com.laolao.pojo.user.dto.SignInWithEmailDTO;
 import com.laolao.pojo.user.dto.SignInWithUsernameDTO;
 import com.laolao.pojo.user.dto.SignUpDTO;
-import com.laolao.pojo.user.vo.UserVO;
+import com.laolao.pojo.user.vo.UpdateUserVO;
+import com.laolao.pojo.user.vo.UserSimpleVO;
 import com.laolao.common.result.Result;
+import com.laolao.pojo.user.vo.UserVO;
 import com.laolao.service.user.UserService;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
@@ -42,7 +44,7 @@ public class UserController {
      * @return 用户基本数据
      */
     @PostMapping("/sign-in/username")
-    public Result<UserVO> signInWithUsername(@RequestBody SignInWithUsernameDTO signInWithUsernameDTO, HttpServletResponse res) {
+    public Result<UserSimpleVO> signInWithUsername(@RequestBody SignInWithUsernameDTO signInWithUsernameDTO, HttpServletResponse res) {
         return userService.signInWithUsername(signInWithUsernameDTO, res);
     }
 
@@ -54,7 +56,7 @@ public class UserController {
      * @return 用户基本数据
      */
     @PostMapping("/sign-in/email")
-    public Result<UserVO> signInWithEmail(@RequestBody SignInWithEmailDTO signInWithEmailDTO, HttpServletResponse res) {
+    public Result<UserSimpleVO> signInWithEmail(@RequestBody SignInWithEmailDTO signInWithEmailDTO, HttpServletResponse res) {
         return userService.signInWithEmail(signInWithEmailDTO, res);
     }
 
@@ -67,7 +69,7 @@ public class UserController {
      * @return 用户基本数据
      */
     @PostMapping("/sign-up")
-    public Result<UserVO> signUp(@RequestBody SignUpDTO signUpDTO, HttpServletResponse res) {
+    public Result<UserSimpleVO> signUp(@RequestBody SignUpDTO signUpDTO, HttpServletResponse res) {
         return userService.signUp(signUpDTO, res);
     }
 
@@ -80,7 +82,7 @@ public class UserController {
      * @return 用户基本数据
      */
     @GetMapping("/profile")
-    public Result<UserVO> getProfile(HttpServletRequest req) {
+    public Result<UserSimpleVO> getProfile(HttpServletRequest req) {
         return userService.getProfile(req);
     }
 
@@ -94,5 +96,27 @@ public class UserController {
     @GetMapping("/sign-out")
     public Result<String> signOut(HttpServletResponse res) {
         return userService.signOut(res);
+    }
+
+    /**
+     * 获取用户主页信息
+     *
+     * @param id 用户Id
+     * @return 用户主页数据
+     */
+    @GetMapping("/{id}")
+    public Result<UserVO> getUser(@PathVariable Integer id) {
+        return userService.getUser(id);
+    }
+
+    /**
+     * 更新用户信息
+     *
+     * @param updateUserVO 新数据
+     * @return 消息结果
+     */
+    @PostMapping("/update")
+    public Result<String> updateUser(@RequestBody UpdateUserVO updateUserVO) {
+        return userService.update(updateUserVO);
     }
 }

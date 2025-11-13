@@ -22,6 +22,4 @@ public interface PostService {
     Result<String> deletePost(int id);
 
     Result<List<CommentReplyVO>> getReply(int id);
-
-    Result<ImageVO> uploadImages(MultipartFile[] images) throws Exception;
 }

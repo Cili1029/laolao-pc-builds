@@ -1,9 +1,10 @@
 package com.laolao.pojo.forum.vo;
 
-import com.laolao.pojo.user.vo.UserVO;
+import com.laolao.pojo.user.vo.UserSimpleVO;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -19,7 +20,7 @@ public class CommentReplyVO {
     /**
      * 用户
      */
-    private UserVO user;
+    private UserSimpleVO user;
 
     /**
      * 回复指向的评论Id,0则为直接评论
@@ -34,7 +35,7 @@ public class CommentReplyVO {
     /**
      * 图片
      */
-    private String image;
+    private List<String> images;
 
     /**
      * 点赞数

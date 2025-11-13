@@ -1,6 +1,6 @@
 package com.laolao.pojo.forum.vo;
 
-import com.laolao.pojo.user.vo.UserVO;
+import com.laolao.pojo.user.vo.UserSimpleVO;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -25,7 +25,7 @@ public class CommentVO {
     /**
      * 用户
      */
-    private UserVO user;
+    private UserSimpleVO user;
 
     /**
      * 评论内容

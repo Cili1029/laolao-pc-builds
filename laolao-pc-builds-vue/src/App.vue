@@ -95,10 +95,12 @@
                   <span class="text-xs text-gray-500 font-normal">欢迎回来！</span>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <User class="mr-2 h-4 w-4" />
-                  <span>个人信息(还没写)</span>
-                </DropdownMenuItem>
+                <RouterLink :to="`/user/${userStore.user.id}`">
+                  <DropdownMenuItem>
+                    <User class="mr-2 h-4 w-4" />
+                    <span>个人信息</span>
+                  </DropdownMenuItem>
+                </RouterLink>
                 <DropdownMenuItem>
                   <Smile class="mr-2 h-4 w-4" />
                   <span>签到/优惠券(还没写)</span>

@@ -12,7 +12,7 @@ import com.laolao.pojo.forum.entity.Comment;
 import com.laolao.pojo.forum.vo.CommentReplyVO;
 import com.laolao.pojo.forum.vo.CommentVO;
 import com.laolao.pojo.user.entity.User;
-import com.laolao.pojo.user.vo.UserVO;
+import com.laolao.pojo.user.vo.UserSimpleVO;
 import com.laolao.service.forum.CommentService;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
@@ -70,8 +70,12 @@ public class CommentServiceImpl implements CommentService {
                 .userId(userId)
                 .parent(addReplyDTO.getParent())
                 .content(addReplyDTO.getContent())
+                .images(addReplyDTO.getImages())
                 .createdAt(LocalDateTime.now())
                 .build();
+        if (comment.getImages() == null || comment.getImages().isEmpty()) {
+            comment.setImages(null);
+        }
         // 写入数据库
         commentMapper.insertReply(comment);
         postMapper.updateCommentCount(addReplyDTO.getId(), 1, LocalDateTime.now());
@@ -115,9 +119,9 @@ public class CommentServiceImpl implements CommentService {
             // 获取对应用户
             User user = userMap.get(comment.getUserId());
             // 转换
-            UserVO userVO = mapStruct.userToUserVO(user);
+            UserSimpleVO userSimpleVO = mapStruct.userToUserSimpleVO(user);
             // 写入
-            comment.setUser(userVO);
+            comment.setUser(userSimpleVO);
             // 分为直接评论和评论的评论
             if (type == 1) {
                 CommentVO commentVO = mapStruct.commentToCommentVO(comment);
