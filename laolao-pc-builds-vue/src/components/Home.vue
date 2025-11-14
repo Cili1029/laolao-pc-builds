@@ -1,5 +1,5 @@
 <template>
-    <div class="h-full py-6 sm:py-8 lg:py-12">
+    <div class="min-h-full flex flex-col gap-6 py-6 sm:py-8 lg:py-12">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12 max-w-6xl mx-auto px-4 sm:px-6">
             <!-- 配件卡片 -->
             <div
@@ -45,11 +45,105 @@
                 </router-link>
             </div>
         </div>
+        <!-- 热门商品和热门帖子 -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12 max-w-6xl mx-auto px-4 sm:px-6">
+            <!-- 热门商品 -->
+            <div
+                class="group bg-white rounded-xl sm:rounded-2xl shadow-lg sm:shadow-xl p-6 sm:p-8 border border-gray-100">
+                <div class="flex justify-between">
+                    <div class="flex items-center">
+                        <span class="icon-[noto--face-savouring-delicious-food] text-3xl"></span>
+                        <span class="px-2 items-center">热门商品</span>
+                    </div>
+                    <!-- <router-link to="/forum" class="hover:text-sky-400 flex items-center">
+                        更多热门👉
+                    </router-link> -->
+                </div>
+                <div v-for="product in products" :key="product.id" class="flex items-center">
+                    <img :src="product.image" class="w-16 h-16 rounded-lg" />
+                    <span>{{ product.name }}</span>
+                    <span class="icon-[material-symbols--shopping-cart-outline] text-4xl flex-shrink-0 hover:bg-red-500 ml-auto"></span>
+                    <div class="border-t-2"></div>
+                </div>
+            </div>
+
+            <!-- 热门帖子 -->
+            <div
+                class="group bg-white rounded-xl sm:rounded-2xl shadow-lg sm:shadow-xl p-6 sm:p-8 border border-gray-100">
+                <div class="flex justify-between">
+                    <div class="flex items-center">
+                        <span class="icon-[noto--nerd-face] text-3xl"></span>
+                        <span class="px-2 items-center">热门帖子</span>
+                    </div>
+                    <!-- <router-link to="/forum" class="hover:text-sky-400 flex items-center">
+                        更多热门👉
+                    </router-link> -->
+                </div>
+                <div v-for="simple in postSimple" :key="simple.id">
+                    <div class="flex mx-2 my-4 justify-between items-center">
+                        <router-link :to="`/forum/post/${simple.id}`" class="text-xl cursor-pointer">
+                            {{ simple.title }}
+                        </router-link>
+                    </div>
+                    <div class="border-t-2"></div>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 
 <script setup lang="ts">
+    import { onMounted } from 'vue';
+    import axios from '@/utils/myAxios'
+    import { ref } from 'vue'
 
+    onMounted(() => {
+        getPostHot()
+        getProductHot()
+    })
+
+    // 帖子简单信息
+    interface PostSimple {
+        id: number
+        title: string
+        likeCount: number
+        commentCount: number
+        updatedAt: string
+    }
+    const postSimple = ref<PostSimple[]>([])
+
+    // 获取热度帖子
+    const getPostHot = async () => {
+        const response = await axios.get("/api/user/forum/post/hot", {
+            params: {
+                count: 5
+            }
+        })
+        postSimple.value = response.data.data
+    }
+
+
+    interface Product {
+        id: number
+        productType: number
+        name: string
+        price: number
+        image: string
+        commonDescription: string
+        description: string
+        sales: number
+    }
+    const products = ref<Product[]>([])
+
+    // 获取热度商品
+    const getProductHot = async () => {
+        const response = await axios.get("/api/user/shop/products/hot", {
+            params: {
+                count: 5
+            }
+        })
+    products.value = response.data.data
+    }
 
 </script>
 

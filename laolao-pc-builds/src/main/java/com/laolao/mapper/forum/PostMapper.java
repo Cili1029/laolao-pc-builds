@@ -33,4 +33,6 @@ public interface PostMapper {
     List<Post> selectPostByUserid(Integer id);
 
     List<Post> getPostBatch(List<Integer> postIdList);
+
+    List<Post> getHot(int count);
 }

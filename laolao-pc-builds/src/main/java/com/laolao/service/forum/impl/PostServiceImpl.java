@@ -39,7 +39,12 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Result<List<PostSimpleVO>> getPostSimple(int categoryId) {
-        List<Post> postList = postMapper.selectPostSimple(categoryId);
+        List<Post> postList = new ArrayList<>();
+        if (categoryId == 5) {
+            postList = postMapper.getHot(0);
+        } else {
+            postList = postMapper.selectPostSimple(categoryId);
+        }
         List<PostSimpleVO> postSimpleVOList = new ArrayList<>();
         for (Post post : postList) {
             PostSimpleVO postSimpleVO = mapStruct.PostToSimpleVO(post);
@@ -157,7 +162,19 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public Result<List<PostSimpleVO>> getHot(int count) {
+        List<Post> postList = postMapper.getHot(count);
+        List<PostSimpleVO> postSimpleVOList = new ArrayList<>();
+        for (Post post : postList) {
+            PostSimpleVO postSimpleVO = mapStruct.PostToSimpleVO(post);
+            postSimpleVOList.add(postSimpleVO);
+        }
+        return Result.success(postSimpleVOList);
+    }
+
+    @Override
     public Result<List<PostSimpleVO>> search(int categoryId, String searchContent) {
+
         List<Post> postList = postMapper.searchPostSimple(categoryId, searchContent);
         if (postList.isEmpty()) {
             return Result.success(Collections.emptyList(), "什么也没找到...");

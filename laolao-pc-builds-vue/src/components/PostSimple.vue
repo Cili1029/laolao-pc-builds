@@ -14,7 +14,7 @@
             </div>
         </div>
         <div class="border-t-4"></div>
-        <div class="flex justify-between items-center p-2">
+        <div v-show="categoryStore.currentCategory !== 5" class="flex justify-between items-center p-2">
             <div></div>
             <div class="flex w-1/3 max-w-sm items-center gap-1.5">
                 <Button v-if="back" @click="getPost()">返回</Button>
@@ -28,7 +28,7 @@
                 <div class="text-l justify-between items-center text-gray-500">
                     <div class="w-22 font-bold">帖子</div>
                 </div>
-                <div class="text-l flex justify-between items-center text-gray-500">
+                <div class="hidden md:flex text-l text-gray-500">
                     <div class="w-22 font-bold text-center">回复</div>
                     <div class="w-22 font-bold text-center">点赞</div>
                     <div class="w-22 font-bold text-center">最后回复</div>
@@ -41,7 +41,7 @@
                 <router-link :to="`/forum/post/${simple.id}`" class="text-xl cursor-pointer">
                     {{ simple.title }}
                 </router-link>
-                <div class="flex text-gray-600">
+                <div class="hidden md:flex text-gray-600">
                     <div class="w-22 font-bold text-center">{{ simple.commentCount }}</div>
                     <div class="w-22 font-bold text-center">{{ simple.likeCount }}</div>
                     <div class="w-22 font-bold text-center">{{ formatTime(simple.updatedAt) }}</div>

@@ -30,7 +30,6 @@ public class ProductController {
      */
     @GetMapping("/components")
     public Result<List<ProductVO>> Components(int categoryId) {
-
         return productService.listWithCategoryId(categoryId);
     }
 
@@ -71,5 +70,16 @@ public class ProductController {
     @GetMapping("/bundles")
     public Result<List<ProductVO>> Bundles(int categoryId) {
         return productService.listWithCategoryId(categoryId);
+    }
+
+    /**
+     * 获取热门帖子
+     *
+     * @param count 数量
+     * @return 帖子简单信息
+     */
+    @GetMapping("/hot")
+    public Result<List<ProductVO>> getHot(int count) {
+        return productService.getHot(count);
     }
 }

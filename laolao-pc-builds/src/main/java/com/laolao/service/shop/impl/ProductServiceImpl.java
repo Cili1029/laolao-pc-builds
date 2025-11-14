@@ -12,7 +12,9 @@ import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -66,5 +68,21 @@ public class ProductServiceImpl implements ProductService {
             }
         }
         return Result.success(productVoList);
+    }
+
+    @Override
+    public Result<List<ProductVO>> getHot(int count) {
+        List<ProductVO> productVOS;
+        // 查询部件的销售排行
+        productVOS = componentMapper.getByConditions(0, null);
+        // 查询捆绑销售的销售排行
+        List<Bundle> bundleList = bundleMapper.getByConditions(0, null);
+        for (Bundle bundle : bundleList) {
+            ProductVO productVO = mapStruct.bundleToComponentVO(bundle);
+            productVOS.add(productVO);
+        }
+        //排序
+        List<ProductVO> collect = productVOS.stream().sorted(Comparator.comparing(ProductVO::getSales).reversed()).limit(count).toList();
+        return Result.success(collect);
     }
 }

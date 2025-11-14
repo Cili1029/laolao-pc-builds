@@ -58,11 +58,6 @@ public class Post {
     private Integer status;
 
     /**
-     * 是否置顶
-     */
-    private Integer top;
-
-    /**
      * 创建时间
      */
     private LocalDateTime createdAt;
@@ -71,4 +66,9 @@ public class Post {
      * 最后更新时间（最后评论）
      */
     private LocalDateTime updatedAt;
+
+    /**
+     * 热度分数
+     */
+    private int hotScore;
 }

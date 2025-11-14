@@ -43,6 +43,11 @@ public class Bundle implements Serializable {
     private String Description;
 
     /**
+     * 销售额
+     */
+    private int sales;
+
+    /**
      * 状态 1启用 0停用
      */
     private Integer status;

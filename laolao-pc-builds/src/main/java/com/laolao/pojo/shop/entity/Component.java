@@ -37,6 +37,11 @@ public class Component implements Serializable {
     private String commonDescription;
 
     /**
+     * 销售额
+     */
+    private int sales;
+
+    /**
      * 状态 1启用 0停用
      */
     private Integer status;

@@ -12,4 +12,6 @@ public interface ProductService {
     Result<List<ComponentVariantVO>> listWithComponentId(int id, int productType);
 
     Result<List<ProductVO>> searchByName(int categoryId, String searchContent);
+
+    Result<List<ProductVO>> getHot(int count);
 }

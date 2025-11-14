@@ -18,6 +18,11 @@ public class PostVO {
     private int id;
 
     /**
+     * 所属分类Id
+     */
+    private Integer categoryId;
+
+    /**
      * 发帖用户
      */
     private UserSimpleVO user;

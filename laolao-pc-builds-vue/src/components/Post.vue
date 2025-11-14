@@ -349,6 +349,7 @@
     }
     interface PostVO {
         id: number
+        categoryId: number
         user: UserVO
         title: string
         content: string
@@ -373,6 +374,7 @@
             // 设置为有回复
             setReply(post.value.comment)
         }
+        categoryStore.currentCategory = post.value!.categoryId
     }
 
     const getReply = async (id: number) => {

@@ -35,7 +35,7 @@
                                             <SelectItem :value="category.id" v-for="category in categories"
                                                 :key="category.id">
                                                 <span :class="categoryStore.getIconClass(category.id)"></span>
-                                                {{ category.name }}
+                                                <span>{{ category.name }}</span>
                                             </SelectItem>
                                         </SelectGroup>
                                     </SelectContent>
@@ -91,7 +91,7 @@
                 <div class="p-2 text-base flex rounded-lg">类别</div>
                 <div @click="changeCategory(category)" v-for="category in categories" :key="category.id"
                     class="p-2 text-lg cursor-pointer hover:bg-sky-100 flex rounded-lg"
-                    :class="category.id === currentCategory ? 'bg-sky-100' : ''">
+                    :class="category.id === categoryStore.currentCategory ? 'bg-sky-100' : ''">
                     <span :class="categoryStore.getIconClass(category.id)"></span>
                     <p class="pl-3">{{ category.name }}</p>
                 </div>
@@ -144,12 +144,12 @@
         const response = await axios.get("/api/user/forum/category")
         categories.value = response.data.data
 
-        currentCategory.value = response.data.data[0].id
-        categoryStore.setCategory(categories.value[0] as Category)
+        categoryStore.currentCategory = response.data.data[1].id
+        categoryStore.setCategory(categories.value[1] as Category)
     }
 
     const changeCategory = (category: Category) => {
-        currentCategory.value = category.id
+        categoryStore.currentCategory = category.id
         categoryStore.setCategory(category)
         // 切换分类时回到帖子列表
         router.push("/forum")

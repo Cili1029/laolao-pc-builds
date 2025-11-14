@@ -1,13 +1,13 @@
 <template>
-    <div class="flex h-full">
-        <div class="w-1/5 bg-white rounded-xl shadow-sm p-6 mr-4 h-full overflow-y-auto scrollbar-edge">
-            <div class="flex justify-between items-center mb-6">
+    <div class="flex h-full flex-col sm:flex-row">
+        <div class="w-full md:w-1/5 bg-white rounded-xl shadow-sm p-6 mr-4 overflow-x-auto scrollbar-edge md:h-full">
+            <div class="hidden md:flex justify-between items-center mb-6">
                 <h3 class="text-xl font-bold text-gray-800">
                     <i class="fas fa-fire text-red-500 mr-2"></i> 分类
                 </h3>
             </div>
-            <div class="space-y-4">
-                <div class="flex items-center p-3 rounded-lg transition-colors"
+            <div class="flex space-x-4 overflow-x-auto pb-2 md:block md:space-y-4 min-h-[100px]">
+                <div class="flex-shrink-0 flex items-center p-3 rounded-lg transition-colors"
                     :class="cat.id === currentCategory.id ? 'bg-gray-100' : 'hover:bg-gray-50'" v-for="cat in category"
                     :key="cat.id" @click="ShowComponent(cat)">
                     <span class="icon-[streamline-cyber--smiley-sigh] text-3xl"></span>
@@ -18,12 +18,12 @@
             </div>
         </div>
 
-        <div class="w-4/5 bg-white rounded-xl shadow-sm p-6 h-full overflow-y-auto scrollbar-edge">
+        <div class="w-full md:w-4/5 bg-white rounded-xl shadow-sm p-6 h-full overflow-y-auto scrollbar-edge">
             <div class="flex justify-between items-center mb-6">
                 <h3 class="text-xl font-bold text-gray-800">
                     <i class="fas fa-fire text-red-500 mr-2"></i> {{ currentCategory?.name || '' }}
                 </h3>
-                <div class="flex w-full max-w-sm items-center gap-1.5">
+                <div class="flex items-center gap-1.5">
                     <Input type="text" placeholder="搜索点什么..." v-model="searchContent" />
                     <Button type="submit" @click="search(currentCategory?.id)">搜索</Button>
                 </div>
@@ -35,11 +35,13 @@
                     <div class="w-22 h-22 bg-gray-200 rounded-lg flex items-center justify-center mb-2">
                         <img :src="product.image" />
                     </div>
-                    <div class="text-center mb-2 h-30">
+                    <div class="text-center mb-5 h-30">
                         <h4 class="font-medium">{{ product.name }}</h4>
                         <span v-if="product.productType === 1" class="text-sm block mt-1">{{ product.commonDescription
                         }}</span>
                     </div>
+                    <span v-show="product.sales !== 0" class="flex items-start mt-1 self-start">已售:{{ product.sales
+                        }}</span>
                     <div class="flex items-center justify-between w-full mt-auto">
                         <span v-if="product.productType === 1" class="font-bold text-red-500">￥{{ product.price
                         }}起</span>
@@ -61,6 +63,8 @@
                                         <img :src="product.image" class="w-full h-auto rounded-lg" />
                                     </div>
                                     <div class="w-1/2 flex flex-col justify-between">
+                                        <span v-show="product.sales !== 0"
+                                            class="pb-2 flex items-end mt-1 ml-auto">已售:{{ product.sales }}</span>
                                         <div class="mb-4 h-1/2">
                                             <p class="text-sm text-gray-600">{{ selectedVariant?.description ||
                                                 currentVariants[0]?.description }}</p>
@@ -99,11 +103,15 @@
                                                     }}</span>
                                             </div>
                                         </div>
-
                                     </div>
                                     <div class="w-2/5 flex flex-col justify-between">
-                                        <div class="mb-4 h-1/2">
-                                            <p class="text-sm text-gray-600">{{ product.description }}</p>
+                                        <div class="mb-4 h-1/2 flex flex-col">
+                                            <span v-show="product.sales !== 0" class="pb-2 flex items-end mt-1 ml-auto">
+                                                已售:{{ product.sales }}
+                                            </span>
+                                            <p class="text-sm text-gray-600 w-full">
+                                                {{ product.description }}
+                                            </p>
                                         </div>
                                         <DialogFooter class="mt-auto">
                                             <DialogClose as-child>
@@ -143,6 +151,7 @@
         image: string
         commonDescription: string
         description: string
+        sales: number
     }
 
     interface category {

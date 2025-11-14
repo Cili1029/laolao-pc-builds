@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.laolao.mapper.shop.ComponentMapper">
     <select id="getByConditions" resultType="com.laolao.pojo.shop.vo.ProductVO" parameterType="com.laolao.pojo.shop.vo.ProductVO">
-        SELECT co.id, ca.product_type,co.name, co.image, co.common_description, MIN(va.price) as price
+        SELECT co.id, ca.product_type,co.name, co.image, co.common_description, co.sales, MIN(va.price) as price
         FROM shop_component co
                  JOIN shop_component_variant va ON co.id = va.component_id JOIN shop_category ca ON ca.id = co.category_id
         <where>

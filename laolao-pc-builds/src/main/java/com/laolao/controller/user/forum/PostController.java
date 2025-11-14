@@ -87,4 +87,15 @@ public class PostController {
     public Result<String> deletePost(@PathVariable int id) {
         return postService.deletePost(id);
     }
+
+    /**
+     * 获取热门帖子
+     *
+     * @param count 数量
+     * @return 帖子简单信息
+     */
+    @GetMapping("/hot")
+    public Result<List<PostSimpleVO>> getHot(int count) {
+        return postService.getHot(count);
+    }
 }

@@ -44,4 +44,9 @@ public class ProductVO {
      * 描述
      */
     private String description;
+
+    /**
+     * 销售额
+     */
+    private int sales;
 }

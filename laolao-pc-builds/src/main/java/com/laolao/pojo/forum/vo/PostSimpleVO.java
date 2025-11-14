@@ -16,6 +16,11 @@ public class PostSimpleVO {
     private int id;
 
     /**
+     * 所属分类Id
+     */
+    private Integer categoryId;
+
+    /**
      * 帖子标题
      */
     private String title;
@@ -34,4 +39,9 @@ public class PostSimpleVO {
      * 最后更新时间（最后评论）
      */
     private LocalDateTime updatedAt;
+
+    /**
+     * 热度分数
+     */
+    private int hotScore;
 }
