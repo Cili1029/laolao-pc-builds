@@ -72,7 +72,6 @@
                                         product.quantity}}</span>
                                 </div>
                             </div>
-
                         </div>
                         <div class="w-2/5 flex flex-col justify-between">
                             <p class="flex justify-between">

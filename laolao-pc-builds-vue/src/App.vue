@@ -12,64 +12,69 @@
           <RouterLink to="/hello" class="text-gray-600 hover:text-blue-500 transition-colors">功能测试</RouterLink>
 
           <!-- 购物车 -->
-          <Drawer>
-            <DrawerTrigger class="text-gray-600 hover:text-blue-500" @click="showCart()">购物车</DrawerTrigger>
-            <DrawerContent v-if="products && products.length > 0" class="h-3/4">
-              <DrawerHeader>
-                <DrawerTitle class="text-3xl">我的购物车</DrawerTitle>
-                <DrawerDescription>
-                  <p class="text-xl hover:text-blue-500" @click="clear()">清空购物车</p>
-                </DrawerDescription>
-              </DrawerHeader>
-              <div class="flex gap-6 py-4 overflow-y-auto scrollbar-edge">
+          <Sheet>
+            <SheetTrigger as-child class="text-gray-600 hover:text-blue-500" @click="showCart()">
+              <span>购物车</span>
+            </SheetTrigger>
+            <SheetContent>
+              <SheetHeader>
+                <SheetTitle>我的购物车</SheetTitle>
+                <SheetDescription>
+                  <p class="hover:text-blue-500" :class="{ 'cursor-not-allowed': products.length === 0 }"
+                    @click="products.length > 0 && clear()">
+                    清空购物车
+                  </p>
+                </SheetDescription>
+              </SheetHeader>
+              <div v-if="products && products.length > 0" class="flex gap-6 py-4 overflow-y-auto scrollbar-edge">
                 <div class="w-full flex flex-col space-y-2">
                   <div v-for="product in products" :key="product.name"
-                    class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 flex items-center">
-                    <img :src="product.image" class="w-15 h-15 object-cover rounded-md mr-4" />
-                    <div class="flex-1">
-                      <h3 class="font-medium text-gray-900">{{ product.name }}</h3>
-                      {{ product.variantName }}
+                    class="flex flex-col bg-white rounded-lg shadow-sm border border-gray-200 p-4 items-center">
+                    <div class="flex">
+                      <img :src="product.image" class="w-15 h-15 object-cover rounded-md mr-4" />
+                      <div class="flex-1">
+                        <h3 class="font-medium text-gray-900">{{ product.name }}</h3>
+                        {{ product.variantName }}
+                      </div>
                     </div>
-                    <div class="ml-auto mx-10">
-                      <span class="text-lg font-bold text-red-600">￥{{ product.price }}</span>
-                    </div>
-                    <div class="ml-auto mx-10">
-                      <Button variant="outline" size="icon" class="h-8 w-8 shrink-0 rounded-full"
-                        @click="quantity(product, 0)">
-                        <span class="icon-[mdi--minus] h-4 w-4"></span>
-                        <span class="sr-only">Decrease</span>
-                      </Button>
-                      <span class="text-lg font-bold mx-1">{{ product.quantity }}</span>
-                      <Button variant="outline" size="icon" class="h-8 w-8 shrink-0 rounded-full"
-                        @click="quantity(product, 1)">
-                        <span class="icon-[mdi--plus] h-4 w-4"></span>
-                        <span class="sr-only">Increase</span>
-                      </Button>
+                    <div class="flex justify-between w-full">
+                      <div>
+                        <span class="text-lg font-bold text-red-600">￥{{ product.price }}</span>
+                      </div>
+                      <div>
+                        <Button variant="outline" size="icon" class="h-8 w-8 shrink-0 rounded-full"
+                          @click="quantity(product, 0)">
+                          <span class="icon-[mdi--minus] h-4 w-4"></span>
+                          <span class="sr-only">Decrease</span>
+                        </Button>
+                        <span class="text-lg font-bold mx-1">{{ product.quantity }}</span>
+                        <Button variant="outline" size="icon" class="h-8 w-8 shrink-0 rounded-full"
+                          @click="quantity(product, 1)">
+                          <span class="icon-[mdi--plus] h-4 w-4"></span>
+                          <span class="sr-only">Increase</span>
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-              <DrawerFooter>
-                <div class="text-xl ml-auto font-bold text-red-600">总价（未算优惠券）: ￥{{ totalPrice.toFixed(2) }}</div>
-                <DrawerClose as-child>
-                  <Button class="h-15" @click="order()">去结算</Button>
-                </DrawerClose>
-              </DrawerFooter>
-            </DrawerContent>
-
-            <DrawerContent v-else class="h-3/4">
-              <DrawerHeader>
-                <DrawerTitle class="text-3xl">我的购物车</DrawerTitle>
-                <DrawerDescription></DrawerDescription>
-              </DrawerHeader>
-              <div class="text-4xl text-center">
-                购物车是空的！
+              <div v-else class="flex justify-center items-center h-full">
+                <div class="flex flex-col items-center">
+                  <span class="icon-[noto--enraged-face] text-9xl"></span>
+                  <div class="font-bold">什么也没有！</div>
+                </div>
               </div>
-              <DrawerFooter>
-                <Button class="h-15" disabled>去结算</Button>
-              </DrawerFooter>
-            </DrawerContent>
-          </Drawer>
+              <SheetFooter>
+                <div class="flex justify-between text-xl font-bold text-red-600">
+                  <span>总价（未算优惠券）:</span>
+                  <span>￥{{ totalPrice.toFixed(2) }}</span>
+                </div>
+                <SheetClose as-child>
+                  <Button class="h-15" @click="order()" :disabled="!(products && products.length > 0)">去结算</Button>
+                </SheetClose>
+              </SheetFooter>
+            </SheetContent>
+          </Sheet>
 
           <!-- 未登录，点击登录 -->
           <div v-if="!userStore.signedIn">
@@ -159,7 +164,7 @@
       </div>
     </div>
     <!-- 全局消息弹窗 -->
-    <Toaster position="top-right" />
+    <Toaster position="bottom-left"/>
   </div>
 </template>
 
@@ -172,10 +177,10 @@
   import { Toaster } from '@/components/ui/sonner'
   import { toast } from "vue-sonner"
   import 'vue-sonner/style.css'
+  import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger, } from "@/components/ui/sheet"
   import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
   import { ShoppingBag, LogOut, User, Smile } from "lucide-vue-next"
   import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-  import { Drawer, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger, DrawerClose } from "@/components/ui/drawer"
   import { Button } from "@/components/ui/button"
   import { useRouter } from 'vue-router'
   const router = useRouter()
