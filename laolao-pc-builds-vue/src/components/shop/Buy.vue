@@ -8,8 +8,8 @@
             </div>
             <div class="flex space-x-4 overflow-x-auto pb-2 md:block md:space-y-4 min-h-[100px]">
                 <div class="flex-shrink-0 flex items-center p-3 rounded-lg transition-colors"
-                    :class="cat.id === currentCategory.id ? 'bg-gray-100' : 'hover:bg-gray-50'" v-for="cat in category"
-                    :key="cat.id" @click="ShowComponent(cat)">
+                    :class="cat.id === currentCategory.id ? 'bg-gray-100' : 'hover:bg-gray-50'"
+                    v-for="cat in categories" :key="cat.id" @click="ShowComponent(cat)">
                     <span class="icon-[streamline-cyber--smiley-sigh] text-3xl"></span>
                     <div class="ml-4 flex-1">
                         <h4 class="font-medium">{{ cat.name }}</h4>
@@ -38,19 +38,19 @@
                     <div class="text-center mb-5 h-30">
                         <h4 class="font-medium">{{ product.name }}</h4>
                         <span v-if="product.productType === 1" class="text-sm block mt-1">{{ product.commonDescription
-                        }}</span>
+                            }}</span>
                     </div>
                     <span v-show="product.sales !== 0" class="flex items-start mt-1 self-start">已售:{{ product.sales
-                        }}</span>
+                    }}</span>
                     <div class="flex items-center justify-between w-full mt-auto">
                         <span v-if="product.productType === 1" class="font-bold text-red-500">￥{{ product.price
-                        }}起</span>
+                            }}起</span>
                         <span v-else-if="product.productType === 2" class="font-bold text-red-500">￥{{ product.price
-                        }}</span>
-                        <Dialog>
+                            }}</span>
+                        <Dialog v-model:open="productDialogStates[product.id]">
                             <DialogTrigger as-child>
                                 <span class="icon-[material-symbols--shopping-cart-outline] text-4xl hover:bg-red-500"
-                                    @click="openVariantDialog(product)"></span>
+                                    @click="openVariantDialog(product.id, product.productType)"></span>
                             </DialogTrigger>
                             <DialogContent class="sm:max-w-[1000px]">
                                 <DialogHeader>
@@ -100,7 +100,7 @@
                                             </div>
                                             <div class="ml-auto">
                                                 原价:<span class="text-lg font-bold text-red-600">￥{{ variant.price
-                                                    }}</span>
+                                                }}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -142,6 +142,11 @@
     import { Input } from "@/components/ui/input"
     import 'vue-sonner/style.css'
     import { toast } from "vue-sonner"
+    import { useRoute, useRouter } from 'vue-router'
+    const route = useRoute()
+    const router = useRouter()
+    import { useProductStore } from '@/stores/ProductStore'
+    const productStore = useProductStore()
 
     interface Product {
         id: number
@@ -172,7 +177,7 @@
     }
 
     const products = ref<Product[]>([])
-    const category = ref<category[]>([])
+    const categories = ref<category[]>([])
     const currentCategory = ref<category>({
         id: 0,
         productType: 0,
@@ -183,13 +188,37 @@
         ShowCategory()
     })
 
+    // 自动打开热门商品的详细界面
+    const productDialogStates = ref<Record<number, boolean>>({})
+    const openProduct = () => {
+        // 初始化为false
+        products.value.forEach(product => {
+            productDialogStates.value[product.id] = false
+        })
+        if(productStore.id && productStore.id !== 0) {
+            //首页热门来的
+            productDialogStates.value[productStore.id] = true
+            openVariantDialog(productStore.id, productStore.productType)
+            //清空
+            productStore.setProduct(0,0)
+        }
+    }
+
     const ShowCategory = async () => {
         try {
             const response = await axios.get('/api/user/shop/category/list')
-            category.value = response.data.data
-            if (category.value && category.value.length > 0) {
-                currentCategory.value = category.value[0]!
-                ShowComponent(category.value[0]!)
+            categories.value = response.data.data
+            if (Number(route.params.id) === -1) {
+                // 默认页
+                router.replace(`/buy/${categories.value[0]?.id}`)
+                currentCategory.value = categories.value[0]!
+                ShowComponent(categories.value[0]!)
+            } else {
+                const category = categories.value.find(c => c.id === Number(route.params.id))
+                if (category) {
+                    currentCategory.value = category
+                    ShowComponent(category)
+                }
             }
         } catch (error) {
             console.log(error)
@@ -199,6 +228,7 @@
     const ShowComponent = async (category: category) => {
         try {
             currentCategory.value = category
+            router.replace(`/buy/${category.id}`)
             if (category.productType === 1) {
                 const response = await axios.get('/api/user/shop/products/components', {
                     params: {
@@ -217,6 +247,7 @@
         } catch (error) {
             console.log(error)
         }
+        openProduct()
     }
 
     // 后端获得的所有数据
@@ -225,18 +256,17 @@
     const selectedVariant = ref<Variant | null>(null)
 
     // 打开商品对话框
-    const openVariantDialog = async (product: Product) => {
+    const openVariantDialog = async (id: number, productType: number) => {
         // 重置之前的状态
         currentVariants.value = []
         selectedVariant.value = null
 
         // 设置新商品
-
         try {
             const response = await axios.get('/api/user/shop/products/variants', {
                 params: {
-                    id: product.id,
-                    productType: product.productType
+                    id: id,
+                    productType: productType
                 }
             })
             currentVariants.value = response.data.data

@@ -39,7 +39,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Result<List<PostSimpleVO>> getPostSimple(int categoryId) {
-        List<Post> postList = new ArrayList<>();
+        List<Post> postList;
         if (categoryId == 5) {
             postList = postMapper.getHot(0);
         } else {

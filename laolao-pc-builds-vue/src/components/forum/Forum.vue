@@ -117,9 +117,10 @@
     import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
     import { Input } from "@/components/ui/input"
     import { Textarea } from "@/components/ui/textarea"
-    import FileUpload from '@/components/Upload.vue';
+    import FileUpload from '@/components/common/Upload.vue';
     import { useForumCategoryStore } from '@/stores/ForumCategoryStore'
-    import { useRouter } from 'vue-router'
+    import { useRouter, useRoute } from 'vue-router'
+    const route = useRoute()
     const router = useRouter()
     import { usePostStore } from '@/stores/PostStore'
     const postStore = usePostStore()
@@ -143,16 +144,28 @@
     const getCategory = async () => {
         const response = await axios.get("/api/user/forum/category")
         categories.value = response.data.data
-
-        categoryStore.currentCategory = response.data.data[1].id
-        categoryStore.setCategory(categories.value[1] as Category)
+        if (Number(route.params.categoryId) === -1) {
+            // 默认页
+            router.replace(`/forum/${categories.value[1]?.id}`)
+            categoryStore.currentCategory = categories.value[1]!.id
+            categoryStore.setCategory(categories.value[1]!)
+        } else {
+            const category = categories.value.find(c => c.id === Number(route.params.categoryId))
+            if (category) {
+                categoryStore.currentCategory = category.id
+                categoryStore.setCategory(category)
+            } else {
+                router.push('/home');
+            }
+        }
+        
     }
 
     const changeCategory = (category: Category) => {
         categoryStore.currentCategory = category.id
         categoryStore.setCategory(category)
         // 切换分类时回到帖子列表
-        router.push("/forum")
+        router.replace(`/forum/${category.id}`)
     }
 
     // 发布帖子

@@ -38,7 +38,7 @@
         </div>
         <div v-for="simple in postSimple" :key="simple.id">
             <div class="flex mx-2 my-4 justify-between items-center">
-                <router-link :to="`/forum/post/${simple.id}`" class="text-xl cursor-pointer">
+                <router-link :to="`/forum/${simple.categoryId}/post/${simple.id}`" class="text-xl cursor-pointer">
                     {{ simple.title }}
                 </router-link>
                 <div class="hidden md:flex text-gray-600">
@@ -69,6 +69,7 @@
     // 帖子简单信息
     interface PostSimple {
         id: number
+        categoryId: number
         title: string
         likeCount: number
         commentCount: number
@@ -99,12 +100,12 @@
 
     // 监听路由变化
     watch(
-        [() => categoryStore.category.id, () => postStore.postSimple.id], // 只监听这两个特定值
+        [() => categoryStore.category.id, () => postStore.postSimple?.id], // 只监听这两个特定值
         () => {
             if (categoryStore.category.id) {
                 getPost() // 分类变化时获取帖子
             }
-            if (postStore.postSimple.id) {
+            if (postStore.postSimple?.id) {
                 postSimple.value.push(postStore.postSimple) // 有新帖子时添加
                 postStore.setPostSimple({} as PostSimple) // 立即清空，避免重复添加
             }

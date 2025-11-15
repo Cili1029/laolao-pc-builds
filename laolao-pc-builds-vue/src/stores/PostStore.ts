@@ -1,9 +1,10 @@
-import type PostSimple from '@/components/PostSimple.vue'
+import type PostSimple from '@/components/forum/PostSimple.vue'
 import { defineStore } from 'pinia'
 
 // 帖子简单信息
 interface PostSimple {
     id: number
+    categoryId: number
     title: string
     likeCount: number
     commentCount: number

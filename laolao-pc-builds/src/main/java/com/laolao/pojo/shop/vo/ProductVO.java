@@ -21,6 +21,11 @@ public class ProductVO {
     private int productType;
 
     /**
+     * 所属分类
+     */
+    private int categoryId;
+
+    /**
      * 商品名
      */
     private String name;

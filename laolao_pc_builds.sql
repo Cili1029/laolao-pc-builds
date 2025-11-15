@@ -11,7 +11,7 @@
  Target Server Version : 80039 (8.0.39)
  File Encoding         : 65001
 
- Date: 26/10/2025 22:22:31
+ Date: 15/11/2025 15:55:26
 */
 
 SET NAMES utf8mb4;
@@ -32,7 +32,7 @@ CREATE TABLE `forum_category`  (
   `updated_by` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '最后更新人',
   `updated_at` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '最后更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '帖子分类' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '帖子分类' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for forum_comment
@@ -44,12 +44,28 @@ CREATE TABLE `forum_comment`  (
   `user_id` int NOT NULL COMMENT '评论用户ID',
   `parent` int NULL DEFAULT 0 COMMENT '回复指向的评论Id,0则为直接评论',
   `content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '评论内容',
-  `image` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '评论图片，最多一张',
+  `images` json NULL COMMENT '评论图片，最多一张',
   `status` tinyint NULL DEFAULT 1 COMMENT '状态：1-正常，2-删除',
   `like_count` int NULL DEFAULT 0 COMMENT '点赞数',
   `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 141 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '帖子评论' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 250 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '帖子评论' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for forum_like
+-- ----------------------------
+DROP TABLE IF EXISTS `forum_like`;
+CREATE TABLE `forum_like`  (
+  `id` int NOT NULL AUTO_INCREMENT COMMENT '主键Id',
+  `user_id` int NOT NULL COMMENT '用户Id',
+  `like_type` int NOT NULL COMMENT '点赞类型 (1:帖子, 2:评论和回复)',
+  `like_id` int NOT NULL COMMENT '被点赞的Id',
+  `status` int NOT NULL DEFAULT 1 COMMENT '状态 (1: 点赞, 0: 取消)',
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '最后更新时间',
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE INDEX `uk_user_target`(`user_id` ASC, `like_type` ASC, `like_id` ASC) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 51 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '点赞记录表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for forum_post
@@ -62,14 +78,13 @@ CREATE TABLE `forum_post`  (
   `title` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '帖子标题',
   `content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '帖子内容',
   `images` json NULL COMMENT '帖子图片',
-  `view_count` int NULL DEFAULT 0 COMMENT '浏览数',
   `like_count` int NULL DEFAULT 0 COMMENT '点赞数',
   `comment_count` int NULL DEFAULT 0 COMMENT '评论数',
   `status` tinyint NULL DEFAULT 1 COMMENT '状态：1-正常，2-删除',
-  `top` tinyint NULL DEFAULT 0 COMMENT '是否置顶',
   `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '最后更新时间（评论时间）',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 21 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '帖子' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 87 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '帖子' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for shop_address
@@ -86,7 +101,7 @@ CREATE TABLE `shop_address`  (
   `detail_address` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '详细地址',
   `default_address` tinyint(1) NULL DEFAULT 0 COMMENT '是否默认地址',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 16 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '收货人信息' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 34 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '收货人信息' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for shop_bundle
@@ -99,6 +114,7 @@ CREATE TABLE `shop_bundle`  (
   `price` decimal(10, 2) NOT NULL COMMENT '价格',
   `image` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '图片',
   `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL COMMENT '描述',
+  `sales` int NULL DEFAULT 0 COMMENT '销售额',
   `status` tinyint NULL DEFAULT 0 COMMENT '状态 1启用 0停用',
   `sort` int NULL DEFAULT 0 COMMENT '排序',
   `created_by` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '创建人',
@@ -136,7 +152,7 @@ CREATE TABLE `shop_cart_item`  (
   `quantity` int NOT NULL DEFAULT 1 COMMENT '数量',
   `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 104 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '购物车' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 128 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '购物车' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for shop_category
@@ -167,6 +183,7 @@ CREATE TABLE `shop_component`  (
   `category_id` int NOT NULL COMMENT '类别',
   `image` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '图片',
   `common_description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL COMMENT '通用描述',
+  `sales` int NULL DEFAULT 0 COMMENT '销售额',
   `status` tinyint NULL DEFAULT 0 COMMENT '状态 1启用 0停用',
   `sort` int NULL DEFAULT 0 COMMENT '排序',
   `created_by` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '创建人',
@@ -213,7 +230,8 @@ CREATE TABLE `shop_order`  (
   `discount_amount` decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '商品优惠金额',
   `consignee` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '收货人',
   `phone` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '收货人手机号',
-  `address` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '收货地址',
+  `address_id` int NULL DEFAULT NULL COMMENT '当前选择的地址Id',
+  `address` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '收货地址（用于存入固定订单信息）',
   `cancel_reason` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '订单取消原因',
   `rejection_reason` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '订单拒绝原因',
   `checkout_time` datetime NULL DEFAULT NULL COMMENT '支付时间',
@@ -224,7 +242,7 @@ CREATE TABLE `shop_order`  (
   `updated_by` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '最后更新人',
   `updated_at` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '最后更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 46 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '订单表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 67 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '订单表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for shop_order_detail
@@ -239,7 +257,7 @@ CREATE TABLE `shop_order_detail`  (
   `quantity` int NOT NULL DEFAULT 1 COMMENT '数量',
   `price` decimal(10, 2) NOT NULL COMMENT '单价',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 59 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '订单明细表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 83 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '订单明细表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for user

@@ -104,7 +104,7 @@
           </div>
           <div v-for="userPost in user?.userPostList" :key="userPost.id">
             <div class="flex mx-2 my-4 justify-between items-center">
-              <router-link :to="`/forum/post/${userPost.id}`" class="text-xl cursor-pointer">
+              <router-link :to="`/forum/${userPost.categoryId}/post/${userPost.id}`" class="text-xl cursor-pointer">
                 {{ userPost.title }}
               </router-link>
               <div class="flex text-gray-600">
@@ -132,7 +132,7 @@
           </div>
           <div v-for="likePost in user?.likePostList" :key="likePost.id">
             <div class="flex mx-2 my-4 justify-between items-center">
-              <router-link :to="`/forum/post/${likePost.id}`" class="text-xl cursor-pointer">
+              <router-link :to="`/forum/${likePost.categoryId}/post/${likePost.id}`" class="text-xl cursor-pointer">
                 {{ likePost.title }}
               </router-link>
               <div class="flex text-gray-600">
@@ -163,7 +163,7 @@
   import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog"
   import { Input } from "@/components/ui/input"
   import { Label } from "@/components/ui/label"
-  import FileUpload from '@/components/Upload.vue';
+  import FileUpload from '@/components/common/Upload.vue';
   import { onMounted, ref, watch } from "vue"
   import { useRoute } from 'vue-router'
   const route = useRoute()
@@ -196,6 +196,7 @@
 
   interface PostSimple {
     id: number
+    categoryId: number
     title: string
     likeCount: number
     commentCount: number

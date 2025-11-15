@@ -1,15 +1,15 @@
 // src/router/index.ts
 import { createRouter, createWebHistory } from 'vue-router'
-import Hello from '@/components/HelloWorld.vue'
-import Home from '../components/Home.vue'
-import Buy from '../components/Buy.vue';
-import Order from '@/components/Order.vue';
-import MyOrders from '@/components/MyOrders.vue';
-import Forum from '@/components/Forum.vue';
-import Post from '@/components/Post.vue';
-import PostSimple from '@/components/PostSimple.vue';
-import Sign from '@/components/Sign.vue';
-import User from '@/components/User.vue';
+import Hello from '@/components/common/HelloWorld.vue'
+import Home from '../components/common/Home.vue'
+import Buy from '../components/shop/Buy.vue';
+import Order from '@/components/shop/Order.vue';
+import MyOrders from '@/components/shop/MyOrders.vue';
+import Forum from '@/components/forum/Forum.vue';
+import Post from '@/components/forum/Post.vue';
+import PostSimple from '@/components/forum/PostSimple.vue';
+import Sign from '@/components/user/Sign.vue';
+import User from '@/components/user/User.vue';
 
 
 // 使用 RouteRecordRaw 类型定义路由
@@ -38,7 +38,7 @@ const routes = [
     meta: { showFooter: true }
   },
   {
-    path: '/buy',
+    path: '/buy/:id',
     name: 'Buy',
     component: Buy,
     meta: { showFooter: false }
@@ -62,7 +62,7 @@ const routes = [
     meta: { showFooter: false }
   },
   {
-    path: '/forum',
+    path: '/forum/:categoryId',
     component: Forum,
     meta: { showFooter: false },
     children: [
@@ -71,7 +71,7 @@ const routes = [
         component: PostSimple
       },
       {
-        path: 'post/:id', // 帖子详情，作为子路由
+        path: 'post/:postId', // 帖子详情，作为子路由
         component: Post,
       }
     ]

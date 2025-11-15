@@ -114,7 +114,7 @@
                                     @click="openReply(comment.id), getReply(comment.id)">{{ comment.replyCount
                                     }}条回复▼</Button>
                                 <Button v-else variant="secondary" @click="openReply(comment.id)">{{ comment.replyCount
-                                    }}条回复▲</Button>
+                                }}条回复▲</Button>
                             </div>
                             <Dialog>
                                 <DialogTrigger as-child>
@@ -131,7 +131,7 @@
                                             <DialogTrigger as-child>
                                                 <Button :disabled="uploading">
                                                     {{ uploading ? "上传中" : fileCount > 0 ? `上传了${fileCount}张图片` :
-                                                    "上传图片（可选）" }}
+                                                        "上传图片（可选）" }}
                                                 </Button>
                                             </DialogTrigger>
                                             <DialogContent class="md:max-w-4xl">
@@ -299,7 +299,7 @@
     import dayjs from 'dayjs'
     import relativeTime from 'dayjs/plugin/relativeTime'
     import 'dayjs/locale/zh-cn'
-    import FileUpload from '@/components/Upload.vue';
+    import FileUpload from '@/components/common/Upload.vue';
     import { useForumCategoryStore } from '@/stores/ForumCategoryStore'
     const categoryStore = useForumCategoryStore()
     import { useUserStore } from '@/stores/UserStore'
@@ -313,7 +313,7 @@
 
     const route = useRoute()
     // 帖子Id
-    const id = Number(route.params.id)
+    const id = Number(route.params.postId)
 
     onMounted(() => {
         getPost(id)
@@ -374,7 +374,9 @@
             // 设置为有回复
             setReply(post.value.comment)
         }
-        categoryStore.currentCategory = post.value!.categoryId
+        if (categoryStore.currentCategory !== 5) {
+            categoryStore.currentCategory = post.value!.categoryId
+        }
     }
 
     const getReply = async (id: number) => {
