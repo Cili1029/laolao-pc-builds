@@ -7,10 +7,10 @@
             </span>
         </div>
         <div class="h-24 m-5 pl-5 bg-white shadow-sm rounded-sm flex items-center">
-            <span class="text-6xl" :class="categoryStore.getIconClass(categoryStore.category.id)"></span>
+            <span class="text-6xl" :class="categoryStore.getCategoryById(categoryStore.currentCategory)?.icon"></span>
             <div class="p-3">
-                <p class="text-2xl font-bold">{{ categoryStore.category.name }}</p>
-                <p>{{ categoryStore.category.description }}</p>
+                <p class="text-2xl font-bold">{{ categoryStore.getCategoryById(categoryStore.currentCategory)?.name }}</p>
+                <p>{{ categoryStore.getCategoryById(categoryStore.currentCategory)?.description }}</p>
             </div>
         </div>
         <div class="border-t-4"></div>
@@ -37,10 +37,17 @@
             <div class="border-t-2"></div>
         </div>
         <div v-for="simple in postSimple" :key="simple.id">
-            <div class="flex mx-2 my-4 justify-between items-center">
-                <router-link :to="`/forum/${simple.categoryId}/post/${simple.id}`" class="text-xl cursor-pointer">
-                    {{ simple.title }}
-                </router-link>
+            <div class="flex mx-2 my-1 justify-between items-center">
+                <div>
+                    <router-link :to="`/forum/${simple.categoryId}/post/${simple.id}`" class="text-xl cursor-pointer">
+                        <p>{{ simple.title }}</p>
+                    </router-link>
+                    <div @click="categoryStore.currentCategory = simple.categoryId" class="inline-flex items-center bg-gray-200 py-0.5 px-2 cursor-pointer rounded">
+                        <span class="text-sm mr-1" :class="categoryStore.getCategoryById(simple.categoryId)?.icon"></span>
+                        <span class="text-xs">{{ categoryStore.getCategoryById(simple.categoryId)?.name }}</span>
+                    </div>
+                </div>
+
                 <div class="hidden md:flex text-gray-600">
                     <div class="w-22 font-bold text-center">{{ simple.commentCount }}</div>
                     <div class="w-22 font-bold text-center">{{ simple.likeCount }}</div>
@@ -82,7 +89,7 @@
         back.value = false
         const response = await axios.get("/api/user/forum/post/simple", {
             params: {
-                categoryId: categoryStore.category.id
+                categoryId: categoryStore.currentCategory
             }
         })
         postSimple.value = response.data.data
@@ -100,9 +107,9 @@
 
     // 监听路由变化
     watch(
-        [() => categoryStore.category.id, () => postStore.postSimple?.id], // 只监听这两个特定值
+        [() => categoryStore.currentCategory, () => postStore.postSimple?.id], // 只监听这两个特定值
         () => {
-            if (categoryStore.category.id) {
+            if (categoryStore.currentCategory) {
                 getPost() // 分类变化时获取帖子
             }
             if (postStore.postSimple?.id) {
@@ -119,7 +126,7 @@
     const search = async () => {
         const response = await axios.get("/api/user/forum/post/search", {
             params: {
-                categoryId: categoryStore.category.id,
+                categoryId: categoryStore.currentCategory,
                 searchContent: searchContent.value
             }
         })

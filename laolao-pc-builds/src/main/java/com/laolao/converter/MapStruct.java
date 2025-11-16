@@ -41,6 +41,8 @@ public interface MapStruct {
     @Mapping(target = "id", ignore = true)
     Order addressDTOToOrder(AddressDTO addressDTO);
 
+    ShopCouponVO shopCouponToShopCouponVO(ShopCoupon shopCoupon);
+
     // 论坛的
     ForumCategoryVO ForumCategoryToCategoryVO(ForumCategory forumCategory);
 

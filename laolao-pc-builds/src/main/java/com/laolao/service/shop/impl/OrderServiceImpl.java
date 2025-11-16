@@ -5,13 +5,12 @@ import com.laolao.common.context.BaseContext;
 import com.laolao.common.exception.UnknownError;
 import com.laolao.common.result.Result;
 import com.laolao.converter.MapStruct;
-import com.laolao.mapper.shop.AddressMapper;
-import com.laolao.mapper.shop.CartMapper;
-import com.laolao.mapper.shop.OrderMapper;
+import com.laolao.mapper.shop.*;
 import com.laolao.pojo.shop.dto.CancelDTO;
 import com.laolao.pojo.shop.dto.ChangeOrderAddressDTO;
 import com.laolao.pojo.shop.dto.PayDTO;
 import com.laolao.pojo.shop.entity.Address;
+import com.laolao.pojo.shop.entity.CartItem;
 import com.laolao.pojo.shop.entity.Order;
 import com.laolao.pojo.shop.entity.OrderDetail;
 import com.laolao.pojo.shop.vo.*;
@@ -39,25 +38,53 @@ public class OrderServiceImpl implements OrderService {
     private CartMapper cartMapper;
     @Resource
     private AddressMapper addressMapper;
+    @Resource
+    private ComponentMapper componentMapper;
+    @Resource
+    private BundleMapper bundleMapper;
 
     @Transactional
     @Override
     public Result<String> createOrder() {
+        Result<List<CartProductVO>> cartProductList = cartService.getCartProductList();
+        List<CartProductVO> data = cartProductList.getData();
+        // 减库存
+        // 组件的id
+        int userId = BaseContext.getCurrentId();
+        List<CartItem> cartItemList = cartMapper.getList(userId);
+        List<IdAndQuantityVO> components = cartItemList.stream()
+                .filter(cartItem -> cartItem.getProductType() == 1)
+                .map(cartItem -> new IdAndQuantityVO(
+                        cartItem.getProductId(),
+                        cartItem.getQuantity()
+                ))
+                .toList();
+        // 整机的id
+        List<IdAndQuantityVO> bundles = cartItemList.stream()
+                .filter(cartItem -> cartItem.getProductType() == 2)
+                .map(cartItem -> new IdAndQuantityVO(
+                        cartItem.getProductId(),
+                        cartItem.getQuantity()
+                ))
+                .toList();
+        if (!components.isEmpty()) {
+            componentMapper.updateStock(components);
+        }
+        if (!bundles.isEmpty()) {
+            bundleMapper.updateStock(bundles);
+        }
+
         // 订单表
         // 生成订单号
         String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
         String random = String.valueOf((int) ((Math.random() * 900) + 100));
         String number = "ORD" + date + random;
         // 下单用户
-        int userId = BaseContext.getCurrentId();
-
         Order order = new Order();
         order.setNumber(number);
         order.setUserId(userId);
 
         // 计算总价
-        Result<List<CartProductVO>> cartProductList = cartService.getCartProductList();
-        List<CartProductVO> data = cartProductList.getData();
         BigDecimal originalAmount = data.stream()
                 .map(item -> item.getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
@@ -131,6 +158,7 @@ public class OrderServiceImpl implements OrderService {
         orderMapper.update(order);
         return Result.success("成功！");
     }
+
     @Override
     public Result<List<OrdersVO>> getOrders() {
         int userId = BaseContext.getCurrentId();

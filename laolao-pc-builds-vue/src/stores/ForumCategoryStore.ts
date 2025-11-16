@@ -2,31 +2,23 @@ import { defineStore } from 'pinia'
 
 interface Category {
     id: number
+    icon: string
     name: string
     description: string
 }
 
 export const useForumCategoryStore = defineStore('forumCategory', {
     state: () => ({
-        category: {
-            id: 0,
-            name: '',
-            description: ''
-        } as Category,
+        categories: [] as Category[],
         currentCategory: 0
     }),
 
     actions: {
-        setCategory(category: Category) {
-            this.category.id = category.id
-            this.category.name = category.name
-            this.category.description = category.description
-        },
-
-        clearCategory() {
-            this.category.id = 0
-            this.category.name = ''
-            this.category.description = ''
+        setCategories(categories: Category[]) {
+            this.categories = categories;
+            this.categories.forEach(category => {
+                category.icon = this.getIcon(category.id)
+            })
         },
 
         setCurrentCategory(id: number) {
@@ -35,8 +27,15 @@ export const useForumCategoryStore = defineStore('forumCategory', {
     },
 
     getters: {
-        // 添加 getIconClass 作为 getter
-        getIconClass: () => {
+        getCategoryById: (state) => {
+            return (id: number): Category | null => {
+                // 从categories数组中查找id匹配的分类
+                const matched = state.categories.find(category => category.id === id);
+                return matched ? matched : null; // 找不到返回null
+            };
+        },
+
+        getIcon: () => {
             return (id: number) => {
                 const iconMap: Record<number, string> = {
                     1: 'icon-[noto--old-man-light-skin-tone] text-3xl',
@@ -47,6 +46,6 @@ export const useForumCategoryStore = defineStore('forumCategory', {
                 };
                 return iconMap[id] || '';
             }
-        }
+        },
     },
 })

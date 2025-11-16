@@ -13,6 +13,8 @@ import com.laolao.mapper.forum.PostMapper;
 import com.laolao.mapper.user.UserMapper;
 import com.laolao.pojo.forum.entity.Post;
 import com.laolao.pojo.forum.vo.PostSimpleVO;
+import com.laolao.pojo.shop.entity.ShopCoupon;
+import com.laolao.pojo.shop.vo.ShopCouponVO;
 import com.laolao.pojo.user.dto.SignInWithEmailDTO;
 import com.laolao.pojo.user.dto.SignInWithUsernameDTO;
 import com.laolao.pojo.user.dto.SignUpDTO;
@@ -174,7 +176,18 @@ public class UserServiceImpl implements UserService {
             PostSimpleVO postSimpleVO = mapStruct.PostToSimpleVO(post);
             userPostList.add(postSimpleVO);
         }
+        // 组装
+        UserVO userVO = UserVO.builder()
+                .user(userSimpleVO)
+                .userPostList(userPostList)
+                .build();
+        return Result.success(userVO);
+    }
+
+    @Override
+    public Result<List<PostSimpleVO>> getLike(Integer id) {
         // 获取喜欢的帖子
+        List<Post> postList;
         List<Integer> postIdList = likeMapper.getLikePost(id);
         ArrayList<PostSimpleVO> likePostList = new ArrayList<>();
         if (!postIdList.isEmpty()) {
@@ -184,13 +197,18 @@ public class UserServiceImpl implements UserService {
                 likePostList.add(postSimpleVO);
             }
         }
-        // 组装
-        UserVO userVO = UserVO.builder()
-                .user(userSimpleVO)
-                .userPostList(userPostList)
-                .likePostList(likePostList)
-                .build();
-        return Result.success(userVO);
+        return Result.success(likePostList);
+    }
+
+    @Override
+    public Result<List<ShopCouponVO>> getShopCoupon() {
+        List<ShopCoupon> couponList = userMapper.selectCoupon(BaseContext.getCurrentId());
+        List<ShopCouponVO> shopCouponVOS = new ArrayList<>();
+        for (ShopCoupon coupon : couponList) {
+            ShopCouponVO shopCouponVO = mapStruct.shopCouponToShopCouponVO(coupon);
+            shopCouponVOS.add(shopCouponVO);
+        }
+        return Result.success(shopCouponVOS);
     }
 
     @Override

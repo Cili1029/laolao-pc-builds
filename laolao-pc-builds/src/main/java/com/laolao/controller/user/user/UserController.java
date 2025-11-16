@@ -1,5 +1,7 @@
 package com.laolao.controller.user.user;
 
+import com.laolao.pojo.forum.vo.PostSimpleVO;
+import com.laolao.pojo.shop.vo.ShopCouponVO;
 import com.laolao.pojo.user.dto.SignInWithEmailDTO;
 import com.laolao.pojo.user.dto.SignInWithUsernameDTO;
 import com.laolao.pojo.user.dto.SignUpDTO;
@@ -13,6 +15,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -110,6 +113,17 @@ public class UserController {
     }
 
     /**
+     * 获取用户喜欢的贴纸
+     *
+     * @param id 用户Id
+     * @return 用户主页数据
+     */
+    @GetMapping("/{id}/like")
+    public Result<List<PostSimpleVO>> getLike(@PathVariable Integer id) {
+        return userService.getLike(id);
+    }
+
+    /**
      * 更新用户信息
      *
      * @param updateUserVO 新数据
@@ -118,5 +132,15 @@ public class UserController {
     @PostMapping("/update")
     public Result<String> updateUser(@RequestBody UpdateUserVO updateUserVO) {
         return userService.update(updateUserVO);
+    }
+
+    /**
+     * 获取拥护的优惠券
+     *
+     * @return 优惠券数据
+     */
+    @GetMapping("/coupon")
+    public Result<List<ShopCouponVO>> getShopCoupon() {
+        return userService.getShopCoupon();
     }
 }

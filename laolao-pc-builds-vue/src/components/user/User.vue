@@ -229,6 +229,16 @@
     }
   }
 
+  const getLike = async () => {
+    try {
+      const response = await axios.get(`/api/user/user/${route.params.id}/like`)
+      user.value!.likePostList = response.data.data
+      getLiked.value = true
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   const newName = ref("")
 
   // 图片上传
@@ -287,8 +297,12 @@
 
   // 显示类别
   const currentType = ref(1)
+  const getLiked = ref<boolean>(false)
 
   const changeType = (type: number) => {
     currentType.value = type
+    if(type === 2 && !getLiked.value) {
+      getLike()
+    }
   }
 </script>

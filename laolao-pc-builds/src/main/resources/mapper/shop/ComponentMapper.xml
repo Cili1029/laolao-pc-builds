@@ -30,4 +30,18 @@
         </foreach>
             and ca.product_type = 1
     </select>
+
+    <update id="updateStock" parameterType="java.util.List">
+        UPDATE shop_component_variant
+        SET stock = stock - CASE
+        <foreach collection="list" item="component" separator="">
+            WHEN id = #{component.productId} THEN #{component.quantity}
+        </foreach>
+        ELSE 0
+        END
+        WHERE id IN
+        <foreach collection="list" item="component" open="(" close=")" separator=",">
+            #{component.productId}
+        </foreach>
+    </update>
 </mapper>

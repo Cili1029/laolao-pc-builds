@@ -16,8 +16,8 @@
             <SheetTrigger as-child class="text-gray-600 hover:text-blue-500" @click="showCart()">
               <span>购物车</span>
             </SheetTrigger>
-            <SheetContent>
-              <SheetHeader>
+            <SheetContent class="gap-0">
+              <SheetHeader class="border border-gray-200 rounded-lg shadow-sm">
                 <SheetTitle>我的购物车</SheetTitle>
                 <SheetDescription>
                   <p class="hover:text-blue-500" :class="{ 'cursor-not-allowed': products.length === 0 }"
@@ -26,10 +26,10 @@
                   </p>
                 </SheetDescription>
               </SheetHeader>
-              <div v-if="products && products.length > 0" class="flex gap-6 py-4 overflow-y-auto scrollbar-edge">
-                <div class="w-full flex flex-col space-y-2">
+              <div v-if="products && products.length > 0" class="flex overflow-y-auto scrollbar-edge py-2">
+                <div class="w-full flex flex-col space-y-2 ">
                   <div v-for="product in products" :key="product.name"
-                    class="flex flex-col bg-white rounded-lg shadow-sm border border-gray-200 p-4 items-center">
+                    class="flex flex-col bg-white rounded-lg shadow-sm border border-gray-200 p-2 mx-2">
                     <div class="flex">
                       <img :src="product.image" class="w-15 h-15 object-cover rounded-md mr-4" />
                       <div class="flex-1">
@@ -64,7 +64,7 @@
                   <div class="font-bold">什么也没有！</div>
                 </div>
               </div>
-              <SheetFooter>
+              <SheetFooter class="border border-gray-200 rounded-lg shadow-sm">
                 <div class="flex justify-between text-xl font-bold text-red-600">
                   <span>总价（未算优惠券）:</span>
                   <span>￥{{ totalPrice.toFixed(2) }}</span>
@@ -108,7 +108,7 @@
                 </RouterLink>
                 <DropdownMenuItem>
                   <Smile class="mr-2 h-4 w-4" />
-                  <span>签到/优惠券(还没写)</span>
+                  <span>我的优惠券</span>
                 </DropdownMenuItem>
                 <RouterLink to="/my-orders">
                   <DropdownMenuItem>

@@ -10,9 +10,9 @@
             </div>
             <div class="h-24 px-3 bg-white flex flex-col justify-center">
                 <p class="text-2xl font-bold">{{ post?.title }}</p>
-                <div class="flex">
-                    <span class="text-xl" :class="categoryStore.getIconClass(categoryStore.category.id)"></span>
-                    <p class="text-l">{{ categoryStore.category.name }}</p>
+                <div @click="changeCategory()" class="inline-flex items-center bg-gray-200 py-0.5 px-2 cursor-pointer w-fit rounded">
+                    <span class="text-xl mr-1" :class="categoryStore.getCategoryById(post.categoryId)?.icon"></span>
+                    <span class="text-l">{{ categoryStore.getCategoryById(post.categoryId)?.name }}</span>
                 </div>
             </div>
             <div class="border-t-3"></div>
@@ -114,7 +114,7 @@
                                     @click="openReply(comment.id), getReply(comment.id)">{{ comment.replyCount
                                     }}条回复▼</Button>
                                 <Button v-else variant="secondary" @click="openReply(comment.id)">{{ comment.replyCount
-                                }}条回复▲</Button>
+                                    }}条回复▲</Button>
                             </div>
                             <Dialog>
                                 <DialogTrigger as-child>
@@ -361,7 +361,24 @@
         comment: CommentVO[]
     }
 
-    const post = ref<PostVO>()
+    const post = ref<PostVO>({
+        id: 0,
+        categoryId: 0,
+        user: {
+            id: 0,
+            username: '',
+            avatar: '',
+            name: ''
+        },
+        title: '',
+        content: '',
+        images: [], // 初始化为空数组
+        likeCount: 0,
+        like: 0,
+        commentCount: 0,
+        createdAt: '',
+        comment: [] // 嵌套的评论数组初始化为空数组
+    })
 
     const getPost = async (id: number) => {
         const response = await axios.get("/api/user/forum/post", {
@@ -467,7 +484,6 @@
     // 删除帖子
     const deletePost = async (id: number) => {
         await axios.delete(`/api/user/forum/post/${id}`)
-        post.value = undefined
         router.back()
     }
 
@@ -556,6 +572,12 @@
         } catch (error) {
             console.error('点赞失败:', error)
         }
+    }
+
+    const changeCategory = () => {
+        categoryStore.currentCategory = post.value.categoryId
+        // 切换分类时回到帖子列表
+        router.replace(`/forum/${post.value.categoryId}`)
     }
 
     // 图片上传

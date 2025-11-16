@@ -59,13 +59,15 @@
                         更多商品👉
                     </router-link>
                 </div>
-                <div v-for="product in products" :key="product.id" class="flex items-center">
-                    <img :src="product.image" class="w-16 h-16 rounded-lg" />
-                    <span>{{ product.name }}</span>
-                    <router-link :to="`/buy/${product.categoryId}`" @click="setProduct(product)"
-                        class="flex-shrink-0 ml-auto">
-                        <span class="icon-[material-symbols--shopping-cart-outline] text-4xl hover:bg-red-500 "></span>
-                    </router-link>
+                <div v-for="product in products" :key="product.id">
+                    <div class="flex items-center">
+                        <img :src="product.image" class="w-15 h-15 rounded-lg m-1" />
+                        <span>{{ product.name }}</span>
+                        <router-link :to="`/buy/${product.categoryId}`" @click="setProduct(product)"
+                            class="flex-shrink-0 ml-auto flex items-center">
+                            <span class="icon-[material-symbols--shopping-cart-outline] text-4xl hover:bg-red-500 "></span>
+                        </router-link>
+                    </div>
                     <div class="border-t-2"></div>
                 </div>
             </div>

@@ -23,7 +23,7 @@ public class UserVO {
     private List<PostSimpleVO> userPostList;
 
     /**
-     * 喜欢的帖子
+     * 喜欢的帖子(基本信息不传)
      */
-    private List<PostSimpleVO> likePostList;
+    private List<PostSimpleVO> likePostList = null;
 }

@@ -32,11 +32,12 @@
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectGroup>
-                                            <SelectItem :value="category.id" v-for="category in categories"
-                                                :key="category.id">
-                                                <span :class="categoryStore.getIconClass(category.id)"></span>
-                                                <span>{{ category.name }}</span>
-                                            </SelectItem>
+                                            <template v-for="category in categories" :key="category.id">
+                                                <SelectItem v-if="category.id !== 5" :value="category.id">
+                                                    <span :class="categoryStore.getCategoryById(category.id)?.icon"></span>
+                                                    <span>{{ category.name }}</span>
+                                                </SelectItem>
+                                            </template>
                                         </SelectGroup>
                                     </SelectContent>
                                 </Select>
@@ -89,10 +90,10 @@
             <div class="border-t-3 mt-2"></div>
             <div>
                 <div class="p-2 text-base flex rounded-lg">类别</div>
-                <div @click="changeCategory(category)" v-for="category in categories" :key="category.id"
+                <div @click="changeCategory(category.id)" v-for="category in categories" :key="category.id"
                     class="p-2 text-lg cursor-pointer hover:bg-sky-100 flex rounded-lg"
                     :class="category.id === categoryStore.currentCategory ? 'bg-sky-100' : ''">
-                    <span :class="categoryStore.getIconClass(category.id)"></span>
+                    <span :class="categoryStore.getCategoryById(category.id)?.icon"></span>
                     <p class="pl-3">{{ category.name }}</p>
                 </div>
             </div>
@@ -133,6 +134,7 @@
 
     interface Category {
         id: number
+        icon: string
         name: string
         description: string
     }
@@ -148,12 +150,12 @@
             // 默认页
             router.replace(`/forum/${categories.value[1]?.id}`)
             categoryStore.currentCategory = categories.value[1]!.id
-            categoryStore.setCategory(categories.value[1]!)
+            categoryStore.setCategories(categories.value)
         } else {
             const category = categories.value.find(c => c.id === Number(route.params.categoryId))
             if (category) {
                 categoryStore.currentCategory = category.id
-                categoryStore.setCategory(category)
+                categoryStore.setCategories(categories.value)
             } else {
                 router.push('/home');
             }
@@ -161,11 +163,10 @@
         
     }
 
-    const changeCategory = (category: Category) => {
-        categoryStore.currentCategory = category.id
-        categoryStore.setCategory(category)
+    const changeCategory = (id: number) => {
+        categoryStore.currentCategory = id
         // 切换分类时回到帖子列表
-        router.replace(`/forum/${category.id}`)
+        router.replace(`/forum/${id}`)
     }
 
     // 发布帖子
@@ -187,7 +188,7 @@
             postStore.setPostSimple(response.data.data)
         }
         const res = categories.value.find(category => category.id === categoryId.value) as Category
-        changeCategory(res)
+        changeCategory(res.id)
         categoryId.value = 0
         title.value = ''
         content.value = ''

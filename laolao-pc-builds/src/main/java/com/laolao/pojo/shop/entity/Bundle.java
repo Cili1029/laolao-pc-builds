@@ -48,6 +48,11 @@ public class Bundle implements Serializable {
     private int sales;
 
     /**
+     * 库存
+     */
+    private int stock;
+
+    /**
      * 状态 1启用 0停用
      */
     private Integer status;

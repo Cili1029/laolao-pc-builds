@@ -3,6 +3,7 @@ package com.laolao.mapper.shop;
 import com.laolao.pojo.shop.entity.Bundle;
 import com.laolao.pojo.shop.vo.CartProductVO;
 import com.laolao.pojo.shop.vo.ComponentVariantVO;
+import com.laolao.pojo.shop.vo.IdAndQuantityVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
@@ -22,4 +23,6 @@ public interface BundleMapper {
     Bundle check(int id);
 
     List<CartProductVO> ListFromCart(int userId, List<Integer> productIds);
+
+    void updateStock(List<IdAndQuantityVO> bundles);
 }
