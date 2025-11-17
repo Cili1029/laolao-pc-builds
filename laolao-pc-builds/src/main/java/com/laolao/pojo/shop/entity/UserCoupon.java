@@ -1,10 +1,18 @@
-package com.laolao.pojo.user.entity;
+package com.laolao.pojo.shop.entity;
+
+import lombok.*;
 
 import java.time.LocalDateTime;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
+@Builder
 public class UserCoupon {
     /**
-     * 用户持有的优惠券 Id
+     * 用户持有的优惠券主键Id
      */
     private Integer id;
 

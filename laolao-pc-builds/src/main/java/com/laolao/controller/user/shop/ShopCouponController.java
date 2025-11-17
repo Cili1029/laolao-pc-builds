@@ -1,7 +1,9 @@
 package com.laolao.controller.user.shop;
 
 import com.laolao.common.result.Result;
+import com.laolao.pojo.shop.dto.GetCouponDTO;
 import com.laolao.pojo.shop.vo.ShopCouponVO;
+import com.laolao.pojo.shop.vo.UserCouponVO;
 import com.laolao.service.shop.ShopCouponService;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
@@ -22,8 +24,28 @@ public class ShopCouponController {
      *
      * @return 优惠券数据
      */
-    @GetMapping
-    public Result<List<ShopCouponVO>> getShopCoupon() {
-        return shopCouponService.getShopCoupon();
+    @GetMapping("/shop")
+    public Result<List<ShopCouponVO>> showShopCoupon() {
+        return shopCouponService.ShowShopCoupon();
+    }
+
+    /**
+     * 获取拥护的优惠券
+     *
+     * @return 优惠券数据
+     */
+    @GetMapping("/user")
+    public Result<List<UserCouponVO>> showUserCoupon() {
+        return shopCouponService.showUserCoupon();
+    }
+
+    /**
+     * 用户获得优惠券
+     *
+     * @return 逐渐Id
+     */
+    @PostMapping("/get")
+    public Result<UserCouponVO> getCoupon(@RequestBody GetCouponDTO getCouponDTO) {
+        return shopCouponService.getCoupon(getCouponDTO);
     }
 }

@@ -133,14 +133,4 @@ public class UserController {
     public Result<String> updateUser(@RequestBody UpdateUserVO updateUserVO) {
         return userService.update(updateUserVO);
     }
-
-    /**
-     * 获取拥护的优惠券
-     *
-     * @return 优惠券数据
-     */
-    @GetMapping("/coupon")
-    public Result<List<ShopCouponVO>> getShopCoupon() {
-        return userService.getShopCoupon();
-    }
 }

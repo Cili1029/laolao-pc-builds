@@ -23,7 +23,4 @@ public interface UserMapper {
     List<User> selectUser(List<Integer> userIdList1);
 
     void updateUser(UpdateUserVO updateUserVO);
-
-    @Select("select * from user_coupon where user_id = #{userId}")
-    List<ShopCoupon> selectCoupon(int userId);
 }

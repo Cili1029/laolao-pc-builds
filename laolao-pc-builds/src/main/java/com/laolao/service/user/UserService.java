@@ -32,6 +32,4 @@ public interface UserService {
     Result<String> update(UpdateUserVO updateUserVO);
 
     Result<List<PostSimpleVO>> getLike(Integer id);
-
-    Result<List<ShopCouponVO>> getShopCoupon();
 }

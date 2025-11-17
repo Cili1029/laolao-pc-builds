@@ -1,10 +1,14 @@
 package com.laolao.service.shop.impl;
 
+import com.laolao.common.context.BaseContext;
 import com.laolao.common.result.Result;
 import com.laolao.converter.MapStruct;
 import com.laolao.mapper.shop.ShopCouponMapper;
+import com.laolao.pojo.shop.dto.GetCouponDTO;
 import com.laolao.pojo.shop.entity.ShopCoupon;
 import com.laolao.pojo.shop.vo.ShopCouponVO;
+import com.laolao.pojo.shop.entity.UserCoupon;
+import com.laolao.pojo.shop.vo.UserCouponVO;
 import com.laolao.service.shop.ShopCouponService;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
@@ -20,13 +24,31 @@ public class ShopShopCouponServiceImpl implements ShopCouponService {
     private MapStruct mapStruct;
 
     @Override
-    public Result<List<ShopCouponVO>> getShopCoupon() {
-        List<ShopCoupon> couponList = shopCouponMapper.selectCoupon();
+    public Result<List<ShopCouponVO>> ShowShopCoupon() {
+        List<ShopCoupon> couponList = shopCouponMapper.selectShopCoupon();
         List<ShopCouponVO> shopCouponVOS = new ArrayList<>();
         for (ShopCoupon coupon : couponList) {
             ShopCouponVO shopCouponVO = mapStruct.shopCouponToShopCouponVO(coupon);
             shopCouponVOS.add(shopCouponVO);
         }
         return Result.success(shopCouponVOS);
+    }
+
+    @Override
+    public Result<List<UserCouponVO>> showUserCoupon() {
+        List<UserCouponVO> couponList = shopCouponMapper.selectUserCoupon(0, BaseContext.getCurrentId());
+        return Result.success(couponList);
+    }
+
+    @Override
+    public Result<UserCouponVO> getCoupon(GetCouponDTO getCouponDTO) {
+        int userId = BaseContext.getCurrentId();
+        UserCoupon userCoupon = UserCoupon.builder()
+                .userId(userId)
+                .couponId(getCouponDTO.getCouponId())
+                .build();
+        shopCouponMapper.insertUserCoupon(userCoupon);
+        List<UserCouponVO> userCouponVOS = shopCouponMapper.selectUserCoupon(userCoupon.getId(), 0);
+        return Result.success(userCouponVOS.get(0), "领取成功！");
     }
 }

@@ -201,17 +201,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Result<List<ShopCouponVO>> getShopCoupon() {
-        List<ShopCoupon> couponList = userMapper.selectCoupon(BaseContext.getCurrentId());
-        List<ShopCouponVO> shopCouponVOS = new ArrayList<>();
-        for (ShopCoupon coupon : couponList) {
-            ShopCouponVO shopCouponVO = mapStruct.shopCouponToShopCouponVO(coupon);
-            shopCouponVOS.add(shopCouponVO);
-        }
-        return Result.success(shopCouponVOS);
-    }
-
-    @Override
     public Result<String> update(UpdateUserVO updateUserVO) {
         updateUserVO.setId(BaseContext.getCurrentId());
         userMapper.updateUser(updateUserVO);
