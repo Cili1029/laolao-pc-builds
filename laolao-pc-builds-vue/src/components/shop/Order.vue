@@ -233,7 +233,7 @@
                             </div>
                             <div class="ml-auto">
                                 <span class="text-lg font-bold text-orange-500">￥{{ product.price }}×{{ product.quantity
-                                    }}</span>
+                                }}</span>
                             </div>
                         </div>
                     </div>
@@ -248,6 +248,10 @@
                     </div>
                     <div class="flex justify-between">
                         <p class="text-m text-gray-800 mb-4">商品总价</p>
+                        <p class="text-m text-gray-800 mb-4">￥{{ originalAmount }}</p>
+                    </div>
+                    <div class="flex justify-between" @click="showCouponDialog(2)">
+                        <p class="text-m text-gray-800 mb-4">使用优惠券</p>
                         <p class="text-m text-gray-800 mb-4">￥{{ originalAmount }}</p>
                     </div>
                 </div>
@@ -282,6 +286,7 @@
                 </div>
             </div>
         </div>
+        <CouponDialog :type="couponDialogType" v-model:isOpen="isOpenCouponDialog"></CouponDialog>
     </div>
 </template>
 
@@ -297,6 +302,7 @@
     import { Input } from "@/components/ui/input"
     import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger, } from '@/components/ui/alert-dialog'
     import { Label } from "@/components/ui/label"
+    import CouponDialog from '@/components/shop/CouponDialog.vue';
 
     onMounted(() => {
         // 判断订单是否为待付款再进行下一步
@@ -408,7 +414,7 @@
     }
 
     const add = async () => {
-        const {id, ...res} = currentAddress
+        const { id, ...res } = currentAddress
         try {
             const response = await axios.post("/api/user/shop/address/add",
                 res
@@ -427,7 +433,7 @@
     }
 
     const update = async () => {
-        const {number, ...res} = currentAddress
+        const { number, ...res } = currentAddress
         try {
             const response = await axios.post("/api/user/shop/address/update",
                 res
@@ -506,7 +512,7 @@
 
     // 改变收货地址
     const changeAddress = async (AddressId: number) => {
-        if(AddressId === selectAddress.value) {
+        if (AddressId === selectAddress.value) {
             return
         }
         try {
@@ -536,7 +542,7 @@
         try {
             const response = await axios.delete(`/api/user/shop/address/del/${id}`)
             addressList.value = response.data.data
-            if(id === selectAddress.value) {
+            if (id === selectAddress.value) {
                 selectAddress.value = 0
             }
 
@@ -571,10 +577,10 @@
             products.value = response.data.data.orderDetails || []
             originalAmount.value = response.data.data.originalAmount
             discountAmount.value = response.data.data.discountAmount
-            if(!selectAddress.value) {
+            if (!selectAddress.value) {
                 selectAddress.value = response.data.data.addressId
             }
-            
+
         } catch (error) {
             console.log(error)
         }
@@ -592,6 +598,13 @@
         } catch (error) {
             console.log(error)
         }
+    }
+
+    const isOpenCouponDialog = ref(false); // 控制弹窗显示/隐藏
+    const couponDialogType = ref(1)
+    const showCouponDialog = (type: number) => {
+        couponDialogType.value = type
+        isOpenCouponDialog.value = true
     }
 
 </script>

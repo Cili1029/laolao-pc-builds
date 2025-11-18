@@ -13,8 +13,6 @@ import com.laolao.mapper.forum.PostMapper;
 import com.laolao.mapper.user.UserMapper;
 import com.laolao.pojo.forum.entity.Post;
 import com.laolao.pojo.forum.vo.PostSimpleVO;
-import com.laolao.pojo.shop.entity.ShopCoupon;
-import com.laolao.pojo.shop.vo.ShopCouponVO;
 import com.laolao.pojo.user.dto.SignInWithEmailDTO;
 import com.laolao.pojo.user.dto.SignInWithUsernameDTO;
 import com.laolao.pojo.user.dto.SignUpDTO;

@@ -1,6 +1,5 @@
 package com.laolao.mapper.user;
 
-import com.laolao.pojo.shop.entity.ShopCoupon;
 import com.laolao.pojo.user.entity.User;
 import com.laolao.pojo.user.vo.UpdateUserVO;
 import org.apache.ibatis.annotations.*;

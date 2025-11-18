@@ -45,7 +45,7 @@ public class ShopCouponController {
      * @return 逐渐Id
      */
     @PostMapping("/get")
-    public Result<UserCouponVO> getCoupon(@RequestBody GetCouponDTO getCouponDTO) {
+    public Result<String> getCoupon(@RequestBody GetCouponDTO getCouponDTO) {
         return shopCouponService.getCoupon(getCouponDTO);
     }
 }

@@ -41,14 +41,13 @@ public class ShopShopCouponServiceImpl implements ShopCouponService {
     }
 
     @Override
-    public Result<UserCouponVO> getCoupon(GetCouponDTO getCouponDTO) {
+    public Result<String> getCoupon(GetCouponDTO getCouponDTO) {
         int userId = BaseContext.getCurrentId();
         UserCoupon userCoupon = UserCoupon.builder()
                 .userId(userId)
                 .couponId(getCouponDTO.getCouponId())
                 .build();
         shopCouponMapper.insertUserCoupon(userCoupon);
-        List<UserCouponVO> userCouponVOS = shopCouponMapper.selectUserCoupon(userCoupon.getId(), 0);
-        return Result.success(userCouponVOS.get(0), "领取成功！");
+        return Result.success("领取成功！");
     }
 }

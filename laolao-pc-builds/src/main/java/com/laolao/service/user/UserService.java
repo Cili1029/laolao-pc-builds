@@ -1,7 +1,6 @@
 package com.laolao.service.user;
 
 import com.laolao.pojo.forum.vo.PostSimpleVO;
-import com.laolao.pojo.shop.vo.ShopCouponVO;
 import com.laolao.pojo.user.dto.SignInWithEmailDTO;
 import com.laolao.pojo.user.dto.SignInWithUsernameDTO;
 import com.laolao.pojo.user.dto.SignUpDTO;

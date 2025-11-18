@@ -10,6 +10,7 @@
         <!-- 导航链接 -->
         <div class="flex space-x-6 items-center">
           <RouterLink to="/hello" class="text-gray-600 hover:text-blue-500 transition-colors">功能测试</RouterLink>
+          <span @click="showCouponDialog(1)" class="text-gray-600 hover:text-blue-500 transition-colors">更多优惠券</span>
 
           <!-- 购物车 -->
           <Sheet>
@@ -106,7 +107,7 @@
                     <span>个人信息</span>
                   </DropdownMenuItem>
                 </RouterLink>
-                <DropdownMenuItem>
+                <DropdownMenuItem @click="showCouponDialog(2)">
                   <Smile class="mr-2 h-4 w-4" />
                   <span>我的优惠券</span>
                 </DropdownMenuItem>
@@ -163,8 +164,9 @@
         </div>
       </div>
     </div>
-    <!-- 全局消息弹窗 -->
-    <Toaster position="bottom-left"/>
+    <!-- 全局弹窗 -->
+    <CouponDialog :type="couponDialogType" v-model:isOpen="isOpenCouponDialog"></CouponDialog>
+    <Toaster position="bottom-left" />
   </div>
 </template>
 
@@ -175,6 +177,7 @@
   const route = useRoute()
   import logo from '@/assets/logo.jpg'
   import { Toaster } from '@/components/ui/sonner'
+  import CouponDialog from '@/components/shop/CouponDialog.vue';
   import { toast } from "vue-sonner"
   import 'vue-sonner/style.css'
   import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger, } from "@/components/ui/sheet"
@@ -325,6 +328,13 @@
     } catch (error) {
       console.log(error)
     }
+  }
+
+  const isOpenCouponDialog = ref(false); // 控制弹窗显示/隐藏
+  const couponDialogType = ref(1)
+  const showCouponDialog = (type: number) => {
+    couponDialogType.value = type
+    isOpenCouponDialog.value = true
   }
 </script>
 
