@@ -18,6 +18,11 @@ public class OrderVO {
     private BigDecimal originalAmount;
 
     /**
+     * 使用的优惠券Id
+     */
+    private int userCouponId;
+
+    /**
      * 商品优惠金额
      */
     private BigDecimal discountAmount;

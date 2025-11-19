@@ -4,6 +4,7 @@ import com.laolao.common.result.Result;
 import com.laolao.pojo.shop.dto.CancelDTO;
 import com.laolao.pojo.shop.dto.ChangeOrderAddressDTO;
 import com.laolao.pojo.shop.dto.PayDTO;
+import com.laolao.pojo.shop.dto.CouponDTO;
 import com.laolao.pojo.shop.vo.OrderDetailVO;
 import com.laolao.pojo.shop.vo.OrdersVO;
 import com.laolao.pojo.shop.vo.OrderVO;
@@ -109,5 +110,25 @@ public class OrderController {
         return orderService.pay(payDTO);
     }
 
+    /**
+     * 选择优惠券
+     *
+     * @param couponDTO 基本数据
+     * @return 结果信息
+     */
+    @PatchMapping("/coupon")
+    public Result<String> useCoupon(@RequestBody CouponDTO couponDTO) {
+        return orderService.useCoupon(couponDTO);
+    }
 
+    /**
+     * 取消使用优惠券
+     *
+     * @param couponDTO 基本数据
+     * @return 结果信息
+     */
+    @PatchMapping("/coupon/cancel")
+    public Result<String> cancelCoupon(@RequestBody CouponDTO couponDTO) {
+        return orderService.cancelCoupon(couponDTO);
+    }
 }

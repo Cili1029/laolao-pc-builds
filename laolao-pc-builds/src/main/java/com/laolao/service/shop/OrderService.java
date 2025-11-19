@@ -4,6 +4,7 @@ import com.laolao.common.result.Result;
 import com.laolao.pojo.shop.dto.CancelDTO;
 import com.laolao.pojo.shop.dto.ChangeOrderAddressDTO;
 import com.laolao.pojo.shop.dto.PayDTO;
+import com.laolao.pojo.shop.dto.CouponDTO;
 import com.laolao.pojo.shop.vo.OrderDetailVO;
 import com.laolao.pojo.shop.vo.OrdersVO;
 import com.laolao.pojo.shop.vo.OrderVO;
@@ -26,4 +27,8 @@ public interface OrderService {
     Result<String> cancelOrder(CancelDTO cancelDTO);
 
     Result<String> pay(PayDTO payDTO);
+
+    Result<String> useCoupon(CouponDTO couponDTO);
+
+    Result<String> cancelCoupon(CouponDTO couponDTO);
 }

@@ -233,7 +233,7 @@
                             </div>
                             <div class="ml-auto">
                                 <span class="text-lg font-bold text-orange-500">￥{{ product.price }}×{{ product.quantity
-                                }}</span>
+                                    }}</span>
                             </div>
                         </div>
                     </div>
@@ -247,12 +247,12 @@
                         <p class="font-bold">付款详细</p>
                     </div>
                     <div class="flex justify-between">
-                        <p class="text-m text-gray-800 mb-4">商品总价</p>
-                        <p class="text-m text-gray-800 mb-4">￥{{ originalAmount }}</p>
+                        <p class="text-m text-gray-800">商品总价</p>
+                        <p class="text-m text-gray-800">￥{{ originalAmount }}</p>
                     </div>
-                    <div class="flex justify-between" @click="showCouponDialog(2)">
-                        <p class="text-m text-gray-800 mb-4">使用优惠券</p>
-                        <p class="text-m text-gray-800 mb-4">￥{{ originalAmount }}</p>
+                    <div class="flex justify-between">
+                        <p class="text-m text-gray-800">优惠券</p>
+                        <p class="text-m text-gray-800" @click="showCouponDialog(3)">￥{{ discountAmount }}▶</p>
                     </div>
                 </div>
 
@@ -286,7 +286,10 @@
                 </div>
             </div>
         </div>
-        <CouponDialog :type="couponDialogType" v-model:isOpen="isOpenCouponDialog"></CouponDialog>
+        <CouponDialog :type="couponDialogType" :number="(route.params.number as string) || ''"
+            :userCouponId="userCouponId" v-model:isOpen="isOpenCouponDialog" @discountAmount="handleCouponUse"
+            @userCouponId="handleUserCouponId">
+        </CouponDialog>
     </div>
 </template>
 
@@ -566,6 +569,7 @@
     const products = ref<Product[]>([])
     const originalAmount = ref(0)
     const discountAmount = ref(0)
+    const userCouponId = ref(0)
 
     const showOrder = async () => {
         try {
@@ -577,6 +581,7 @@
             products.value = response.data.data.orderDetails || []
             originalAmount.value = response.data.data.originalAmount
             discountAmount.value = response.data.data.discountAmount
+            userCouponId.value = response.data.data.userCouponId
             if (!selectAddress.value) {
                 selectAddress.value = response.data.data.addressId
             }
@@ -606,5 +611,14 @@
         couponDialogType.value = type
         isOpenCouponDialog.value = true
     }
+
+    const handleCouponUse = (discount: number) => {
+        discountAmount.value = discount
+    };
+
+    const handleUserCouponId = (value: number) => {
+        userCouponId.value = value; // 把子组件传的值赋值给父组件的变量
+    };
+
 
 </script>

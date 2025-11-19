@@ -42,6 +42,11 @@ public class Order {
     private BigDecimal discountAmount;
 
     /**
+     * 使用的优惠券Id
+     */
+    private int userCouponId;
+
+    /**
      * 收货人
      */
     private String consignee;

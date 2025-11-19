@@ -5,6 +5,7 @@ import com.laolao.pojo.shop.entity.OrderDetail;
 import com.laolao.pojo.shop.vo.OrdersVO;
 import org.apache.ibatis.annotations.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,4 +34,7 @@ public interface OrderMapper {
 
     @Select("select * from shop_order where user_id = ${userId} and number = #{number}")
     Order selectOrder(int userId, String number);
+
+    @Update("update shop_order set user_coupon_id = #{id}, discount_amount = #{discountAmount} where number = #{number};")
+    void updateCoupon(Integer id, BigDecimal discountAmount, String number);
 }

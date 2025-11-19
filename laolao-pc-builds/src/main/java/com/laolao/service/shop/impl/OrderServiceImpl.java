@@ -9,10 +9,8 @@ import com.laolao.mapper.shop.*;
 import com.laolao.pojo.shop.dto.CancelDTO;
 import com.laolao.pojo.shop.dto.ChangeOrderAddressDTO;
 import com.laolao.pojo.shop.dto.PayDTO;
-import com.laolao.pojo.shop.entity.Address;
-import com.laolao.pojo.shop.entity.CartItem;
-import com.laolao.pojo.shop.entity.Order;
-import com.laolao.pojo.shop.entity.OrderDetail;
+import com.laolao.pojo.shop.dto.CouponDTO;
+import com.laolao.pojo.shop.entity.*;
 import com.laolao.pojo.shop.vo.*;
 import com.laolao.service.shop.CartService;
 import com.laolao.service.shop.OrderService;
@@ -42,6 +40,8 @@ public class OrderServiceImpl implements OrderService {
     private ComponentMapper componentMapper;
     @Resource
     private BundleMapper bundleMapper;
+    @Resource
+    private ShopCouponMapper shopCouponMapper;
 
     @Transactional
     @Override
@@ -137,6 +137,7 @@ public class OrderServiceImpl implements OrderService {
         Order order = orderMapper.selectOrderById(orderDetailList.get(0).getId());
         orderVO.setOriginalAmount(order.getOriginalAmount());
         orderVO.setDiscountAmount(order.getDiscountAmount());
+        orderVO.setUserCouponId(order.getUserCouponId());
         // 获取已选择的地址
         orderVO.setAddressId(order.getAddressId());
         return Result.success(orderVO);
@@ -209,5 +210,32 @@ public class OrderServiceImpl implements OrderService {
         order.setCheckoutTime(LocalDateTime.now());
         orderMapper.update(order);
         return Result.success("付款成功");
+    }
+
+    @Override
+    public Result<String> useCoupon(CouponDTO couponDTO) {
+        int userId = BaseContext.getCurrentId();
+        couponDTO.setUserId(userId);
+        couponDTO.setStatus(2);
+        couponDTO.setUsedAt(LocalDateTime.now());
+        // 查询优惠券信息折扣
+        BigDecimal discountAmount = shopCouponMapper.selectShopCouponById(couponDTO.getId());
+        // 更新优惠券信息
+        shopCouponMapper.UpdateCoupon(couponDTO);
+        // 更新订单使用优惠券
+        orderMapper.updateCoupon(couponDTO.getId(), discountAmount, couponDTO.getNumber());
+        return Result.success("成功！");
+    }
+
+    @Override
+    public Result<String> cancelCoupon(CouponDTO couponDTO) {
+        int userId = BaseContext.getCurrentId();
+        couponDTO.setUserId(userId);
+        couponDTO.setStatus(1);
+        couponDTO.setUsedAt(null);
+        orderMapper.updateCoupon(null, BigDecimal.valueOf(0), couponDTO.getNumber());
+        couponDTO.setNumber(null);
+        shopCouponMapper.UpdateCoupon(couponDTO);
+        return Result.success("取消使用！");
     }
 }
