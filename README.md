@@ -1,363 +1,113 @@
-# 劳劳的装机工坊
-一个基于 Spring Boot 和 Vue 3 的 PC 硬件商城与论坛平台，提供硬件产品销售、订单管理、社区论坛等功能。
+# 劳劳的装机工坊（LaoLao PC Builds）
 
-## 📋 项目简介
+以「装机 + 社区」为核心的一站式 PC 交流/购置平台。该仓库同时包含 Spring Boot 3 后端以及 Vue 3 + Vite 前端，支持从硬件选型、下单支付到玩家社区互动的完整闭环。
 
-劳劳的装机工坊是一个全栈 Web 应用，包含以下核心功能：
+## 项目亮点
+- **装机商城**：商品/组件/整机三级维度，支持检索、规格切换、优惠券、购物车、地址与订单全链路管理。
+- **玩家论坛**：帖子分类、搜索、点赞、评论/回复，热帖榜单及富文本发布能力。
+- **用户体系**：邮箱验证码注册登录、JWT + Cookie 会话、个人主页、资料编辑、喜欢的帖子等。
+- **系统能力**：Redis 缓存、MyBatis + PageHelper 分页、MapStruct DTO/VO 转换、阿里云邮件 & OSS、定时任务自动关闭超时订单、全局拦截器统一注入 `/api` 前缀与鉴权。
 
-- **商城系统**：PC 硬件产品浏览、购买、订单管理
-- **论坛社区**：用户交流、帖子发布、评论互动
-- **用户系统**：注册登录、个人中心、订单查询
-- **产品分类**：显卡、CPU、主板、内存、固态硬盘等硬件分类
+## 技术栈
+- **后端**：Spring Boot 3.5、Spring MVC/WebFlux、MyBatis、PageHelper、Redis、MySQL、MapStruct、Lombok、Aliyun SDK、JJWT。
+- **前端**：Vue 3 + TypeScript、Vite 7、Pinia、Vue Router 4、Tailwind CSS（v4）、axios、vue-sonner、Lucide Icons。
+- **基础设施**：MySQL 8+、Redis 6+/7+、阿里云 DirectMail & OSS、高德开放平台（地址解析/地图）。
 
-## 🛠️ 技术栈
-
-### 后端技术
-
-- **框架**：Spring Boot 3.5.6
-- **语言**：Java 17
-- **ORM**：MyBatis 3.0.5
-- **数据库**：MySQL 8.0+
-- **缓存**：Redis
-- **连接池**：Druid 1.2.27
-- **认证**：JWT (jjwt 0.13.0)
-- **对象映射**：MapStruct 1.6.3
-- **分页插件**：PageHelper 2.1.1
-- **云服务**：阿里云 OSS（对象存储）、阿里云 DM（邮件服务）
-- **其他**：Lombok、Spring AOP、WebFlux
-
-### 前端技术
-
-- **框架**：Vue 3.5.22 + TypeScript 5.3
-- **构建工具**：Vite 7.7
-- **状态管理**：Pinia 3.0.3
-- **路由**：Vue Router 4.5.1
-- **UI 组件库**：Reka UI 2.6.0（基于 Radix UI）
-- **样式**：TailwindCSS 4.1.14
-- **HTTP 客户端**：Axios 1.12.2
-- **工具库**：
-  - VueUse 13.9.0
-  - dayjs 1.11.18（日期处理）
-  - vue-sonner 2.0.9（消息提示）
-  - vue3-cookies 1.0.6（Cookie 管理）
-
-## 📁 项目结构
-
+## 仓库结构
 ```
-laolao-pc-builds/
-├── laolao-pc-builds/              # 后端项目
-│   ├── src/
-│   │   ├── main/
-│   │   │   ├── java/com/laolao/
-│   │   │   │   ├── controller/    # 控制器层
-│   │   │   │   │   ├── admin/     # 管理员控制器
-│   │   │   │   │   ├── common/    # 公共控制器
-│   │   │   │   │   └── user/      # 用户控制器
-│   │   │   │   │       ├── forum/ # 论坛相关
-│   │   │   │   │       ├── shop/  # 商城相关
-│   │   │   │   │       └── user/  # 用户相关
-│   │   │   │   ├── service/       # 服务层
-│   │   │   │   ├── mapper/        # MyBatis Mapper 接口
-│   │   │   │   ├── pojo/          # 实体类
-│   │   │   │   ├── common/        # 公共类、工具类
-│   │   │   │   ├── converter/     # 对象转换器
-│   │   │   │   ├── handler/       # 处理器、拦截器
-│   │   │   │   └── webconfig/     # Web 配置
-│   │   │   └── resources/
-│   │   │       ├── mapper/        # MyBatis XML 映射文件
-│   │   │       └── application*.yaml  # 配置文件
-│   │   └── test/                  # 测试代码
-│   └── pom.xml                    # Maven 配置文件
-│
-├── laolao-pc-builds-vue/          # 前端项目
-│   ├── src/
-│   │   ├── components/            # Vue 组件
-│   │   │   ├── common/            # 公共组件
-│   │   │   ├── forum/             # 论坛组件
-│   │   │   ├── shop/              # 商城组件
-│   │   │   ├── user/              # 用户组件
-│   │   │   └── ui/                # UI 组件库
-│   │   ├── stores/                # Pinia 状态管理
-│   │   ├── router/                # 路由配置
-│   │   ├── utils/                 # 工具函数
-│   │   ├── assets/                # 静态资源
-│   │   └── main.ts                # 入口文件
-│   ├── package.json
-│   └── vite.config.ts
-│
-├── image/                         # 产品图片资源
-│   ├── 1/                         # 显卡图片
-│   ├── 2/                         # 显卡图片（AMD）
-│   ├── 3/                         # CPU 图片（Intel）
-│   ├── 4/                         # CPU 图片（AMD）
-│   ├── 5/                         # 主板图片
-│   ├── 6/                         # 内存图片
-│   └── 7/                         # 固态硬盘图片
-│
-└── laolao_pc_builds.sql          # 数据库初始化脚本
+.
+├── laolao-pc-builds/               # Spring Boot 服务
+│   ├── src/main/java/com/laolao
+│   │   ├── controller/             # user/shop/forum 等 REST 模块
+│   │   ├── service/、mapper/       # 业务与 MyBatis
+│   │   ├── converter/              # MapStruct DTO/VO 映射
+│   │   ├── common/                 # 全局配置、异常、工具、JWT
+│   │   ├── Interceptor/SignInInterceptor.java
+│   │   ├── task/OrderTask.java     # 15 分钟订单超时关闭
+│   │   └── webconfig/WebConfig.java# /api 前缀 + 登录拦截
+│   └── src/main/resources
+│       ├── application.yaml / application-*.yaml
+│       └── mapper/**/*.xml
+├── laolao-pc-builds-vue/           # Vue3 前端
+│   ├── src/components/{shop,forum,user,common}
+│   ├── src/stores/*.ts             # Pinia（产品/帖子/用户）
+│   ├── src/router/index.ts         # 首页/购机/论坛/订单/用户
+│   ├── src/utils/myAxios.ts        # axios 实例与拦截器
+│   └── vite.config.ts              # /api -> :8080 代理
+├── image/                          # 项目截图/素材
+└── laolao_pc_builds.sql            # 数据库初始化脚本
 ```
 
-## ✨ 功能特性
+## 功能模块速览
+- **商城模块（`controller/user/shop`）**：商品、分类、组件规格、购物车、收货地址、优惠券、订单（含状态流转/取消原因）。`OrderTask` 每 5 分钟扫描并关闭 15 分钟未支付订单。
+- **论坛模块（`controller/user/forum`）**：帖子 CRUD、评论/回复、点赞、热帖列表与分类检索。
+- **用户模块（`controller/user/user`）**：邮箱验证码（阿里云 DirectMail）、用户名/邮箱登录、注册自动登录、JWT 签发、个人资料与喜欢的帖子。
+- **公共能力**：`common.properties` 统一承载阿里云/OSS/高德配置，`common.handler` 处理全局异常，`SignInInterceptor` 对除白名单外的 `/api/**` 接口做登录校验。
 
-### 商城功能
-- 产品浏览与搜索
-- 产品分类管理（显卡、CPU、主板、内存、SSD）
-- 购物车功能
-- 订单创建与管理
-- 收货地址管理
-- 订单详情查看
+## 快速开始
+### 1. 前置准备
+- JDK 17、Maven 3.9+（或使用 `mvnw`）、Node.js 18+/pnpm 或 npm、MySQL 8+、Redis 6+/7+。
+- 可选：阿里云邮件/OSS、Redis、本地 SMTP、地图服务等账号。
 
-### 论坛功能
-- 论坛分类浏览
-- 帖子发布与编辑
-- 帖子详情查看
-- 评论与回复
-- 点赞功能
-
-### 用户功能
-- 用户注册与登录（JWT 认证）
-- 个人中心
-- 订单查询
-- 个人信息管理
-
-### 管理功能
-- 管理员后台
-- 产品管理
-- 订单管理
-- 用户管理
-
-## 🚀 快速开始
-
-### 环境要求
-
-- **JDK**：17 或更高版本
-- **Maven**：3.6+ 或使用项目自带的 Maven Wrapper
-- **Node.js**：18+ 
-- **npm/yarn/pnpm**：最新版本
-- **MySQL**：8.0+
-- **Redis**：6.0+
-
-### 后端启动
-
-1. **克隆项目**
+### 2. 初始化数据库
 ```bash
-git clone <repository-url>
-cd laolao-pc-builds
-```
-
-2. **创建数据库**
-```bash
-# 导入数据库脚本
 mysql -u root -p < laolao_pc_builds.sql
 ```
+如需自定义库名，请同步修改 `application-*.yaml` 中的 `laolao.datasource.database`。
 
-3. **配置数据库和 Redis**
-   
-   编辑 `laolao-pc-builds/src/main/resources/application-dev.yaml`（或创建对应环境的配置文件）：
-```yaml
-laolao:
-  datasource:
-    host: localhost
-    port: 3306
-    database: laolao_pc_builds
-    username: your_username
-    password: your_password
-  redis:
-    host: localhost
-    port: 6379
-    database: 1
-  aliyun:
-    access-key:
-      accessKey-id: your_access_key_id
-      accessKey-secret: your_access_key_secret
-    oss:
-      endpoint: your_oss_endpoint
-      bucket-name: your_bucket_name
-  amap:
-    key: your_amap_key
-```
+### 3. 配置后端
+1. 编辑 `laolao-pc-builds/src/main/resources/application-dev.yaml`（或新建 `application-prod.yaml`）：
+   - `laolao.datasource.*`：数据库连接。
+   - `laolao.redis.*`：Redis 缓存。
+   - `laolao.aliyun.*`：DirectMail、OSS，生产环境请改为安全的密钥管理方式。
+   - `laolao.amap.key`：高德开放平台 key。
+   - `laolao.jwt.*`：JWT 密钥、TTL（默认 7 天）。
+2. `application.yaml` 中 `spring.profiles.active` 默认 `dev`，部署时切到 `prod`。
 
-4. **启动后端服务**
+### 4. 启动后端服务
 ```bash
 cd laolao-pc-builds
-# Windows
-mvnw.cmd spring-boot:run
-
-# Linux/Mac
-./mvnw spring-boot:run
+mvn spring-boot:run
+# 或
+mvn clean package && java -jar target/laolao-pc-builds-0.0.1-SNAPSHOT.jar
 ```
+后端默认监听 `http://localhost:8080`，所有接口统一挂载在 `/api/**`。
 
-后端服务将在 `http://localhost:8080` 启动
-
-### 前端启动
-
-1. **进入前端目录**
+### 5. 启动前端客户端
 ```bash
 cd laolao-pc-builds-vue
+npm install        # 或 pnpm install / yarn
+npm run dev        # 默认 5173 端口
 ```
+- `vite.config.ts` 已把 `/api` 代理到 `http://localhost:8080`，开发环境无需额外修改。
+- 生产部署请在 `src/utils/myAxios.ts` 中为 `baseURL` 配置真实网关地址，或使用 Vite 环境变量（`import.meta.env.VITE_API_BASE_URL`）封装二次构建。
+- 构建生产资源：`npm run build && npm run preview`。
 
-2. **安装依赖**
-```bash
-npm install
-# 或
-yarn install
-# 或
-pnpm install
-```
+## 常用命令速查
+| 场景 | 命令 |
+| --- | --- |
+| 后端单元测试 | `mvn test` |
+| 格式化 + 编译 | `mvn clean verify` |
+| 前端代码检查 | `npx vue-tsc --noEmit` |
+| 前端打包 | `npm run build` |
 
-3. **配置 API 地址**
-   
-   编辑 `src/utils/myAxios.ts`，配置后端 API 基础地址（如果与默认不同）
+## 开发约定
+- **接口规范**：所有 `@RestController` 通过 `WebConfig` 自动加上 `/api` 前缀；统一返回 `com.laolao.common.result.Result`。
+- **鉴权**：`SignInInterceptor` 针对除邮箱验证码、注册、公开数据外的接口强制校验 JWT，401 时前端 axios 拦截器会跳转 `/sign`。
+- **缓存**：Redis 用于验证码、热点数据、会话信息等，可依据场景设置 TTL。
+- **对象转换**：DTO/VO 通过 MapStruct（`converter` 包）集中维护，减少样板代码。
+- **分页**：结合 PageHelper + MyBatis XML Mapper，SQL 位于 `src/main/resources/mapper/**`.
 
-4. **启动开发服务器**
-```bash
-npm run dev
-# 或
-yarn dev
-# 或
-pnpm dev
-```
+## 常见问题
+1. **前端无法访问接口？** 确认 `npm run dev` 控制台无跨域报错，必要时在 `myAxios.ts` 设置 `baseURL = import.meta.env.VITE_API_BASE_URL || '/api'`。
+2. **定时任务未执行？** 确保 `@EnableScheduling` 已在启动类启用，并且服务未处于单线程阻塞状态。
+3. **OSS/邮件凭证安全？** 切勿在公开仓库保留真实密钥，可通过环境变量、KMS 或配置中心注入。
+4. **数据库脚本更新？** 请同步维护 `laolao_pc_builds.sql`，必要时附带 `migrate` 说明。
 
-前端服务通常在 `http://localhost:5173` 启动（Vite 默认端口）
+## 下一步
+- 丰富 `controller/admin` 管控端能力（库存、帖子审核等）。
+- 引入自动化测试 & API 文档（Swagger / SpringDoc）。
+- 完善 CICD（单元测试、lint、Docker 镜像等）。
 
-### 构建生产版本
-
-**后端构建**
-```bash
-cd laolao-pc-builds
-mvnw.cmd clean package
-# 生成的 jar 包在 target/ 目录
-```
-
-**前端构建**
-```bash
-cd laolao-pc-builds-vue
-npm run build
-# 构建产物在 dist/ 目录
-```
-
-## ⚙️ 配置说明
-
-### 后端配置
-
-主要配置文件位于 `laolao-pc-builds/src/main/resources/`：
-
-- `application.yaml`：主配置文件
-- `application-dev.yaml`：开发环境配置
-- `application-prod.yaml`：生产环境配置
-
-关键配置项：
-- **数据库连接**：数据源配置
-- **Redis 配置**：缓存服务器配置
-- **JWT 配置**：认证令牌密钥和过期时间
-- **阿里云 OSS**：对象存储配置（用于图片上传）
-- **高德地图 API**：用于地址相关功能
-
-### 前端配置
-
-- `vite.config.ts`：Vite 构建配置
-- `tsconfig.json`：TypeScript 配置
-- `src/utils/myAxios.ts`：Axios 请求配置
-
-## 📝 开发规范
-
-### 代码风格
-- 后端遵循 Java 编码规范，使用 Lombok 简化代码
-- 前端使用 TypeScript，遵循 Vue 3 Composition API 规范
-- 使用 ESLint/Prettier 保持代码风格统一（如果已配置）
-
-### 分支管理
-- `main`：主分支，生产环境代码
-- `dev`：开发分支
-- `feature/*`：功能分支
-
-### 提交规范
-建议使用约定式提交（Conventional Commits）：
-- `feat:` 新功能
-- `fix:` 修复问题
-- `docs:` 文档更新
-- `style:` 代码格式
-- `refactor:` 重构
-- `test:` 测试相关
-- `chore:` 构建/工具相关
-
-## 🔧 常见问题
-
-### 后端启动失败
-
-1. **端口被占用**：修改 `application.yaml` 中的 `server.port`
-2. **数据库连接失败**：检查数据库配置和 MySQL 服务状态
-3. **Redis 连接失败**：检查 Redis 服务是否启动
-4. **依赖下载失败**：配置 Maven 镜像源
-
-### 前端启动失败
-
-1. **依赖安装失败**：清除缓存后重试
-   ```bash
-   npm cache clean --force
-   rm -rf node_modules package-lock.json
-   npm install
-   ```
-2. **端口被占用**：在 `vite.config.ts` 中配置其他端口
-3. **API 请求失败**：检查后端服务是否启动，API 地址是否正确
-
-## 📦 部署说明
-
-### 后端部署
-
-1. 构建 jar 包：
-```bash
-mvnw.cmd clean package -DskipTests
-```
-
-2. 运行 jar 包：
-```bash
-java -jar target/laolao-pc-builds-0.0.1-SNAPSHOT.jar --spring.profiles.active=prod
-```
-
-### 前端部署
-
-1. 构建生产版本：
-```bash
-npm run build
-```
-
-2. 将 `dist/` 目录部署到 Nginx 或其他 Web 服务器
-
-3. Nginx 配置示例：
-```nginx
-server {
-    listen 80;
-    server_name your-domain.com;
-    root /path/to/dist;
-    index index.html;
-
-    location / {
-        try_files $uri $uri/ /index.html;
-    }
-
-    location /api {
-        proxy_pass http://localhost:8080;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-    }
-}
-```
-
-## 📄 许可证
-
-本项目仅供学习交流使用。
-
-## 👥 贡献者
-
-欢迎提交 Issue 和 Pull Request！
-
-## 📞 联系方式
-
-如有问题，请提交 Issue 或联系项目维护者。
-
----
-
-**注意**：本项目中的配置文件（如 `application-dev.yaml`）包含敏感信息，已添加到 `.gitignore`。部署时请创建对应的配置文件并填入正确的配置信息。
-
+欢迎提交 Issue/PR，让「劳劳的装机工坊」更易用 ❤️
 
