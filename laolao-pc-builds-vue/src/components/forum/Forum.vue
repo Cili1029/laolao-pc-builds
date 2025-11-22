@@ -55,6 +55,7 @@
                             <Dialog>
                                 <DialogTrigger as-child>
                                     <Button :disabled="uploading">
+                                        <span class="icon-[charm--folder]"></span>
                                         {{ uploading ? "上传中" : fileCount > 0 ? `上传了${fileCount}张图片` : "上传图片（可选）" }}
                                     </Button>
                                 </DialogTrigger>
@@ -79,6 +80,7 @@
                             <DialogClose as-child class="ml-auto">
                                 <Button type="submit" :disabled="!title || !content || !(categoryId !== 0) || uploading"
                                     @click="create()">
+                                    <span class="icon-[charm--rocket]"></span>
                                     发布！
                                 </Button>
                             </DialogClose>

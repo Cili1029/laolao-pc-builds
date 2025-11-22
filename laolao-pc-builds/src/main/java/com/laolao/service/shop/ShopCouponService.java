@@ -13,4 +13,6 @@ public interface ShopCouponService {
     Result<List<UserCouponVO>> showUserCoupon();
 
     Result<String> getCoupon(GetCouponDTO getCouponDTO);
+
+    Result<List<UserCouponVO>> getAvailableCoupon(int userCouponId);
 }

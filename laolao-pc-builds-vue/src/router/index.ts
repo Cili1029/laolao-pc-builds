@@ -2,7 +2,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Hello from '@/components/common/HelloWorld.vue'
 import Home from '../components/common/Home.vue'
-import Buy from '../components/shop/Buy.vue';
+import Shop from '../components/shop/Shop.vue';
 import Order from '@/components/shop/Order.vue';
 import MyOrders from '@/components/shop/MyOrders.vue';
 import Forum from '@/components/forum/Forum.vue';
@@ -10,6 +10,7 @@ import Post from '@/components/forum/Post.vue';
 import PostSimple from '@/components/forum/PostSimple.vue';
 import Sign from '@/components/user/Sign.vue';
 import User from '@/components/user/User.vue';
+import Product from '@/components/shop/product.vue';
 
 
 // 使用 RouteRecordRaw 类型定义路由
@@ -39,10 +40,17 @@ const routes = [
   },
   {
     path: '/buy/:id',
-    name: 'Buy',
-    component: Buy,
+    name: 'Shop',
+    component: Shop,
     meta: { showFooter: false }
   },
+  {
+    path: '/buy/product/:productType/:id',
+    name: 'Product',
+    component: Product,
+    meta: { showFooter: false }
+  },
+
   {
     path: '/hello',
     name: 'Hello',

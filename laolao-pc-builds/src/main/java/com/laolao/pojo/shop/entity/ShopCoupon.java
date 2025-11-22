@@ -55,4 +55,10 @@ public class ShopCoupon {
      * 有效期结束
      */
     private LocalDateTime validEndTime;
+
+    /**
+     * 已领取
+     * 联表用
+     */
+    private int obtained;
 }

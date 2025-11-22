@@ -36,7 +36,7 @@ public class ShopShopCouponServiceImpl implements ShopCouponService {
 
     @Override
     public Result<List<UserCouponVO>> showUserCoupon() {
-        List<UserCouponVO> couponList = shopCouponMapper.selectUserCoupon(0, BaseContext.getCurrentId());
+        List<UserCouponVO> couponList = shopCouponMapper.selectUserCoupon(BaseContext.getCurrentId(), 0);
         return Result.success(couponList);
     }
 
@@ -49,5 +49,11 @@ public class ShopShopCouponServiceImpl implements ShopCouponService {
                 .build();
         shopCouponMapper.insertUserCoupon(userCoupon);
         return Result.success("领取成功！");
+    }
+
+    @Override
+    public Result<List<UserCouponVO>> getAvailableCoupon(int userCouponId) {
+        List<UserCouponVO> couponList = shopCouponMapper.selectAvailableCoupon(BaseContext.getCurrentId(), userCouponId);
+        return Result.success(couponList);
     }
 }

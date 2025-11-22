@@ -103,23 +103,23 @@
                 <DropdownMenuSeparator />
                 <RouterLink :to="`/user/${userStore.user.id}`">
                   <DropdownMenuItem>
-                    <User class="mr-2 h-4 w-4" />
+                    <span class="icon-[charm--person]"></span>
                     <span>个人信息</span>
                   </DropdownMenuItem>
                 </RouterLink>
-                <DropdownMenuItem @click="showCouponDialog(2)">
-                  <Smile class="mr-2 h-4 w-4" />
-                  <span>我的优惠券</span>
-                </DropdownMenuItem>
                 <RouterLink to="/my-orders">
                   <DropdownMenuItem>
-                    <ShoppingBag class="mr-2 h-4 w-4" />
+                    <span class="icon-[charm--clipboard]"></span>
                     <span>我的订单</span>
                   </DropdownMenuItem>
                 </RouterLink>
+                <DropdownMenuItem @click="showCouponDialog(2)">
+                  <span class="icon-[charm--gift]"></span>
+                  <span>我的优惠券</span>
+                </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem @click="signOut" class="text-red-600 focus:text-red-600">
-                  <LogOut class="mr-2 h-4 w-4" />
+                  <span class="icon-[picon--exit]"></span>
                   <span>退出登录</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -182,7 +182,6 @@
   import 'vue-sonner/style.css'
   import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger, } from "@/components/ui/sheet"
   import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-  import { ShoppingBag, LogOut, User, Smile } from "lucide-vue-next"
   import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
   import { Button } from "@/components/ui/button"
   import { useRouter } from 'vue-router'

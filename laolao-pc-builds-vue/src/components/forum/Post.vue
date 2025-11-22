@@ -43,13 +43,11 @@
                     <div class="flex flex-col items-end gap-1">
                         <div class="flex items-center">
                             <p class="pr-2">{{ post?.likeCount }}</p>
-
                             <div @click="like(1, post!.id, 0)">
                                 <span v-if="post?.like === 0"
                                     class="icon-[material-symbols--thumb-up-outline] text-xl"></span>
                                 <span v-else class="icon-[material-symbols--thumb-up] text-xl"></span>
                             </div>
-
                         </div>
                         <AlertDialog v-if="post?.user.id === userStore.user.id">
                             <AlertDialogTrigger as-child>
@@ -112,9 +110,9 @@
                             <div v-if="replyMap.has(comment.id)">
                                 <Button v-if="!replyMap.get(comment.id)" variant="secondary"
                                     @click="openReply(comment.id), getReply(comment.id)">{{ comment.replyCount
-                                    }}条回复▼</Button>
+                                    }}条回复<span class="icon-[charm--chevron-down]"></span></Button>
                                 <Button v-else variant="secondary" @click="openReply(comment.id)">{{ comment.replyCount
-                                    }}条回复▲</Button>
+                                    }}条回复<span class="icon-[charm--chevron-up]"></span></Button>
                             </div>
                             <Dialog>
                                 <DialogTrigger as-child>
@@ -130,6 +128,7 @@
                                         <Dialog>
                                             <DialogTrigger as-child>
                                                 <Button :disabled="uploading">
+                                                    <span class="icon-[charm--folder]"></span>
                                                     {{ uploading ? "上传中" : fileCount > 0 ? `上传了${fileCount}张图片` :
                                                         "上传图片（可选）" }}
                                                 </Button>
@@ -154,7 +153,8 @@
                                         </Dialog>
                                         <DialogClose as-child class="ml-auto">
                                             <Button :disabled="!myComment" @click="submitReply(comment.id)">
-                                                发送
+                                                <span class="icon-[charm--rocket]"></span>
+                                                发送！
                                             </Button>
                                         </DialogClose>
                                     </DialogFooter>
@@ -259,6 +259,7 @@
                 <Dialog>
                     <DialogTrigger as-child>
                         <Button :disabled="uploading">
+                            <span class="icon-[charm--folder]"></span>
                             {{ uploading ? "上传中" : fileCount > 0 ? `上传了${fileCount}张图片` : "上传图片（可选）" }}
                         </Button>
                     </DialogTrigger>
@@ -280,7 +281,9 @@
                         </DialogFooter>
                     </DialogContent>
                 </Dialog>
-                <Button @click="submitComment()" :disabled="!myComment || uploading">发送！</Button>
+                <Button @click="submitComment()" :disabled="!myComment || uploading">
+                    <span class="icon-[charm--rocket]"></span>
+                    发送！</Button>
             </div>
 
         </div>

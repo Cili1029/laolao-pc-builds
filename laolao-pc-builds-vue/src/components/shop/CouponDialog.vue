@@ -8,6 +8,7 @@
           <DialogDescription>
           </DialogDescription>
         </DialogHeader>
+        <!-- 优惠券中心 -->
         <div v-if="props.type === 1" class="h-120 overflow-y-auto scrollbar-edge">
           <div v-if="shopCoupons && shopCoupons.length > 0">
             <div v-for="coupon in shopCoupons" :key="coupon.id"
@@ -25,8 +26,9 @@
                 </div>
               </div>
               <div class="p-4">
-                <button @click="getCoupon(coupon)"
-                  class="bg-white text-red-600 px-4 py-2 rounded font-medium">领取</button>
+                <button v-if="coupon.obtained === 0" @click="getCoupon(coupon)"
+                  class="bg-white text-red-600 p-2 rounded font-medium">领取</button>
+                <button v-else class="bg-white text-red-600 p-2 rounded font-medium">已领取</button>
               </div>
             </div>
           </div>
@@ -37,7 +39,9 @@
             </div>
           </div>
         </div>
-        <div v-else-if="props.type === 2 || props.type === 3" class="h-120 overflow-y-auto scrollbar-edge">
+
+        <!-- 我的优惠券 -->
+        <div v-else-if="props.type === 2" class="h-120 overflow-y-auto scrollbar-edge">
           <div v-if="userCoupons && userCoupons.length > 0">
             <div v-for="coupon in userCoupons" :key="coupon.id"
               class="flex items-center mb-3 bg-gradient-to-b from-red-500 to-red-600 text-white rounded-lg overflow-hidden justify-between border-5 border-red-600">
@@ -54,19 +58,44 @@
                 </div>
               </div>
               <div class="p-4">
-                <button v-if="coupon.status !== 1"
-                  class="bg-white text-red-600 px-4 py-2 rounded font-medium disabled">{{ coupon.status === 2 ? "已使用" :
-                    "已过期" }}</button>
-                <div v-else>
-                  <button v-if="props.type === 2" @click="goToUse()"
-                    class="bg-white text-red-600 px-4 py-2 rounded font-medium">去使用</button>
-                  <div v-if="props.type === 3">
-                    <button v-if="userCouponId === coupon.id" @click="cancelCoupon(coupon.id)"
-                      class="bg-white text-red-600 px-4 py-2 rounded font-medium">取消使用</button>
-                    <button v-else @click="useCoupon(coupon.id, coupon.discountAmount)"
-                      class="bg-white text-red-600 px-4 py-2 rounded font-medium">使用</button>
-                  </div>
+                <button v-if="coupon.status === 0" @click="goToUse()"
+                  class="bg-white text-red-600 p-2 rounded font-medium">去使用</button>
+                <button v-else class="bg-white text-red-600 p-2 rounded font-medium">{{ coupon.status === 1 ?
+                  "已使用"
+                  : "已过期" }}</button>
+              </div>
+            </div>
+          </div>
+          <div v-else class="flex justify-center items-center h-full">
+            <div class="flex flex-col items-center">
+              <span class="icon-[noto--enraged-face] text-9xl"></span>
+              <div class="font-bold">什么也没有！</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 使用优惠券 -->
+        <div v-else-if="props.type === 3" class="h-120 overflow-y-auto scrollbar-edge">
+          <div v-if="orderCoupons && orderCoupons.length > 0">
+            <div v-for="coupon in orderCoupons" :key="coupon.id"
+              class="flex items-center mb-3 bg-gradient-to-b from-red-500 to-red-600 text-white rounded-lg overflow-hidden justify-between border-5 border-red-600">
+              <div class="flex">
+                <div class="bg-white text-red-600 p-4 flex flex-col items-center">
+                  <span class="text-2xl font-bold">¥{{ coupon.discountAmount }}</span>
+                  <span class="text-sm">实付满{{ coupon.minimumAmount }}</span>
+                  <span class="text-sm">可用</span>
                 </div>
+                <div class="flex-col p-4">
+                  <span class="text-lg font-bold">{{ coupon.name }}</span>
+                  <p class="text-sm mt-1">{{ coupon.description }}</p>
+                  <p class="text-sm mt-1">{{ dayjs(coupon.validEndTime).format('YYYY-MM-DD') }}过期</p>
+                </div>
+              </div>
+              <div class="p-4">
+                <span v-if="userCouponId === coupon.id" @click="cancelCoupon(coupon.id)"
+                  class="icon-[charm--circle-tick] text-3xl"></span>
+                <span v-else @click="useCoupon(coupon.id, coupon.discountAmount)"
+                  class="icon-[charm--circle] text-3xl"></span>
               </div>
             </div>
           </div>
@@ -111,11 +140,15 @@
   watch(
     () => props.isOpen,
     (newVal) => {
-      localIsOpen.value = newVal
-      if (props.type === 1) {
-        showShopCoupon()
-      } else {
-        showUserCoupon()
+      if (newVal) {
+        localIsOpen.value = newVal
+        if (props.type === 1) {
+          showShopCoupon()
+        } else if (props.type === 2) {
+          showUserCoupon()
+        } else if (props.type === 3) {
+          showAvailableCoupon()
+        }
       }
     }
   )
@@ -133,6 +166,7 @@
     discountAmount: number
     validStartTime: string
     validEndTime: string
+    obtained: number
   }
 
   interface UserCoupon {
@@ -151,7 +185,9 @@
 
   const shopCoupons = ref<ShopCoupon[]>([])
   const userCoupons = ref<UserCoupon[]>([])
+  const orderCoupons = ref<UserCoupon[]>([])
 
+  // 优惠券中心
   const showShopCoupon = async () => {
     try {
       const response = await axios.get("/api/user/shop/coupon/shop")
@@ -160,9 +196,9 @@
     catch (error) {
       console.log(error)
     }
-
   }
 
+  // 用户的优惠券
   const showUserCoupon = async () => {
     try {
       const response = await axios.get("/api/user/shop/coupon/user")
@@ -172,13 +208,29 @@
     }
   }
 
+  // 订单中可以使用的优惠券
+  const showAvailableCoupon = async () => {
+    try {
+      const response = await axios.get("/api/user/shop/coupon/order", {
+        params: {
+          // 传递被这个订单使用的优惠券供订单取消
+          userCouponId: props.userCouponId
+        }
+      })
+      // status为0的优惠券
+      orderCoupons.value = response.data.data
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  // 领取优惠券
   const getCoupon = async (shopCoupon: ShopCoupon) => {
     try {
       await axios.post("/api/user/shop/coupon/get", {
         couponId: shopCoupon.id
       })
-      // 更新用户优惠券
-      showUserCoupon()
+      shopCoupon.obtained = 1
     } catch (error) {
       console.log(error)
     }
@@ -218,6 +270,7 @@
 
   const goToUse = () => {
     router.push(`/buy/${-1}`)
-    emits('update:isOpen', false);
+    localIsOpen.value = false
+    emits('update:isOpen', false)
   }
 </script>

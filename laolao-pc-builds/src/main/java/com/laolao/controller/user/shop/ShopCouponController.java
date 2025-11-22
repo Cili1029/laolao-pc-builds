@@ -21,6 +21,7 @@ public class ShopCouponController {
 
     /**
      * 获取已启用的优惠券
+     * 还有领取状态
      *
      * @return 优惠券数据
      */
@@ -31,6 +32,7 @@ public class ShopCouponController {
 
     /**
      * 获取拥护的优惠券
+     * 只获取可以用的
      *
      * @return 优惠券数据
      */
@@ -47,5 +49,15 @@ public class ShopCouponController {
     @PostMapping("/get")
     public Result<String> getCoupon(@RequestBody GetCouponDTO getCouponDTO) {
         return shopCouponService.getCoupon(getCouponDTO);
+    }
+
+    /**
+     * 获得订单可用优惠券
+     *
+     * @return 逐渐Id
+     */
+    @GetMapping("/order")
+    public Result<List<UserCouponVO>> getAvailableCoupon(int userCouponId) {
+        return shopCouponService.getAvailableCoupon(userCouponId);
     }
 }

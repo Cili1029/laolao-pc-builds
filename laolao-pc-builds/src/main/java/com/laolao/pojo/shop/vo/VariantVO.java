@@ -2,7 +2,6 @@ package com.laolao.pojo.shop.vo;
 
 import lombok.*;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 
 @Getter
@@ -10,14 +9,14 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class ComponentVariantVO implements Serializable {
+public class VariantVO {
     /**
-     * 商品版本Id
+     * 主键
      */
     private int id;
 
     /**
-     * 商品Id
+     * 所属部件Id
      */
     private int componentId;
 
@@ -34,11 +33,21 @@ public class ComponentVariantVO implements Serializable {
     /**
      * 描述
      */
-    private String description;
+    private String Description;
+
+    /**
+     * 库存
+     */
+    private int stock;
 
     // 主机用
     /**
-     * 商品名
+     * 数量
+     */
+    private int quantity;
+
+    /**
+     * 产品名
      */
     private String name;
 

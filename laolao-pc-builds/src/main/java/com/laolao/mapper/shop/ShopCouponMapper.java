@@ -11,10 +11,10 @@ import java.util.List;
 
 @Mapper
 public interface ShopCouponMapper {
-    @Select("select * from shop_coupon where stock > 0 and status = 1")
+    @Select("select s.*, u.coupon_id obtained from shop_coupon s left join user_coupon u on s.id = u.coupon_id where s.stock > 0 and s.status = 1")
     List<ShopCoupon> selectShopCoupon();
 
-    List<UserCouponVO> selectUserCoupon(int id, int userId);
+    List<UserCouponVO> selectUserCoupon(int userId, int status);
 
     @Insert("insert into user_coupon(user_id, coupon_id) value (#{userId}, #{couponId})")
     @Options(useGeneratedKeys = true, keyProperty = "id")
@@ -25,4 +25,10 @@ public interface ShopCouponMapper {
 
     @Select("select discount_amount from shop_coupon s join user_coupon u on s.id = u.coupon_id where u.id = #{id}")
     BigDecimal selectShopCouponById(int id);
+
+    @Select("update user_coupon set order_id = null, status = 0, used_at = null where order_id = #{number}")
+    void cancelUseCoupon(String number);
+
+    @Select("select * from user_coupon u join shop_coupon s on u.coupon_id = s.id where user_id = #{userId} or u.id = #{userCouponId}")
+    List<UserCouponVO> selectAvailableCoupon(int userId, int userCouponId);
 }

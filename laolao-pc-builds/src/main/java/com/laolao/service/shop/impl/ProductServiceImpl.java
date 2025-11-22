@@ -4,8 +4,9 @@ import com.laolao.converter.MapStruct;
 import com.laolao.mapper.shop.BundleMapper;
 import com.laolao.mapper.shop.ComponentMapper;
 import com.laolao.pojo.shop.entity.Bundle;
-import com.laolao.pojo.shop.vo.ComponentVariantVO;
-import com.laolao.pojo.shop.vo.ProductVO;
+import com.laolao.pojo.shop.entity.Component;
+import com.laolao.pojo.shop.entity.Variant;
+import com.laolao.pojo.shop.vo.*;
 import com.laolao.common.result.Result;
 import com.laolao.service.shop.ProductService;
 import jakarta.annotation.Resource;
@@ -42,18 +43,6 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Result<List<ComponentVariantVO>> listWithComponentId(int id, int productType) {
-        List<ComponentVariantVO> componentVariantVO;
-        if (productType == 1) {
-            componentVariantVO =  componentMapper.getByComponentsId(id);
-        } else {
-            componentVariantVO =bundleMapper.getByComponentsId(id);
-        }
-
-        return Result.success(componentVariantVO);
-    }
-
-    @Override
     public Result<List<ProductVO>> searchByName(int categoryId, String searchContent) {
         int productType = componentMapper.getType(categoryId);
         List<ProductVO> productVoList = new ArrayList<>();
@@ -83,5 +72,33 @@ public class ProductServiceImpl implements ProductService {
         //排序
         List<ProductVO> collect = productVOS.stream().sorted(Comparator.comparing(ProductVO::getSales).reversed()).limit(count).toList();
         return Result.success(collect);
+    }
+
+    @Override
+    public Result<ComponentDetailsVO> getComponentDetails(int id) {
+        ComponentDetailsVO componentDetailsVO;
+            // 部件
+            Component component = componentMapper.getProduct(id);
+            componentDetailsVO = mapStruct.componentToProductDetailsVO(component);
+            // 部件的变种
+            List<Variant> variants = componentMapper.selectVariants(id);
+            List<VariantVO> variantVOS = new ArrayList<>();
+            for (Variant variant : variants) {
+                VariantVO variantVO = mapStruct.variantToVariantVO(variant);
+                variantVOS.add(variantVO);
+            }
+            componentDetailsVO.setVariants(variantVOS);
+        return Result.success(componentDetailsVO);
+    }
+
+    @Override
+    public Result<BundleDetailsVO> getBundleDetails(int id) {
+        BundleDetailsVO bundleDetailsVO;
+        Bundle bundle = bundleMapper.selectBundle(id);
+        bundleDetailsVO = mapStruct.bundleToProductDetailsVO(bundle);
+        // 捆绑包包含的变种
+        List<VariantVO> variantVOS = bundleMapper.selectBundleVariants(id);
+        bundleDetailsVO.setVariants(variantVOS);
+        return Result.success(bundleDetailsVO);
     }
 }

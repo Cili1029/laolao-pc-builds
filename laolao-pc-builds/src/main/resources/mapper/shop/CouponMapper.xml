@@ -10,11 +10,11 @@
         from user_coupon u
                  join shop_coupon s on u.coupon_id = s.id
         <where>
-            <if test="id != 0">
-                and u.id = #{id}
-            </if>
             <if test="userId != 0">
                 and u.user_id = #{userId}
+            </if>
+            <if test="status != -1">
+                and u.status = #{status}
             </if>
         </where>
     </select>

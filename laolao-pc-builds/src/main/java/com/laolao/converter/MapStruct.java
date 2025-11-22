@@ -25,6 +25,12 @@ public interface MapStruct {
     // 商品的
     ShopCategoryVO ShopCategoryToCategoryVO(ShopCategory shopCategory);
 
+    ComponentDetailsVO componentToProductDetailsVO(Component component);
+
+    BundleDetailsVO bundleToProductDetailsVO(Bundle bundle);
+
+    VariantVO variantToVariantVO(Variant variant);
+
     ProductVO bundleToComponentVO(Bundle bundle);
 
     CartItem cartProductDTOToCartItem(CartProductDTO cartProductDTO);

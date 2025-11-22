@@ -216,11 +216,14 @@ public class OrderServiceImpl implements OrderService {
     public Result<String> useCoupon(CouponDTO couponDTO) {
         int userId = BaseContext.getCurrentId();
         couponDTO.setUserId(userId);
-        couponDTO.setStatus(2);
+        couponDTO.setStatus(1);
         couponDTO.setUsedAt(LocalDateTime.now());
         // 查询优惠券信息折扣
         BigDecimal discountAmount = shopCouponMapper.selectShopCouponById(couponDTO.getId());
         // 更新优惠券信息
+        // 取消所有此订单选中的优惠券
+        shopCouponMapper.cancelUseCoupon(couponDTO.getNumber());
+        // 使用此优惠券
         shopCouponMapper.UpdateCoupon(couponDTO);
         // 更新订单使用优惠券
         orderMapper.updateCoupon(couponDTO.getId(), discountAmount, couponDTO.getNumber());
@@ -231,7 +234,7 @@ public class OrderServiceImpl implements OrderService {
     public Result<String> cancelCoupon(CouponDTO couponDTO) {
         int userId = BaseContext.getCurrentId();
         couponDTO.setUserId(userId);
-        couponDTO.setStatus(1);
+        couponDTO.setStatus(0);
         couponDTO.setUsedAt(null);
         orderMapper.updateCoupon(null, BigDecimal.valueOf(0), couponDTO.getNumber());
         couponDTO.setNumber(null);

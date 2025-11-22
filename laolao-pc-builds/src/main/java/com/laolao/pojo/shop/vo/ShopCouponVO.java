@@ -45,4 +45,9 @@ public class ShopCouponVO {
      * 有效期结束
      */
     private LocalDateTime validEndTime;
+
+    /**
+     * 已领取
+     */
+    private int obtained;
 }

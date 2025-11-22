@@ -1,6 +1,7 @@
 package com.laolao.controller.user.shop;
 
-import com.laolao.pojo.shop.vo.ComponentVariantVO;
+import com.laolao.pojo.shop.vo.BundleDetailsVO;
+import com.laolao.pojo.shop.vo.ComponentDetailsVO;
 import com.laolao.pojo.shop.vo.ProductVO;
 import com.laolao.common.result.Result;
 import com.laolao.service.shop.ProductService;
@@ -34,34 +35,20 @@ public class ProductController {
     }
 
     /**
-     * 获取组件版本数据
-     * 8G，16G，，，
-     *
-     * @param id 组件Id
-     * @param productType 商品类型
-     * @return 版本数据
-     */
-    @GetMapping("/variants")
-    public Result<List<ComponentVariantVO>> Variants(int id, int productType) {
-
-        return productService.listWithComponentId(id, productType);
-    }
-
-    /**
      * 搜索功能
      * 支持模糊搜索，searchContent可有可无
      *
-     * @param categoryId 商品分类Id
+     * @param categoryId    商品分类Id
      * @param searchContent 搜索内容
      * @return 符合的商品数据
      */
     @GetMapping("/search")
     public Result<List<ProductVO>> SearchComponentByName(int categoryId, String searchContent) {
-        return productService.searchByName(categoryId,searchContent);
+        return productService.searchByName(categoryId, searchContent);
     }
 
-
-    /**获取整机
+    /**
+     * 获取整机
      * 如站长推荐，网友推荐
      *
      * @param categoryId 商品分类Id
@@ -70,6 +57,29 @@ public class ProductController {
     @GetMapping("/bundles")
     public Result<List<ProductVO>> Bundles(int categoryId) {
         return productService.listWithCategoryId(categoryId);
+    }
+
+
+    /**
+     * 商品详细页(组件)
+     *
+     * @param id 商品Id
+     * @return 详细数据
+     */
+    @GetMapping("/component")
+    public Result<ComponentDetailsVO> getComponentDetails(int id) {
+        return productService.getComponentDetails(id);
+    }
+
+    /**
+     * 商品详细页(整机)
+     *
+     * @param id 商品Id
+     * @return 详细数据
+     */
+    @GetMapping("/bundle")
+    public Result<BundleDetailsVO> getBundleDetails(int id) {
+        return productService.getBundleDetails(id);
     }
 
     /**
