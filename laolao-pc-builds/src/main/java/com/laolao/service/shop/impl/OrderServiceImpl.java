@@ -6,10 +6,7 @@ import com.laolao.common.exception.UnknownError;
 import com.laolao.common.result.Result;
 import com.laolao.converter.MapStruct;
 import com.laolao.mapper.shop.*;
-import com.laolao.pojo.shop.dto.CancelDTO;
-import com.laolao.pojo.shop.dto.ChangeOrderAddressDTO;
-import com.laolao.pojo.shop.dto.PayDTO;
-import com.laolao.pojo.shop.dto.CouponDTO;
+import com.laolao.pojo.shop.dto.*;
 import com.laolao.pojo.shop.entity.*;
 import com.laolao.pojo.shop.vo.*;
 import com.laolao.service.shop.CartService;
@@ -45,7 +42,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Transactional
     @Override
-    public Result<String> createOrder() {
+    public Result<String> createOrderFromCart() {
         Result<List<CartProductVO>> cartProductList = cartService.getCartProductList();
         List<CartProductVO> data = cartProductList.getData();
         // 减库存
@@ -75,12 +72,10 @@ public class OrderServiceImpl implements OrderService {
         }
 
         // 订单表
-        // 生成订单号
-        String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
-        String random = String.valueOf((int) ((Math.random() * 900) + 100));
-        String number = "ORD" + date + random;
-        // 下单用户
         Order order = new Order();
+        // 生成订单号
+        String number = "ORD" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")) + (int) ((Math.random() * 900) + 100);
+        // 下单用户
         order.setNumber(number);
         order.setUserId(userId);
 
@@ -113,6 +108,58 @@ public class OrderServiceImpl implements OrderService {
 
         // 清空购物车
         cartMapper.clear(userId);
+
+        return Result.success(number, "创建订单成功");
+    }
+
+    @Override
+    public Result<String> createOrderDirectly(BuyProductDTO buyProductDTO) {
+        int userId = BaseContext.getCurrentId();
+        IdAndQuantityVO idAndQuantityVO = new IdAndQuantityVO();
+        idAndQuantityVO.setProductId(buyProductDTO.getProductId());
+        idAndQuantityVO.setQuantity(buyProductDTO.getQuantity());
+        // 获取产品信息
+        // 减库存
+        OrderProductVO orderProductVO;
+        if (buyProductDTO.getProductType() == 1) {
+            orderProductVO = componentMapper.selectOrderProduct(buyProductDTO.getProductId());
+            orderProductVO.setQuantity(buyProductDTO.getQuantity());
+            componentMapper.updateStock(List.of(idAndQuantityVO));
+        } else {
+            orderProductVO = bundleMapper.selectOrderBundle(buyProductDTO.getProductId());
+            orderProductVO.setQuantity(buyProductDTO.getQuantity());
+            bundleMapper.updateStock(List.of(idAndQuantityVO));
+        }
+
+        // 订单表
+        Order order = new Order();
+        // 生成订单号
+        String number = "ORD" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")) + (int) ((Math.random() * 900) + 100);
+        // 下单用户
+        order.setNumber(number);
+        order.setUserId(userId);
+
+        // 计算总价
+        BigDecimal originalAmount = orderProductVO.getPrice().multiply(BigDecimal.valueOf(orderProductVO.getQuantity()));
+        order.setOriginalAmount(originalAmount);
+
+        //设置收货人，有默认用默认，无默认不填
+        Address address = addressMapper.getDefault(userId);
+        if (address != null) {
+            order.setConsignee(address.getConsignee());
+            order.setPhone(address.getPhone());
+            order.setAddress(address.getProvince() + address.getCity() + address.getDistrict() + address.getDetailAddress());
+            order.setAddressId(address.getId());
+        }
+        orderMapper.insert(order);
+        int id = order.getId();
+
+        // 商品详细表
+        ArrayList<OrderDetail> orderDetails = new ArrayList<>();
+        OrderDetail orderDetail = mapStruct.orderProductVOToOrderDetail(orderProductVO);
+        orderDetail.setOrderId(id);
+        orderDetails.add(orderDetail);
+        orderMapper.insertToDetail(orderDetails);
 
         return Result.success(number, "创建订单成功");
     }

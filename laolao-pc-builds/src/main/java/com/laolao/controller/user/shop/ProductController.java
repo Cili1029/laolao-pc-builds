@@ -23,7 +23,7 @@ public class ProductController {
     private ProductService productService;
 
     /**
-     * 获取组件
+     * 获取组件（简页）
      * 如显卡，CPU。。。
      *
      * @param categoryId 商品分类id
@@ -31,7 +31,19 @@ public class ProductController {
      */
     @GetMapping("/components")
     public Result<List<ProductVO>> Components(int categoryId) {
-        return productService.listWithCategoryId(categoryId);
+        return productService.getComponentListWithCategoryId(categoryId);
+    }
+
+    /**
+     * 获取整机（简页）
+     * 如站长推荐，网友推荐
+     *
+     * @param categoryId 商品分类Id
+     * @return 整机数据
+     */
+    @GetMapping("/bundles")
+    public Result<List<ProductVO>> Bundles(int categoryId) {
+        return productService.getBundleListWithCategoryId(categoryId);
     }
 
     /**
@@ -45,18 +57,6 @@ public class ProductController {
     @GetMapping("/search")
     public Result<List<ProductVO>> SearchComponentByName(int categoryId, String searchContent) {
         return productService.searchByName(categoryId, searchContent);
-    }
-
-    /**
-     * 获取整机
-     * 如站长推荐，网友推荐
-     *
-     * @param categoryId 商品分类Id
-     * @return 整机数据
-     */
-    @GetMapping("/bundles")
-    public Result<List<ProductVO>> Bundles(int categoryId) {
-        return productService.listWithCategoryId(categoryId);
     }
 
 
@@ -83,7 +83,7 @@ public class ProductController {
     }
 
     /**
-     * 获取热门帖子
+     * 获取热门商品
      *
      * @param count 数量
      * @return 帖子简单信息

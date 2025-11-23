@@ -5,7 +5,7 @@ import com.laolao.pojo.forum.entity.ForumCategory;
 import com.laolao.pojo.forum.entity.Post;
 import com.laolao.pojo.forum.vo.*;
 import com.laolao.pojo.shop.dto.AddressDTO;
-import com.laolao.pojo.shop.dto.CartProductDTO;
+import com.laolao.pojo.shop.dto.BuyProductDTO;
 import com.laolao.pojo.shop.entity.*;
 import com.laolao.pojo.shop.vo.*;
 import com.laolao.pojo.user.entity.User;
@@ -33,12 +33,14 @@ public interface MapStruct {
 
     ProductVO bundleToComponentVO(Bundle bundle);
 
-    CartItem cartProductDTOToCartItem(CartProductDTO cartProductDTO);
+    CartItem cartProductDTOToCartItem(BuyProductDTO buyProductDTO);
 
     AddressVO addressToAddressVO(Address address);
 
     @Mapping(target = "id", ignore = true)
     OrderDetail cartProductVOToOrderDetail(CartProductVO cartProductVO);
+
+    OrderDetail orderProductVOToOrderDetail(OrderProductVO orderProductVO);
 
     OrderDetailVO orderToOrderDetailVO(Order order);
 

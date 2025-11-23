@@ -3,6 +3,7 @@ package com.laolao.pojo.shop.vo;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Getter
 @Setter
@@ -28,7 +29,7 @@ public class OrderProductVO {
     /**
      * 数量
      */
-    private Integer quantity;
+    private int quantity;
 
     /**
      * 单价

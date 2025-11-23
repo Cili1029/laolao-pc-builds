@@ -1,7 +1,7 @@
 package com.laolao.controller.user.shop;
 
 import com.laolao.common.result.Result;
-import com.laolao.pojo.shop.dto.CartProductDTO;
+import com.laolao.pojo.shop.dto.BuyProductDTO;
 import com.laolao.pojo.shop.vo.CartProductVO;
 import com.laolao.service.shop.CartService;
 import jakarta.annotation.Resource;
@@ -22,12 +22,12 @@ public class CartController {
     /**
      * 添加商品到购物车
      *
-     * @param cartProductDTO 商品类型和id
+     * @param buyProductDTO 商品类型和id
      * @return 结果信息
      */
     @PostMapping("/plus")
-    public Result<String> addToCart(@RequestBody CartProductDTO cartProductDTO) {
-        return cartService.addToCart(cartProductDTO);
+    public Result<String> addToCart(@RequestBody BuyProductDTO buyProductDTO) {
+        return cartService.addToCart(buyProductDTO);
     }
 
     /**
@@ -45,12 +45,12 @@ public class CartController {
      * 删除购物车中的商品
      * 大于1则-1，等于1则删除
      *
-     * @param cartProductDTO 商品类型和id
+     * @param buyProductDTO 商品类型和id
      * @return 结果信息
      */
     @DeleteMapping("/minus")
-    public Result<String> deleteFromCart(@RequestBody CartProductDTO cartProductDTO) {
-        return cartService.deleteFromCart(cartProductDTO);
+    public Result<String> deleteFromCart(@RequestBody BuyProductDTO buyProductDTO) {
+        return cartService.deleteFromCart(buyProductDTO);
     }
 
     /**

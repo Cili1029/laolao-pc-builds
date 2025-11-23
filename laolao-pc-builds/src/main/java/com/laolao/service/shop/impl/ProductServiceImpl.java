@@ -27,17 +27,20 @@ public class ProductServiceImpl implements ProductService {
     private MapStruct mapStruct;
 
     @Override
-    public Result<List<ProductVO>> listWithCategoryId(int categoryId) {
-        int productType = componentMapper.getType(categoryId);
+    public Result<List<ProductVO>> getComponentListWithCategoryId(int categoryId) {
+        List<ProductVO> productVoList;
+        productVoList = componentMapper.getByConditions(categoryId, null);
+        return Result.success(productVoList);
+    }
+
+
+    @Override
+    public Result<List<ProductVO>> getBundleListWithCategoryId(int categoryId) {
         List<ProductVO> productVoList = new ArrayList<>();
-        if (productType == 1) {
-            productVoList =  componentMapper.getByConditions(categoryId, null);
-        } else {
-            List<Bundle> bundles = bundleMapper.getByConditions(categoryId, null);
-            for (Bundle bundle : bundles) {
-                ProductVO productVO = mapStruct.bundleToComponentVO(bundle);
-                productVoList.add(productVO);
-            }
+        List<Bundle> bundles = bundleMapper.getByConditions(categoryId, null);
+        for (Bundle bundle : bundles) {
+            ProductVO productVO = mapStruct.bundleToComponentVO(bundle);
+            productVoList.add(productVO);
         }
         return Result.success(productVoList);
     }
@@ -47,7 +50,7 @@ public class ProductServiceImpl implements ProductService {
         int productType = componentMapper.getType(categoryId);
         List<ProductVO> productVoList = new ArrayList<>();
         if (productType == 1) {
-            productVoList =  componentMapper.getByConditions(categoryId, searchContent);
+            productVoList = componentMapper.getByConditions(categoryId, searchContent);
         } else {
             List<Bundle> bundles = bundleMapper.getByConditions(categoryId, searchContent);
             for (Bundle bundle : bundles) {
@@ -77,17 +80,17 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Result<ComponentDetailsVO> getComponentDetails(int id) {
         ComponentDetailsVO componentDetailsVO;
-            // 部件
-            Component component = componentMapper.getProduct(id);
-            componentDetailsVO = mapStruct.componentToProductDetailsVO(component);
-            // 部件的变种
-            List<Variant> variants = componentMapper.selectVariants(id);
-            List<VariantVO> variantVOS = new ArrayList<>();
-            for (Variant variant : variants) {
-                VariantVO variantVO = mapStruct.variantToVariantVO(variant);
-                variantVOS.add(variantVO);
-            }
-            componentDetailsVO.setVariants(variantVOS);
+        // 部件
+        Component component = componentMapper.getProduct(id);
+        componentDetailsVO = mapStruct.componentToProductDetailsVO(component);
+        // 部件的变种
+        List<Variant> variants = componentMapper.selectVariants(id);
+        List<VariantVO> variantVOS = new ArrayList<>();
+        for (Variant variant : variants) {
+            VariantVO variantVO = mapStruct.variantToVariantVO(variant);
+            variantVOS.add(variantVO);
+        }
+        componentDetailsVO.setVariants(variantVOS);
         return Result.success(componentDetailsVO);
     }
 

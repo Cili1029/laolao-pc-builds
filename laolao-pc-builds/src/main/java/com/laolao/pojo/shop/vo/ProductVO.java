@@ -41,16 +41,6 @@ public class ProductVO {
     private String image;
 
     /**
-     * 通用描述
-     */
-    private String commonDescription;
-
-    /**
-     * 描述
-     */
-    private String description;
-
-    /**
      * 销售额
      */
     private int sales;

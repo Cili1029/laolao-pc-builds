@@ -8,7 +8,9 @@ import com.laolao.common.result.Result;
 import java.util.List;
 
 public interface ProductService {
-    Result<List<ProductVO>> listWithCategoryId(int categoryId);
+    Result<List<ProductVO>> getComponentListWithCategoryId(int categoryId);
+
+    Result<List<ProductVO>> getBundleListWithCategoryId(int categoryId);
 
     Result<List<ProductVO>> searchByName(int categoryId, String searchContent);
 

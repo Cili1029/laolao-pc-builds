@@ -28,7 +28,7 @@ public class ComponentDetailsVO {
     /**
      * 图片
      */
-    private String image;
+    private List<String> images;
 
     /**
      * 通用描述

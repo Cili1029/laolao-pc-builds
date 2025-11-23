@@ -4,6 +4,7 @@ import lombok.*;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -29,7 +30,7 @@ public class Component implements Serializable {
     /**
      * 图片
      */
-    private String image;
+    private List<String> images;
 
     /**
      * 通用描述

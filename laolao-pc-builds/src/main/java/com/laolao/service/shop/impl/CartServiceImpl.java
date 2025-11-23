@@ -6,7 +6,7 @@ import com.laolao.converter.MapStruct;
 import com.laolao.mapper.shop.BundleMapper;
 import com.laolao.mapper.shop.CartMapper;
 import com.laolao.mapper.shop.ComponentMapper;
-import com.laolao.pojo.shop.dto.CartProductDTO;
+import com.laolao.pojo.shop.dto.BuyProductDTO;
 import com.laolao.pojo.shop.entity.Bundle;
 import com.laolao.pojo.shop.entity.CartItem;
 import com.laolao.pojo.shop.entity.Variant;
@@ -61,15 +61,15 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public Result<String> addToCart(CartProductDTO cartProductDTO) {
+    public Result<String> addToCart(BuyProductDTO buyProductDTO) {
         // 查询是否在售,库存是否充足
-        if (cartProductDTO.getProductType() == 1) {
-            Variant variant = componentMapper.check(cartProductDTO.getProductId());
+        if (buyProductDTO.getProductType() == 1) {
+            Variant variant = componentMapper.check(buyProductDTO.getProductId());
             if (variant == null) {
                 return Result.error("商品不可购买（停售或无库存）");
             }
         } else {
-            Bundle bundle = bundleMapper.check(cartProductDTO.getProductId());
+            Bundle bundle = bundleMapper.check(buyProductDTO.getProductId());
             if (bundle == null) {
                 return Result.error("商品不可购买（停售或无库存）");
             }
@@ -77,7 +77,7 @@ public class CartServiceImpl implements CartService {
 
         // 查询购物车表里有没有这个商品
         int userId = BaseContext.getCurrentId();
-        CartItem cartItem = mapStruct.cartProductDTOToCartItem(cartProductDTO);
+        CartItem cartItem = mapStruct.cartProductDTOToCartItem(buyProductDTO);
         cartItem.setUserId(userId);
 
         CartItem res = cartMapper.isExists(cartItem);
@@ -85,8 +85,8 @@ public class CartServiceImpl implements CartService {
             // 无，添加
             cartMapper.add(cartItem);
         } else {
-            // 有，数量加1
-            cartMapper.updateQuantity(cartItem, +1);
+            // 有，加数量
+            cartMapper.updateQuantity(cartItem, +buyProductDTO.getQuantity());
         }
 
         return Result.success("加入购物车了！");
@@ -94,9 +94,9 @@ public class CartServiceImpl implements CartService {
 
 
     @Override
-    public Result<String> deleteFromCart(CartProductDTO cartProductDTO) {
+    public Result<String> deleteFromCart(BuyProductDTO buyProductDTO) {
         // 判断数量是一个还是多个
-        CartItem cartItem = mapStruct.cartProductDTOToCartItem(cartProductDTO);
+        CartItem cartItem = mapStruct.cartProductDTOToCartItem(buyProductDTO);
         cartItem.setUserId(BaseContext.getCurrentId());
         CartItem res = cartMapper.isExists(cartItem);
         if (res == null) {

@@ -1,10 +1,7 @@
 package com.laolao.service.shop;
 
 import com.laolao.common.result.Result;
-import com.laolao.pojo.shop.dto.CancelDTO;
-import com.laolao.pojo.shop.dto.ChangeOrderAddressDTO;
-import com.laolao.pojo.shop.dto.PayDTO;
-import com.laolao.pojo.shop.dto.CouponDTO;
+import com.laolao.pojo.shop.dto.*;
 import com.laolao.pojo.shop.vo.OrderDetailVO;
 import com.laolao.pojo.shop.vo.OrdersVO;
 import com.laolao.pojo.shop.vo.OrderVO;
@@ -12,7 +9,7 @@ import com.laolao.pojo.shop.vo.OrderVO;
 import java.util.List;
 
 public interface OrderService {
-    Result<String> createOrder();
+    Result<String> createOrderFromCart();
 
     Result<OrderVO> getOrderProduct(String number);
 
@@ -31,4 +28,6 @@ public interface OrderService {
     Result<String> useCoupon(CouponDTO couponDTO);
 
     Result<String> cancelCoupon(CouponDTO couponDTO);
+
+    Result<String> createOrderDirectly(BuyProductDTO buyProductDTO);
 }

@@ -10,7 +10,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class CartProductDTO implements Serializable {
+public class BuyProductDTO implements Serializable {
     /**
      * 商品类型
      */
@@ -20,4 +20,9 @@ public class CartProductDTO implements Serializable {
      * 商品Id
      */
     private int productId;
+
+    /**
+     * 数量
+     */
+    private int quantity;
 }

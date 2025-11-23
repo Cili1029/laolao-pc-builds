@@ -26,6 +26,11 @@ public class ShopCategory {
     private String name;
 
     /**
+     * 类别图片
+     */
+    private String image;
+
+    /**
      * 状态 1启用 0停用
      */
     private Integer status;

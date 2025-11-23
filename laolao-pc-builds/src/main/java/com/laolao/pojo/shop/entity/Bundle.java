@@ -5,6 +5,7 @@ import lombok.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -34,6 +35,11 @@ public class Bundle implements Serializable {
 
     /**
      * 图片
+     */
+    private List<String> images;
+
+    /**
+     * 图片(单图)
      */
     private String image;
 

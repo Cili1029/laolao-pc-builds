@@ -35,7 +35,7 @@ public class BundleDetailsVO implements Serializable {
     /**
      * 图片
      */
-    private String image;
+    private List<String> images;
 
     /**
      * 描述

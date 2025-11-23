@@ -1,10 +1,7 @@
 package com.laolao.controller.user.shop;
 
 import com.laolao.common.result.Result;
-import com.laolao.pojo.shop.dto.CancelDTO;
-import com.laolao.pojo.shop.dto.ChangeOrderAddressDTO;
-import com.laolao.pojo.shop.dto.PayDTO;
-import com.laolao.pojo.shop.dto.CouponDTO;
+import com.laolao.pojo.shop.dto.*;
 import com.laolao.pojo.shop.vo.OrderDetailVO;
 import com.laolao.pojo.shop.vo.OrdersVO;
 import com.laolao.pojo.shop.vo.OrderVO;
@@ -24,13 +21,23 @@ public class OrderController {
     private OrderService orderService;
 
     /**
-     * 创建订单
+     * 创建订单（购物车）
      *
      * @return 结果信息
      */
     @PostMapping("/create")
-    public Result<String> createOrder() {
-        return orderService.createOrder();
+    public Result<String> createOrderFromCart() {
+        return orderService.createOrderFromCart();
+    }
+
+    /**
+     * 创建订单（直接购买）
+     *
+     * @return 结果信息
+     */
+    @PostMapping("/directly")
+    public Result<String> createOrderDirectly(@RequestBody BuyProductDTO buyProductDTO) {
+        return orderService.createOrderDirectly(buyProductDTO);
     }
 
 

@@ -4,6 +4,7 @@ import com.laolao.pojo.shop.entity.Component;
 import com.laolao.pojo.shop.entity.Variant;
 import com.laolao.pojo.shop.vo.CartProductVO;
 import com.laolao.pojo.shop.vo.IdAndQuantityVO;
+import com.laolao.pojo.shop.vo.OrderProductVO;
 import com.laolao.pojo.shop.vo.ProductVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -29,4 +30,10 @@ public interface ComponentMapper {
 
     @Select("select * from shop_component_variant where component_id = #{id}")
     List<Variant> selectVariants(int id);
+
+    @Select("select co.name, cv.variant_name, co.images->>'$[0]' AS image, cv.price " +
+            "from shop_component_variant cv " +
+            "join shop_component co on cv.component_id = co.id " +
+            "where cv.id = #{id}")
+    OrderProductVO selectOrderProduct(int productId);
 }

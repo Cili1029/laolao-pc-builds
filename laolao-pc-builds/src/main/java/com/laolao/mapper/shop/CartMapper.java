@@ -9,7 +9,7 @@ import java.util.List;
 public interface CartMapper {
     CartItem isExists(CartItem cartItem);
 
-    @Insert("insert into shop_cart_item (user_id, product_type, product_id) VALUE (#{userId}, #{productType}, #{productId})")
+    @Insert("insert into shop_cart_item (user_id, product_type, product_id, quantity) VALUE (#{userId}, #{productType}, #{productId}, #{quantity})")
     void add(CartItem cartItem);
 
     @Update("update shop_cart_item set quantity = quantity + #{delta} where user_id = #{cartItem.userId} and product_type = #{cartItem.productType} and product_id = #{cartItem.productId}")
