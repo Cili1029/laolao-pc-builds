@@ -3,7 +3,6 @@ package com.laolao.pojo.shop.entity;
 import lombok.*;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 
 @Getter

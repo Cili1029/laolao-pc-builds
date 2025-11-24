@@ -1,7 +1,6 @@
 package com.laolao.mapper.shop;
 
 import com.laolao.pojo.shop.entity.Bundle;
-import com.laolao.pojo.shop.entity.Variant;
 import com.laolao.pojo.shop.vo.CartProductVO;
 import com.laolao.pojo.shop.vo.IdAndQuantityVO;
 import com.laolao.pojo.shop.vo.OrderProductVO;
