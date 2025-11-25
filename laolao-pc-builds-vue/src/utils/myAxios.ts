@@ -39,7 +39,7 @@ request.interceptors.response.use(
             switch (status) {
                 case 401:
                     // 跳转到登录页
-                    router.push('/sign')
+                    router.replace('/sign')
                     msg = '该功能需要登录，请先登录'
                     break
                 default:

@@ -1,46 +1,83 @@
 <template>
-    <div class="flex h-full flex-col">
-        <div class="flex items-center justify-between mx-10 py-3">
-            <p class="text-orange-500 text-lg font-bold py-3">热卖分类</p>
-            <div class="flex gap-1.5 w-1/2 items-center">
-                <Input type="text" placeholder="搜索点什么..." v-model="searchContent"
-                    class="py-5 border-2 border-orange-500" />
-                <Button type="submit" @click="search(currentCategory?.id)"
-                    class="py-5 bg-orange-500 font-bold hover:bg-orange-600">搜索</Button>
+    <div class="flex h-full flex-col bg-slate-50">
+        <!-- 顶部搜索区域 -->
+        <div class="flex flex-col md:flex-row items-center justify-between px-6 py-6 gap-4 bg-white shadow-sm z-20">
+            <div class="flex items-center gap-2">
+                <div class="h-8 w-1 bg-orange-500 rounded-full"></div>
+                <p class="text-gray-800 text-xl font-extrabold tracking-tight">热卖分类</p>
             </div>
-            <div></div>
+            
+            <div class="flex w-full md:w-1/2 max-w-2xl gap-2 items-center relative">
+                <Input type="text" placeholder="搜索您心仪的商品..." v-model="searchContent"
+                    class="h-11 pl-4 pr-4 rounded-full border-gray-200 bg-gray-50 focus-visible:ring-orange-500 focus-visible:border-orange-500 transition-all shadow-sm" />
+                <Button type="submit" @click="search(currentCategory?.id)"
+                    class="h-11 px-8 rounded-full bg-gradient-to-r from-orange-500 to-red-500 font-bold text-white hover:from-orange-600 hover:to-red-600 shadow-md transition-all active:scale-95">
+                    搜索
+                </Button>
+            </div>
+            <!-- 占位，保持中间对齐 -->
+            <div class="hidden md:block w-[100px]"></div>
         </div>
-        <div class="flex gap-2 pb-3">
-            <span v-for="category in categories" :key="category.id" @click="ShowComponent(category)"
-                class="p-2 rounded-md shadow-sm border-1 hover:border-orange-500 hover:text-orange-500 transition-all flex items-center gap-1"
-                :class="{ 'border-orange-500 text-orange-500': category.id === currentCategory.id }">
-                <img :src="category.image" class="h-7 w-7 rounded-md" />
-                <span>{{ category.name }}</span>
-            </span>
+
+        <!-- 分类选择区域 -->
+        <div class="p-4 rounded-b-xl bg-white border-t border-gray-100">
+            <div class="flex gap-3 overflow-x-auto scrollbar-hide">
+                <span v-for="category in categories" :key="category.id" @click="ShowComponent(category)"
+                    class="cursor-pointer select-none group flex items-center gap-2 p-3 rounded-xl border-2 transition-all duration-300 ease-in-out whitespace-nowrap"
+                    :class="category.id === currentCategory.id 
+                        ? 'border-orange-200 text-orange-600' 
+                        : 'text-gray-600 hover:border-orange-200 hover:text-orange-500'">
+                    <img :src="category.image" class="h-6 w-6 rounded object-cover" />
+                    <span class="font-medium text-sm">{{ category.name }}</span>
+                </span>
+            </div>
         </div>
-        <div class="w-full bg-white rounded-xl shadow-sm p-4 h-full overflow-y-auto scrollbar-edge">
-            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 relative">
-                <router-link :to="`/buy/product/${product.productType}/${product.id}`" class="flex flex-col items-center p-3 rounded-lg shadow-sm hover:bg-gray-100 transition-all
-                       relative z-10 hover:z-50 hover:scale-105 hover:shadow-lg" v-for="product in products"
-                    :key="product.id">
-                    <div class="bg-gray-200 rounded-lg flex items-center justify-center mb-2 overflow-hidden">
-                        <img :src="product.image" class="w-full rounded-md" />
-                    </div>
-                    <h4 class="font-medium py-2">{{ product.name }}</h4>
-                    <div class="items-center w-full mt-auto">
-                        <div class="flex items-center mt-auto">
-                            <p class="font-bold text-orange-600 text-lg">￥{{ product.price
-                            }}
-                                <span v-if="product.productType === 1" class="text-base font-medium">起</span>
-                            </p>
-                            <span class="text-sm pl-3">{{ product.sales > 0 ? product.sales+"+人付款" : "新品" }}</span>
+
+        <!-- 商品列表区域 -->
+        <div class="flex-1 overflow-hidden">
+            <div class="h-full overflow-y-auto scrollbar-edge scrollbar-track-transparent pb-20">
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 p-3">
+                    <router-link :to="`/buy/product/${product.productType}/${product.id}`" 
+                        class="group bg-white rounded-2xl overflow-hidden border border-gray-100 hover:border-gray-100 transition-all duration-300 relative z-10 hover:z-50 hover:scale-105 hover:shadow-lg" 
+                        v-for="product in products"
+                        :key="product.id">
+                        
+                        <!-- 图片容器 -->
+                        <div class="relative w-full aspect-square bg-gray-50 overflow-hidden">
+                            <img :src="product.image" class="w-full h-full" />
+                            <!-- 遮罩层，增加质感 -->
+                            <div class="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-300"></div>
                         </div>
-                    </div>
-                </router-link>
+
+                        <!-- 内容区域 -->
+                        <div class="p-4 flex flex-col flex-1">
+                            <h4 class="font-medium text-gray-800 mb-2 line-clamp-2 text-sm leading-relaxed group-hover:text-orange-600 transition-colors">
+                                {{ product.name }}
+                            </h4>
+                            
+                            <div class="mt-auto pt-2 flex items-end justify-between w-full">
+                                <div>
+                                    <p class="flex items-baseline gap-0.5 text-orange-600 font-bold">
+                                        <span class="text-xs">￥</span>
+                                        <span class="text-xl">{{ product.price }}</span>
+                                        <span v-if="product.productType === 1" class="text-xs text-gray-400 font-normal ml-1">起</span>
+                                    </p>
+                                </div>
+                                <div class="bg-orange-50 px-2 py-0.5 rounded text-xs font-medium text-orange-600/80">
+                                    {{ product.sales > 0 ? product.sales + "+人付款" : "新品上架" }}
+                                </div>
+                            </div>
+                        </div>
+                    </router-link>
+                </div>
+
+                <!-- 空状态提示 (如果 products 为空时可以显示，虽然原逻辑没写，但样式预留在这里) -->
+                <div v-if="products.length === 0" class="flex flex-col items-center justify-center h-64 text-gray-400">
+                    <p>暂无相关商品</p>
+                </div>
             </div>
         </div>
     </div>
-
 </template>
 
 <script setup lang="ts">
