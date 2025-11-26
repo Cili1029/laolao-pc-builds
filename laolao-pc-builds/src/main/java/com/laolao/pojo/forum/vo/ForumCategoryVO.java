@@ -20,6 +20,11 @@ public class ForumCategoryVO {
     private String name;
 
     /**
+     * 图片
+     */
+    private String image;
+
+    /**
      * 分类描述
      */
     private String description;

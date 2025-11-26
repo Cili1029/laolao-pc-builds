@@ -37,4 +37,7 @@ public interface OrderMapper {
 
     @Update("update shop_order set user_coupon_id = #{id}, discount_amount = #{discountAmount} where number = #{number};")
     void updateCoupon(Integer id, BigDecimal discountAmount, String number);
+
+    @Update("update shop_order set discount_amount = #{discountAmount}, user_coupon_id = #{userCouponId}, status = #{status}, cancel_reason = #{cancelReason}, cancel_time = #{cancelTime} where user_id = #{userId} and number = #{number}")
+    void updateExpire(Order order);
 }

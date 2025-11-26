@@ -11,8 +11,10 @@ import java.util.List;
 
 @Mapper
 public interface ShopCouponMapper {
-    @Select("select s.*, u.coupon_id obtained from shop_coupon s left join user_coupon u on s.id = u.coupon_id where s.stock > 0 and s.status = 1")
-    List<ShopCoupon> selectShopCoupon();
+    @Select("SELECT s.*, IF(u.coupon_id IS NOT NULL, 1, 0) AS obtained " +
+            "FROM shop_coupon s LEFT JOIN user_coupon u ON s.id = u.coupon_id AND u.user_id = #{userId} " +
+            "WHERE s.stock > 0 AND s.status = 1;")
+    List<ShopCoupon> selectShopCoupon(int userId);
 
     List<UserCouponVO> selectUserCoupon(int userId, int status);
 

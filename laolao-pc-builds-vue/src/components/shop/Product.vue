@@ -173,7 +173,7 @@
             <h1 class="text-2xl lg:text-3xl font-extrabold text-gray-900 tracking-tight mb-3">{{ bundle?.name }}</h1>
             <div class="flex items-end justify-between">
               <div class="flex items-baseline gap-2">
-                <span class="text-sm text-orange-500 font-medium bg-orange-50 px-2 py-0.5 rounded">券后价</span>
+                <span class="text-sm text-orange-500 font-medium bg-orange-50 px-2 py-0.5 rounded">{{bundle?.discountPercent}}折</span>
                 <span class="text-3xl font-bold text-orange-600">¥{{ bundle?.price }}</span>
               </div>
               <span class="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded-md">已售 {{ bundle?.sales }}</span>
@@ -280,6 +280,7 @@
     sales: number
     stock: number
     variants: Variant[]
+    discountPercent: number
   }
 
   interface Variant {
@@ -318,6 +319,13 @@
           }
         })
         bundle.value = response.data.data
+
+        // 计算折扣
+        let totalPrice = 0
+        bundle.value?.variants.forEach(variant => {
+          totalPrice = totalPrice + variant.price * variant.quantity
+        })
+        bundle.value!.discountPercent = Math.floor(bundle.value!.price / totalPrice* 100)
       }
     } catch (error) {
       console.log(error)

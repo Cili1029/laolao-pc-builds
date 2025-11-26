@@ -36,7 +36,7 @@ public class ProductVO {
     private BigDecimal price;
 
     /**
-     * 图片
+     * 图片(单图)
      */
     private String image;
 

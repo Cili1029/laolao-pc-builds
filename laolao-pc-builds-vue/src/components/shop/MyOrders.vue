@@ -3,39 +3,54 @@
         <div v-if="orders.length">
             <Dialog>
                 <DialogTrigger as-child>
-                    <div class="bg-white flex border border-gray-200 p-2 rounded-lg">
-                        <div class="w-full flex flex-col space-y-2">
+                    <div
+                        class="rounded-3xl border border-slate-100 bg-white/90 p-4 shadow-xl backdrop-blur transition hover:shadow-2xl">
+                        <div class="space-y-4">
                             <div v-for="order in orders" :key="order.number"
-                                class="rounded-lg shadow-sm border border-gray-200 p-4"
+                                class="rounded-xl border border-slate-100 bg-gradient-to-br from-white via-white to-slate-50/60 px-5 py-2 shadow-sm transition hover:-translate-y-0.5 hover:border-orange-100 hover:shadow-lg cursor-pointer"
                                 @click="showDetail(order.number, order.status)">
-                                <div class="mb-3 flex justify-between">
-                                    <p class="font-bold">订单号：{{ order.number }}</p>
-                                    <p class="font-bold"> {{ getOrderStatus(order.status) }}</p>
-                                </div>
-                                <div class="flex items-center">
-                                    <img :src="order.image" class="w-15 h-15 object-cover rounded-md mr-4" />
-                                    <div class="flex-1">
-                                        <h3 class="font-medium text-gray-900">{{ order.name }}</h3>
-                                        <span v-if="order.productCount > 1">等{{ order.productCount - 1 }}个商品</span>
+                                <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
+                                    <div>
+                                        <p class="text-xs uppercase tracking-[0.3em] text-slate-400">订单号</p>
+                                        <p class="font-mono text-lg font-semibold text-slate-800">{{ order.number }}</p>
                                     </div>
-                                    <div class="ml-auto">
-                                        <span class="text-m">实付款￥
-                                            <span class="text-lg font-bold">{{ order.finalAmount }}</span>
-                                        </span>
+                                    <span
+                                        class="rounded-full px-4 py-1 text-sm font-semibold"
+                                        :class="order.status === 1 ? 'bg-orange-100 text-orange-600' :
+                                            order.status === 5 ? 'bg-emerald-100 text-emerald-600' :
+                                                order.status === 6 ? 'bg-slate-100 text-slate-500' : 'bg-sky-100 text-sky-600'">
+                                        {{ getOrderStatus(order.status) }}
+                                    </span>
+                                </div>
+                                <div class="flex items-center gap-4">
+                                    <img :src="order.image"
+                                        class="h-20 w-20 flex-shrink-0 rounded-xl object-cover shadow-inner" />
+                                    <div class="flex-1 min-w-0">
+                                        <h3 class="text-base font-semibold text-slate-900 line-clamp-1">{{ order.name }}</h3>
+                                        <p class="text-sm text-slate-500 mt-1" v-if="order.productCount > 1">
+                                            等{{ order.productCount - 1 }}个商品
+                                        </p>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="text-xs uppercase tracking-[0.3em] text-slate-400">实付款</p>
+                                        <p class="text-2xl font-black text-slate-900">￥{{ order.finalAmount }}</p>
                                     </div>
                                 </div>
-                                <div class="mb-3 flex justify-end" @click.stop>
+                                <div class="mt-4 flex flex-wrap items-center justify-end gap-2" @click.stop>
                                     <AlertDialog>
                                         <AlertDialogTrigger as-child>
-                                            <Button v-if="order.status == 1 || order.status == 2">取消订单</Button>
+                                            <Button v-if="order.status == 1 || order.status == 2"
+                                                class="rounded-full border border-orange-200 bg-orange-50 text-orange-600 hover:bg-orange-100">
+                                                取消订单
+                                            </Button>
                                         </AlertDialogTrigger>
-                                        <AlertDialogContent>
+                                        <AlertDialogContent class="space-y-3">
                                             <AlertDialogHeader>
-                                                <AlertDialogTitle>确定要取消该订单吗</AlertDialogTitle>
+                                                <AlertDialogTitle>确定要取消该订单吗？</AlertDialogTitle>
                                                 <AlertDialogDescription>
                                                     操作一旦完成无法撤回，请谨慎选择
                                                 </AlertDialogDescription>
-                                                <Textarea v-model="reason" placeholder="取消原因？"></Textarea>
+                                                <Textarea v-model="reason" placeholder="取消原因？" class="rounded-xl"></Textarea>
                                             </AlertDialogHeader>
                                             <AlertDialogFooter>
                                                 <AlertDialogCancel>算了</AlertDialogCancel>
@@ -44,7 +59,10 @@
                                             </AlertDialogFooter>
                                         </AlertDialogContent>
                                     </AlertDialog>
-                                    <Button v-if="order.status == 3 || order.status == 4">确认收货</Button>
+                                    <Button v-if="order.status == 3 || order.status == 4"
+                                        class="rounded-full bg-slate-900 text-white hover:bg-slate-800">
+                                        确认收货
+                                    </Button>
                                 </div>
                             </div>
                         </div>

@@ -1,291 +1,292 @@
 <template>
-    <div class="h-full overflow-y-auto scrollbar-edge p-4">
+    <div class="h-full overflow-y-auto bg-gradient-to-b from-slate-50 to-white p-3 scrollbar-edge">
         <!-- 贴主 -->
-        <div>
+        <div class="space-y-4 rounded-3xl border border-slate-100 bg-white/90 p-6 shadow-sm backdrop-blur">
             <!-- 标题 -->
-            <div class="px-3 mt-5 pl-5 py-1 bg-sky-100 shadow-sm flex items-center">
-                <span class="text-xl">
+            <div class="rounded-2xl bg-sky-50 px-5 py-3 text-slate-700 shadow-inner">
+                <span class="text-base leading-relaxed">
                     <span class="font-bold">真诚、友善、团结、专业</span>，共建你我引以为荣之社区。
                 </span>
             </div>
-            <div class="h-24 px-3 bg-white flex flex-col justify-center">
-                <p class="text-2xl font-bold">{{ post?.title }}</p>
-                <div @click="changeCategory()" class="inline-flex items-center bg-gray-200 py-0.5 px-2 cursor-pointer w-fit rounded">
-                    <span class="text-xl mr-1" :class="categoryStore.getCategoryById(post.categoryId)?.icon"></span>
-                    <span class="text-l">{{ categoryStore.getCategoryById(post.categoryId)?.name }}</span>
+            <div class="rounded-2xl border border-slate-100 bg-white/90 px-6 py-5 shadow-sm">
+                <p class="text-3xl font-black text-slate-900">{{ post?.title }}</p>
+                <div @click="changeCategory()"
+                    class="mt-3 inline-flex w-fit items-center rounded-full bg-slate-100/80 px-3 py-1 text-sm text-slate-600 transition hover:bg-slate-200">
+                    <img :src="categoryStore.getCategoryById(post.categoryId)?.image" class="h-10 w-10" />
+                    {{ categoryStore.getCategoryById(post.categoryId)?.name }}
                 </div>
             </div>
-            <div class="border-t-3"></div>
             <!-- 内容 -->
-            <div class="flex px-3 pt-3">
+            <div class="flex gap-4 rounded-2xl border border-slate-100 bg-white/90 p-5 shadow-sm">
                 <!-- 头像 -->
                 <RouterLink :to="`/user/${post?.user.id}`">
                     <Avatar
-                        class="w-14 h-14 text-2xl cursor-pointer hover:ring-2 hover:ring-blue-500 transition-all rounded-full">
+                        class="h-16 w-16 cursor-pointer rounded-full text-2xl shadow ring-2 ring-transparent transition hover:-translate-y-0.5 hover:ring-sky-300">
                         <AvatarImage :src="post?.user.avatar || ''" alt="用户头像" />
                         <AvatarFallback>{{ post?.user.name.substring(0, 1) }}</AvatarFallback>
                     </Avatar>
                 </RouterLink>
                 <!-- 内容 -->
-                <div class="p-2 w-full">
-                    <div class="flex justify-between">
-                        <p class="pb-4">{{ post?.user.name }}</p>
+                <div class="w-full space-y-4">
+                    <div class="flex flex-wrap justify-between text-sm text-slate-500">
+                        <p class="font-semibold text-slate-800">{{ post?.user.name }}</p>
                         <p>{{ formatTime(post?.createdAt) }}</p>
                     </div>
-                    <div>
-                        <p class="pb-2">{{ post?.content }}</p>
-                        <div class="flex flex-col items-start">
+                    <div class="text-base leading-relaxed text-slate-700">
+                        <p class="whitespace-pre-line">{{ post?.content }}</p>
+                        <div class="mt-4 grid gap-4 md:grid-cols-2">
                             <img :src="image" v-for="image in post?.images" :key="image"
-                                class="max-h-150 object-contain rounded-md shadow-sm cursor-pointer hover:shadow-md transition-shadow mb-5"
+                                class="max-h-96 w-full rounded-2xl object-cover shadow transition hover:shadow-lg"
                                 alt="帖子图片">
                         </div>
                     </div>
-                    <div class="flex flex-col items-end gap-1">
-                        <div class="flex items-center">
-                            <p class="pr-2">{{ post?.likeCount }}</p>
-                            <div @click="like(1, post!.id, 0)">
-                                <span v-if="post?.like === 0"
-                                    class="icon-[material-symbols--thumb-up-outline] text-xl"></span>
-                                <span v-else class="icon-[material-symbols--thumb-up] text-xl"></span>
+                    <div class="flex flex-wrap items-center justify-between">
+                        <div class="flex gap-6 text-center text-sm text-slate-500">
+                            <div>
+                                <p class="text-base font-bold text-slate-900">{{ post?.commentCount }}</p>
+                                <p>评论量</p>
+                            </div>
+                            <div class="flex flex-col items-center">
+                                <p class="text-base font-bold text-slate-900">{{ post?.likeCount }}</p>
+                                <p>点赞</p>
                             </div>
                         </div>
-                        <AlertDialog v-if="post?.user.id === userStore.user.id">
-                            <AlertDialogTrigger as-child>
-                                <p class="text-xs hover:text-orange-500">删除帖子</p>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                                <AlertDialogHeader>
-                                    <AlertDialogTitle>确定要删除该帖子吗？</AlertDialogTitle>
-                                    <AlertDialogDescription>
-                                        操作一旦完成无法撤回，请谨慎选择
-                                    </AlertDialogDescription>
-                                </AlertDialogHeader>
-                                <AlertDialogFooter>
-                                    <AlertDialogCancel>算了</AlertDialogCancel>
-                                    <AlertDialogAction @click="deletePost(post?.id)">删除</AlertDialogAction>
-                                </AlertDialogFooter>
-                            </AlertDialogContent>
-                        </AlertDialog>
+                        <div class="flex items-center gap-2">
+                            <Button variant="ghost" class="rounded-full px-4" @click="like(1, post!.id, 0)">
+                                <span v-if="post?.like === 0"
+                                    class="icon-[material-symbols--thumb-up-outline] text-2xl"></span>
+                                <span v-else class="icon-[material-symbols--thumb-up] text-2xl text-orange-500"></span>
+                            </Button>
+                            <AlertDialog v-if="post?.user.id === userStore.user.id">
+                                <AlertDialogTrigger as-child>
+                                    <p class="cursor-pointer text-xs text-slate-400 hover:text-orange-500">删除帖子</p>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                        <AlertDialogTitle>确定要删除该帖子吗？</AlertDialogTitle>
+                                        <AlertDialogDescription>
+                                            操作一旦完成无法撤回，请谨慎选择
+                                        </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                        <AlertDialogCancel>算了</AlertDialogCancel>
+                                        <AlertDialogAction @click="deletePost(post?.id)">删除</AlertDialogAction>
+                                    </AlertDialogFooter>
+                                </AlertDialogContent>
+                            </AlertDialog>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="border-t-3"></div>
-            <div class="flex my-1 pl-14">
-                <div class="px-5 flex w-fit flex-col items-center">
-                    <p class="text-blue-500">{{ post?.commentCount }}</p>
-                    <p>评论量</p>
-                </div>
-            </div>
-            <div class="border-t-3"></div>
         </div>
         <!-- 评论 -->
-        <div class="flex flex-col px-3 pt-3" v-for="comment in post?.comment" :key="comment.id">
-            <!-- 直接评论 -->
-            <div class="flex w-full">
-                <!-- 头像 -->
-                <RouterLink :to="`/user/${comment.user.id}`">
-                    <Avatar
-                        class="w-14 h-14 text-2xl cursor-pointer hover:ring-2 hover:ring-blue-500 transition-all rounded-full">
-                        <AvatarImage :src="comment.user.avatar || ''" alt="用户头像" />
-                        <AvatarFallback>{{ comment.user.name.substring(0, 1) }}</AvatarFallback>
-                    </Avatar>
-                </RouterLink>
-
-                <!-- 内容 -->
-                <div class="p-2 w-full">
-                    <div class="flex justify-between">
-                        <p class="pb-4">{{ comment.user.name }}</p>
-                        <p>{{ formatTime(comment.createdAt) }}</p>
-                    </div>
-                    <div>
-                        <p class="pb-2">{{ comment.content }}</p>
-                        <div class="flex flex-col items-start">
-                            <img :src="image" v-for="image in comment.images" :key="image"
-                                class="max-h-150 object-contain rounded-md shadow-sm cursor-pointer hover:shadow-md transition-shadow mb-5"
-                                alt="评论图片">
-                        </div>
-                    </div>
-                    <div class="pb-4 flex justify-between items-center">
-                        <div class="flex">
-                            <div v-if="replyMap.has(comment.id)">
-                                <Button v-if="!replyMap.get(comment.id)" variant="secondary"
-                                    @click="openReply(comment.id), getReply(comment.id)">{{ comment.replyCount
-                                    }}条回复<span class="icon-[charm--chevron-down]"></span></Button>
-                                <Button v-else variant="secondary" @click="openReply(comment.id)">{{ comment.replyCount
-                                    }}条回复<span class="icon-[charm--chevron-up]"></span></Button>
-                            </div>
-                            <Dialog>
-                                <DialogTrigger as-child>
-                                    <Button class="ml-2" variant="secondary">回复层主</Button>
-                                </DialogTrigger>
-                                <DialogContent class="sm:max-w-[600px]">
-                                    <DialogHeader>
-                                        <DialogTitle>回复层主</DialogTitle>
-                                        <DialogDescription></DialogDescription>
-                                    </DialogHeader>
-                                    <Textarea class="h-32" v-model="myComment" placeholder="说点什么..."></Textarea>
-                                    <DialogFooter class="flex justify-start gap-2">
-                                        <Dialog>
-                                            <DialogTrigger as-child>
-                                                <Button :disabled="uploading">
-                                                    <span class="icon-[charm--folder]"></span>
-                                                    {{ uploading ? "上传中" : fileCount > 0 ? `上传了${fileCount}张图片` :
-                                                        "上传图片（可选）" }}
-                                                </Button>
-                                            </DialogTrigger>
-                                            <DialogContent class="md:max-w-4xl">
-                                                <DialogHeader>
-                                                    <DialogTitle>上传图片</DialogTitle>
-                                                    <DialogDescription>
-                                                    </DialogDescription>
-                                                </DialogHeader>
-                                                <div>
-                                                    <FileUpload v-model:data="images" :max-files="1" />
-                                                </div>
-                                                <DialogFooter>
-                                                    <DialogClose as-child>
-                                                        <Button type="button" class="w-full" @click="uploadFiles()">
-                                                            提交
-                                                        </Button>
-                                                    </DialogClose>
-                                                </DialogFooter>
-                                            </DialogContent>
-                                        </Dialog>
-                                        <DialogClose as-child class="ml-auto">
-                                            <Button :disabled="!myComment" @click="submitReply(comment.id)">
-                                                <span class="icon-[charm--rocket]"></span>
-                                                发送！
-                                            </Button>
-                                        </DialogClose>
-                                    </DialogFooter>
-                                </DialogContent>
-                            </Dialog>
-                        </div>
-                        <div class="flex flex-col items-end gap-1">
-                            <div class="flex items-center">
-                                <p class="pr-2">{{ comment.likeCount }}</p>
-                                <div @click="like(2, comment?.id, 0)">
-                                    <span v-if="comment?.like === 0"
-                                        class="icon-[material-symbols--thumb-up-outline] text-xl"></span>
-                                    <span v-else class="icon-[material-symbols--thumb-up] text-xl"></span>
-                                </div>
-                            </div>
-                            <AlertDialog v-if="comment.user.id === userStore.user.id">
-                                <AlertDialogTrigger as-child>
-                                    <p class="text-xs hover:text-orange-500">删除评论</p>
-                                </AlertDialogTrigger>
-                                <AlertDialogContent>
-                                    <AlertDialogHeader>
-                                        <AlertDialogTitle>确定要删除该评论吗？</AlertDialogTitle>
-                                        <AlertDialogDescription>
-                                            操作一旦完成无法撤回，请谨慎选择
-                                        </AlertDialogDescription>
-                                    </AlertDialogHeader>
-                                    <AlertDialogFooter>
-                                        <AlertDialogCancel>算了</AlertDialogCancel>
-                                        <AlertDialogAction @click="deleteComment(comment.id)">删除</AlertDialogAction>
-                                    </AlertDialogFooter>
-                                </AlertDialogContent>
-                            </AlertDialog>
-                        </div>
-                    </div>
-                    <div class="border-t-2"></div>
-                </div>
-            </div>
-            <!-- 评论的回复 -->
-            <div class="shadow-md rounded-md">
-                <div class="px-10 flex w-full" v-if="replyMap.get(comment.id)" v-for="reply in comment.reply"
-                    :key="reply.id">
+        <div class="mt-4 space-y-4 p-3">
+            <div v-for="comment in post?.comment" :key="comment.id"
+                class="space-y-4 rounded-3xl border border-slate-100 bg-white/90 p-5 shadow-sm">
+                <!-- 直接评论 -->
+                <div class="flex gap-4">
                     <!-- 头像 -->
-                    <RouterLink :to="`/user/${reply.user.id}`">
+                    <RouterLink :to="`/user/${comment.user.id}`">
                         <Avatar
-                            class="w-14 h-14 text-2xl cursor-pointer hover:ring-2 hover:ring-blue-500 transition-all rounded-full">
-                            <AvatarImage :src="reply.user.avatar || ''" alt="用户头像" />
-                            <AvatarFallback>{{ reply.user.name.substring(0, 1) }}</AvatarFallback>
+                            class="h-12 w-12 cursor-pointer rounded-full text-2xl ring-2 ring-transparent transition hover:-translate-y-0.5 hover:ring-sky-300">
+                            <AvatarImage :src="comment.user.avatar || ''" alt="用户头像" />
+                            <AvatarFallback>{{ comment.user.name.substring(0, 1) }}</AvatarFallback>
                         </Avatar>
                     </RouterLink>
+
                     <!-- 内容 -->
-                    <div class="p-2 w-full">
-                        <div class="flex justify-between">
-                            <p class="pb-4">{{ reply.user.name }}</p>
-                            <p>{{ formatTime(reply.createdAt) }}</p>
+                    <div class="w-full space-y-4">
+                        <div class="flex flex-wrap justify-between text-sm text-slate-500">
+                            <p class="font-semibold text-slate-800">{{ comment.user.name }}</p>
+                            <p>{{ formatTime(comment.createdAt) }}</p>
                         </div>
-                        <div>
-                            <p class="pb-2">{{ reply.content }}</p>
-                            <div class="flex flex-col items-start">
+                        <div class="rounded-2xl bg-slate-50/70 px-4 py-3 text-slate-700">
+                            <p class="whitespace-pre-line">{{ comment.content }}</p>
+                            <div class="mt-4 grid gap-3 md:grid-cols-2">
+                                <img :src="image" v-for="image in comment.images" :key="image"
+                                    class="max-h-72 w-full rounded-2xl object-cover shadow transition hover:shadow-lg"
+                                    alt="评论图片">
+                            </div>
+                        </div>
+                        <div class="flex flex-wrap items-center justify-between gap-3">
+                            <div class="flex flex-wrap items-center gap-2">
+                                <div v-if="replyMap.has(comment.id)">
+                                    <Button v-if="!replyMap.get(comment.id)" variant="secondary"
+                                        class="rounded-full px-4"
+                                        @click="openReply(comment.id), getReply(comment.id)">{{ comment.replyCount
+                                        }}条回复<span class="icon-[charm--chevron-down]"></span></Button>
+                                    <Button v-else variant="secondary" class="rounded-full px-4"
+                                        @click="openReply(comment.id)">{{ comment.replyCount
+                                        }}条回复<span class="icon-[charm--chevron-up]"></span></Button>
+                                </div>
+                                <Dialog>
+                                    <DialogTrigger as-child>
+                                        <Button class="rounded-full" variant="secondary">回复层主</Button>
+                                    </DialogTrigger>
+                                    <DialogContent class="sm:max-w-[600px]">
+                                        <DialogHeader>
+                                            <DialogTitle>回复层主</DialogTitle>
+                                        </DialogHeader>
+                                        <Textarea class="h-32 rounded-2xl" v-model="myComment" placeholder="说点什么..."></Textarea>
+                                        <DialogFooter class="flex flex-wrap gap-2">
+                                            <Dialog>
+                                                <DialogTrigger as-child>
+                                                    <Button :disabled="uploading" class="rounded-full px-4">
+                                                        <span class="icon-[charm--folder]"></span>
+                                                        {{ uploading ? "上传中" : fileCount > 0 ? `上传了${fileCount}张图片` :
+                                                            "上传图片（可选）" }}
+                                                    </Button>
+                                                </DialogTrigger>
+                                                <DialogContent class="md:max-w-4xl">
+                                                    <DialogHeader>
+                                                        <DialogTitle>上传图片</DialogTitle>
+                                                    </DialogHeader>
+                                                    <div>
+                                                        <FileUpload v-model:data="images" :max-files="1" />
+                                                    </div>
+                                                    <DialogFooter>
+                                                        <DialogClose as-child>
+                                                            <Button type="button" class="w-full" @click="uploadFiles()">
+                                                                提交
+                                                            </Button>
+                                                        </DialogClose>
+                                                    </DialogFooter>
+                                                </DialogContent>
+                                            </Dialog>
+                                            <DialogClose as-child class="ml-auto">
+                                                <Button :disabled="!myComment" class="rounded-full px-5"
+                                                    @click="submitReply(comment.id)">
+                                                    <span class="icon-[charm--rocket]"></span>
+                                                    发送！
+                                                </Button>
+                                            </DialogClose>
+                                        </DialogFooter>
+                                    </DialogContent>
+                                </Dialog>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <div class="flex items-center gap-1 text-slate-600">
+                                    <p class="text-base font-semibold">{{ comment.likeCount }}</p>
+                                    <div @click="like(2, comment?.id, 0)"
+                                        class="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 text-xl transition hover:bg-slate-200">
+                                        <span v-if="comment?.like === 0"
+                                            class="icon-[material-symbols--thumb-up-outline]"></span>
+                                        <span v-else class="icon-[material-symbols--thumb-up] text-orange-500"></span>
+                                    </div>
+                                </div>
+                                <AlertDialog v-if="comment.user.id === userStore.user.id">
+                                    <AlertDialogTrigger as-child>
+                                        <p class="cursor-pointer text-xs text-slate-400 hover:text-orange-500">删除评论</p>
+                                    </AlertDialogTrigger>
+                                    <AlertDialogContent>
+                                        <AlertDialogHeader>
+                                            <AlertDialogTitle>确定要删除该评论吗？</AlertDialogTitle>
+                                            <AlertDialogDescription>
+                                                操作一旦完成无法撤回，请谨慎选择
+                                            </AlertDialogDescription>
+                                        </AlertDialogHeader>
+                                        <AlertDialogFooter>
+                                            <AlertDialogCancel>算了</AlertDialogCancel>
+                                            <AlertDialogAction @click="deleteComment(comment.id)">删除</AlertDialogAction>
+                                        </AlertDialogFooter>
+                                    </AlertDialogContent>
+                                </AlertDialog>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 评论的回复 -->
+                <div v-if="replyMap.get(comment.id)" class="space-y-3 rounded-2xl bg-slate-50/80 p-4">
+                    <div class="flex gap-4" v-for="reply in comment.reply" :key="reply.id">
+                        <!-- 头像 -->
+                        <RouterLink :to="`/user/${reply.user.id}`">
+                            <Avatar
+                                class="h-11 w-11 cursor-pointer rounded-full text-xl ring-2 ring-transparent transition hover:-translate-y-0.5 hover:ring-sky-300">
+                                <AvatarImage :src="reply.user.avatar || ''" alt="用户头像" />
+                                <AvatarFallback>{{ reply.user.name.substring(0, 1) }}</AvatarFallback>
+                            </Avatar>
+                        </RouterLink>
+                        <!-- 内容 -->
+                        <div class="w-full space-y-3 rounded-2xl border border-slate-100 bg-white/80 px-4 py-3 shadow-sm">
+                            <div class="flex flex-wrap justify-between text-xs text-slate-500">
+                                <p class="font-semibold text-slate-800">{{ reply.user.name }}</p>
+                                <p>{{ formatTime(reply.createdAt) }}</p>
+                            </div>
+                            <p class="text-sm text-slate-700">{{ reply.content }}</p>
+                            <div class="grid gap-3 md:grid-cols-2">
                                 <img :src="image" v-for="image in reply.images" :key="image"
-                                    class="max-h-150 object-contain rounded-md shadow-sm cursor-pointer hover:shadow-md transition-shadow mb-5"
+                                    class="max-h-64 w-full rounded-2xl object-cover shadow transition hover:shadow-lg"
                                     alt="回复图片">
                             </div>
-                        </div>
-                        <div class="flex flex-col items-end gap-1 pb-4">
-                            <div class="flex items-center">
-                                <p class="pr-2">{{ reply.likeCount }}</p>
-                                <div @click="like(2, reply?.id, reply.parent)">
-                                    <span v-if="reply?.like === 0"
-                                        class="icon-[material-symbols--thumb-up-outline] text-xl"></span>
-                                    <span v-else class="icon-[material-symbols--thumb-up] text-xl"></span>
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2 text-slate-600">
+                                    <p class="text-base font-semibold">{{ reply.likeCount }}</p>
+                                    <div @click="like(2, reply?.id, reply.parent)"
+                                        class="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-lg transition hover:bg-slate-200">
+                                        <span v-if="reply?.like === 0"
+                                            class="icon-[material-symbols--thumb-up-outline]"></span>
+                                        <span v-else class="icon-[material-symbols--thumb-up] text-orange-500"></span>
+                                    </div>
                                 </div>
+                                <AlertDialog v-if="reply.user.id === userStore.user.id">
+                                    <AlertDialogTrigger as-child>
+                                        <p class="cursor-pointer text-xs text-slate-400 hover:text-orange-500">删除回复</p>
+                                    </AlertDialogTrigger>
+                                    <AlertDialogContent>
+                                        <AlertDialogHeader>
+                                            <AlertDialogTitle>确定要删除该回复吗？</AlertDialogTitle>
+                                            <AlertDialogDescription>
+                                                操作一旦完成无法撤回，请谨慎选择
+                                            </AlertDialogDescription>
+                                        </AlertDialogHeader>
+                                        <AlertDialogFooter>
+                                            <AlertDialogCancel>算了</AlertDialogCancel>
+                                            <AlertDialogAction @click="deleteReply(comment.id, reply.id)">删除
+                                            </AlertDialogAction>
+                                        </AlertDialogFooter>
+                                    </AlertDialogContent>
+                                </AlertDialog>
                             </div>
-                            <AlertDialog v-if="reply.user.id === userStore.user.id">
-                                <AlertDialogTrigger as-child>
-                                    <p class="text-xs hover:text-orange-500">删除回复</p>
-                                </AlertDialogTrigger>
-                                <AlertDialogContent>
-                                    <AlertDialogHeader>
-                                        <AlertDialogTitle>确定要删除该回复吗？</AlertDialogTitle>
-                                        <AlertDialogDescription>
-                                            操作一旦完成无法撤回，请谨慎选择
-                                        </AlertDialogDescription>
-                                    </AlertDialogHeader>
-                                    <AlertDialogFooter>
-                                        <AlertDialogCancel>算了</AlertDialogCancel>
-                                        <AlertDialogAction @click="deleteReply(comment.id, reply.id)">删除
-                                        </AlertDialogAction>
-                                    </AlertDialogFooter>
-                                </AlertDialogContent>
-                            </AlertDialog>
                         </div>
-                        <div class="border-t-2"></div>
                     </div>
                 </div>
             </div>
         </div>
         <!-- 回复 -->
-        <div class="border-t-3"></div>
-        <div class="grid w-full gap-2 pb-15 pt-2">
-            <Textarea v-model="myComment" class="h-32" placeholder="说点什么..."></Textarea>
-            <div class="flex justify-between">
-                <Dialog>
-                    <DialogTrigger as-child>
-                        <Button :disabled="uploading">
-                            <span class="icon-[charm--folder]"></span>
-                            {{ uploading ? "上传中" : fileCount > 0 ? `上传了${fileCount}张图片` : "上传图片（可选）" }}
-                        </Button>
-                    </DialogTrigger>
-                    <DialogContent class="md:max-w-4xl">
-                        <DialogHeader>
-                            <DialogTitle>上传图片</DialogTitle>
-                            <DialogDescription>
-                            </DialogDescription>
-                        </DialogHeader>
-                        <div>
-                            <FileUpload v-model:data="images" :max-files="1" />
-                        </div>
-                        <DialogFooter class="sm:justify-start">
-                            <DialogClose as-child>
-                                <Button type="button" class="w-full" @click="uploadFiles()">
-                                    提交
-                                </Button>
-                            </DialogClose>
-                        </DialogFooter>
-                    </DialogContent>
-                </Dialog>
-                <Button @click="submitComment()" :disabled="!myComment || uploading">
-                    <span class="icon-[charm--rocket]"></span>
-                    发送！</Button>
+        <div class="mt-6 rounded-3xl border border-dashed border-slate-200 bg-white/80 p-5 shadow-inner">
+            <p class="text-sm font-semibold uppercase tracking-[0.3em] text-slate-400">发表评论</p>
+            <div class="mt-4 grid gap-3">
+                <Textarea v-model="myComment" class="h-32 rounded-2xl" placeholder="说点什么..."></Textarea>
+                <div class="flex flex-wrap items-center justify-between gap-3">
+                    <Dialog>
+                        <DialogTrigger as-child>
+                            <Button :disabled="uploading" class="rounded-full px-5">
+                                <span class="icon-[charm--folder]"></span>
+                                {{ uploading ? "上传中" : fileCount > 0 ? `上传了${fileCount}张图片` : "上传图片（可选）" }}
+                            </Button>
+                        </DialogTrigger>
+                        <DialogContent class="md:max-w-4xl">
+                            <DialogHeader>
+                                <DialogTitle>上传图片</DialogTitle>
+                            </DialogHeader>
+                            <div>
+                                <FileUpload v-model:data="images" :max-files="1" />
+                            </div>
+                            <DialogFooter class="sm:justify-start">
+                                <DialogClose as-child>
+                                    <Button type="button" class="w-full" @click="uploadFiles()">
+                                        提交
+                                    </Button>
+                                </DialogClose>
+                            </DialogFooter>
+                        </DialogContent>
+                    </Dialog>
+                    <Button @click="submitComment()" :disabled="!myComment || uploading"
+                        class="rounded-full px-6 shadow-lg shadow-orange-200/60">
+                        <span class="icon-[charm--rocket]"></span>
+                        发送！</Button>
+                </div>
             </div>
-
         </div>
     </div>
 </template>
@@ -298,7 +299,7 @@
     import { Textarea } from "@/components/ui/textarea"
     import { Button } from "@/components/ui/button"
     import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger, } from '@/components/ui/alert-dialog'
-    import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog"
+    import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog"
     import dayjs from 'dayjs'
     import relativeTime from 'dayjs/plugin/relativeTime'
     import 'dayjs/locale/zh-cn'

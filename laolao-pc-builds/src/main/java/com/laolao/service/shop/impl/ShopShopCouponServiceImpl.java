@@ -25,7 +25,7 @@ public class ShopShopCouponServiceImpl implements ShopCouponService {
 
     @Override
     public Result<List<ShopCouponVO>> ShowShopCoupon() {
-        List<ShopCoupon> couponList = shopCouponMapper.selectShopCoupon();
+        List<ShopCoupon> couponList = shopCouponMapper.selectShopCoupon(BaseContext.getCurrentId());
         List<ShopCouponVO> shopCouponVOS = new ArrayList<>();
         for (ShopCoupon coupon : couponList) {
             ShopCouponVO shopCouponVO = mapStruct.shopCouponToShopCouponVO(coupon);

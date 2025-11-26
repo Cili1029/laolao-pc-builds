@@ -5,7 +5,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-10">
 
                 <!-- 配件商城 -->
-                <router-link :to="`/buy/${-1}`"
+                <router-link :to="`/buy/${0}`"
                     class="group relative overflow-hidden rounded-3xl bg-white border border-gray-100 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-1 cursor-pointer">
                     <div
                         class="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-blue-400/20 to-cyan-300/20 rounded-full blur-3xl -mr-16 -mt-16 transition-transform duration-700 group-hover:scale-125">
@@ -73,7 +73,7 @@
                             <div class="w-1 h-8 bg-red-500 rounded-full"></div>
                             <h2 class="text-xl font-bold text-gray-800">热销商品</h2>
                         </div>
-                        <router-link :to="`/buy/${1}`"
+                        <router-link :to="`/buy/${0}`"
                             class="text-gray-400 hover:text-red-500 text-sm flex items-center gap-1 transition-colors">
                             全部商品 <span class="text-lg">›</span>
                         </router-link>
@@ -179,8 +179,10 @@
 </template>
 
 <script setup lang="ts">
-    import { onMounted, ref } from 'vue';
+    import { onMounted, ref, onUnmounted } from 'vue';
     import axios from '@/utils/myAxios'
+    import { useCommonStore } from '@/stores/CommonStore'
+    const commonStore = useCommonStore()
 
     // 工具函数：简单的日期格式化
     const formatDate = (dateStr: string) => {
@@ -191,7 +193,12 @@
     onMounted(() => {
         getPostHot()
         getProductHot()
+        commonStore.setShowFunction(false)
     })
+
+    onUnmounted(() => {
+        commonStore.setShowFunction(true);
+    });
 
     interface PostSimple {
         id: number

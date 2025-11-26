@@ -1,63 +1,76 @@
 <template>
-    <div class="h-full overflow-y-auto scrollbar-edge">
+    <div class="h-full overflow-y-auto bg-gradient-to-b from-slate-50 to-white scrollbar-edge">
         <!-- 板块描述 -->
-        <div class="m-5 pl-5 py-1 bg-sky-100 shadow-sm flex items-center">
-            <span class="text-xl">
-                <span class="font-bold">真诚、友善、团结、专业</span>，共建你我引以为荣之社区。
-            </span>
-        </div>
-        <div class="h-24 m-5 pl-5 bg-white shadow-sm rounded-sm flex items-center">
-            <span class="text-6xl" :class="categoryStore.getCategoryById(categoryStore.currentCategory)?.icon"></span>
-            <div class="p-3">
-                <p class="text-2xl font-bold">{{ categoryStore.getCategoryById(categoryStore.currentCategory)?.name }}</p>
-                <p>{{ categoryStore.getCategoryById(categoryStore.currentCategory)?.description }}</p>
+        <div class="rounded-3xl border border-slate-100 bg-white/90 p-6 m-2 shadow-md backdrop-blur">
+            <div class="rounded-2xl bg-sky-50 px-5 py-3 text-slate-700 shadow-inner">
+                <span class="text-base leading-relaxed">
+                    <span class="font-bold">真诚、友善、团结、专业</span>，共建你我引以为荣之社区。
+                </span>
             </div>
-        </div>
-        <div class="border-t-4"></div>
-        <div v-show="categoryStore.currentCategory !== 5" class="flex justify-between items-center p-2">
-            <div></div>
-            <div class="flex w-1/3 max-w-sm items-center gap-1.5">
-                <Button v-if="back" @click="getPost()">返回</Button>
-                <Input type="text" placeholder="搜索帖子..." v-model="searchContent" />
-                <Button type="submit" @click="search()" :disabled="!searchContent">搜索</Button>
-            </div>
-        </div>
-        <div class="border-t-4"></div>
-        <div>
-            <div class="flex m-2 justify-between items-center">
-                <div class="text-l justify-between items-center text-gray-500">
-                    <div class="w-22 font-bold">帖子</div>
-                </div>
-                <div class="hidden md:flex text-l text-gray-500">
-                    <div class="w-22 font-bold text-center">回复</div>
-                    <div class="w-22 font-bold text-center">点赞</div>
-                    <div class="w-22 font-bold text-center">最后回复</div>
-                </div>
-            </div>
-            <div class="border-t-2"></div>
-        </div>
-        <div v-for="simple in postSimple" :key="simple.id">
-            <div class="flex mx-2 my-1 justify-between items-center">
+            <div
+                class="mt-5 flex items-center gap-4 rounded-2xl border border-slate-100 bg-white/90 px-6 py-5 shadow-sm">
+                <img :src="categoryStore.getCategoryById(categoryStore.currentCategory)?.image" class="h-15 w-15" />
+                
                 <div>
-                    <router-link :to="`/forum/${simple.categoryId}/post/${simple.id}`" class="text-xl cursor-pointer">
-                        <p>{{ simple.title }}</p>
-                    </router-link>
-                    <div @click="categoryStore.currentCategory = simple.categoryId" class="inline-flex items-center bg-gray-200 py-0.5 px-2 cursor-pointer rounded">
-                        <span class="text-sm mr-1" :class="categoryStore.getCategoryById(simple.categoryId)?.icon"></span>
-                        <span class="text-xs">{{ categoryStore.getCategoryById(simple.categoryId)?.name }}</span>
+                    <p class="text-3xl font-black text-slate-900">
+                        {{ categoryStore.getCategoryById(categoryStore.currentCategory)?.name }}
+                    </p>
+                    <p class="text-sm text-slate-500">
+                        {{ categoryStore.getCategoryById(categoryStore.currentCategory)?.description }}
+                    </p>
+                </div>
+            </div>
+            <div v-show="categoryStore.currentCategory !== 5"
+                class="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-slate-50/70 px-4 py-3">
+                <p class="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">发现好贴</p>
+                <div class="flex w-full max-w-md items-center gap-2">
+                    <Button v-if="back" @click="getPost()" class="rounded-full px-4">返回</Button>
+                    <Input type="text" placeholder="搜索帖子..." v-model="searchContent"
+                        class="flex-1 rounded-full border-slate-200" />
+                    <Button type="submit" class="rounded-full px-4" @click="search()"
+                        :disabled="!searchContent">搜索</Button>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-6 rounded-3xl border border-slate-100 bg-white/90 shadow-xl">
+            <div
+                class="flex items-center justify-between rounded-t-3xl bg-slate-50/80 px-6 py-4 text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">
+                <span>帖子</span>
+                <div class="hidden items-center gap-4 text-slate-500 md:flex">
+                    <p class="w-12 text-center text-base">回复</p>
+                    <p class="w-12 text-center text-base">点赞</p>
+                    <p class="w-18 text-center text-sm">最后回复</p>
+                </div>
+            </div>
+            <div class="divide-y divide-slate-100">
+                <div v-for="simple in postSimple" :key="simple.id"
+                    class="flex flex-wrap items-center justify-between gap-4 px-6 py-4 transition hover:bg-slate-50/60">
+                    <div class="space-y-2">
+                        <router-link :to="`/forum/${simple.categoryId}/post/${simple.id}`"
+                            class="text-lg font-semibold text-slate-900 hover:text-orange-500">
+                            {{ simple.title }}
+                        </router-link>
+                        <div @click="categoryStore.currentCategory = simple.categoryId"
+                            class="inline-flex cursor-pointer items-center rounded-full bg-slate-100 px-3 py-1 mx-2 text-xs text-slate-500 transition hover:bg-slate-200">
+                                <img :src="categoryStore.getCategoryById(simple.categoryId)?.image" class="h-4 w-4" />
+                                
+                            {{ categoryStore.getCategoryById(simple.categoryId)?.name }}
+                        </div>
+                    </div>
+
+                    <div class="hidden items-center gap-4 text-slate-500 md:flex">
+                        <p class="w-12 text-center text-base font-bold text-slate-900">{{
+                            simple.commentCount }}</p>
+                        <p class="w-12 text-center text-base font-bold text-slate-900">{{ simple.likeCount
+                            }}</p>
+                        <p class="w-18 text-center text-sm font-bold text-slate-900">{{
+                            formatTime(simple.updatedAt) }}</p>
                     </div>
                 </div>
-
-                <div class="hidden md:flex text-gray-600">
-                    <div class="w-22 font-bold text-center">{{ simple.commentCount }}</div>
-                    <div class="w-22 font-bold text-center">{{ simple.likeCount }}</div>
-                    <div class="w-22 font-bold text-center">{{ formatTime(simple.updatedAt) }}</div>
-                </div>
             </div>
-            <div class="border-t-2"></div>
         </div>
     </div>
-
 </template>
 
 <script setup lang="ts">

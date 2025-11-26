@@ -47,6 +47,17 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Result<List<ProductVO>> searchByName(int categoryId, String searchContent) {
+        if (categoryId == 0) {
+            // 全部搜索
+            List<ProductVO> productVOS = componentMapper.getByConditions(0, searchContent);
+            List<Bundle> bundles = bundleMapper.getByConditions(0, searchContent);
+            for (Bundle bundle : bundles) {
+                ProductVO productVO = mapStruct.bundleToComponentVO(bundle);
+                productVOS.add(productVO);
+            }
+            return Result.success(productVOS);
+        }
+
         int productType = componentMapper.getType(categoryId);
         List<ProductVO> productVoList = new ArrayList<>();
         if (productType == 1) {
@@ -73,6 +84,10 @@ public class ProductServiceImpl implements ProductService {
             productVOS.add(productVO);
         }
         //排序
+        if (count == 0) {
+            List<ProductVO> collect = productVOS.stream().sorted(Comparator.comparing(ProductVO::getSales).reversed()).toList();
+            return Result.success(collect);
+        }
         List<ProductVO> collect = productVOS.stream().sorted(Comparator.comparing(ProductVO::getSales).reversed()).limit(count).toList();
         return Result.success(collect);
     }

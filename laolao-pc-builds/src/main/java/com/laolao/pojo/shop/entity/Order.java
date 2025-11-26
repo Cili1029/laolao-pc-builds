@@ -44,7 +44,7 @@ public class Order {
     /**
      * 使用的优惠券Id
      */
-    private int userCouponId;
+    private Integer userCouponId;
 
     /**
      * 收货人

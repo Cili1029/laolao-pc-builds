@@ -184,7 +184,9 @@ public class OrderServiceImpl implements OrderService {
         Order order = orderMapper.selectOrderById(orderDetailList.get(0).getId());
         orderVO.setOriginalAmount(order.getOriginalAmount());
         orderVO.setDiscountAmount(order.getDiscountAmount());
-        orderVO.setUserCouponId(order.getUserCouponId());
+        if (order.getUserCouponId() != null) {
+            orderVO.setUserCouponId(order.getUserCouponId());
+        }
         // 获取已选择的地址
         orderVO.setAddressId(order.getAddressId());
         return Result.success(orderVO);
@@ -235,6 +237,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Result<String> cancelOrder(CancelDTO cancelDTO) {
+        // 释放优惠券
+        shopCouponMapper.cancelUseCoupon(cancelDTO.getNumber());
+
         int userId = BaseContext.getCurrentId();
         Order order = new Order();
         order.setUserId(userId);
@@ -242,7 +247,9 @@ public class OrderServiceImpl implements OrderService {
         order.setStatus(6);
         order.setCancelReason(cancelDTO.getCancelReason());
         order.setCancelTime(LocalDateTime.now());
-        orderMapper.update(order);
+        order.setDiscountAmount(BigDecimal.valueOf(0));
+        order.setUserCouponId(null);
+        orderMapper.updateExpire(order);
         return Result.success("取消成功");
     }
 

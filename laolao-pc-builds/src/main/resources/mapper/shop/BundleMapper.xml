@@ -4,15 +4,15 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.laolao.mapper.shop.BundleMapper">
     <select id="getByConditions" resultType="com.laolao.pojo.shop.entity.Bundle" parameterType="com.laolao.pojo.shop.entity.Bundle">
-        SELECT *, shop_bundle.images->>'$[0]' AS image
-        FROM shop_bundle
-        join shop_category on shop_category.id = shop_bundle.category_id
+        SELECT s.id, shop_category.product_type, s.name, s.price, s.images->>'$[0]' AS image, s.sales
+        FROM shop_bundle s
+        join shop_category on shop_category.id = s.category_id
         <where>
             <if test="categoryId != null and categoryId != '' and categoryId != 0">
                 and category_id = #{categoryId}
             </if>
             <if test="searchContent != null and searchContent != ''">
-                and shop_bundle.name like concat('%',#{searchContent},'%')
+                and s.name like concat('%',#{searchContent},'%')
             </if>
         </where>
     </select>

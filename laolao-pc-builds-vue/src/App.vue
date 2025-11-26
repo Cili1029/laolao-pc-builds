@@ -1,54 +1,61 @@
 <template>
   <div class="min-h-screen flex flex-col h-screen font-sans bg-slate-50">
-    <!-- 固定导航条 -->
-    <!-- 美化：增强了毛玻璃效果 (backdrop-blur-xl)，加了细腻的边框，去除了生硬的深阴影 -->
-    <div class="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-white/40 shadow-sm supports-[backdrop-filter]:bg-white/60">
+    <div
+      class="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-white/40 shadow-sm supports-[backdrop-filter]:bg-white/60">
       <div class="flex justify-between items-center px-4 sm:px-6 lg:px-40 h-16">
         <!-- Logo 区域 -->
         <div class="flex items-center space-x-2 group cursor-pointer" @click="goHome">
-          <div class="relative overflow-hidden rounded-lg shadow-sm border border-gray-100 group-hover:shadow-md transition-all duration-300">
-             <img :src="logo" class="w-9 h-9 object-cover transform group-hover:scale-110 transition-transform duration-500" />
+          <div
+            class="relative overflow-hidden rounded-lg shadow-sm border border-gray-100 group-hover:shadow-md transition-all duration-300">
+            <img :src="logo"
+              class="w-9 h-9 object-cover transform group-hover:scale-110 transition-transform duration-500" />
           </div>
           <span class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-gray-800 to-gray-600">
             劳劳的装机工坊
           </span>
         </div>
-        
+
         <!-- 导航链接 -->
-        <div class="flex space-x-4 md:space-x-6 items-center">
-          <RouterLink to="/hello" class="text-sm font-medium text-gray-600 hover:text-orange-600 hover:bg-orange-50 px-3 py-1.5 rounded-full transition-all">
-            功能测试
-          </RouterLink>
-          <span @click="showCouponDialog(1)" class="cursor-pointer text-sm font-medium text-gray-600 hover:text-orange-600 hover:bg-orange-50 px-3 py-1.5 rounded-full transition-all flex items-center gap-1">
+        <div class="flex space-x-2 items-center">
+          <router-link :to="`/buy/${0}`" v-show="commonStore.isShowFunction"
+            class="cursor-pointer text-sm font-medium text-gray-600 hover:text-orange-600 hover:bg-orange-50 px-3 py-1.5 rounded-full transition-all flex items-center gap-1">
+            <span class="icon-[mage--shop]"></span>商城
+          </router-link>
+          <router-link :to="`/forum/${-1}`" v-show="commonStore.isShowFunction"
+            class="cursor-pointer text-sm font-medium text-gray-600 hover:text-orange-600 hover:bg-orange-50 px-3 py-1.5 rounded-full transition-all flex items-center gap-1">
+            <span class="icon-[material-symbols--forum-outline-rounded]"></span>社区
+          </router-link>
+          <span @click="showCouponDialog(1)"
+            class="cursor-pointer text-sm font-medium text-gray-600 hover:text-orange-600 hover:bg-orange-50 px-3 py-1.5 rounded-full transition-all flex items-center gap-1">
             <span class="icon-[charm--gift]"></span> 更多优惠券
           </span>
 
           <!-- 购物车 -->
           <Sheet>
-            <SheetTrigger as-child class="text-gray-600 hover:text-orange-600 transition-colors cursor-pointer" @click="showCart()">
-              <div class="relative p-2 rounded-full hover:bg-gray-100">
-                 <span class="icon-[mdi--cart-outline] text-2xl"></span>
-                 <!-- 小红点 -->
-                 <span v-if="products.length > 0" class="absolute top-1.5 right-1.5 h-2 w-2 bg-red-500 rounded-full ring-2 ring-white"></span>
-                 <span class="sr-only">购物车</span>
-              </div>
+            <SheetTrigger as-child class="text-gray-600 hover:text-orange-600 transition-colors cursor-pointer"
+              @click="showCart()">
+              <span
+                class="cursor-pointer text-sm font-medium text-gray-600 hover:text-orange-600 hover:bg-orange-50 px-3 py-1.5 rounded-full transition-all flex items-center gap-1">
+                <span class="icon-[mdi--cart-outline]"></span>购物车
+              </span>
             </SheetTrigger>
             <SheetContent class="gap-0 flex flex-col h-full bg-white/95 backdrop-blur-sm">
               <SheetHeader class="px-6 py-4 border-b border-gray-100">
                 <SheetTitle class="flex items-center gap-2 text-xl font-bold text-gray-900">
-                    <span class="icon-[mdi--cart] text-orange-500"></span> 我的购物车
+                  <span class="icon-[mdi--cart] text-orange-500"></span> 我的购物车
                 </SheetTitle>
                 <SheetDescription>
-                  <p class="text-xs text-gray-400 hover:text-red-500 transition-colors cursor-pointer flex items-center gap-1 mt-1" 
-                     :class="{ 'opacity-50 cursor-not-allowed': products.length === 0 }"
+                  <p class="text-xs text-gray-400 hover:text-red-500 transition-colors cursor-pointer flex items-center gap-1 mt-1"
+                    :class="{ 'opacity-50 cursor-not-allowed': products.length === 0 }"
                     @click="products.length > 0 && clear()">
                     <span class="icon-[mdi--trash-can-outline]"></span> 清空购物车
                   </p>
                 </SheetDescription>
               </SheetHeader>
-              
+
               <!-- 购物车列表 -->
-              <div v-if="products && products.length > 0" class="flex-1 overflow-y-auto scrollbar-edge py-4 px-2 space-y-3">
+              <div v-if="products && products.length > 0"
+                class="flex-1 overflow-y-auto scrollbar-edge py-4 px-2 space-y-3">
                 <div class="w-full flex flex-col space-y-3">
                   <div v-for="product in products" :key="product.name"
                     class="group flex flex-col bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all p-3 mx-1 relative">
@@ -58,7 +65,8 @@
                       </div>
                       <div class="flex-1 min-w-0">
                         <h3 class="font-bold text-gray-800 text-sm truncate">{{ product.name }}</h3>
-                        <p class="text-xs text-gray-500 mt-0.5 bg-gray-50 inline-block px-1.5 py-0.5 rounded">{{ product.variantName }}</p>
+                        <p class="text-xs text-gray-500 mt-0.5 bg-gray-50 inline-block px-1.5 py-0.5 rounded">{{
+                          product.variantName }}</p>
                       </div>
                     </div>
                     <div class="flex justify-between items-end mt-3 border-t border-gray-50 pt-2">
@@ -66,12 +74,14 @@
                         <span class="text-base font-bold text-orange-600">￥{{ product.price }}</span>
                       </div>
                       <div class="flex items-center gap-2 bg-gray-50 rounded-lg p-1 border border-gray-100">
-                        <Button variant="ghost" size="icon" class="h-6 w-6 rounded hover:bg-white hover:shadow-sm hover:text-orange-600"
+                        <Button variant="ghost" size="icon"
+                          class="h-6 w-6 rounded hover:bg-white hover:shadow-sm hover:text-orange-600"
                           @click="quantity(product, 0)">
                           <span class="icon-[mdi--minus] h-3 w-3"></span>
                         </Button>
                         <span class="text-sm font-bold w-4 text-center">{{ product.quantity }}</span>
-                        <Button variant="ghost" size="icon" class="h-6 w-6 rounded hover:bg-white hover:shadow-sm hover:text-orange-600"
+                        <Button variant="ghost" size="icon"
+                          class="h-6 w-6 rounded hover:bg-white hover:shadow-sm hover:text-orange-600"
                           @click="quantity(product, 1)">
                           <span class="icon-[mdi--plus] h-3 w-3"></span>
                         </Button>
@@ -80,31 +90,31 @@
                   </div>
                 </div>
               </div>
-              
+
               <!-- 空状态 -->
               <div v-else class="flex-1 flex flex-col justify-center items-center h-full text-gray-300 gap-4">
                 <div class="bg-gray-50 p-6 rounded-full shadow-inner">
-                    <span class="icon-[mdi--cart-off] text-6xl text-gray-300"></span>
+                  <span class="icon-[mdi--cart-off] text-6xl text-gray-300"></span>
                 </div>
                 <div class="text-center">
-                    <p class="font-bold text-gray-400">购物车空空如也</p>
-                    <p class="text-xs mt-1">快去添加点什么吧</p>
+                  <p class="font-bold text-gray-400">购物车空空如也</p>
+                  <p class="text-xs mt-1">快去添加点什么吧</p>
                 </div>
               </div>
 
               <SheetFooter class="border-t border-gray-100 p-6 bg-gray-50 mt-auto">
                 <div class="w-full space-y-4">
-                    <div class="flex justify-between items-end">
-                      <span class="text-sm text-gray-500">总计 (不含运费)</span>
-                      <span class="text-xl font-extrabold text-orange-600">￥{{ totalPrice.toFixed(2) }}</span>
-                    </div>
-                    <SheetClose as-child>
-                      <Button class="w-full h-11 text-base font-bold bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 shadow-lg shadow-orange-500/20 rounded-xl transition-all active:scale-95" 
-                        @click="order()" 
-                        :disabled="!(products && products.length > 0)">
-                        立即结算
-                      </Button>
-                    </SheetClose>
+                  <div class="flex justify-between items-end">
+                    <span class="text-sm text-gray-500">总计 (不含运费)</span>
+                    <span class="text-xl font-extrabold text-orange-600">￥{{ totalPrice.toFixed(2) }}</span>
+                  </div>
+                  <SheetClose as-child>
+                    <Button
+                      class="w-full h-11 text-base font-bold bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 shadow-lg shadow-orange-500/20 rounded-xl transition-all active:scale-95"
+                      @click="order()" :disabled="!(products && products.length > 0)">
+                      立即结算
+                    </Button>
+                  </SheetClose>
                 </div>
               </SheetFooter>
             </SheetContent>
@@ -123,9 +133,11 @@
           <div v-else>
             <DropdownMenu>
               <DropdownMenuTrigger as-child>
-                <Avatar class="cursor-pointer border-2 border-transparent hover:border-orange-200 transition-all rounded-full shadow-sm h-9 w-9">
+                <Avatar
+                  class="cursor-pointer border-2 border-transparent hover:border-orange-200 transition-all rounded-full shadow-sm h-9 w-9">
                   <AvatarImage :src="userStore.user.avatar" alt="用户头像" />
-                  <AvatarFallback class="bg-orange-50 text-orange-600 font-bold">{{ userStore.user.name.substring(0, 1) }}</AvatarFallback>
+                  <AvatarFallback class="bg-orange-50 text-orange-600 font-bold">{{ userStore.user.name.substring(0, 1)
+                  }}</AvatarFallback>
                 </Avatar>
               </DropdownMenuTrigger>
               <DropdownMenuContent class="w-56 p-2 rounded-xl shadow-xl border-gray-100" align="end">
@@ -135,23 +147,27 @@
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator class="bg-gray-100" />
                 <RouterLink :to="`/user/${userStore.user.id}`">
-                  <DropdownMenuItem class="cursor-pointer rounded-lg hover:bg-orange-50 hover:text-orange-600 focus:bg-orange-50 focus:text-orange-600">
+                  <DropdownMenuItem
+                    class="cursor-pointer rounded-lg hover:bg-orange-50 hover:text-orange-600 focus:bg-orange-50 focus:text-orange-600">
                     <span class="icon-[charm--person] mr-2"></span>
                     <span>个人信息</span>
                   </DropdownMenuItem>
                 </RouterLink>
                 <RouterLink to="/my-orders">
-                  <DropdownMenuItem class="cursor-pointer rounded-lg hover:bg-orange-50 hover:text-orange-600 focus:bg-orange-50 focus:text-orange-600">
+                  <DropdownMenuItem
+                    class="cursor-pointer rounded-lg hover:bg-orange-50 hover:text-orange-600 focus:bg-orange-50 focus:text-orange-600">
                     <span class="icon-[charm--clipboard] mr-2"></span>
                     <span>我的订单</span>
                   </DropdownMenuItem>
                 </RouterLink>
-                <DropdownMenuItem @click="showCouponDialog(2)" class="cursor-pointer rounded-lg hover:bg-orange-50 hover:text-orange-600 focus:bg-orange-50 focus:text-orange-600">
+                <DropdownMenuItem @click="showCouponDialog(2)"
+                  class="cursor-pointer rounded-lg hover:bg-orange-50 hover:text-orange-600 focus:bg-orange-50 focus:text-orange-600">
                   <span class="icon-[charm--gift] mr-2"></span>
                   <span>我的优惠券</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator class="bg-gray-100" />
-                <DropdownMenuItem @click="signOut" class="cursor-pointer rounded-lg text-red-500 hover:bg-red-50 hover:text-red-600 focus:bg-red-50 focus:text-red-600">
+                <DropdownMenuItem @click="signOut"
+                  class="cursor-pointer rounded-lg text-red-500 hover:bg-red-50 hover:text-red-600 focus:bg-red-50 focus:text-red-600">
                   <span class="icon-[picon--exit] mr-2"></span>
                   <span>退出登录</span>
                 </DropdownMenuItem>
@@ -200,14 +216,14 @@
     <!-- 全局弹窗 -->
     <CouponDialog :type="couponDialogType" v-model:isOpen="isOpenCouponDialog"></CouponDialog>
     <Toaster position="bottom-left" :toastOptions="{
-       style: { background: 'white', border: '1px solid #e5e7eb', color: '#1f2937' },
-       class: 'shadow-lg rounded-xl',
+      style: { background: 'white', border: '1px solid #e5e7eb', color: '#1f2937' },
+      class: 'shadow-lg rounded-xl',
     }" />
   </div>
 </template>
 
 <script setup lang="ts">
-// 脚本内容完全保持不变
+  // 脚本内容完全保持不变
   import { ref, onMounted, computed } from 'vue'
   import axios from './utils/myAxios'
   import { useRoute } from 'vue-router'
@@ -225,6 +241,9 @@
   const router = useRouter()
   import { useUserStore } from '@/stores/UserStore'
   const userStore = useUserStore()
+  import { useCommonStore } from '@/stores/CommonStore'
+  const commonStore = useCommonStore()
+
 
   // 组件挂载时检查登录状态
   onMounted(() => {
@@ -386,6 +405,7 @@
     opacity: 0;
     transform: translateY(5px);
   }
+
   .fade-leave-to {
     opacity: 0;
     transform: translateY(-5px);

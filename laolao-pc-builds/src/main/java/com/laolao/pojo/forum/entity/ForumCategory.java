@@ -26,6 +26,11 @@ public class ForumCategory {
     private String description;
 
     /**
+     * 图片
+     */
+    private String image;
+
+    /**
      * 排序
      */
     private int sort;

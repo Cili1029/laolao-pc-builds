@@ -1,8 +1,8 @@
 <template>
-  <div class="h-full flex flex-col bg-slate-50 overflow-hidden">
+  <div class="h-full flex flex-col bg-slate-50 overflow-hidden py-8">
     
     <!-- 顶部个人信息区域 -->
-    <div class="bg-white shadow-sm border-b border-gray-100 z-10 shrink-0">
+    <div class="bg-white rounded-2xl shadow-sm border-b border-gray-100 z-10 shrink-0 max-w-5xl w-full mx-auto">
       <!-- 模拟 Banner 背景 (可选，用渐变色代替) -->
       <div class="h-32 bg-gradient-to-r from-blue-400 to-indigo-500 relative overflow-hidden">
           <div class="absolute inset-0 bg-white/10 pattern-dots"></div>
@@ -99,7 +99,7 @@
     </div>
 
     <!-- 主内容区 -->
-    <div class="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 py-8 flex flex-col min-h-0">
+    <div class="flex-1 max-w-5xl w-full mx-auto py-8 flex flex-col min-h-0">
       <div class="flex flex-col h-full bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
         
         <!-- Tab 切换栏 -->
