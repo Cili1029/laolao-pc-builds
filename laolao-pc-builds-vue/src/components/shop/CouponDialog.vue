@@ -324,7 +324,7 @@
   }
 
   const goToUse = () => {
-    router.push(`/buy/${-1}`)
+    router.push(`/buy/${0}`)
     localIsOpen.value = false
     emits('update:isOpen', false)
   }

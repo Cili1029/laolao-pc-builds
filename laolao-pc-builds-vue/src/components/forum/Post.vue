@@ -12,7 +12,7 @@
                 <p class="text-3xl font-black text-slate-900">{{ post?.title }}</p>
                 <div @click="changeCategory()"
                     class="mt-3 inline-flex w-fit items-center rounded-full bg-slate-100/80 px-3 py-1 text-sm text-slate-600 transition hover:bg-slate-200">
-                    <img :src="categoryStore.getCategoryById(post.categoryId)?.image" class="h-10 w-10" />
+                    <img :src="categoryStore.getCategoryById(post.categoryId)?.image" class="h-5 w-5" />
                     {{ categoryStore.getCategoryById(post.categoryId)?.name }}
                 </div>
             </div>

@@ -2,7 +2,7 @@
     <div class="flex h-full flex-col bg-slate-50">
         <!-- 顶部搜索区域 -->
         <div class="flex flex-col md:flex-row items-center justify-between px-6 py-6 gap-4 bg-white shadow-sm z-20">
-            <div class="flex items-center gap-2">
+            <div class="hidden md:flex items-center gap-2">
                 <div class="h-8 w-1 bg-orange-500 rounded-full"></div>
                 <p class="text-gray-800 text-xl font-extrabold tracking-tight">{{ currentCategory.id === 0 ? "所有宝贝" :
                     "热卖分类" }}</p>
@@ -41,13 +41,12 @@
         <div class="flex-1 overflow-hidden">
             <div class="h-full overflow-y-auto scrollbar-edge scrollbar-track-transparent pb-20">
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 p-3">
-                    <router-link :to="`/buy/product/${hot.productType}/${hot.id}`" v-show="currentCategory.id === 0"
+                    <router-link :to="`/buy/product/${all.productType}/${all.id}`" v-show="currentCategory.id === 0"
                         class="group bg-white rounded-2xl overflow-hidden border border-gray-100 hover:border-gray-100 transition-all duration-300 relative z-10 hover:z-50 hover:scale-105 hover:shadow-lg"
-                        v-for="hot in hot" :key="hot.id">
-
+                        v-for="all in all" :key="`${all.productType}-${all.id}`">
                         <!-- 图片容器 -->
                         <div class="relative w-full aspect-square bg-gray-50 overflow-hidden">
-                            <img :src="hot.image" class="w-full h-full" />
+                            <img :src="all.image" class="w-full h-full" />
                             <!-- 遮罩层，增加质感 -->
                             <div
                                 class="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-300">
@@ -58,28 +57,29 @@
                         <div class="p-4 flex flex-col flex-1">
                             <h4
                                 class="font-medium text-gray-800 mb-2 line-clamp-2 h-[calc(2*1.6em)] text-sm leading-relaxed group-hover:text-orange-600 transition-colors">
-                                {{ hot.name }}
+                                {{ all.name }}
                             </h4>
 
                             <div class="mt-auto pt-2 flex items-end justify-between w-full">
                                 <div>
                                     <p class="flex items-baseline gap-0.5 text-orange-600 font-bold">
                                         <span class="text-xs">￥</span>
-                                        <span class="text-xl">{{ hot.price }}</span>
-                                        <span v-if="hot.productType === 1"
+                                        <span class="text-xl">{{ all.price }}</span>
+                                        <span v-if="all.productType === 1"
                                             class="text-xs text-gray-400 font-normal ml-1">起</span>
                                     </p>
                                 </div>
                                 <div class="bg-orange-50 px-2 py-0.5 rounded text-xs font-medium text-orange-600/80">
-                                    {{ hot.sales > 0 ? hot.sales + "+人付款" : "新品上架" }}
+                                    {{ all.sales > 0 ? all.sales + "+人付款" : "新品上架" }}
                                 </div>
                             </div>
                         </div>
                     </router-link>
+
                     <router-link :to="`/buy/product/${product.productType}/${product.id}`"
                         v-show="currentCategory.id !== 0"
                         class="group bg-white rounded-2xl overflow-hidden border border-gray-100 hover:border-gray-100 transition-all duration-300 relative z-10 hover:z-50 hover:scale-105 hover:shadow-lg"
-                        v-for="product in products" :key="product.id">
+                        v-for="product in products" :key="`${product.productType}-${product.id}`">
 
                         <!-- 图片容器 -->
                         <div class="relative w-full aspect-square bg-gray-50 overflow-hidden">
@@ -152,7 +152,7 @@
         name: "所有宝贝",
         image: "https://laolao123.oss-cn-hangzhou.aliyuncs.com/%E7%BB%84%E4%BB%B6%E5%9B%BE/%E9%80%9A%E7%94%A8/1.png"
     }])
-    const hot = ref<Product[]>([])
+    const all = ref<Product[]>([])
 
     const currentCategory = ref<category>({
         id: 0,
@@ -187,7 +187,7 @@
                 const response = await axios.get("/api/user/shop/products/hot", {
                     params: { count: 0 } // 稍微多取几个，或者保持5个
                 })
-                hot.value = response.data.data
+                all.value = response.data.data
             } else if (category.productType === 1) {
                 const response = await axios.get('/api/user/shop/products/components', {
                     params: {
@@ -230,7 +230,7 @@
                 })
             }
             if (categoryId === 0) {
-                hot.value = response.data.data
+                all.value = response.data.data
             } else {
                 products.value = response.data.data
             }

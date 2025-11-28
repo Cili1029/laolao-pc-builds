@@ -33,14 +33,14 @@
             </div>
         </div>
 
-        <div class="mt-6 rounded-3xl border border-slate-100 bg-white/90 shadow-xl">
+        <div class="rounded-3xl border border-slate-100 bg-white/90 shadow-xl">
             <div
-                class="flex items-center justify-between rounded-t-3xl bg-slate-50/80 px-6 py-4 text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">
-                <span>帖子</span>
+                class="flex items-center justify-between rounded-t-3xl bg-slate-50/80 px-6 py-2 font-semibold text-slate-400">
+                <span class="text-base">帖子</span>
                 <div class="hidden items-center gap-4 text-slate-500 md:flex">
                     <p class="w-12 text-center text-base">回复</p>
                     <p class="w-12 text-center text-base">点赞</p>
-                    <p class="w-18 text-center text-sm">最后回复</p>
+                    <p class="w-24 text-center text-base">最后回复</p>
                 </div>
             </div>
             <div class="divide-y divide-slate-100">
@@ -64,7 +64,7 @@
                             simple.commentCount }}</p>
                         <p class="w-12 text-center text-base font-bold text-slate-900">{{ simple.likeCount
                             }}</p>
-                        <p class="w-18 text-center text-sm font-bold text-slate-900">{{
+                        <p class="w-24 text-center text-sm font-bold text-slate-900">{{
                             formatTime(simple.updatedAt) }}</p>
                     </div>
                 </div>

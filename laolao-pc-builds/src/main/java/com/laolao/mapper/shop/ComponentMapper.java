@@ -36,4 +36,6 @@ public interface ComponentMapper {
             "join shop_component co on cv.component_id = co.id " +
             "where cv.id = #{id}")
     OrderProductVO selectOrderProduct(int productId);
+
+    List<ProductVO> getHot(int limit);
 }

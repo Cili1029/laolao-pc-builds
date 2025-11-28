@@ -14,8 +14,7 @@
                                         <p class="text-xs uppercase tracking-[0.3em] text-slate-400">订单号</p>
                                         <p class="font-mono text-lg font-semibold text-slate-800">{{ order.number }}</p>
                                     </div>
-                                    <span
-                                        class="rounded-full px-4 py-1 text-sm font-semibold"
+                                    <span class="rounded-full px-4 py-1 text-sm font-semibold"
                                         :class="order.status === 1 ? 'bg-orange-100 text-orange-600' :
                                             order.status === 5 ? 'bg-emerald-100 text-emerald-600' :
                                                 order.status === 6 ? 'bg-slate-100 text-slate-500' : 'bg-sky-100 text-sky-600'">
@@ -26,7 +25,8 @@
                                     <img :src="order.image"
                                         class="h-20 w-20 flex-shrink-0 rounded-xl object-cover shadow-inner" />
                                     <div class="flex-1 min-w-0">
-                                        <h3 class="text-base font-semibold text-slate-900 line-clamp-1">{{ order.name }}</h3>
+                                        <h3 class="text-base font-semibold text-slate-900 line-clamp-1">{{ order.name }}
+                                        </h3>
                                         <p class="text-sm text-slate-500 mt-1" v-if="order.productCount > 1">
                                             等{{ order.productCount - 1 }}个商品
                                         </p>
@@ -50,7 +50,48 @@
                                                 <AlertDialogDescription>
                                                     操作一旦完成无法撤回，请谨慎选择
                                                 </AlertDialogDescription>
-                                                <Textarea v-model="reason" placeholder="取消原因？" class="rounded-xl"></Textarea>
+                                                <div class="flex items-center">
+                                                    <label class="w-16 text-sm font-medium text-slate-600">原因</label>
+                                                    <Select v-model="reason">
+                                                        <SelectTrigger class="w-[220px] rounded-xl">
+                                                            <SelectValue placeholder="选择一个原因" />
+                                                        </SelectTrigger>
+                                                        <SelectContent>
+                                                            <SelectGroup>
+                                                                <SelectItem value="没手感">
+                                                                    没手感
+                                                                </SelectItem>
+                                                                <SelectItem value="刚睡醒">
+                                                                    刚睡醒
+                                                                </SelectItem>
+                                                                <SelectItem value="对面开挂了">
+                                                                    对面开挂了
+                                                                </SelectItem>
+                                                                <SelectItem value="天气太冷了">
+                                                                    天气太冷了
+                                                                </SelectItem>
+                                                                <SelectItem value="电量低提示了">
+                                                                    电量低提示了
+                                                                </SelectItem>
+                                                                <SelectItem value="我妈叫我了">
+                                                                    我妈叫我了
+                                                                </SelectItem>
+                                                                <SelectItem value="皮肤手感不行">
+                                                                    皮肤手感不行
+                                                                </SelectItem>
+                                                                <SelectItem value="刚刚黑客入侵了">
+                                                                    刚刚黑客入侵了
+                                                                </SelectItem>
+                                                                <SelectItem value="我在上课">
+                                                                    我在上课
+                                                                </SelectItem>
+                                                                <SelectItem value="边吃饭边打的">
+                                                                    边吃饭边打的
+                                                                </SelectItem>
+                                                            </SelectGroup>
+                                                        </SelectContent>
+                                                    </Select>
+                                                </div>
                                             </AlertDialogHeader>
                                             <AlertDialogFooter>
                                                 <AlertDialogCancel>算了</AlertDialogCancel>
@@ -79,13 +120,15 @@
 
                     <div class="flex flex-col md:flex-row flex-1 overflow-hidden">
                         <!-- 左侧：商品列表 (可滚动) -->
-                        <div class="w-full md:w-7/12 bg-gray-50/30 p-6 overflow-y-auto border-r border-gray-100 h-[300px] md:h-auto">
+                        <div
+                            class="w-full md:w-7/12 bg-gray-50/30 p-6 overflow-y-auto border-r border-gray-100 h-[300px] md:h-auto">
                             <div class="space-y-3">
                                 <div v-for="product in detail?.products" :key="detail?.number"
                                     class="bg-white rounded-lg p-3 flex gap-3 shadow-sm border border-gray-100">
                                     <img :src="product.image" class="w-16 h-16 object-cover rounded bg-gray-50" />
                                     <div class="flex-1 min-w-0 flex flex-col justify-between py-0.5">
-                                        <h3 class="font-medium text-gray-900 text-sm line-clamp-1">{{ product.name }}</h3>
+                                        <h3 class="font-medium text-gray-900 text-sm line-clamp-1">{{ product.name }}
+                                        </h3>
                                         <div class="flex justify-between items-end">
                                             <span class="text-xs text-gray-500">{{ product.variantName }}</span>
                                             <div class="text-right">
@@ -107,38 +150,56 @@
                                         <span>商品总额</span>
                                         <span>￥{{ detail?.originalAmount ?? 0 }}</span>
                                     </div>
-                                    <div v-if="detail?.status != 1 && detail?.status != 5" class="flex justify-between text-xs text-gray-500">
+                                    <div v-if="detail?.status != 1 && detail?.status != 5"
+                                        class="flex justify-between text-xs text-gray-500">
                                         <span>优惠</span>
                                         <span class="text-red-500">-￥{{ detail?.discountAmount ?? 0 }}</span>
                                     </div>
                                     <div class="flex justify-between items-center pt-2 border-t border-blue-100">
                                         <span class="font-bold text-gray-700 text-sm">实付款</span>
-                                        <span class="font-bold text-xl text-blue-600">￥{{ (detail?.originalAmount ?? 0) - (detail?.discountAmount ?? 0) }}</span>
+                                        <span class="font-bold text-xl text-blue-600">￥{{ (detail?.originalAmount ?? 0)
+                                            -
+                                            (detail?.discountAmount ?? 0) }}</span>
                                     </div>
                                 </div>
 
                                 <!-- 配送信息 -->
                                 <div class="space-y-3 text-sm">
                                     <div v-if="detail?.consignee" class="flex gap-3">
-                                        <div class="flex-shrink-0 w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 icon-[lucide--map-pin] text-xs">📍</div>
+                                        <div
+                                            class="flex-shrink-0 w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 icon-[lucide--map-pin] text-xs">
+                                            📍</div>
                                         <div>
                                             <div class="font-bold text-gray-800">
-                                                {{ detail?.consignee }} <span class="text-gray-400 font-normal ml-1">{{ detail?.phone }}</span>
+                                                {{ detail?.consignee }} <span class="text-gray-400 font-normal ml-1">{{
+                                                    detail?.phone
+                                                }}</span>
                                             </div>
-                                            <div class="text-gray-500 text-xs mt-0.5 leading-relaxed">{{ detail?.address }}</div>
+                                            <div class="text-gray-500 text-xs mt-0.5 leading-relaxed">{{ detail?.address
+                                            }}</div>
                                         </div>
                                     </div>
                                 </div>
 
                                 <!-- 时间线 -->
                                 <div class="border-t border-gray-100 pt-4 space-y-2 text-xs text-gray-500">
-                                    <p v-if="detail?.checkoutTime" class="flex justify-between"><span>支付时间</span><span>{{ dayjs(detail?.checkoutTime).format('YYYY-MM-DD HH:mm:ss') }}</span></p>
-                                    <p v-if="detail?.deliveryTime" class="flex justify-between"><span>发货时间</span><span>{{ dayjs(detail?.deliveryTime).format('YYYY-MM-DD HH:mm:ss') }}</span></p>
-                                    <p v-if="detail?.receiveTime" class="flex justify-between"><span>完成时间</span><span>{{ dayjs(detail?.receiveTime).format('YYYY-MM-DD HH:mm:ss') }}</span></p>
-                                    <p v-if="detail?.cancelTime" class="flex justify-between text-red-500"><span>取消时间</span><span>{{ dayjs(detail?.cancelTime).format('YYYY-MM-DD HH:mm:ss') }}</span></p>
+                                    <p v-if="detail?.checkoutTime" class="flex justify-between">
+                                        <span>支付时间</span><span>{{
+                                            dayjs(detail?.checkoutTime).format('YYYY-MM-DD HH:mm:ss') }}</span>
+                                    </p>
+                                    <p v-if="detail?.deliveryTime" class="flex justify-between">
+                                        <span>发货时间</span><span>{{
+                                            dayjs(detail?.deliveryTime).format('YYYY-MM-DD HH:mm:ss') }}</span>
+                                    </p>
+                                    <p v-if="detail?.receiveTime" class="flex justify-between"><span>完成时间</span><span>{{
+                                        dayjs(detail?.receiveTime).format('YYYY-MM-DD HH:mm:ss') }}</span></p>
+                                    <p v-if="detail?.cancelTime" class="flex justify-between text-red-500">
+                                        <span>取消时间</span><span>{{
+                                            dayjs(detail?.cancelTime).format('YYYY-MM-DD HH:mm:ss') }}</span>
+                                    </p>
                                 </div>
                             </div>
-                            
+
                             <div class="mt-6">
                                 <DialogClose as-child>
                                     <Button variant="secondary" class="w-full">关闭详情</Button>
@@ -163,7 +224,6 @@
     import axios from "@/utils/myAxios"
     import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog"
     import { Button } from "@/components/ui/button"
-    import { Textarea } from "@/components/ui/textarea"
     import { toast } from "vue-sonner"
     import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger, } from '@/components/ui/alert-dialog'
     import 'vue-sonner/style.css'
@@ -171,6 +231,7 @@
     const router = useRouter()
     import dayjs from 'dayjs'
     import 'dayjs/locale/zh-cn'
+    import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
     onMounted(() => {
         getOrders()

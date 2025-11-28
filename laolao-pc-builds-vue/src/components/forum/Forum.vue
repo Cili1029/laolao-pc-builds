@@ -35,7 +35,7 @@
                                 </DialogHeader>
 
                                 <div class="space-y-4">
-                                    <div class="flex items-center gap-3">
+                                    <div class="flex items-center">
                                         <label class="w-16 text-sm font-medium text-slate-600">类别</label>
                                         <Select v-model="categoryId">
                                             <SelectTrigger class="w-[220px] rounded-xl">

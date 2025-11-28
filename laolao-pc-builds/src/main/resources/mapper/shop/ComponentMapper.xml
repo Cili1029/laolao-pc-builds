@@ -31,6 +31,17 @@
             and ca.product_type = 1
     </select>
 
+    <select id="getHot" resultType="com.laolao.pojo.shop.vo.ProductVO" parameterType="com.laolao.pojo.shop.vo.ProductVO">
+        SELECT co.id, co.category_id, ca.product_type,co.name, co.images->>'$[0]' AS image, co.sales, MIN(va.price) as price
+        FROM shop_component co
+        JOIN shop_component_variant va ON co.id = va.component_id JOIN shop_category ca ON ca.id = co.category_id
+        GROUP BY co.id
+        order by co.sales desc
+        <if test="limit != 0">
+            limit #{limit}
+        </if>
+    </select>
+
     <update id="updateStock" parameterType="java.util.List">
         UPDATE shop_component_variant
         SET stock = stock - CASE

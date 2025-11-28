@@ -76,9 +76,9 @@ public class ProductServiceImpl implements ProductService {
     public Result<List<ProductVO>> getHot(int count) {
         List<ProductVO> productVOS;
         // 查询部件的销售排行
-        productVOS = componentMapper.getByConditions(0, null);
+        productVOS = componentMapper.getHot(count);
         // 查询捆绑销售的销售排行
-        List<Bundle> bundleList = bundleMapper.getByConditions(0, null);
+        List<Bundle> bundleList = bundleMapper.getHot(count);
         for (Bundle bundle : bundleList) {
             ProductVO productVO = mapStruct.bundleToComponentVO(bundle);
             productVOS.add(productVO);

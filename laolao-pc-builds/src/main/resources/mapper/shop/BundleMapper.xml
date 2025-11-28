@@ -29,6 +29,15 @@
         and c.product_type = 2
     </select>
 
+    <select id="getHot" resultType="com.laolao.pojo.shop.entity.Bundle" parameterType="com.laolao.pojo.shop.entity.Bundle">
+        select s.id, shop_category.product_type, s.name, s.price, s.images->>'$[0]' AS image, s.sales
+        from shop_bundle s join shop_category on shop_category.id = s.category_id
+        order by s.sales desc
+        <if test="limit != 0">
+            limit #{limit}
+        </if>
+    </select>
+
     <update id="updateStock" parameterType="java.util.List">
         UPDATE shop_bundle
         SET stock = stock - CASE
