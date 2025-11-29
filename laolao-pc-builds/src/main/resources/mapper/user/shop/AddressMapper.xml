@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.laolao.mapper.user.shop.AddressMapper">
+
+    <update id="setDefault">
+        update shop_address set default_address = #{defaultAddress}
+        <where>
+            user_id = #{userId}
+            <if test="id != null and id != ''">
+                and id = #{id}
+            </if>
+        </where>
+    </update>
+</mapper>

@@ -4,7 +4,7 @@ import com.laolao.pojo.shop.vo.BundleDetailsVO;
 import com.laolao.pojo.shop.vo.ComponentDetailsVO;
 import com.laolao.pojo.shop.vo.ProductVO;
 import com.laolao.common.result.Result;
-import com.laolao.service.shop.ProductService;
+import com.laolao.service.user.shop.ProductService;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

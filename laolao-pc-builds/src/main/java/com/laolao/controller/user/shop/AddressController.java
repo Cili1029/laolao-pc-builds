@@ -4,7 +4,7 @@ import com.laolao.common.result.Result;
 import com.laolao.pojo.shop.dto.AddressDTO;
 import com.laolao.pojo.shop.vo.AddressVO;
 import com.laolao.pojo.shop.vo.DistrictVO;
-import com.laolao.service.shop.AddressService;
+import com.laolao.service.user.shop.AddressService;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
 

@@ -4,7 +4,7 @@ import com.laolao.common.result.Result;
 import com.laolao.pojo.shop.dto.GetCouponDTO;
 import com.laolao.pojo.shop.vo.ShopCouponVO;
 import com.laolao.pojo.shop.vo.UserCouponVO;
-import com.laolao.service.shop.ShopCouponService;
+import com.laolao.service.user.shop.ShopCouponService;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
 

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.laolao.mapper.user.shop.ComponentMapper">
+    <select id="getByConditions" resultType="com.laolao.pojo.shop.vo.ProductVO" parameterType="com.laolao.pojo.shop.vo.ProductVO">
+        SELECT co.id, co.category_id, ca.product_type,co.name, co.images->>'$[0]' AS image, co.sales, MIN(va.price) as price
+        FROM shop_component co
+                 JOIN shop_component_variant va ON co.id = va.component_id JOIN shop_category ca ON ca.id = co.category_id
+        <where>
+            <if test="categoryId != null and categoryId != '' and categoryId != 0">
+                and co.category_id = #{categoryId}
+            </if>
+            <if test="searchContent != null and searchContent != ''">
+                and co.name like concat('%',#{searchContent},'%')
+            </if>
+        </where>
+        GROUP BY co.id
+    </select>
+
+    <select id="ListFromCart" resultType="com.laolao.pojo.shop.vo.CartProductVO" parameterType="com.laolao.pojo.shop.vo.CartProductVO">
+        select cv.id, ca.product_type, co.name, cv.variant_name, co.images->>'$[0]' AS image, cv.price, ca.quantity
+        from shop_component_variant cv
+            join shop_component co on cv.component_id = co.id
+            join shop_cart_item ca on ca.product_id = cv.id
+        where ca.user_id = #{userId}
+          and cv.id in
+        <foreach collection="productIds" item="productId" open="(" separator="," close=")">
+            #{productId}
+        </foreach>
+            and ca.product_type = 1
+    </select>
+
+    <select id="getHot" resultType="com.laolao.pojo.shop.vo.ProductVO" parameterType="com.laolao.pojo.shop.vo.ProductVO">
+        SELECT co.id, co.category_id, ca.product_type,co.name, co.images->>'$[0]' AS image, co.sales, MIN(va.price) as price
+        FROM shop_component co
+        JOIN shop_component_variant va ON co.id = va.component_id JOIN shop_category ca ON ca.id = co.category_id
+        GROUP BY co.id
+        order by co.sales desc
+        <if test="limit != 0">
+            limit #{limit}
+        </if>
+    </select>
+
+    <update id="updateStock" parameterType="java.util.List">
+        UPDATE shop_component_variant
+        SET stock = stock - CASE
+        <foreach collection="list" item="component" separator="">
+            WHEN id = #{component.productId} THEN #{component.quantity}
+        </foreach>
+        ELSE 0
+        END
+        WHERE id IN
+        <foreach collection="list" item="component" open="(" close=")" separator=",">
+            #{component.productId}
+        </foreach>
+    </update>
+</mapper>

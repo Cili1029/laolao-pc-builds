@@ -42,6 +42,16 @@ public class User implements Serializable {
     private String email;
 
     /**
+     * 状态
+     */
+    private int status;
+
+    /**
+     * 管理权限
+     */
+    private int admin;
+
+    /**
      * 创建时间
      */
     private LocalDateTime createdAt;

@@ -5,7 +5,7 @@ import com.laolao.pojo.shop.dto.*;
 import com.laolao.pojo.shop.vo.OrderDetailVO;
 import com.laolao.pojo.shop.vo.OrdersVO;
 import com.laolao.pojo.shop.vo.OrderVO;
-import com.laolao.service.shop.OrderService;
+import com.laolao.service.user.shop.OrderService;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
 

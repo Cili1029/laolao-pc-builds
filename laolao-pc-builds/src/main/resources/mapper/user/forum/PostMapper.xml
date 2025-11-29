@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.laolao.mapper.a.forum.PostMapper">
+    <update id="updateCommentCount">
+        UPDATE forum_post
+        <set>
+            <if test="delta != null">
+                comment_count = comment_count + #{delta},
+            </if>
+            <if test="now != null">
+                updated_at = #{now}
+            </if>
+        </set>
+        WHERE id = #{id}
+    </update>
+    <select id="getPostBatch" resultType="com.laolao.pojo.forum.entity.Post" parameterType="com.laolao.pojo.forum.entity.Post">
+        select *
+        from forum_post
+        where status = 1
+        and id in
+        <foreach collection="postIdList" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+    <select id="getHot" resultType="com.laolao.pojo.forum.entity.Post" parameterType="com.laolao.pojo.forum.entity.Post">
+        select *, (like_count * 1 + comment_count * 4) - TIMESTAMPDIFF(HOUR, created_at, NOW()) AS hot_score
+            from forum_post where status = 1
+            order by hot_score DESC
+            <if test="count != 0">
+                limit #{count}
+            </if>
+    </select>
+</mapper>

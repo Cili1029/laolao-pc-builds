@@ -1,0 +1,38 @@
+package com.laolao.mapper.user.forum;
+
+import com.laolao.pojo.forum.entity.Post;
+import org.apache.ibatis.annotations.*;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Mapper
+public interface PostMapper {
+    @Select("select * from forum_post where category_id = #{categoryId} and status = 1 order by created_at desc")
+    List<Post> selectPostSimple(int categoryId);
+
+    @Select("select * from forum_post where id = #{id}")
+    Post selectPost(int id);
+
+    @Select("select * from forum_post where category_id = #{categoryId} and title like concat('%',#{searchContent},'%')")
+    List<Post> searchPostSimple(int categoryId, String searchContent);
+
+    @Insert("insert into forum_post(user_id, category_id, title, content, images, created_at, updated_at) value (#{userId}, #{categoryId}, #{title}, #{content}, #{images}, #{createdAt}, #{updatedAt})")
+    @Options(useGeneratedKeys = true, keyProperty = "id")
+    void insertPost(Post post);
+
+    @Update("update forum_post set status = 2 where id = #{id} and user_id = #{userId}")
+    void delete(int id, int userId);
+
+    @Update("update forum_post set like_count = like_count + #{delta}, updated_at = updated_at where id = #{likeId}")
+    void updateLikeCount(int likeId, int delta);
+
+    void updateCommentCount(int id, int delta, LocalDateTime now);
+
+    @Select("select * from forum_post where user_id = #{id} and status = 1")
+    List<Post> selectPostByUserid(Integer id);
+
+    List<Post> getPostBatch(List<Integer> postIdList);
+
+    List<Post> getHot(int count);
+}

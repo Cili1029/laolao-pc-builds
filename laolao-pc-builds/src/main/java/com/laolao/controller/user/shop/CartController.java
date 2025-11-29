@@ -3,7 +3,7 @@ package com.laolao.controller.user.shop;
 import com.laolao.common.result.Result;
 import com.laolao.pojo.shop.dto.BuyProductDTO;
 import com.laolao.pojo.shop.vo.CartProductVO;
-import com.laolao.service.shop.CartService;
+import com.laolao.service.user.shop.CartService;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
 

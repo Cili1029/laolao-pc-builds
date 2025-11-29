@@ -1,79 +1,99 @@
 // src/router/index.ts
 import { createRouter, createWebHistory } from 'vue-router'
-import Home from '../components/common/Home.vue'
-import Shop from '../components/shop/Shop.vue';
-import Order from '@/components/shop/Order.vue';
-import MyOrders from '@/components/shop/MyOrders.vue';
-import Forum from '@/components/forum/Forum.vue';
-import Post from '@/components/forum/Post.vue';
-import PostSimple from '@/components/forum/PostSimple.vue';
-import Sign from '@/components/user/Sign.vue';
-import User from '@/components/user/User.vue';
-import Product from '@/components/shop/Product.vue';
+import type { RouteRecordRaw } from 'vue-router';
+import frontLayout from '@/components/front/common/FrontLayout.vue';
+import Home from '@/components/front/common/Home.vue'
+import Shop from '@/components/front/shop/Shop.vue';
+import Order from '@/components/front/shop/Order.vue';
+import MyOrders from '@/components/front/shop/MyOrders.vue';
+import Forum from '@/components/front/forum/Forum.vue';
+import Post from '@/components/front/forum/Post.vue';
+import PostSimple from '@/components/front/forum/PostSimple.vue';
+import Sign from '@/components/front/user/Sign.vue';
+import FrontUser from '@/components/front/user/User.vue';
+import Product from '@/components/front/shop/Product.vue';
+
+import AdminLayout from '@/components/admin/AdminLayout.vue';
+import AdminUser from '@/components/admin/User/User.vue';
 
 
-// 使用 RouteRecordRaw 类型定义路由
-const routes = [
+const routes: Array<RouteRecordRaw> = [
+  // 1. 用户端路由组
   {
     path: '/',
+    component: frontLayout,
     redirect: '/home',
-    meta: { showFooter: true }
-  },
-  {
-    path: '/home',
-    name: 'Home',
-    component: Home,
-    meta: { showFooter: true }
-  },
-  {
-    path: '/user/:id',
-    name: 'User',
-    component: User,
-    meta: { showFooter: false }
-  },
-  {
-    path: '/sign',
-    name: 'Sign',
-    component: Sign,
-    meta: { showFooter: false }
-  },
-  {
-    path: '/buy/:id',
-    name: 'Shop',
-    component: Shop,
-    meta: { showFooter: false }
-  },
-  {
-    path: '/buy/product/:productType/:id',
-    name: 'Product',
-    component: Product,
-    meta: { showFooter: false }
-  },
-  {
-    path: '/order/:number',
-    name: 'Order',
-    component: Order,
-    meta: { showFooter: false }
-  },
-  {
-    path: '/my-orders',
-    name: 'MyOrders',
-    component: MyOrders,
-    meta: { showFooter: false }
-  },
-  {
-    path: '/forum/:categoryId',
-    component: Forum,
-    meta: { showFooter: false },
     children: [
       {
-        path: '',
-        component: PostSimple
+        path: 'home',
+        name: 'Home',
+        component: Home,
+        meta: { showFooter: true }
       },
       {
-        path: 'post/:postId', // 帖子详情，作为子路由
-        component: Post,
+        path: 'user/:id',
+        name: 'User',
+        component: FrontUser,
+        meta: { showFooter: false }
+      },
+      {
+        path: 'sign',
+        name: 'Sign',
+        component: Sign,
+        meta: { showFooter: false }
+      },
+      {
+        path: 'buy/:id',
+        name: 'Shop',
+        component: Shop,
+        meta: { showFooter: false }
+      },
+      {
+        path: 'buy/product/:productType/:id',
+        name: 'Product',
+        component: Product,
+        meta: { showFooter: false }
+      },
+      {
+        path: 'order/:number',
+        name: 'Order',
+        component: Order,
+        meta: { showFooter: false }
+      },
+      {
+        path: 'my-orders',
+        name: 'MyOrders',
+        component: MyOrders,
+        meta: { showFooter: false }
+      },
+      {
+        path: 'forum/:categoryId',
+        component: Forum,
+        meta: { showFooter: false },
+        children: [
+          {
+            path: '',
+            component: PostSimple
+          },
+          {
+            path: 'post/:postId',
+            component: Post,
+          }
+        ]
       }
+    ]
+  },
+
+  {
+    path: '/admin',
+    component: AdminLayout,
+    redirect: '/admin/user',
+    children: [
+      {
+        path: 'user',
+        name: 'User',
+        component: AdminUser,
+      },
     ]
   }
 ]

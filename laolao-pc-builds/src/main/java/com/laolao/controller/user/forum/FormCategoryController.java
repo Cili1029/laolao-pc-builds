@@ -2,7 +2,7 @@ package com.laolao.controller.user.forum;
 
 import com.laolao.common.result.Result;
 import com.laolao.pojo.forum.vo.ForumCategoryVO;
-import com.laolao.service.forum.ForumCategoryService;
+import com.laolao.service.user.forum.ForumCategoryService;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

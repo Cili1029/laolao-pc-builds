@@ -2,7 +2,7 @@ package com.laolao.controller.user.shop;
 
 import com.laolao.pojo.shop.vo.ShopCategoryVO;
 import com.laolao.common.result.Result;
-import com.laolao.service.shop.ShopCategoryService;
+import com.laolao.service.user.shop.ShopCategoryService;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;

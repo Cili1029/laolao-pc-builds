@@ -8,7 +8,7 @@ import com.laolao.pojo.user.vo.UpdateUserVO;
 import com.laolao.pojo.user.vo.UserSimpleVO;
 import com.laolao.common.result.Result;
 import com.laolao.pojo.user.vo.UserVO;
-import com.laolao.service.user.UserService;
+import com.laolao.service.user.user.UserService;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

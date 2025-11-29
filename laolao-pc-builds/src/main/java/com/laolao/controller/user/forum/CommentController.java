@@ -5,7 +5,7 @@ import com.laolao.pojo.forum.dto.AddCommentDTO;
 import com.laolao.pojo.forum.dto.AddReplyDTO;
 import com.laolao.pojo.forum.vo.CommentReplyVO;
 import com.laolao.pojo.forum.vo.CommentVO;
-import com.laolao.service.forum.CommentService;
+import com.laolao.service.user.forum.CommentService;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
 

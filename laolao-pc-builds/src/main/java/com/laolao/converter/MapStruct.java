@@ -9,6 +9,7 @@ import com.laolao.pojo.shop.dto.BuyProductDTO;
 import com.laolao.pojo.shop.entity.*;
 import com.laolao.pojo.shop.vo.*;
 import com.laolao.pojo.user.entity.User;
+import com.laolao.pojo.user.vo.AdminUserVO;
 import com.laolao.pojo.user.vo.UserSimpleVO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -61,4 +62,7 @@ public interface MapStruct {
     CommentVO commentToCommentVO(Comment comment);
 
     CommentReplyVO commentToCommentReplyVO(Comment comment);
+
+    // 管理端
+    AdminUserVO userToAdminUserVO(User user);
 }

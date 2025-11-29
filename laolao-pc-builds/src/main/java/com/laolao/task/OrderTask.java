@@ -1,7 +1,7 @@
 package com.laolao.task;
 
-import com.laolao.mapper.shop.OrderMapper;
-import com.laolao.mapper.shop.ShopCouponMapper;
+import com.laolao.mapper.user.shop.OrderMapper;
+import com.laolao.mapper.user.shop.ShopCouponMapper;
 import com.laolao.pojo.shop.entity.Order;
 import jakarta.annotation.Resource;
 import org.springframework.scheduling.annotation.Scheduled;

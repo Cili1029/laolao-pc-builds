@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.laolao.mapper.admin.user.AdminUserMapper">
+    <update id="updateUser">
+        update user
+        <set>
+            <if test="avatar != null and avatar != ''">
+                avatar = #{avatar},
+            </if>
+            <if test="username != null and username != ''">
+                username = #{username},
+            </if>
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="email != null and email != ''">
+                email = #{email},
+            </if>
+            <if test="admin != null">
+                admin = #{admin},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <select id="selectUser" resultType="com.laolao.pojo.user.entity.User">
+        select * from user
+        <where>
+            <if test="searchContent != null and searchContent != '' ">
+                username like concat('%',#{searchContent},'%')
+            </if>
+        </where>
+    </select>
+</mapper>

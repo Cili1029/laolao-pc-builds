@@ -5,7 +5,7 @@ import com.laolao.pojo.forum.dto.CreatePostDTO;
 import com.laolao.pojo.forum.vo.CommentReplyVO;
 import com.laolao.pojo.forum.vo.PostSimpleVO;
 import com.laolao.pojo.forum.vo.PostVO;
-import com.laolao.service.forum.PostService;
+import com.laolao.service.user.forum.PostService;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
 
