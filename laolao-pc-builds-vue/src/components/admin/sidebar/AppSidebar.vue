@@ -70,7 +70,7 @@
         icon: Store,
         isActive: false,
         items: [
-          { title: "分类标签", url: "#" },
+          { title: "分类标签", url: "/admin/shop/category" },
           { title: "组件", url: "#" },
           { title: "整机", url: "#" },
           { title: "优惠券", url: "#" },
@@ -82,7 +82,7 @@
         icon: BotMessageSquare,
         isActive: false,
         items: [
-          { title: "分类标签", url: "#" },
+          { title: "分类标签", url: "/admin/forum/category" },
           { title: "帖子", url: "#" },
           { title: "评论", url: "#" },
         ],

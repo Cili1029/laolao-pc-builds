@@ -232,12 +232,12 @@
         try {
             if (status === 1) {
                 await axios.patch("/api/admin/user/status/activate", {
-                    userId: userId
+                    id: userId
                 })
             }
             else {
                 await axios.patch("/api/admin/user/status/deactivate", {
-                    userId: userId
+                    id: userId
                 })
             }
             users.value!.find(user => user.id === userId)!.status = status

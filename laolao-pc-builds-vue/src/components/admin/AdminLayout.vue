@@ -13,6 +13,8 @@
           <Input v-model="commonStore.search.searchContent" placeholder="搜索点什么..." />
           <Button :disabled="!(commonStore.search.searchContent.length > 0)"
             @click="commonStore.search.search = true">搜索</Button>
+
+          <Button @click="commonStore.openDialog = true">新增</Button>
         </div>
       </header>
       <div class=" flex flex-1 p-2 pt-0">

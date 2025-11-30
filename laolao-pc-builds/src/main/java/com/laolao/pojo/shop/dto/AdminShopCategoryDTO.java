@@ -1,15 +1,13 @@
-package com.laolao.pojo.shop.entity;
+package com.laolao.pojo.shop.dto;
 
 import lombok.*;
-
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class ShopCategory {
+public class AdminShopCategoryDTO {
     /**
      * 主键
      */
@@ -31,11 +29,6 @@ public class ShopCategory {
     private String image;
 
     /**
-     * 状态 1启用 0停用
-     */
-    private Integer status;
-
-    /**
      * 排序
      */
     private int sort;
@@ -44,9 +37,4 @@ public class ShopCategory {
      * 创建人
      */
     private int createdBy;
-
-    /**
-     * 创建时间
-     */
-    private LocalDateTime createdAt;
 }

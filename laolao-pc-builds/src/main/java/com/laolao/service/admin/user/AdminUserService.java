@@ -1,4 +1,4 @@
-package com.laolao.service.admin;
+package com.laolao.service.admin.user;
 
 import com.laolao.common.result.Result;
 import com.laolao.pojo.user.dto.AdminUserUpdateDTO;
@@ -9,7 +9,7 @@ import java.util.List;
 public interface AdminUserService {
     Result<List<AdminUserVO>> getUser();
 
-    Result<String> changeStatus(int userId, int status);
+    Result<String> changeStatus(int id, int status);
 
     Result<String> updateUser(AdminUserUpdateDTO adminUserUpdateDTO);
 

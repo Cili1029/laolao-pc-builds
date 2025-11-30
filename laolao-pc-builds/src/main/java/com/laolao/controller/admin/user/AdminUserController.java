@@ -1,10 +1,10 @@
 package com.laolao.controller.admin.user;
 
 import com.laolao.common.result.Result;
-import com.laolao.pojo.user.dto.AdminUserStatusDTO;
+import com.laolao.pojo.common.StatusDTO;
 import com.laolao.pojo.user.dto.AdminUserUpdateDTO;
 import com.laolao.pojo.user.vo.AdminUserVO;
-import com.laolao.service.admin.AdminUserService;
+import com.laolao.service.admin.user.AdminUserService;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,23 +32,23 @@ public class AdminUserController {
     /**
      * 启用账户
      *
-     * @param adminUserStatusDTO 账户Id
+     * @param statusDTO 账户Id
      * @return 结果信息
      */
     @PatchMapping("/status/activate")
-    public Result<String> activate(@RequestBody AdminUserStatusDTO adminUserStatusDTO) {
-        return adminUserService.changeStatus(adminUserStatusDTO.getUserId(), 1);
+    public Result<String> activate(@RequestBody StatusDTO statusDTO) {
+        return adminUserService.changeStatus(statusDTO.getId(), 1);
     }
 
     /**
      * 禁用账户
      *
-     * @param adminUserStatusDTO 账户Id
+     * @param statusDTO 账户Id
      * @return 结果信息
      */
     @PatchMapping("/status/deactivate")
-    public Result<String> deactivate(@RequestBody AdminUserStatusDTO adminUserStatusDTO) {
-        return adminUserService.changeStatus(adminUserStatusDTO.getUserId(), 0);
+    public Result<String> deactivate(@RequestBody StatusDTO statusDTO) {
+        return adminUserService.changeStatus(statusDTO.getId(), 0);
     }
 
     /**

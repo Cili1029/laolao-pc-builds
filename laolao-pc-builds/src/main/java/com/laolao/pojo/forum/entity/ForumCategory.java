@@ -43,20 +43,10 @@ public class ForumCategory {
     /**
      * 创建人
      */
-    private String createdBy;
+    private int createdBy;
 
     /**
      * 创建时间
      */
     private LocalDateTime createdAt;
-
-    /**
-     * 最后更新人
-     */
-    private String updatedBy;
-
-    /**
-     * 最后更新时间
-     */
-    private LocalDateTime updatedAt;
 }

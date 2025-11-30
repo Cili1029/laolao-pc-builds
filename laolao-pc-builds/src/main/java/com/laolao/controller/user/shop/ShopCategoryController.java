@@ -14,7 +14,6 @@ import java.util.List;
 /**
  * 商品分类相关
  */
-@Controller("shopCategoryController")
 @RestController
 @RequestMapping("/user/shop/category")
 public class ShopCategoryController {

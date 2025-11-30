@@ -14,7 +14,9 @@ import FrontUser from '@/components/front/user/User.vue';
 import Product from '@/components/front/shop/Product.vue';
 
 import AdminLayout from '@/components/admin/AdminLayout.vue';
-import AdminUser from '@/components/admin/User/User.vue';
+import AdminUser from '@/components/admin/user/User.vue';
+import ShopCategory from '@/components/admin/shop/ShopCategory.vue';
+import ForumCategory from '@/components/admin/forum/ForumCategory.vue';
 
 
 const routes: Array<RouteRecordRaw> = [
@@ -93,6 +95,16 @@ const routes: Array<RouteRecordRaw> = [
         path: 'user',
         name: 'User',
         component: AdminUser,
+      },
+      {
+        path: 'shop/category',
+        name: 'ShopCategory',
+        component: ShopCategory,
+      },
+      {
+        path: 'forum/category',
+        name: 'ForumCategory',
+        component: ForumCategory,
       },
     ]
   }

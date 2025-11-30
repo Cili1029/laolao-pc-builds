@@ -1,4 +1,4 @@
-package com.laolao.pojo.shop.entity;
+package com.laolao.pojo.forum.dto;
 
 import lombok.*;
 
@@ -9,31 +9,26 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class ShopCategory {
+public class AdminForumCategoryDTO {
     /**
      * 主键
      */
     private int id;
 
     /**
-     * 商品类型
-     */
-    private int productType;
-
-    /**
-     * 类型名
+     * 分类名
      */
     private String name;
 
     /**
-     * 类别图片
+     * 分类描述
      */
-    private String image;
+    private String description;
 
     /**
-     * 状态 1启用 0停用
+     * 图片
      */
-    private Integer status;
+    private String image;
 
     /**
      * 排序
@@ -44,9 +39,4 @@ public class ShopCategory {
      * 创建人
      */
     private int createdBy;
-
-    /**
-     * 创建时间
-     */
-    private LocalDateTime createdAt;
 }

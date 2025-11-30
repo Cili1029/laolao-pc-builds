@@ -6,7 +6,8 @@ export const useCommonStore = defineStore('common', {
     search: {
       searchContent: '',
       search: false,
-    }
+    },
+    openDialog: false
   }),
 
   actions: {

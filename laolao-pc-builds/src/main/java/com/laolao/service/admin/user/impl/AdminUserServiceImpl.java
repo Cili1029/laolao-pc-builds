@@ -1,4 +1,4 @@
-package com.laolao.service.admin.Impl;
+package com.laolao.service.admin.user.impl;
 
 import com.laolao.common.result.Result;
 import com.laolao.converter.MapStruct;
@@ -6,7 +6,7 @@ import com.laolao.mapper.admin.user.AdminUserMapper;
 import com.laolao.pojo.user.dto.AdminUserUpdateDTO;
 import com.laolao.pojo.user.entity.User;
 import com.laolao.pojo.user.vo.AdminUserVO;
-import com.laolao.service.admin.AdminUserService;
+import com.laolao.service.admin.user.AdminUserService;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
@@ -35,8 +35,8 @@ public class AdminUserServiceImpl implements AdminUserService {
     }
 
     @Override
-    public Result<String> changeStatus(int userId, int status) {
-        adminUserMapper.updateStatus(userId, status);
+    public Result<String> changeStatus(int id, int status) {
+        adminUserMapper.updateStatus(id, status);
         return Result.success(status == 1 ? "已启用！" : "已禁用！");
     }
 
