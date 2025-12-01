@@ -35,13 +35,9 @@ public class Like {
      * 状态 (1: 点赞, 0: 取消)
      */
     private int status;
-    /**
-     * 创建时间
-     */
-    private LocalDateTime createdAt;
 
     /**
-     * 最后更新时间
+     * 最后更新时间（点赞，取消点赞时间）
      */
     private LocalDateTime updatedAt;
 }

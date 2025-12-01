@@ -5,8 +5,6 @@ import com.laolao.common.result.Result;
 import com.laolao.mapper.admin.forum.AdminForumCategoryMapper;
 import com.laolao.pojo.forum.dto.AdminForumCategoryDTO;
 import com.laolao.pojo.forum.entity.ForumCategory;
-import com.laolao.pojo.shop.dto.AdminShopCategoryDTO;
-import com.laolao.pojo.shop.entity.ShopCategory;
 import com.laolao.service.admin.forum.AdminForumCategoryService;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;

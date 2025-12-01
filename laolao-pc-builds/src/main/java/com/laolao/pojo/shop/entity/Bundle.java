@@ -78,16 +78,6 @@ public class Bundle implements Serializable {
      */
     private LocalDateTime createdAt;
 
-    /**
-     * 最后更新人
-     */
-    private String updatedBy;
-
-    /**
-     * 最后更新时间
-     */
-    private LocalDateTime updatedAt;
-
     // 联表查询用
     /**
      * 商品类型

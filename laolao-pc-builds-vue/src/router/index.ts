@@ -13,10 +13,12 @@ import Sign from '@/components/front/user/Sign.vue';
 import FrontUser from '@/components/front/user/User.vue';
 import Product from '@/components/front/shop/Product.vue';
 
+import Test from '@/components/admin/test.vue';
 import AdminLayout from '@/components/admin/AdminLayout.vue';
 import AdminUser from '@/components/admin/user/User.vue';
 import ShopCategory from '@/components/admin/shop/ShopCategory.vue';
 import ForumCategory from '@/components/admin/forum/ForumCategory.vue';
+import Component from '@/components/admin/shop/Component.vue';
 
 
 const routes: Array<RouteRecordRaw> = [
@@ -92,6 +94,11 @@ const routes: Array<RouteRecordRaw> = [
     redirect: '/admin/user',
     children: [
       {
+        path: 'test',
+        name: 'Test',
+        component: Test,
+      },
+      {
         path: 'user',
         name: 'User',
         component: AdminUser,
@@ -105,6 +112,11 @@ const routes: Array<RouteRecordRaw> = [
         path: 'forum/category',
         name: 'ForumCategory',
         component: ForumCategory,
+      },
+      {
+        path: 'shop/component',
+        name: 'Component',
+        component: Component,
       },
     ]
   }

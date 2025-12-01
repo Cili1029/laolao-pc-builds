@@ -65,4 +65,6 @@ public interface MapStruct {
 
     // 管理端
     AdminUserVO userToAdminUserVO(User user);
+
+    AdminComponentVO componentToAdminComponentVO(Component component);
 }

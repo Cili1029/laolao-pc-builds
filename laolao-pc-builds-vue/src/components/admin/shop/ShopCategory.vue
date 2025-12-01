@@ -11,7 +11,96 @@
                     <TableHead class="text-center w-[80px]">排序权重</TableHead>
                     <TableHead class="hidden text-center md:table-cell">创建人</TableHead>
                     <TableHead class="hidden text-center md:table-cell">创建时间</TableHead>
-                    <TableHead class="text-center">操作</TableHead>
+                    <Dialog>
+                        <DialogTrigger as-child>
+                            <TableHead class="w-[50px]">
+                                <div class="flex justify-between">
+                                    <p></p>
+                                    <p>操作</p>
+                                    <Button size="icon" variant="ghost" class="h-5 w-5 hover:bg-background">
+                                        <Plus class="h-3 w-3" />
+                                    </Button>
+                                </div>
+
+                            </TableHead>
+                        </DialogTrigger>
+                        <DialogContent class="sm:max-w-[500px]">
+                            <DialogHeader>
+                                <DialogTitle>编辑分类</DialogTitle>
+                                <DialogDescription>修改分类的详细信息。</DialogDescription>
+                            </DialogHeader>
+
+                            <div class="grid gap-6 py-4">
+                                <!-- 图片上传区域 -->
+                                <div class="flex flex-col items-center gap-4">
+                                    <Dialog>
+                                        <DialogTrigger as-child>
+                                            <div
+                                                class="relative group cursor-pointer overflow-hidden rounded-xl border shadow-sm">
+                                                <!-- 使用 Avatar 或 img 均可，这里用 img 方便控制大图 -->
+                                                <img :src="newCategory.image" v-if="newCategory.image"
+                                                    class="h-32 w-32 object-cover transition-transform duration-300 group-hover:scale-105" />
+                                                <div v-else class="h-32 w-32"></div>
+                                                <div
+                                                    class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                                    <span
+                                                        class="text-white text-xs font-medium bg-black/50 px-2 py-1 rounded">添加图片</span>
+                                                </div>
+                                            </div>
+                                        </DialogTrigger>
+                                        <!-- 内层上传 Dialog 保持不变 -->
+                                        <DialogContent class="md:max-w-xl">
+                                            <DialogHeader>
+                                                <DialogTitle>上传图片</DialogTitle>
+                                            </DialogHeader>
+                                            <div class="py-4">
+                                                <FileUpload v-model:data="images" :max-files="1" />
+                                            </div>
+                                            <DialogFooter>
+                                                <DialogClose as-child>
+                                                    <Button type="button" @click="uploadFiles('add')">确认上传</Button>
+                                                </DialogClose>
+                                            </DialogFooter>
+                                        </DialogContent>
+                                    </Dialog>
+                                </div>
+
+                                <!-- 表单字段区域 -->
+                                <div class="grid gap-4">
+                                    <div class="grid gap-2">
+                                        <Label>所属类别</Label>
+                                        <!-- 注意：Select 的 value 需要转为字符串匹配 -->
+                                        <Select v-model="newCategory!.productType">
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="请选择类别" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectGroup>
+                                                    <!-- 这里的 value 视你的后端是 number 还是 string 而定 -->
+                                                    <SelectItem :value="1">组件</SelectItem>
+                                                    <SelectItem :value="2">整机</SelectItem>
+                                                </SelectGroup>
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+
+                                    <div class="grid gap-2">
+                                        <Label for="name">分类名称</Label>
+                                        <Input id="name" v-model="newCategory!.name" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <DialogFooter>
+                                <DialogClose as-child>
+                                    <Button type="submit" @click="add()"
+                                        :disabled="newCategory.productType === -1 || newCategory.image === '' || newCategory.name === '' || uploading">
+                                        添加
+                                    </Button>
+                                </DialogClose>
+                            </DialogFooter>
+                        </DialogContent>
+                    </Dialog>
                 </TableRow>
             </TableHeader>
 
@@ -207,87 +296,6 @@
                 返回全部数据
             </Button>
         </div>
-
-        <!-- 新增 -->
-        <Dialog v-model:open="commonStore.openDialog">
-            <DialogTrigger as-child>
-            </DialogTrigger>
-            <DialogContent class="sm:max-w-[500px]">
-                <DialogHeader>
-                    <DialogTitle>编辑分类</DialogTitle>
-                    <DialogDescription>修改分类的详细信息。</DialogDescription>
-                </DialogHeader>
-
-                <div class="grid gap-6 py-4">
-                    <!-- 图片上传区域 -->
-                    <div class="flex flex-col items-center gap-4">
-                        <Dialog>
-                            <DialogTrigger as-child>
-                                <div class="relative group cursor-pointer overflow-hidden rounded-xl border shadow-sm">
-                                    <!-- 使用 Avatar 或 img 均可，这里用 img 方便控制大图 -->
-                                    <img :src="newCategory.image" v-if="newCategory.image"
-                                        class="h-32 w-32 object-cover transition-transform duration-300 group-hover:scale-105" />
-                                    <div v-else class="h-32 w-32"></div>
-                                    <div
-                                        class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                        <span
-                                            class="text-white text-xs font-medium bg-black/50 px-2 py-1 rounded">添加图片</span>
-                                    </div>
-                                </div>
-                            </DialogTrigger>
-                            <!-- 内层上传 Dialog 保持不变 -->
-                            <DialogContent class="md:max-w-xl">
-                                <DialogHeader>
-                                    <DialogTitle>上传图片</DialogTitle>
-                                </DialogHeader>
-                                <div class="py-4">
-                                    <FileUpload v-model:data="images" :max-files="1" />
-                                </div>
-                                <DialogFooter>
-                                    <DialogClose as-child>
-                                        <Button type="button" @click="uploadFiles('add')">确认上传</Button>
-                                    </DialogClose>
-                                </DialogFooter>
-                            </DialogContent>
-                        </Dialog>
-                    </div>
-
-                    <!-- 表单字段区域 -->
-                    <div class="grid gap-4">
-                        <div class="grid gap-2">
-                            <Label>所属类别</Label>
-                            <!-- 注意：Select 的 value 需要转为字符串匹配 -->
-                            <Select v-model="newCategory!.productType">
-                                <SelectTrigger>
-                                    <SelectValue placeholder="请选择类别" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectGroup>
-                                        <!-- 这里的 value 视你的后端是 number 还是 string 而定 -->
-                                        <SelectItem :value="1">组件</SelectItem>
-                                        <SelectItem :value="2">整机</SelectItem>
-                                    </SelectGroup>
-                                </SelectContent>
-                            </Select>
-                        </div>
-
-                        <div class="grid gap-2">
-                            <Label for="name">分类名称</Label>
-                            <Input id="name" v-model="newCategory!.name" />
-                        </div>
-                    </div>
-                </div>
-
-                <DialogFooter>
-                    <DialogClose as-child>
-                        <Button type="submit" @click="add()"
-                            :disabled="newCategory.productType === -1 || newCategory.image === '' || newCategory.name === '' || uploading">
-                            添加
-                        </Button>
-                    </DialogClose>
-                </DialogFooter>
-            </DialogContent>
-        </Dialog>
     </div>
 </template>
 
@@ -309,9 +317,7 @@
     import FileUpload from '@/components/front/common/Upload.vue'
     import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
     import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger, } from '@/components/ui/alert-dialog'
-    import { useCommonStore } from '@/stores/CommonStore'
-    const commonStore = useCommonStore()
-    import { Ghost } from 'lucide-vue-next'
+    import { Ghost, Plus } from 'lucide-vue-next'
 
 
     onMounted(() => {
@@ -399,7 +405,6 @@
             newCategory.value.productType = -1
             newCategory.value.name = ''
             newCategory.value.image = ''
-            commonStore.openDialog = false
             getCategory()
         } catch (error) {
             console.log(error)

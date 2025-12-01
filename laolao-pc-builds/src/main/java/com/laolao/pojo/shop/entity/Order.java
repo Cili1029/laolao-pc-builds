@@ -100,14 +100,4 @@ public class Order {
      * 创建时间
      */
     private LocalDateTime createdAt;
-
-    /**
-     * 最后更新人
-     */
-    private String updatedBy;
-
-    /**
-     * 最后更新时间
-     */
-    private LocalDateTime updatedAt;
 }

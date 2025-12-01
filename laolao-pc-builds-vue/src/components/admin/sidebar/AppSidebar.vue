@@ -71,7 +71,7 @@
         isActive: false,
         items: [
           { title: "分类标签", url: "/admin/shop/category" },
-          { title: "组件", url: "#" },
+          { title: "组件", url: "/admin/shop/component" },
           { title: "整机", url: "#" },
           { title: "优惠券", url: "#" },
         ],
@@ -90,7 +90,7 @@
     ],
     projects: [
       { name: "销售统计", url: "#", icon: Frame },
-      { name: "Sales & Marketing", url: "#", icon: PieChart },
+      { name: "测试", url: "/admin/test", icon: PieChart },
       { name: "Travel", url: "#", icon: Map },
     ],
   }
