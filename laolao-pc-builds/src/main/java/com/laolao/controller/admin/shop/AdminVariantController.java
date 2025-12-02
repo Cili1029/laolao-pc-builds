@@ -1,32 +1,32 @@
 package com.laolao.controller.admin.shop;
 
-import com.github.pagehelper.PageInfo;
 import com.laolao.common.result.Result;
 import com.laolao.pojo.common.StatusDTO;
-import com.laolao.pojo.shop.vo.AdminComponentVO;
-import com.laolao.service.admin.shop.AdminComponentService;
+import com.laolao.pojo.shop.entity.Variant;
+import com.laolao.service.admin.shop.AdminVariantService;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 
 /**
- * 客户端组件相关
+ * 客户端组件版本相关
  */
 @RestController
-@RequestMapping("/admin/shop/component")
-public class AdminComponentController {
+@RequestMapping("/admin/shop/variant")
+public class AdminVariantController {
 
     @Resource
-    private AdminComponentService adminComponentService;
+    private AdminVariantService adminVariantService;
 
     /**
-     * 获取组件数据
+     * 获取组件版本数据
      *
      * @return 组件数据
      */
     @GetMapping
-    public Result<PageInfo<AdminComponentVO>> list(Integer pageNum, Integer pageSize) {
-        return adminComponentService.getComponent(pageNum, pageSize);
+    public Result<List<Variant>> list(@RequestParam int id) {
+        return adminVariantService.getVariant(id);
     }
 
     /**
@@ -37,7 +37,7 @@ public class AdminComponentController {
      */
     @PatchMapping("/activate")
     public Result<String> activate(@RequestBody StatusDTO statusDTO) {
-        return adminComponentService.changeStatus(statusDTO.getId(), 1);
+        return adminVariantService.changeStatus(statusDTO.getId(), 1);
     }
 
     /**
@@ -48,6 +48,6 @@ public class AdminComponentController {
      */
     @PatchMapping("/deactivate")
     public Result<String> deactivate(@RequestBody StatusDTO statusDTO) {
-        return adminComponentService.changeStatus(statusDTO.getId(), 0);
+        return adminVariantService.changeStatus(statusDTO.getId(), 0);
     }
 }

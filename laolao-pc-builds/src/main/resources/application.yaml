@@ -41,6 +41,26 @@ aliyun:
     endpoint: ${laolao.aliyun.oss.endpoint}
     bucket-name: ${laolao.aliyun.oss.bucket-name}
 
+pagehelper:
+  # 1. 数据库方言（必须配置，告诉 PageHelper 用哪种数据库的分页语法）
+  # 可选值：mysql、oracle、sqlserver、postgresql、sqlite 等（全小写）
+  helper-dialect: mysql
+  # 2. 分页合理化参数（默认 false）
+  # true：pageNum <=0 时查询第 1 页，pageNum > 总页数时查询最后 1 页
+  # false：pageNum 不合法时返回空数据
+  reasonable: true
+  # 3. 支持通过 Mapper 接口参数传递分页参数（默认 false）
+  # true：可在 Mapper 方法参数中直接传入 Page 对象或 pageNum/pageSize
+  support-methods-arguments: true
+  # 4. 为参数绑定提供分页参数名称（配合 support-methods-arguments 使用）
+  # 默认：pageNum=pageNum，pageSize=pageSize，count=countSql，pageSizeZero=pageSizeZero
+  params: count=countSql
+  # 5. 是否返回总记录数（默认 true）
+  # false：不查询总条数（仅返回当前页数据，效率更高）
+  row-bounds-with-count: true
+  # 6. pageSize=0 时是否查询全部数据（默认 false）
+  # true：pageSize=0 时返回所有数据（相当于不分页）
+  page-size-zero: false
 
 laolao:
   jwt:

@@ -1,13 +1,12 @@
 package com.laolao.service.admin.shop;
 
+import com.github.pagehelper.PageInfo;
 import com.laolao.common.result.Result;
-import com.laolao.pojo.shop.entity.Variant;
 import com.laolao.pojo.shop.vo.AdminComponentVO;
 
-import java.util.List;
 
 public interface AdminComponentService {
-    Result<List<AdminComponentVO>> getComponent();
+    Result<PageInfo<AdminComponentVO>> getComponent(Integer pageNum, Integer pageSize);
 
-    Result<List<Variant>> getVariant(int id);
+    Result<String> changeStatus(int id, int status);
 }
