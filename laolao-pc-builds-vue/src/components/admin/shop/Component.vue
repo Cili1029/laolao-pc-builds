@@ -16,11 +16,65 @@
                             <TableHead class="w-[80px] text-center">状态</TableHead>
                             <TableHead class="w-[60px] text-center">排序权重</TableHead>
                             <TableHead class="hidden xl:table-cell w-[120px] text-center">创建信息</TableHead>
-                            <TableHead class="w-[50px] text-center">
-                                <Button size="icon" variant="ghost" class="h-5 w-5 hover:bg-background">
-                                    <Plus class="h-3 w-3" />
-                                </Button>
-                            </TableHead>
+                            <TableHead class="w-[80px] text-center">操作</TableHead>
+                            <Dialog>
+                                <DialogTrigger as-child>
+                                    <TableHead class="w-[50px] text-center">
+                                        <Button size="icon" variant="ghost" class="h-5 w-5 hover:bg-background">
+                                            <Plus class="h-3 w-3" />
+                                        </Button>
+                                    </TableHead>
+                                </DialogTrigger>
+                                <DialogContent class="sm:max-w-[500px]">
+                                    <DialogHeader>
+                                        <DialogTitle>新增分类</DialogTitle>
+                                        <DialogDescription></DialogDescription>
+                                    </DialogHeader>
+                                    <div class="grid gap-6 py-4">
+                                        <!-- 表单字段区域 -->
+                                        <div class="grid gap-4">
+                                            <div class="grid gap-2">
+                                                <Label for="name">组件名</Label>
+                                                <Input id="name" v-model="newComponent!.name" />
+                                            </div>
+                                            <div class="grid gap-2">
+                                                <Label>组件类别</Label>
+                                                <!-- 注意：Select 的 value 需要转为字符串匹配 -->
+                                                <Select v-model="newComponent!.categoryId">
+                                                    <SelectTrigger>
+                                                        <SelectValue placeholder="请选择类别" />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        <SelectGroup>
+                                                            <SelectItem v-for="category in categories"
+                                                                :key="category.id" :value="category.id">{{ category.name
+                                                                }}</SelectItem>
+                                                        </SelectGroup>
+                                                    </SelectContent>
+                                                </Select>
+                                            </div>
+                                            <div class="grid gap-2">
+                                                <Label for="name">描述</Label>
+                                                <Textarea v-model="newComponent.commonDescription"
+                                                    placeholder="描述..." />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <DialogFooter class="flex flex-col gap-3 sm:flex-row sm:justify-start">
+                                        <Button @click="showAddDialog = true">
+                                            <span class="icon-[charm--folder]"></span>
+                                            上传图片
+                                        </Button>
+                                        <DialogClose as-child class="sm:ml-auto">
+                                            <Button type="submit" @click="addComponent()"
+                                                :disabled="!newComponent.name || !newComponent.categoryId">
+                                                添加
+                                            </Button>
+                                        </DialogClose>
+                                    </DialogFooter>
+                                </DialogContent>
+                            </Dialog>
                         </TableRow>
                     </TableHeader>
 
@@ -65,7 +119,10 @@
 
                                 <TableCell>
                                     <Badge variant="outline" class="font-normal text-xs whitespace-nowrap">
-                                        {{ component.categoryId }}
+                                        <p v-for="category in categories" :key="category.id"
+                                            v-show="category.id === component.categoryId">
+                                            {{ category.name }}
+                                        </p>
                                     </Badge>
                                 </TableCell>
 
@@ -96,6 +153,79 @@
                                     <div class="opacity-70 mt-0.5">{{ dayjs(component.createdAt).format('YYYY-MM-DD') }}
                                     </div>
                                 </TableCell>
+                                <TableCell @click.stop
+                                    class="hidden xl:table-cell text-center text-[10px] text-muted-foreground leading-tight">
+                                    <Dialog>
+                                        <DialogTrigger as-child>
+                                            <TableHead class="w-[50px] text-center">
+                                                <Button variant="outline"
+                                                    @click="updateComponentData = JSON.parse(JSON.stringify(component))">
+                                                    编辑
+                                                </Button>
+                                            </TableHead>
+                                        </DialogTrigger>
+                                        <DialogContent class="sm:max-w-[1000px]">
+                                            <DialogHeader>
+                                                <DialogTitle>编辑</DialogTitle>
+                                                <DialogDescription></DialogDescription>
+                                            </DialogHeader>
+                                            <div class="flex space-x-2">
+                                                <div class="gap-6 py-4 w-1/2">
+                                                    <!-- 表单字段区域 -->
+                                                    <div class="grid gap-4">
+                                                        <div class="grid gap-2">
+                                                            <Label for="name">组件名</Label>
+                                                            <Input id="name" v-model="updateComponentData!.name" />
+                                                        </div>
+                                                        <div class="grid gap-2">
+                                                            <Label>组件类别</Label>
+                                                            <Select v-model="updateComponentData!.categoryId">
+                                                                <SelectTrigger>
+                                                                    <SelectValue placeholder="请选择类别" />
+                                                                </SelectTrigger>
+                                                                <SelectContent>
+                                                                    <SelectGroup>
+                                                                        <SelectItem v-for="category in categories"
+                                                                            :key="category.id" :value="category.id">
+                                                                            {{ category.name
+                                                                            }}</SelectItem>
+                                                                    </SelectGroup>
+                                                                </SelectContent>
+                                                            </Select>
+                                                        </div>
+                                                        <div class="grid gap-2">
+                                                            <Label for="name">排序权重</Label>
+                                                            <Input v-model="updateComponentData.sort" type="number" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="w-1/2">
+                                                    <div class="grid gap-2">
+                                                        <Label for="name">描述</Label>
+                                                        <Textarea v-model="updateComponentData.commonDescription"
+                                                            placeholder="描述..." />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <DialogFooter class="flex flex-col gap-3 sm:flex-row sm:justify-start">
+                                                <Button @click="updateImg = component.images, showUpdateDialog = true">
+                                                    <span class="icon-[charm--folder]"></span>
+                                                    图片管理
+                                                </Button>
+                                                <FileManager v-model:open="showUpdateDialog" v-model="updateImg"
+                                                    :max-files="5" upload-api="/api/common/upload"
+                                                    delete-api="/api/common/delete"
+                                                    :upload-extra-data="{ type: 'components' }" />
+                                                <DialogClose as-child class="sm:ml-auto">
+                                                    <Button type="submit" @click="updateComponent(component)"
+                                                        :disabled="!updateComponentData.name || !updateComponentData.categoryId">
+                                                        修改
+                                                    </Button>
+                                                </DialogClose>
+                                            </DialogFooter>
+                                        </DialogContent>
+                                    </Dialog>
+                                </TableCell>
 
                                 <TableCell @click.stop class="text-center px-2">
                                     <DropdownMenu>
@@ -115,7 +245,8 @@
                                             <DropdownMenuItem>
                                                 <Edit class="mr-2 h-3.5 w-3.5" /> 编辑
                                             </DropdownMenuItem>
-                                            <DropdownMenuItem class="text-red-600 focus:text-red-600">
+                                            <DropdownMenuItem class="text-red-600 focus:text-red-600"
+                                                @click="openDeleteDialog = true, deleteType = 1, deleteId = component.id">
                                                 <Trash2 class="mr-2 h-3.5 w-3.5" /> 删除
                                             </DropdownMenuItem>
                                         </DropdownMenuContent>
@@ -130,15 +261,57 @@
                                         <div class="rounded-md border bg-background overflow-hidden">
                                             <div
                                                 class="flex items-center justify-between bg-muted/30 px-3 py-1.5 border-b">
-                                                <div class="flex items-center gap-2">
-                                                    <span class="text-xs font-medium text-foreground/80">版本规格列表</span>
-                                                    <Badge variant="secondary" class="h-4 px-1 text-[9px] font-normal">
-                                                        {{ component.variants!.length }} 个
-                                                    </Badge>
-                                                </div>
-                                                <Button size="icon" variant="ghost" class="h-5 w-5 hover:bg-background">
-                                                    <Plus class="h-3 w-3" />
-                                                </Button>
+                                                <span class="text-xs font-medium text-foreground/80">版本规格列表</span>
+                                                <Dialog>
+                                                    <DialogTrigger as-child>
+                                                        <TableHead class="w-[50px] text-center">
+                                                            <Button size="icon" variant="ghost"
+                                                                class="h-5 w-5 hover:bg-background">
+                                                                <Plus class="h-3 w-3" />
+                                                            </Button>
+                                                        </TableHead>
+                                                    </DialogTrigger>
+                                                    <DialogContent class="sm:max-w-[500px]">
+                                                        <DialogHeader>
+                                                            <DialogTitle>新增版本</DialogTitle>
+                                                            <DialogDescription></DialogDescription>
+                                                        </DialogHeader>
+                                                        <div class="grid gap-6 py-4">
+                                                            <!-- 表单字段区域 -->
+                                                            <div class="grid gap-4">
+                                                                <div class="grid gap-2">
+                                                                    <Label for="name">版本名</Label>
+                                                                    <Input id="name"
+                                                                        v-model="newVariant!.variantName" />
+                                                                </div>
+                                                                <div class="grid gap-2">
+                                                                    <Label for="name">价格</Label>
+                                                                    <Input id="name" type="number"
+                                                                        v-model="newVariant.price" />
+                                                                </div>
+                                                                <div class="grid gap-2">
+                                                                    <Label for="name">描述</Label>
+                                                                    <Textarea v-model="newVariant.description"
+                                                                        placeholder="描述..." />
+                                                                </div>
+                                                                <div class="grid gap-2">
+                                                                    <Label for="name">库存</Label>
+                                                                    <Input id="name" type="number"
+                                                                        v-model="newVariant.stock" />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <DialogFooter>
+                                                            <DialogClose as-child class="sm:ml-auto">
+                                                                <Button type="submit" @click="addVariant(component.id)"
+                                                                    :disabled="!newVariant.variantName || !newVariant.description || newVariant.price === 0">
+                                                                    添加
+                                                                </Button>
+                                                            </DialogClose>
+                                                        </DialogFooter>
+                                                    </DialogContent>
+                                                </Dialog>
                                             </div>
 
                                             <Table>
@@ -155,9 +328,10 @@
                                                         </TableHead>
                                                         <TableHead class="h-8 w-[70px] text-center text-xs">状态
                                                         </TableHead>
-                                                        <TableHead class="h-8 w-[140px] text-center text-xs">快捷操作
+                                                        <TableHead class="h-8 w-[120px] text-center text-xs">创建信息
                                                         </TableHead>
-                                                        <TableHead class="h-8 w-[40px]"></TableHead>
+                                                        <TableHead class="h-8 w-[140px] text-center text-xs">操作
+                                                        </TableHead>
                                                     </TableRow>
                                                 </TableHeader>
                                                 <TableBody>
@@ -192,11 +366,43 @@
                                                                 </span>
                                                             </div>
                                                         </TableCell>
+                                                        <TableCell
+                                                            class="py-2 text-center text-[10px] flex flex-col items-center">
+                                                            <div>{{ variant.createdBy }}</div>
+                                                            <div class="opacity-70 mt-0.5">{{
+                                                                dayjs(variant.createdAt).format('YYYY-MM-DD') }}
+                                                            </div>
+                                                        </TableCell>
                                                         <TableCell class="py-2 text-center">
                                                             <div class="flex items-center justify-center gap-1">
-                                                                <Button variant="outline" class="h-6 px-2 text-[10px]">
-                                                                    补货
-                                                                </Button>
+                                                                <Dialog>
+                                                                    <DialogTrigger as-child>
+                                                                        <Button variant="outline"
+                                                                            @click="newStock = variant.stock"
+                                                                            class="h-6 px-2 text-[10px]">
+                                                                            补货
+                                                                        </Button>
+                                                                    </DialogTrigger>
+                                                                    <DialogContent class="sm:max-w-[425px]">
+                                                                        <DialogHeader>
+                                                                            <DialogTitle>补货</DialogTitle>
+                                                                            <DialogDescription>
+                                                                                输入更新后的数量
+                                                                            </DialogDescription>
+                                                                        </DialogHeader>
+                                                                        <div class="grid gap-3">
+                                                                            <Label>数量</Label>
+                                                                            <Input type="number" v-model="newStock" />
+                                                                        </div>
+                                                                        <DialogFooter>
+                                                                            <DialogClose as-child>
+                                                                                <Button @click="updateStock(variant)">
+                                                                                    修改
+                                                                                </Button>
+                                                                            </DialogClose>
+                                                                        </DialogFooter>
+                                                                    </DialogContent>
+                                                                </Dialog>
                                                                 <Button variant="outline" v-if="variant.status === 1"
                                                                     @click="changeVariantStatus(variant, 0)"
                                                                     class="h-6 px-2 text-[10px]">禁用
@@ -205,43 +411,56 @@
                                                                     @click="changeVariantStatus(variant, 1)"
                                                                     class="h-6 px-2 text-[10px]">启用
                                                                 </Button>
+                                                                <Dialog>
+                                                                    <DialogTrigger as-child>
+                                                                        <Button variant="outline"
+                                                                            @click="updateVariantData = JSON.parse(JSON.stringify(variant))"
+                                                                            class="h-6 px-2 text-[10px]">编辑
+                                                                        </Button>
+                                                                    </DialogTrigger>
+                                                                    <DialogContent class="sm:max-w-[500px]">
+                                                                        <DialogHeader>
+                                                                            <DialogTitle>修改版本</DialogTitle>
+                                                                            <DialogDescription>
+                                                                            </DialogDescription>
+                                                                        </DialogHeader>
+                                                                        <div class="grid gap-6 py-4">
+                                                                            <div class="grid gap-4">
+                                                                                <div class="grid gap-2">
+                                                                                    <Label for="name">版本名</Label>
+                                                                                    <Input id="name"
+                                                                                        v-model="updateVariantData!.variantName" />
+                                                                                </div>
+                                                                                <div class="grid gap-2">
+                                                                                    <Label for="name">价格</Label>
+                                                                                    <Input id="name" type="number"
+                                                                                        v-model="updateVariantData!.price" />
+                                                                                </div>
+                                                                                <div class="grid gap-2">
+                                                                                    <Label for="name">描述</Label>
+                                                                                    <Textarea
+                                                                                        v-model="updateVariantData!.description"
+                                                                                        placeholder="描述..." />
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+
+                                                                        <DialogFooter>
+                                                                            <DialogClose as-child class="sm:ml-auto">
+                                                                                <Button type="submit"
+                                                                                    @click="updateVariant(variant)"
+                                                                                    :disabled="!updateVariantData.variantName || !updateVariantData.description || updateVariantData.price === 0">
+                                                                                    修改
+                                                                                </Button>
+                                                                            </DialogClose>
+                                                                        </DialogFooter>
+                                                                    </DialogContent>
+                                                                </Dialog>
+                                                                <Button variant="outline"
+                                                                    @click="openDeleteDialog = true, deleteType = 2, deleteId = variant.id, componentId = variant.componentId"
+                                                                    class="h-6 px-2 text-[10px]">删除
+                                                                </Button>
                                                             </div>
-                                                        </TableCell>
-                                                        <TableCell>
-                                                            <DropdownMenu>
-                                                                <DropdownMenuTrigger as-child>
-                                                                    <Button variant="ghost" size="icon" class="h-8 w-8">
-                                                                        <MoreHorizontal class="h-4 w-4" />
-                                                                    </Button>
-                                                                </DropdownMenuTrigger>
-                                                                <DropdownMenuContent align="end">
-                                                                    <DropdownMenuItem>
-                                                                        <Edit class="mr-2 h-4 w-4" /> 编辑
-                                                                    </DropdownMenuItem>
-                                                                    <DropdownMenuSeparator />
-                                                                    <DropdownMenuItem class="text-red-600">
-                                                                        <AlertDialog>
-                                                                            <AlertDialogTrigger as-child>
-                                                                                <Trash2 class="mr-2 h-4 w-4" /> 删除
-                                                                            </AlertDialogTrigger>
-                                                                            <AlertDialogContent>
-                                                                                <AlertDialogHeader>
-                                                                                    <AlertDialogTitle>确定删除吗?
-                                                                                    </AlertDialogTitle>
-                                                                                    <AlertDialogDescription>删除后无法找回
-                                                                                    </AlertDialogDescription>
-                                                                                </AlertDialogHeader>
-                                                                                <AlertDialogFooter>
-                                                                                    <AlertDialogCancel>取消
-                                                                                    </AlertDialogCancel>
-                                                                                    <AlertDialogAction @click="">确定
-                                                                                    </AlertDialogAction>
-                                                                                </AlertDialogFooter>
-                                                                            </AlertDialogContent>
-                                                                        </AlertDialog>
-                                                                    </DropdownMenuItem>
-                                                                </DropdownMenuContent>
-                                                            </DropdownMenu>
                                                         </TableCell>
                                                     </TableRow>
                                                 </TableBody>
@@ -250,6 +469,7 @@
                                     </div>
                                 </TableCell>
                             </TableRow>
+
                         </template>
                     </TableBody>
                 </Table>
@@ -273,6 +493,29 @@
                 </PaginationContent>
             </Pagination>
         </div>
+
+        <!-- 删除弹框 -->
+        <AlertDialog v-model:open="openDeleteDialog">
+            <AlertDialogTrigger as-child>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+                <AlertDialogHeader>
+                    <AlertDialogTitle>确定删除吗?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                        删除后无法找回
+                    </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                    <AlertDialogCancel>取消</AlertDialogCancel>
+                    <AlertDialogAction @click="deleteById()">确定
+                    </AlertDialogAction>
+                </AlertDialogFooter>
+            </AlertDialogContent>
+        </AlertDialog>
+
+        
+        <FileManager v-model:open="showAddDialog" v-model="addImg" :max-files="5" upload-api="/api/common/upload"
+            delete-api="/api/common/delete" :upload-extra-data="{ type: 'components' }" />
     </div>
 </template>
 
@@ -280,12 +523,18 @@
 <script setup lang="ts">
     import { onMounted, ref, watch } from 'vue'
     import axios from '@/utils/myAxios'
+    import FileManager from '@/components/common/FileManager.vue'
     import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, } from '@/components/ui/table'
-    import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger, } from '@/components/ui/dropdown-menu'
+    import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, } from '@/components/ui/dropdown-menu'
     import { Badge } from '@/components/ui/badge'
     import { Button } from '@/components/ui/button'
+    import { Label } from '@/components/ui/label'
+    import { Textarea } from '@/components/ui/textarea'
+    import { Input } from '@/components/ui/input'
+    import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
     import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger, } from '@/components/ui/alert-dialog'
     import { ChevronRight, MoreHorizontal, Edit, Trash2, ImageIcon, Plus, CircleOff, Circle } from 'lucide-vue-next'
+    import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, } from '@/components/ui/dialog'
     import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationNext, PaginationPrevious, } from '@/components/ui/pagination'
     import dayjs from 'dayjs'
     import relativeTime from 'dayjs/plugin/relativeTime'
@@ -295,7 +544,30 @@
 
     onMounted(() => {
         getComponent()
+        getCategory()
     })
+
+    interface Category {
+        id: number
+        productType: number
+        name: string
+        image: string
+        status: number
+        sort: number
+        createdBy: string
+        createdAt: string
+    }
+
+    const categories = ref<Category[]>([])
+
+    const getCategory = async () => {
+        try {
+            const response = await axios.get("/api/admin/shop/category/list")
+            categories.value = response.data.data
+        } catch (error) {
+            console.log(error)
+        }
+    }
 
     interface Variant {
         id: number
@@ -376,13 +648,97 @@
 
             targetComponent!.status = status
 
-            if (targetComponent!.variants && targetComponent!.variants.length > 0) {
+            if (targetComponent!.variants && targetComponent!.variants.length > 0 && status === 0) {
                 targetComponent!.variants.forEach(variant => {
                     variant.status = status
                 })
             }
         } catch (error) {
             console.error(error)
+        }
+    }
+
+    const openDeleteDialog = ref<boolean>(false)
+    const deleteType = ref(0)
+    const deleteId = ref(0)
+    const componentId = ref(0)
+
+    const deleteById = async () => {
+        try {
+            if (deleteType.value === 1) {
+                await axios.delete("/api/admin/shop/component", {
+                    params: {
+                        id: deleteId.value
+                    }
+                })
+                components.value = components.value.filter(component => component.id !== deleteId.value)
+            } else {
+                await axios.delete("/api/admin/shop/variant", {
+                    params: {
+                        id: deleteId.value
+                    }
+                })
+                const targetComponent = components.value.find(component => component.id === componentId.value)
+                targetComponent!.variants = targetComponent!.variants!.filter(variant => variant.id !== deleteId.value)
+                componentId.value = 0
+            }
+            deleteType.value = 0
+            deleteId.value = 0
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+    // 新增
+    const newComponent = ref({
+        name: "",
+        categoryId: 0,
+        images: [],
+        commonDescription: ""
+    })
+
+    const addComponent = async () => {
+        try {
+            await axios.post("/api/admin/shop/component/add", {
+                name: newComponent.value.name,
+                categoryId: newComponent.value.categoryId,
+                images: addImg.value,
+                commonDescription: newComponent.value.commonDescription
+            })
+            pageNum.value = 1
+            getComponent()
+            addImg.value = []
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    // 更新
+    const updateComponentData = ref({
+        name: '',
+        categoryId: 0,
+        commonDescription: '',
+        sort: 0
+    })
+
+    const updateComponent = async (component: Component) => {
+        try {
+            await axios.patch("/api/admin/shop/component/update", {
+                id: component.id,
+                name: updateComponentData.value.name,
+                categoryId: updateComponentData.value.categoryId,
+                commonDescription: updateComponentData.value.commonDescription,
+                sort: updateComponentData.value.sort,
+                images: updateImg.value
+            })
+            component.name = updateComponentData.value.name
+            component.categoryId = updateComponentData.value.categoryId
+            component.commonDescription = updateComponentData.value.commonDescription
+            component.sort = updateComponentData.value.sort,
+            component.images = updateImg.value
+            addImg.value = []
+        } catch (error) {
+            console.log(error)
         }
     }
 
@@ -404,6 +760,65 @@
 
         } catch (error) {
             console.error(error)
+        }
+    }
+
+    const newVariant = ref({
+        variantName: "",
+        price: 0,
+        description: "",
+        stock: 0
+    })
+
+    const addVariant = async (componentId: number) => {
+        try {
+            const response = await axios.post("/api/admin/shop/variant/add", {
+                componentId: componentId,
+                variantName: newVariant.value.variantName,
+                price: newVariant.value.price,
+                description: newVariant.value.description,
+                stock: newVariant.value.stock
+            })
+            components.value.find(component => component.id === componentId)!.variants?.push(response.data.data)
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    // 更新
+    const updateVariantData = ref({
+        variantName: "",
+        price: 0,
+        description: ""
+    })
+
+    const updateVariant = async (variant: Variant) => {
+        try {
+            await axios.patch("/api/admin/shop/variant/update", {
+                id: variant.id,
+                variantName: updateVariantData.value.variantName,
+                price: updateVariantData.value.price,
+                description: updateVariantData.value.description
+            })
+            variant.variantName = updateVariantData.value.variantName
+            variant.price = updateVariantData.value.price
+            variant.description = updateVariantData.value.description
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    // 补货
+    const newStock = ref<number>(0)
+    const updateStock = async (variant: Variant) => {
+        try {
+            await axios.patch("/api/admin/shop/variant/stock", {
+                id: variant.id,
+                stock: newStock.value
+            })
+            variant.stock = newStock.value
+        } catch (error) {
+            console.log(error)
         }
     }
 
@@ -429,4 +844,12 @@
         component.variants = variantsData
         openId.value = id
     }
+
+
+    // 控制弹窗开关
+    const showAddDialog = ref(false)
+    const showUpdateDialog = ref(false)
+    // 数据源：现有的图片 URL
+    const addImg = ref<string[]>([])
+    const updateImg = ref<string[]>([])
 </script>

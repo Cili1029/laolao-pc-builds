@@ -1,23 +1,16 @@
-package com.laolao.pojo.shop.entity;
+package com.laolao.pojo.shop.vo;
 
 import lombok.*;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-@Builder
-public class Variant implements Serializable {
-    /**
-     * 主键
-     */
-    private int id;
-
+public class AdminAddVariantVO implements Serializable {
     /**
      * 所属部件Id
      */
@@ -42,19 +35,4 @@ public class Variant implements Serializable {
      * 库存
      */
     private int stock;
-
-    /**
-     * 状态 1启用 0停用
-     */
-    private Integer status;
-
-    /**
-     * 创建人
-     */
-    private int createdBy;
-
-    /**
-     * 创建时间
-     */
-    private LocalDateTime createdAt;
 }

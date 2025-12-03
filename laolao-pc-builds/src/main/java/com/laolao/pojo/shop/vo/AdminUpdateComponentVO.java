@@ -1,9 +1,7 @@
-package com.laolao.pojo.shop.entity;
+package com.laolao.pojo.shop.vo;
 
 import lombok.*;
 
-import java.io.Serializable;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -11,7 +9,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class Component implements Serializable {
+public class AdminUpdateComponentVO {
     /**
      * 主键
      */
@@ -38,27 +36,7 @@ public class Component implements Serializable {
     private String commonDescription;
 
     /**
-     * 销售额
-     */
-    private int sales;
-
-    /**
-     * 状态 1启用 0停用
-     */
-    private Integer status;
-
-    /**
-     * 排序
+     * 排序权重
      */
     private int sort;
-
-    /**
-     * 创建人
-     */
-    private int createdBy;
-
-    /**
-     * 创建时间
-     */
-    private LocalDateTime createdAt;
 }

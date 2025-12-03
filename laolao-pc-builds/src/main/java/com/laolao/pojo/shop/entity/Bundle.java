@@ -46,7 +46,7 @@ public class Bundle implements Serializable {
     /**
      * 描述
      */
-    private String Description;
+    private String description;
 
     /**
      * 销售额
@@ -71,7 +71,7 @@ public class Bundle implements Serializable {
     /**
      * 创建人
      */
-    private String createdBy;
+    private int createdBy;
 
     /**
      * 创建时间

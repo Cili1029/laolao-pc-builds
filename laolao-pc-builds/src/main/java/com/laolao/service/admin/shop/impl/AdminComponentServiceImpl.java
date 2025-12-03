@@ -2,12 +2,15 @@ package com.laolao.service.admin.shop.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.laolao.common.context.BaseContext;
 import com.laolao.common.result.Result;
 import com.laolao.converter.MapStruct;
 import com.laolao.mapper.admin.shop.AdminComponentMapper;
 import com.laolao.mapper.admin.shop.AdminVariantMapper;
 import com.laolao.pojo.shop.entity.Component;
+import com.laolao.pojo.shop.vo.AdminAddComponentVO;
 import com.laolao.pojo.shop.vo.AdminComponentVO;
+import com.laolao.pojo.shop.vo.AdminUpdateComponentVO;
 import com.laolao.service.admin.shop.AdminComponentService;
 import jakarta.annotation.Resource;
 import org.springframework.beans.BeanUtils;
@@ -50,9 +53,33 @@ public class AdminComponentServiceImpl implements AdminComponentService {
     @Override
     @Transactional
     public Result<String> changeStatus(int id, int status) {
-        // 先禁用版本
-        adminVariantMapper.updateVariantStatusByComponentId(id, status);
+        if (status == 0) {
+            // 先禁用版本
+            adminVariantMapper.updateVariantStatusByComponentId(id, status);
+        }
         adminComponentMapper.updateComponentStatus(id, status);
         return Result.success(status == 1 ? "已启用！" : "已禁用！");
+    }
+
+    @Override
+    @Transactional
+    public Result<String> delete(int id) {
+        // 先删除子版本
+        adminVariantMapper.deleteByComponentId(id);
+        adminComponentMapper.delete(id);
+        return Result.success("删除成功！");
+    }
+
+    @Override
+    public Result<String> add(AdminAddComponentVO adminAddComponentVO) {
+        adminAddComponentVO.setCreatedBy(BaseContext.getCurrentId());
+        adminComponentMapper.insert(adminAddComponentVO);
+        return Result.success("新增成功");
+    }
+
+    @Override
+    public Result<String> update(AdminUpdateComponentVO adminUpdateComponentVO) {
+        adminComponentMapper.update(adminUpdateComponentVO);
+        return Result.success("修改成功！");
     }
 }

@@ -1,9 +1,7 @@
 package com.laolao.pojo.shop.vo;
 
-import com.laolao.pojo.shop.entity.Variant;
 import lombok.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -11,12 +9,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class AdminComponentVO{
-    /**
-     * 主键
-     */
-    private int id;
-
+public class AdminAddComponentVO {
     /**
      * 组件名
      */
@@ -38,27 +31,7 @@ public class AdminComponentVO{
     private String commonDescription;
 
     /**
-     * 状态 1启用 0停用
-     */
-    private Integer status;
-
-    /**
-     * 排序
-     */
-    private int sort;
-
-    /**
      * 创建人
      */
     private int createdBy;
-
-    /**
-     * 创建时间
-     */
-    private LocalDateTime createdAt;
-
-    /**
-     * 包含的组件版本
-     */
-    private List<Variant> variants;
 }

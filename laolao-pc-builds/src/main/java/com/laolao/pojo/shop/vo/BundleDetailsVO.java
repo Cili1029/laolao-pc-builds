@@ -40,7 +40,7 @@ public class BundleDetailsVO implements Serializable {
     /**
      * 描述
      */
-    private String Description;
+    private String description;
 
     /**
      * 销售额

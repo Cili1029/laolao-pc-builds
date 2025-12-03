@@ -2,13 +2,19 @@ package com.laolao.common.utils;
 
 import com.aliyun.oss.OSS;
 import com.aliyun.oss.OSSClientBuilder;
+import com.aliyun.oss.model.DeleteObjectsRequest;
+import com.aliyun.oss.model.DeleteObjectsResult;
 import com.laolao.common.properties.AliProperties;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -86,6 +92,69 @@ public class AliOSSUtil {
             // 如果 endpoint 不包含协议，则默认使用 https
             return String.format("https://%s.%s/%s", bucketName, endpoint, fileName);
         }
+    }
+
+    /**
+     * 批量删除文件
+     *
+     * @param fileUrls 文件的完整URL列表，例如 ["https://bucket.endpoint/folder/1.jpg", ...]
+     * @return 成功删除的文件名列表
+     */
+    public List<String> delete(List<String> fileUrls) {
+        if (fileUrls == null || fileUrls.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        // 1. 初始化 OSS 客户端
+        OSS ossClient = new OSSClientBuilder().build(getEndpoint(), getAccessKeyId(), getAccessKeySecret());
+        List<String> deletedKeys = new ArrayList<>();
+
+        try {
+            // 2. 将完整的 URL 解析为 OSS 需要的 Object Name (Key)
+            List<String> keys = new ArrayList<>();
+            for (String urlStr : fileUrls) {
+                try {
+                    // (关键) 2.1 URL 解码：处理中文特殊字符
+                    // 例如 "%E7%BB%84" -> "组"
+                    String decodedUrl = URLDecoder.decode(urlStr, StandardCharsets.UTF_8.toString());
+
+                    // 2.2 提取路径：去除 http://domain/ 部分，只保留 key
+                    // 使用 java.net.URL 类来解析路径
+                    URL url = new URL(decodedUrl);
+                    String path = url.getPath();
+
+                    // url.getPath() 获取的是 "/folder/file.jpg"，OSS 需要 "folder/file.jpg"
+                    // 所以如果开头是 / 需要去掉
+                    String key = path.startsWith("/") ? path.substring(1) : path;
+
+                    keys.add(key);
+                } catch (Exception e) {
+                    System.err.println("解析URL失败: " + urlStr);
+                    // 可以根据业务选择抛出异常还是跳过
+                }
+            }
+
+            if (!keys.isEmpty()) {
+                // 3. 创建删除请求
+                // 注意：OSS 批量删除一次最多支持 1000 个文件
+                DeleteObjectsRequest deleteObjectsRequest = new DeleteObjectsRequest(getBucketName())
+                        .withKeys(keys)
+                        .withQuiet(true); // quiet=true 表示简单模式，不返回删除详细信息，速度稍快
+
+                // 4. 执行删除
+                DeleteObjectsResult deleteObjectsResult = ossClient.deleteObjects(deleteObjectsRequest);
+                deletedKeys = deleteObjectsResult.getDeletedObjects();
+            }
+
+        } catch (Exception e) {
+            throw new RuntimeException("OSS文件删除失败: " + e.getMessage(), e);
+        } finally {
+            // 5. 关闭客户端
+            if (ossClient != null) {
+                ossClient.shutdown();
+            }
+        }
+        return deletedKeys;
     }
 
 }
