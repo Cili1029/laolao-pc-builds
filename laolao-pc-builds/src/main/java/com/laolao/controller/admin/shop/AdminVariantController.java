@@ -2,10 +2,10 @@ package com.laolao.controller.admin.shop;
 
 import com.laolao.common.result.Result;
 import com.laolao.pojo.common.StatusDTO;
-import com.laolao.pojo.common.StockDTO;
+import com.laolao.pojo.common.StockOrQuantityDTO;
 import com.laolao.pojo.shop.entity.Variant;
-import com.laolao.pojo.shop.vo.AdminAddVariantVO;
-import com.laolao.pojo.shop.vo.AdminUpdateVariantVO;
+import com.laolao.pojo.shop.dto.AdminAddVariantDTO;
+import com.laolao.pojo.shop.dto.AdminUpdateVariantDTO;
 import com.laolao.service.admin.shop.AdminVariantService;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * 客户端组件版本相关
+ * 管理端组件版本相关
  */
 @RestController
 @RequestMapping("/admin/shop/variant")
@@ -67,33 +67,33 @@ public class AdminVariantController {
     /**
      * 添加版本
      *
-     * @param adminAddVariantVO 基础信息
+     * @param adminAddVariantDTO 基础信息
      * @return 新增的版本
      */
     @PostMapping("/add")
-    public Result<Variant> add(@RequestBody AdminAddVariantVO adminAddVariantVO) {
-        return adminVariantService.add(adminAddVariantVO);
+    public Result<Variant> add(@RequestBody AdminAddVariantDTO adminAddVariantDTO) {
+        return adminVariantService.add(adminAddVariantDTO);
     }
 
     /**
      * 更新库存
      *
-     * @param stockDTO 库存信息
+     * @param stockOrQuantityDTO 库存信息
      * @return 结果信息
      */
     @PatchMapping("/stock")
-    public Result<String> update(@RequestBody StockDTO stockDTO) {
-        return adminVariantService.updateStock(stockDTO);
+    public Result<String> update(@RequestBody StockOrQuantityDTO stockOrQuantityDTO) {
+        return adminVariantService.updateStock(stockOrQuantityDTO);
     }
 
     /**
      * 更新版本信息
      *
-     * @param adminUpdateVariantVO 更新信息
+     * @param adminUpdateVariantDTO 更新信息
      * @return 结果信息
      */
     @PatchMapping("/update")
-    public Result<String> update(@RequestBody AdminUpdateVariantVO adminUpdateVariantVO) {
-        return adminVariantService.update(adminUpdateVariantVO);
+    public Result<String> update(@RequestBody AdminUpdateVariantDTO adminUpdateVariantDTO) {
+        return adminVariantService.update(adminUpdateVariantDTO);
     }
 }

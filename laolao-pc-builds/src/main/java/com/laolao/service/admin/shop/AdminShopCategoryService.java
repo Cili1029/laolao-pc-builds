@@ -7,7 +7,7 @@ import com.laolao.pojo.shop.entity.ShopCategory;
 import java.util.List;
 
 public interface AdminShopCategoryService {
-    Result<List<ShopCategory>> get();
+    Result<List<ShopCategory>> get(int type);
 
     Result<String> changeStatus(int id, int status);
 

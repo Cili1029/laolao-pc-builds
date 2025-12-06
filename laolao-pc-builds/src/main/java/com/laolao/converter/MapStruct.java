@@ -67,4 +67,6 @@ public interface MapStruct {
     AdminUserVO userToAdminUserVO(User user);
 
     AdminComponentVO componentToAdminComponentVO(Component component);
+
+    AdminBundleVO bundleToAdminBundleVO(Bundle bundle);
 }

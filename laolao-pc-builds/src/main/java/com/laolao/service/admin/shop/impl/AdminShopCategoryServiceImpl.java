@@ -18,8 +18,8 @@ public class AdminShopCategoryServiceImpl implements AdminShopCategoryService {
     private AdminShopCategoryMapper adminShopCategoryMapper;
 
     @Override
-    public Result<List<ShopCategory>> get() {
-        List<ShopCategory> shopCategoryList =  adminShopCategoryMapper.select();
+    public Result<List<ShopCategory>> get(int type) {
+        List<ShopCategory> shopCategoryList =  adminShopCategoryMapper.select(type);
         return Result.success(shopCategoryList);
     }
 

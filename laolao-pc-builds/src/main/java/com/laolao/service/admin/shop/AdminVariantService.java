@@ -1,10 +1,10 @@
 package com.laolao.service.admin.shop;
 
 import com.laolao.common.result.Result;
-import com.laolao.pojo.common.StockDTO;
+import com.laolao.pojo.common.StockOrQuantityDTO;
 import com.laolao.pojo.shop.entity.Variant;
-import com.laolao.pojo.shop.vo.AdminAddVariantVO;
-import com.laolao.pojo.shop.vo.AdminUpdateVariantVO;
+import com.laolao.pojo.shop.dto.AdminAddVariantDTO;
+import com.laolao.pojo.shop.dto.AdminUpdateVariantDTO;
 
 import java.util.List;
 
@@ -15,9 +15,9 @@ public interface AdminVariantService {
 
     Result<String> delete(int id);
 
-    Result<Variant> add(AdminAddVariantVO adminAddVariantVO);
+    Result<Variant> add(AdminAddVariantDTO adminAddVariantDTO);
 
-    Result<String> updateStock(StockDTO stockDTO);
+    Result<String> updateStock(StockOrQuantityDTO stockOrQuantityDTO);
 
-    Result<String> update(AdminUpdateVariantVO adminUpdateVariantVO);
+    Result<String> update(AdminUpdateVariantDTO adminUpdateVariantDTO);
 }

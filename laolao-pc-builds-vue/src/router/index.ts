@@ -19,7 +19,7 @@ import AdminUser from '@/components/admin/user/User.vue';
 import ShopCategory from '@/components/admin/shop/ShopCategory.vue';
 import ForumCategory from '@/components/admin/forum/ForumCategory.vue';
 import Component from '@/components/admin/shop/Component.vue';
-
+import Bundle from '@/components/admin/shop/Bundle.vue';
 
 const routes: Array<RouteRecordRaw> = [
   // 1. 用户端路由组
@@ -36,7 +36,7 @@ const routes: Array<RouteRecordRaw> = [
       },
       {
         path: 'user/:id',
-        name: 'User',
+        name: 'FrontUser',
         component: FrontUser,
         meta: { showFooter: false }
       },
@@ -100,7 +100,7 @@ const routes: Array<RouteRecordRaw> = [
       },
       {
         path: 'user',
-        name: 'User',
+        name: 'AdminUser',
         component: AdminUser,
       },
       {
@@ -117,6 +117,11 @@ const routes: Array<RouteRecordRaw> = [
         path: 'shop/component',
         name: 'Component',
         component: Component,
+      },
+      {
+        path: 'shop/bundle',
+        name: 'Bundle',
+        component: Bundle,
       },
     ]
   }

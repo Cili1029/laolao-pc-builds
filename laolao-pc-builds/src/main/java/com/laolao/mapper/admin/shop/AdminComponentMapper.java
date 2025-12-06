@@ -1,8 +1,8 @@
 package com.laolao.mapper.admin.shop;
 
 import com.laolao.pojo.shop.entity.Component;
-import com.laolao.pojo.shop.vo.AdminAddComponentVO;
-import com.laolao.pojo.shop.vo.AdminUpdateComponentVO;
+import com.laolao.pojo.shop.dto.AdminAddComponentDTO;
+import com.laolao.pojo.shop.dto.AdminUpdateComponentDTO;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -22,8 +22,8 @@ public interface AdminComponentMapper {
     void delete(int id);
 
     @Insert("insert into shop_component(name, category_id, images, common_description, created_by) value (#{name}, #{categoryId}, #{images}, #{commonDescription}, #{createdBy})")
-    void insert(AdminAddComponentVO adminAddComponentVO);
+    void insert(AdminAddComponentDTO adminAddComponentDTO);
 
     @Update("update shop_component set name = #{name}, category_id = #{categoryId}, common_description = #{commonDescription}, sort = #{sort}, images = #{images} where id = #{id}")
-    void update(AdminUpdateComponentVO adminUpdateComponentVO);
+    void update(AdminUpdateComponentDTO adminUpdateComponentDTO);
 }

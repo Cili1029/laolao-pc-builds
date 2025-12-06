@@ -215,7 +215,7 @@
                                                 <FileManager v-model:open="showUpdateDialog" v-model="updateImg"
                                                     :max-files="5" upload-api="/api/common/upload"
                                                     delete-api="/api/common/delete"
-                                                    :upload-extra-data="{ type: 'components' }" />
+                                                    :upload-extra-data="{ type: 'laolaoPC/components' }" />
                                                 <DialogClose as-child class="sm:ml-auto">
                                                     <Button type="submit" @click="updateComponent(component)"
                                                         :disabled="!updateComponentData.name || !updateComponentData.categoryId">
@@ -242,9 +242,6 @@
                                             <DropdownMenuItem v-else @click="changeComponentStatus(component.id, 1)">
                                                 <Circle class="mr-2 h-3.5 w-3.5" />启用
                                             </DropdownMenuItem>
-                                            <DropdownMenuItem>
-                                                <Edit class="mr-2 h-3.5 w-3.5" /> 编辑
-                                            </DropdownMenuItem>
                                             <DropdownMenuItem class="text-red-600 focus:text-red-600"
                                                 @click="openDeleteDialog = true, deleteType = 1, deleteId = component.id">
                                                 <Trash2 class="mr-2 h-3.5 w-3.5" /> 删除
@@ -264,7 +261,7 @@
                                                 <span class="text-xs font-medium text-foreground/80">版本规格列表</span>
                                                 <Dialog>
                                                     <DialogTrigger as-child>
-                                                        <TableHead class="w-[50px] text-center">
+                                                        <TableHead class="w-[50px] text-center flex items-center">
                                                             <Button size="icon" variant="ghost"
                                                                 class="h-5 w-5 hover:bg-background">
                                                                 <Plus class="h-3 w-3" />
@@ -533,7 +530,7 @@
     import { Input } from '@/components/ui/input'
     import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
     import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger, } from '@/components/ui/alert-dialog'
-    import { ChevronRight, MoreHorizontal, Edit, Trash2, ImageIcon, Plus, CircleOff, Circle } from 'lucide-vue-next'
+    import { ChevronRight, MoreHorizontal, Trash2, ImageIcon, Plus, CircleOff, Circle } from 'lucide-vue-next'
     import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, } from '@/components/ui/dialog'
     import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationNext, PaginationPrevious, } from '@/components/ui/pagination'
     import dayjs from 'dayjs'
@@ -562,7 +559,11 @@
 
     const getCategory = async () => {
         try {
-            const response = await axios.get("/api/admin/shop/category/list")
+            const response = await axios.get("/api/admin/shop/category/list", {
+                params:{
+                    type: 1
+                }
+            })
             categories.value = response.data.data
         } catch (error) {
             console.log(error)
@@ -622,21 +623,6 @@
         }
     }
 
-
-    const getVariant = async (id: number) => {
-        try {
-            const response = await axios.get("/api/admin/shop/variant", {
-                params: {
-                    id: id
-                }
-            })
-            return response.data.data
-        } catch (error) {
-            console.log(error)
-            return [] // 出错返回空数组
-        }
-    }
-
     const changeComponentStatus = async (id: number, status: number) => {
         try {
             if (status === 1) {
@@ -655,6 +641,20 @@
             }
         } catch (error) {
             console.error(error)
+        }
+    }
+
+    // 补货
+    const newStock = ref<number>(0)
+    const updateStock = async (variant: Variant) => {
+        try {
+            await axios.patch("/api/admin/shop/variant/stock", {
+                id: variant.id,
+                stock: newStock.value
+            })
+            variant.stock = newStock.value
+        } catch (error) {
+            console.log(error)
         }
     }
 
@@ -742,6 +742,20 @@
         }
     }
 
+    const getVariant = async (id: number) => {
+        try {
+            const response = await axios.get("/api/admin/shop/variant", {
+                params: {
+                    id: id
+                }
+            })
+            return response.data.data
+        } catch (error) {
+            console.log(error)
+            return [] // 出错返回空数组
+        }
+    }
+
     const changeVariantStatus = async (variant: Variant, status: number) => {
         try {
             let response
@@ -803,20 +817,6 @@
             variant.variantName = updateVariantData.value.variantName
             variant.price = updateVariantData.value.price
             variant.description = updateVariantData.value.description
-        } catch (error) {
-            console.log(error)
-        }
-    }
-
-    // 补货
-    const newStock = ref<number>(0)
-    const updateStock = async (variant: Variant) => {
-        try {
-            await axios.patch("/api/admin/shop/variant/stock", {
-                id: variant.id,
-                stock: newStock.value
-            })
-            variant.stock = newStock.value
         } catch (error) {
             console.log(error)
         }

@@ -1,4 +1,4 @@
-package com.laolao.pojo.shop.vo;
+package com.laolao.pojo.shop.dto;
 
 import lombok.*;
 
@@ -9,7 +9,12 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class AdminAddComponentVO {
+public class AdminUpdateBundleDTO {
+    /**
+     * 主键
+     */
+    private int id;
+
     /**
      * 组件名
      */
@@ -26,12 +31,17 @@ public class AdminAddComponentVO {
     private List<String> images;
 
     /**
-     * 通用描述
+     * 描述
      */
-    private String commonDescription;
+    private String description;
 
     /**
-     * 创建人
+     * 价格
      */
-    private int createdBy;
+    private int price;
+
+    /**
+     * 排序权重
+     */
+    private int sort;
 }

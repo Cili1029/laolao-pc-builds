@@ -7,7 +7,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class StockDTO {
+public class StockOrQuantityDTO {
     /**
      * 主键
      */
@@ -18,4 +18,8 @@ public class StockDTO {
      */
     private int stock;
 
+    /**
+     * 数量
+     */
+    private int quantity;
 }

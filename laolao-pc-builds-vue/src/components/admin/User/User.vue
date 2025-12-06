@@ -76,40 +76,22 @@
                                     </DialogHeader>
                                     <div class="flex flex-col gap-6 py-6">
                                         <!-- 修改头像 -->
-                                        <div class="flex flex-col items-center gap-4">
-                                            <Dialog>
-                                                <DialogTrigger as-child>
-                                                    <div class="relative group cursor-pointer">
-                                                        <Avatar class="w-24 h-24 border-2 border-gray-100 shadow-sm">
-                                                            <AvatarImage :src="user.avatar" class="object-cover" />
-                                                            <AvatarFallback>{{ user.name.substring(0, 1) }}
-                                                            </AvatarFallback>
-                                                        </Avatar>
-                                                        <div
-                                                            class="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                                            <span class="text-white text-xs font-medium">更换</span>
-                                                        </div>
-                                                    </div>
-                                                </DialogTrigger>
-                                                <DialogContent class="md:max-w-xl">
-                                                    <DialogHeader>
-                                                        <DialogTitle>上传新头像</DialogTitle>
-                                                        <DialogDescription></DialogDescription>
-                                                    </DialogHeader>
-                                                    <div class="py-4">
-                                                        <FileUpload v-model:data="images" :max-files="1" />
-                                                    </div>
-                                                    <DialogFooter>
-                                                        <DialogClose as-child>
-                                                            <Button type="button"
-                                                                class="w-full bg-indigo-600 hover:bg-indigo-700"
-                                                                @click="uploadFiles()">
-                                                                确认上传
-                                                            </Button>
-                                                        </DialogClose>
-                                                    </DialogFooter>
-                                                </DialogContent>
-                                            </Dialog>
+                                        <div class="flex flex-col items-center gap-4"
+                                            @click="showUploadDialog = true, avatar[0] = user.avatar">
+                                            <div class="relative group cursor-pointer">
+                                                <Avatar class="w-24 h-24 border-2 border-gray-100 shadow-sm">
+                                                    <AvatarImage :src="user.avatar" class="object-cover" />
+                                                    <AvatarFallback>{{ user.name.substring(0, 1) }}
+                                                    </AvatarFallback>
+                                                </Avatar>
+                                                <div
+                                                    class="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                                    <span class="text-white text-xs font-medium">更换</span>
+                                                </div>
+                                            </div>
+                                            <FileManager v-model:open="showUploadDialog" v-model="avatar" :max-files="1"
+                                                upload-api="/api/common/upload" delete-api="/api/common/delete"
+                                                :upload-extra-data="{ type: 'laolaoPC/user/avatar' }" />
                                         </div>
 
                                         <div class="space-y-2">
@@ -135,7 +117,7 @@
                                     <DialogFooter>
                                         <DialogClose as-child>
                                             <Button type="submit" @click="update(user.id)"
-                                                :disabled="!newData!.name || uploading"
+                                                :disabled="!newData!.name"
                                                 class="bg-indigo-600 hover:bg-indigo-700 w-full sm:w-auto">
                                                 保存更改
                                             </Button>
@@ -184,7 +166,7 @@
     import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, } from '@/components/ui/dialog'
     import { Input } from '@/components/ui/input'
     import { Label } from '@/components/ui/label'
-    import FileUpload from '@/components/front/common/Upload.vue'
+    import FileManager from '@/components/common/FileManager.vue'
     import { Checkbox } from '@/components/ui/checkbox'
     import { useCommonStore } from '@/stores/CommonStore'
     const commonStore = useCommonStore()
@@ -252,7 +234,7 @@
         try {
             await axios.patch("/api/admin/user/update", {
                 id: newData.value?.id,
-                avatar: url.value,
+                avatar: avatar.value,
                 username: newData.value?.username,
                 name: newData.value?.name,
                 email: newData.value?.email,
@@ -260,7 +242,7 @@
             })
             const index = users.value!.findIndex(user => user.id === userId)
             users.value![index] = newData.value!
-            url.value = ''
+            avatar.value = []
         } catch (error) {
             console.log(error)
         }
@@ -279,42 +261,8 @@
         }
     }
 
-    // 图片上传
-    const images = ref<File[]>([])
-    const fileCount = ref(0)
-    const uploading = ref<boolean>(false)
-    const url = ref('');
-
-    const uploadFiles = async () => {
-        if (images.value.length === 0) {
-            alert('请先选择文件')
-            return;
-        }
-
-        try {
-            // 创建 FormData 对象
-            const formData = new FormData()
-            // 将每个文件添加到 FormData 中
-            images.value.forEach(image => {
-                formData.append('images', image)
-                formData.append('type', "avatars")
-            });
-
-            // 发送 POST 请求
-            uploading.value = true
-            const response = await axios.post("/api/common/upload", formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-            });
-            fileCount.value = fileCount.value + response.data.data.count
-            url.value = response.data.data.images[0]
-            newData.value!.avatar = url.value
-        } catch (error) {
-            console.error('上传失败:', error)
-        } finally {
-            uploading.value = false
-        }
-    }
-
+    // 控制弹窗开关
+    const showUploadDialog = ref(false)
+    // 数据源：现有的图片 URL
+    const avatar = ref<string[]>([])
 </script>

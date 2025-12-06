@@ -1,9 +1,8 @@
 package com.laolao.mapper.admin.shop;
 
-import com.laolao.pojo.common.StockDTO;
+import com.laolao.pojo.common.StockOrQuantityDTO;
 import com.laolao.pojo.shop.entity.Variant;
-import com.laolao.pojo.shop.vo.AdminAddVariantVO;
-import com.laolao.pojo.shop.vo.AdminUpdateVariantVO;
+import com.laolao.pojo.shop.dto.AdminUpdateVariantDTO;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -50,8 +49,8 @@ public interface AdminVariantMapper {
     void insert(Variant variant);
 
     @Update("update shop_component_variant set stock = #{stock} where id = #{id};")
-    void updateStock(StockDTO stockDTO);
+    void updateStock(StockOrQuantityDTO stockOrQuantityDTO);
 
     @Update("update shop_component_variant set variant_name = #{variantName}, price = #{price}, description = #{description} where id = #{id};")
-    void update(AdminUpdateVariantVO adminUpdateVariantVO);
+    void update(AdminUpdateVariantDTO adminUpdateVariantDTO);
 }

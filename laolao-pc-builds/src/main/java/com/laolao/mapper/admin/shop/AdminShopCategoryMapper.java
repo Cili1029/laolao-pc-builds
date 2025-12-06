@@ -8,8 +8,7 @@ import java.util.List;
 
 @Mapper
 public interface AdminShopCategoryMapper {
-    @Select("select * from shop_category")
-    List<ShopCategory> select();
+    List<ShopCategory> select(int type);
 
     @Update("update shop_category set status = #{status} where id = #{id}")
     void updateStatus(int id, int status);

@@ -43,7 +43,7 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 p-3">
                     <router-link :to="`/buy/product/${all.productType}/${all.id}`" v-show="currentCategory.id === 0"
                         class="group bg-white rounded-2xl overflow-hidden border border-gray-100 hover:border-gray-100 transition-all duration-300 relative z-10 hover:z-50 hover:scale-105 hover:shadow-lg"
-                        v-for="all in all" :key="`${all.productType}-${all.id}`">
+                        v-for="all in allProducts" :key="`${all.productType}-${all.id}`">
                         <!-- 图片容器 -->
                         <div class="relative w-full aspect-square bg-gray-50 overflow-hidden">
                             <img :src="all.image" class="w-full h-full" />
@@ -152,7 +152,7 @@
         name: "所有宝贝",
         image: "https://laolao123.oss-cn-hangzhou.aliyuncs.com/%E7%BB%84%E4%BB%B6%E5%9B%BE/%E9%80%9A%E7%94%A8/1.png"
     }])
-    const all = ref<Product[]>([])
+    const allProducts = ref<Product[]>([])
 
     const currentCategory = ref<category>({
         id: 0,
@@ -187,7 +187,7 @@
                 const response = await axios.get("/api/user/shop/products/hot", {
                     params: { count: 0 } // 稍微多取几个，或者保持5个
                 })
-                all.value = response.data.data
+                allProducts.value = response.data.data
             } else if (category.productType === 1) {
                 const response = await axios.get('/api/user/shop/products/components', {
                     params: {
@@ -230,7 +230,7 @@
                 })
             }
             if (categoryId === 0) {
-                all.value = response.data.data
+                allProducts.value = response.data.data
             } else {
                 products.value = response.data.data
             }

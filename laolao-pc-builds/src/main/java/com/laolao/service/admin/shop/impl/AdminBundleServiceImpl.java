@@ -1,0 +1,113 @@
+package com.laolao.service.admin.shop.impl;
+
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.laolao.common.context.BaseContext;
+import com.laolao.common.result.Result;
+import com.laolao.converter.MapStruct;
+import com.laolao.mapper.admin.shop.AdminBundleMapper;
+import com.laolao.pojo.common.StockOrQuantityDTO;
+import com.laolao.pojo.shop.dto.AdminAddBundleDTO;
+import com.laolao.pojo.shop.dto.AdminBundleAddVariantDTO;
+import com.laolao.pojo.shop.dto.AdminUpdateBundleDTO;
+import com.laolao.pojo.shop.entity.Bundle;
+import com.laolao.pojo.shop.vo.*;
+import com.laolao.service.admin.shop.AdminBundleService;
+import jakarta.annotation.Resource;
+import org.springframework.beans.BeanUtils;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Service
+public class AdminBundleServiceImpl implements AdminBundleService {
+    @Resource
+    private MapStruct mapStruct;
+    @Resource
+    private AdminBundleMapper adminBundleMapper;
+
+
+    @Override
+    public Result<PageInfo<AdminBundleVO>> getBundle(Integer pageNum, Integer pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
+        List<Bundle> bundleList = adminBundleMapper.selectBundle();
+        List<AdminBundleVO> adminBundleVOList = new ArrayList<>();
+        for (Bundle bundle : bundleList) {
+            AdminBundleVO vo = mapStruct.bundleToAdminBundleVO(bundle);
+            adminBundleVOList.add(vo);
+        }
+
+        // 转换提取
+        PageInfo<Bundle> componentPageInfo = new PageInfo<>(bundleList);
+        PageInfo<AdminBundleVO> resultPageInfo = new PageInfo<>();
+        BeanUtils.copyProperties(componentPageInfo, resultPageInfo);
+
+        // setVO
+        resultPageInfo.setList(adminBundleVOList);
+        return Result.success(resultPageInfo);
+    }
+
+    @Override
+    @Transactional
+    public Result<String> changeStatus(int id, int status) {
+        adminBundleMapper.updateStatus(id, status);
+        return Result.success(status == 1 ? "已启用！" : "已禁用！");
+    }
+
+    @Override
+    public Result<String> delete(int id) {
+        adminBundleMapper.delete(id);
+        return Result.success("删除成功！");
+    }
+
+    @Override
+    public Result<String> add(AdminAddBundleDTO adminAddBundleDTO) {
+        adminAddBundleDTO.setCreatedBy(BaseContext.getCurrentId());
+        adminBundleMapper.insert(adminAddBundleDTO);
+        return Result.success("新增成功");
+    }
+
+    @Override
+    public Result<String> update(AdminUpdateBundleDTO adminUpdateBundleDTO) {
+        adminBundleMapper.update(adminUpdateBundleDTO);
+        return Result.success("修改成功！");
+    }
+
+    @Override
+    public Result<String> updateStock(StockOrQuantityDTO stockOrQuantityDTO) {
+        adminBundleMapper.updateStock(stockOrQuantityDTO);
+        return Result.success("货量修改成功！");
+    }
+
+    @Override
+    public Result<List<AdminBundleVariantVO>> getVariant(int id) {
+        List<AdminBundleVariantVO> adminBundleVariantVOS = adminBundleMapper.getVariant(id);
+        return Result.success(adminBundleVariantVOS);
+    }
+
+    @Override
+    public Result<String> updateQuantity(StockOrQuantityDTO stockOrQuantityDTO) {
+        adminBundleMapper.updateQuantity(stockOrQuantityDTO);
+        return Result.success("修改成功！");
+    }
+
+    @Override
+    public Result<String> deleteVariant(int id) {
+        adminBundleMapper.deleteVariant(id);
+        return Result.success("删除成功！");
+    }
+
+    @Override
+    public Result<List<AdminBundleVariantVO>> searchVariant(String searchContent) {
+        List<AdminBundleVariantVO> adminBundleVariantVOS = adminBundleMapper.searchVariant(searchContent);
+        return Result.success(adminBundleVariantVOS);
+    }
+
+    @Override
+    public Result<String> addVariant(AdminBundleAddVariantDTO adminBundleAddVariantDTO) {
+        adminBundleMapper.insertVariant(adminBundleAddVariantDTO);
+        return Result.success("新增成功！");
+    }
+}

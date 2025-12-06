@@ -21,4 +21,13 @@
         </set>
         where id = #{id}
     </update>
+
+    <select id="select" resultType="com.laolao.pojo.shop.entity.ShopCategory">
+        select * from shop_category
+        <where>
+            <if test="type != 0">
+                product_type = #{type}
+            </if>
+        </where>
+    </select>
 </mapper>

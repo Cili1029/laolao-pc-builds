@@ -1,4 +1,4 @@
-package com.laolao.pojo.shop.vo;
+package com.laolao.pojo.shop.dto;
 
 import lombok.*;
 
@@ -10,11 +10,11 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class AdminAddVariantVO implements Serializable {
+public class AdminUpdateVariantDTO implements Serializable {
     /**
-     * 所属部件Id
+     * 版本Id
      */
-    private int componentId;
+    private int id;
 
     /**
      * 版本名
@@ -30,9 +30,4 @@ public class AdminAddVariantVO implements Serializable {
      * 描述
      */
     private String description;
-
-    /**
-     * 库存
-     */
-    private int stock;
 }

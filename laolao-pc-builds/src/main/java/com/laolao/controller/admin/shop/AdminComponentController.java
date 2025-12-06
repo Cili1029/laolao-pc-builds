@@ -3,16 +3,16 @@ package com.laolao.controller.admin.shop;
 import com.github.pagehelper.PageInfo;
 import com.laolao.common.result.Result;
 import com.laolao.pojo.common.StatusDTO;
-import com.laolao.pojo.shop.vo.AdminAddComponentVO;
+import com.laolao.pojo.shop.dto.AdminAddComponentDTO;
 import com.laolao.pojo.shop.vo.AdminComponentVO;
-import com.laolao.pojo.shop.vo.AdminUpdateComponentVO;
+import com.laolao.pojo.shop.dto.AdminUpdateComponentDTO;
 import com.laolao.service.admin.shop.AdminComponentService;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
 
 
 /**
- * 客户端组件相关
+ * 管理端组件相关
  */
 @RestController
 @RequestMapping("/admin/shop/component")
@@ -66,22 +66,22 @@ public class AdminComponentController {
     /**
      * 添加组件
      *
-     * @param adminAddComponentVO 基础信息
+     * @param adminAddComponentDTO 基础信息
      * @return 结果信息
      */
     @PostMapping("/add")
-    public Result<String> add(@RequestBody AdminAddComponentVO adminAddComponentVO) {
-        return adminComponentService.add(adminAddComponentVO);
+    public Result<String> add(@RequestBody AdminAddComponentDTO adminAddComponentDTO) {
+        return adminComponentService.add(adminAddComponentDTO);
     }
 
     /**
      * 更新版本信息
      *
-     * @param adminUpdateComponentVO 更新信息
+     * @param adminUpdateComponentDTO 更新信息
      * @return 结果信息
      */
     @PatchMapping("/update")
-    public Result<String> update(@RequestBody AdminUpdateComponentVO adminUpdateComponentVO) {
-        return adminComponentService.update(adminUpdateComponentVO);
+    public Result<String> update(@RequestBody AdminUpdateComponentDTO adminUpdateComponentDTO) {
+        return adminComponentService.update(adminUpdateComponentDTO);
     }
 }

@@ -32,37 +32,22 @@
 
                             <div class="grid gap-6 py-4">
                                 <!-- 图片上传区域 -->
-                                <div class="flex flex-col items-center gap-4">
-                                    <Dialog>
-                                        <DialogTrigger as-child>
-                                            <div
-                                                class="relative group cursor-pointer overflow-hidden rounded-xl border shadow-sm">
-                                                <!-- 使用 Avatar 或 img 均可，这里用 img 方便控制大图 -->
-                                                <img :src="newCategory.image" v-if="newCategory.image"
-                                                    class="h-32 w-32 object-cover transition-transform duration-300 group-hover:scale-105" />
-                                                <div v-else class="h-32 w-32"></div>
-                                                <div
-                                                    class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                                    <span
-                                                        class="text-white text-xs font-medium bg-black/50 px-2 py-1 rounded">添加图片</span>
-                                                </div>
-                                            </div>
-                                        </DialogTrigger>
-                                        <!-- 内层上传 Dialog 保持不变 -->
-                                        <DialogContent class="md:max-w-xl">
-                                            <DialogHeader>
-                                                <DialogTitle>上传图片</DialogTitle>
-                                            </DialogHeader>
-                                            <div class="py-4">
-                                                <FileUpload v-model:data="images" :max-files="1" />
-                                            </div>
-                                            <DialogFooter>
-                                                <DialogClose as-child>
-                                                    <Button type="button" @click="uploadFiles('add')">确认上传</Button>
-                                                </DialogClose>
-                                            </DialogFooter>
-                                        </DialogContent>
-                                    </Dialog>
+                                <div class="flex flex-col items-center gap-4" @click="showAddDialog = true">
+                                    <div
+                                        class="relative group cursor-pointer overflow-hidden rounded-xl border shadow-sm">
+                                        <!-- 使用 Avatar 或 img 均可，这里用 img 方便控制大图 -->
+                                        <img :src="newCategory.image[0]" v-if="newCategory.image.length > 0"
+                                            class="h-32 w-32 object-cover transition-transform duration-300 group-hover:scale-105" />
+                                        <div v-else class="h-32 w-32"></div>
+                                        <div
+                                            class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <span
+                                                class="text-white text-xs font-medium bg-black/50 px-2 py-1 rounded">添加图片</span>
+                                        </div>
+                                    </div>
+                                    <FileManager v-model:open="showAddDialog" v-model="newCategory.image" :max-files="1"
+                                        upload-api="/api/common/upload" delete-api="/api/common/delete"
+                                        :upload-extra-data="{ type: 'laolaoPC/forum/category' }" />
                                 </div>
 
                                 <!-- 表单字段区域 -->
@@ -82,7 +67,7 @@
                             <DialogFooter>
                                 <DialogClose as-child>
                                     <Button type="submit" @click="add()"
-                                        :disabled="newCategory.description === '' || newCategory.image === '' || newCategory.name === '' || uploading">
+                                        :disabled="newCategory.description === '' || newCategory.image.length === 0 || newCategory.name === ''">
                                         添加
                                     </Button>
                                 </DialogClose>
@@ -146,9 +131,7 @@
                         <div class="flex justify-center gap-2">
                             <Dialog>
                                 <DialogTrigger as-child>
-                                    <!-- 防止直接修改原对象，使用深拷贝 -->
-                                    <Button variant="ghost" size="sm"
-                                        @click="updateData = JSON.parse(JSON.stringify(category))">
+                                    <Button variant="ghost" size="sm" @click="initUpdateData(category)">
                                         编辑
                                     </Button>
                                 </DialogTrigger>
@@ -160,37 +143,22 @@
 
                                     <div class="grid gap-6 py-4">
                                         <!-- 图片上传区域 -->
-                                        <div class="flex flex-col items-center gap-4">
-                                            <Dialog>
-                                                <DialogTrigger as-child>
-                                                    <div
-                                                        class="relative group cursor-pointer overflow-hidden rounded-xl border shadow-sm">
-                                                        <!-- 使用 Avatar 或 img 均可，这里用 img 方便控制大图 -->
-                                                        <img :src="category.image"
-                                                            class="h-32 w-32 object-cover transition-transform duration-300 group-hover:scale-105" />
-                                                        <div
-                                                            class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                                            <span
-                                                                class="text-white text-xs font-medium bg-black/50 px-2 py-1 rounded">更换图片</span>
-                                                        </div>
-                                                    </div>
-                                                </DialogTrigger>
-                                                <!-- 内层上传 Dialog 保持不变 -->
-                                                <DialogContent class="md:max-w-xl">
-                                                    <DialogHeader>
-                                                        <DialogTitle>上传新图片</DialogTitle>
-                                                    </DialogHeader>
-                                                    <div class="py-4">
-                                                        <FileUpload v-model:data="images" :max-files="1" />
-                                                    </div>
-                                                    <DialogFooter>
-                                                        <DialogClose as-child>
-                                                            <Button type="button"
-                                                                @click="uploadFiles('update')">确认上传</Button>
-                                                        </DialogClose>
-                                                    </DialogFooter>
-                                                </DialogContent>
-                                            </Dialog>
+                                        <div class="flex flex-col items-center gap-4" @click="showUpdateDialog = true">
+                                            <div
+                                                class="relative group cursor-pointer overflow-hidden rounded-xl border shadow-sm">
+                                                <!-- 使用 Avatar 或 img 均可，这里用 img 方便控制大图 -->
+                                                <img :src="category.image"
+                                                    class="h-32 w-32 object-cover transition-transform duration-300 group-hover:scale-105" />
+                                                <div
+                                                    class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                                    <span
+                                                        class="text-white text-xs font-medium bg-black/50 px-2 py-1 rounded">更换图片</span>
+                                                </div>
+                                            </div>
+                                            <FileManager v-model:open="showUpdateDialog" v-model="updateData.image"
+                                                :max-files="1" upload-api="/api/common/upload"
+                                                delete-api="/api/common/delete"
+                                                :upload-extra-data="{ type: 'laolaoPC/shop/category' }" />
                                         </div>
 
                                         <!-- 表单字段区域 -->
@@ -215,7 +183,7 @@
                                     <DialogFooter>
                                         <DialogClose as-child>
                                             <Button type="submit" @click="update(category.id)"
-                                                :disabled="!updateData!.name || uploading">
+                                                :disabled="!updateData!.name">
                                                 保存更改
                                             </Button>
                                         </DialogClose>
@@ -288,7 +256,7 @@
     import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, } from '@/components/ui/dialog'
     import { Input } from '@/components/ui/input'
     import { Label } from '@/components/ui/label'
-    import FileUpload from '@/components/front/common/Upload.vue'
+    import FileManager from '@/components/common/FileManager.vue';
     import { Textarea } from '@/components/ui/textarea'
     import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger, } from '@/components/ui/alert-dialog'
     import { Ghost, Plus } from 'lucide-vue-next'
@@ -312,7 +280,7 @@
     interface NewCategory {
         name: string
         description: string
-        image: string
+        image: string[]
     }
 
     const categories = ref<Category[]>([])
@@ -344,7 +312,24 @@
         }
     }
 
-    const updateData = ref<Category>()
+    const updateData = ref({
+        id: 0,
+        name: "",
+        description: "",
+        image: [] as string[],
+        sort: 0
+    })
+
+    const initUpdateData = (category: Category) => {
+        // 1. 手动构建 updateData，避免深拷贝覆盖 image 数组类型
+        updateData.value = {
+            id: category.id,
+            name: category.name,
+            description: category.description,
+            image: category.image ? [category.image] : [], // 强制转为数组
+            sort: category.sort,
+        }
+    };
 
     const update = async (id: number) => {
         try {
@@ -352,12 +337,14 @@
                 id: id,
                 name: updateData.value?.name,
                 description: updateData.value?.description,
-                image: url.value,
+                image: updateData.value.image[0],
                 sort: updateData.value?.sort,
             })
-            const index = categories.value!.findIndex(category => category.id === id)
-            categories.value![index] = updateData.value!
-            url.value = ''
+            const category = categories.value!.find(category => category.id === id)
+            category!.name = updateData.value.name
+            category!.description = updateData.value.description
+            category!.image = updateData.value.image[0]!
+            category!.sort = updateData.value.sort
         } catch (error) {
             console.log(error)
         }
@@ -366,7 +353,7 @@
     const newCategory = ref<NewCategory>({
         name: '',
         description: '',
-        image: ''
+        image: []
     })
 
     const add = async () => {
@@ -374,11 +361,11 @@
             await axios.post("/api/admin/forum/category/add", {
                 name: newCategory.value?.name,
                 description: newCategory.value.description,
-                image: newCategory.value.image,
+                image: newCategory.value.image[0],
             })
             newCategory.value.name = ''
             newCategory.value.description = ''
-            newCategory.value.image = ''
+            newCategory.value.image = []
             getCategory()
         } catch (error) {
             console.log(error)
@@ -398,46 +385,7 @@
         }
     }
 
-    // 图片上传
-    const images = ref<File[]>([])
-    const fileCount = ref(0)
-    const uploading = ref<boolean>(false)
-    const url = ref('');
-
-    const uploadFiles = async (type: string) => {
-        if (images.value.length === 0) {
-            alert('请先选择文件')
-            return;
-        }
-
-        try {
-            // 创建 FormData 对象
-            const formData = new FormData()
-            // 将每个文件添加到 FormData 中
-            images.value.forEach(image => {
-                formData.append('images', image)
-                formData.append('type', "avatars")
-            });
-
-            // 发送 POST 请求
-            uploading.value = true
-            const response = await axios.post("/api/common/upload", formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-            });
-            fileCount.value = fileCount.value + response.data.data.count
-            url.value = response.data.data.images[0]
-            if (type === 'update') {
-                updateData.value!.image = url.value
-            } else {
-                newCategory.value.image = url.value
-            }
-        } catch (error) {
-            console.error('上传失败:', error)
-        } finally {
-            uploading.value = false
-        }
-    }
-
+    // 控制弹窗开关
+    const showAddDialog = ref(false)
+    const showUpdateDialog = ref(false)
 </script>

@@ -8,9 +8,9 @@ import com.laolao.converter.MapStruct;
 import com.laolao.mapper.admin.shop.AdminComponentMapper;
 import com.laolao.mapper.admin.shop.AdminVariantMapper;
 import com.laolao.pojo.shop.entity.Component;
-import com.laolao.pojo.shop.vo.AdminAddComponentVO;
+import com.laolao.pojo.shop.dto.AdminAddComponentDTO;
 import com.laolao.pojo.shop.vo.AdminComponentVO;
-import com.laolao.pojo.shop.vo.AdminUpdateComponentVO;
+import com.laolao.pojo.shop.dto.AdminUpdateComponentDTO;
 import com.laolao.service.admin.shop.AdminComponentService;
 import jakarta.annotation.Resource;
 import org.springframework.beans.BeanUtils;
@@ -71,15 +71,15 @@ public class AdminComponentServiceImpl implements AdminComponentService {
     }
 
     @Override
-    public Result<String> add(AdminAddComponentVO adminAddComponentVO) {
-        adminAddComponentVO.setCreatedBy(BaseContext.getCurrentId());
-        adminComponentMapper.insert(adminAddComponentVO);
+    public Result<String> add(AdminAddComponentDTO adminAddComponentDTO) {
+        adminAddComponentDTO.setCreatedBy(BaseContext.getCurrentId());
+        adminComponentMapper.insert(adminAddComponentDTO);
         return Result.success("新增成功");
     }
 
     @Override
-    public Result<String> update(AdminUpdateComponentVO adminUpdateComponentVO) {
-        adminComponentMapper.update(adminUpdateComponentVO);
+    public Result<String> update(AdminUpdateComponentDTO adminUpdateComponentDTO) {
+        adminComponentMapper.update(adminUpdateComponentDTO);
         return Result.success("修改成功！");
     }
 }

@@ -1,4 +1,4 @@
-package com.laolao.pojo.shop.vo;
+package com.laolao.pojo.shop.dto;
 
 import lombok.*;
 
@@ -9,7 +9,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class AdminUpdateComponentVO {
+public class AdminUpdateComponentDTO {
     /**
      * 主键
      */

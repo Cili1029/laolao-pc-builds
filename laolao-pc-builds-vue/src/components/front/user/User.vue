@@ -12,7 +12,7 @@
         <div class="flex flex-col sm:flex-row items-end -mt-12 gap-6">
 
           <!-- 头像 (带边框，突出显示) -->
-          <div class="relative group">
+          <div class="relative group" @click="showUploadDialog = userStore.user.id === user?.user.id">
             <Avatar class="w-32 h-32 border-4 border-white shadow-md rounded-full bg-white text-4xl cursor-pointer">
               <AvatarImage :src="user?.user.avatar || ''" alt="用户头像" class="object-cover" />
               <AvatarFallback class="bg-indigo-50 text-indigo-500 font-bold">{{ user?.user.name.substring(0, 1) }}
@@ -48,38 +48,17 @@
                 </DialogHeader>
                 <div class="flex flex-col gap-6 py-6">
                   <!-- 修改头像 -->
-                  <div class="flex flex-col items-center gap-4">
-                    <Dialog>
-                      <DialogTrigger as-child>
-                        <div class="relative group cursor-pointer">
-                          <Avatar class="w-24 h-24 border-2 border-gray-100 shadow-sm">
-                            <AvatarImage :src="url" class="object-cover" />
-                            <AvatarFallback>{{ user?.user.name.substring(0, 1) }}</AvatarFallback>
-                          </Avatar>
-                          <div
-                            class="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                            <span class="text-white text-xs font-medium">更换</span>
-                          </div>
-                        </div>
-                      </DialogTrigger>
-                      <DialogContent class="md:max-w-xl">
-                        <DialogHeader>
-                          <DialogTitle>上传新头像</DialogTitle>
-                          <DialogDescription>建议使用正方形图片</DialogDescription>
-                        </DialogHeader>
-                        <div class="py-4">
-                          <FileUpload v-model:data="images" :max-files="1" />
-                        </div>
-                        <DialogFooter>
-                          <DialogClose as-child>
-                            <Button type="button" class="w-full bg-indigo-600 hover:bg-indigo-700"
-                              @click="uploadFiles()">
-                              确认上传
-                            </Button>
-                          </DialogClose>
-                        </DialogFooter>
-                      </DialogContent>
-                    </Dialog>
+                  <div class="flex flex-col items-center gap-4" @click="showUploadDialog = true">
+                    <div class="relative group cursor-pointer">
+                      <Avatar class="w-24 h-24 border-2 border-gray-100 shadow-sm">
+                        <AvatarImage :src="avatar[0]!" class="object-cover" />
+                        <AvatarFallback>{{ user?.user.name.substring(0, 1) }}</AvatarFallback>
+                      </Avatar>
+                      <div
+                        class="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                        <span class="text-white text-xs font-medium">更换</span>
+                      </div>
+                    </div>
                     <span class="text-xs text-gray-400">点击头像进行修改</span>
                   </div>
 
@@ -92,7 +71,7 @@
                 </div>
                 <DialogFooter>
                   <DialogClose as-child>
-                    <Button type="submit" @click="update()" :disabled="!newName || uploading"
+                    <Button type="submit" @click="update()" :disabled="!newName"
                       class="bg-indigo-600 hover:bg-indigo-700 w-full sm:w-auto">
                       保存更改
                     </Button>
@@ -197,6 +176,9 @@
         </div>
       </div>
     </div>
+
+    <FileManager v-model:open="showUploadDialog" v-model="avatar" :max-files="1" upload-api="/api/common/upload"
+      delete-api="/api/common/delete" :upload-extra-data="{ type: 'laolaoPC/user/avatar' }" />
   </div>
 </template>
 
@@ -207,7 +189,7 @@
   import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog"
   import { Input } from "@/components/ui/input"
   import { Label } from "@/components/ui/label"
-  import FileUpload from '@/components/front/common/Upload.vue';
+  import FileManager from '@/components/common/FileManager.vue'
   import { onMounted, ref, watch } from "vue"
   import { useRoute } from 'vue-router'
   const route = useRoute()
@@ -267,7 +249,7 @@
       const response = await axios.get(`/api/user/user/${route.params.id}`)
       user.value = response.data.data
       newName.value = user.value!.user.name
-      url.value = user.value?.user.avatar!
+      avatar.value.push(user.value!.user.avatar)
     } catch (error) {
       console.log(error)
     }
@@ -285,55 +267,22 @@
 
   const newName = ref("")
 
-  // 图片上传
-  const images = ref<File[]>([])
-  const fileCount = ref(0)
-  const uploading = ref<boolean>(false)
-  const url = ref('');
+  // 控制弹窗开关
+  const showUploadDialog = ref(false)
+  // 数据源：现有的图片 URL
+  const avatar = ref<string[]>([])
 
-  const uploadFiles = async () => {
-    if (images.value.length === 0) {
-      alert('请先选择文件')
-      return;
-    }
-
-    try {
-      // 创建 FormData 对象
-      const formData = new FormData()
-      // 将每个文件添加到 FormData 中
-      images.value.forEach(image => {
-        formData.append('images', image)
-        formData.append('type', "avatars")
-      });
-
-      // 发送 POST 请求
-      uploading.value = true
-      const response = await axios.post("/api/common/upload", formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      });
-      fileCount.value = fileCount.value + response.data.data.count
-      url.value = response.data.data.images[0]
-    } catch (error) {
-      console.error('上传失败:', error)
-    } finally {
-      uploading.value = false
-    }
-  }
 
   const update = async () => {
     try {
-      if (url.value !== user.value?.user.avatar || newName.value !== user.value?.user.name) {
+      if (avatar.value[0] !== user.value?.user.avatar || newName.value !== user.value?.user.name) {
         await axios.post("/api/user/user/update", {
           name: newName.value,
-          avatar: url.value
+          avatar: avatar.value
         })
         user.value!.user.name = newName.value
-        user.value!.user.avatar = url.value
+        user.value!.user.avatar = avatar.value[0]!
       }
-      images.value = []
-      fileCount.value = 0
     } catch (error) {
       console.log(error)
     }

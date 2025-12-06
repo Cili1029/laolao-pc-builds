@@ -127,32 +127,17 @@
                                         <DialogHeader>
                                             <DialogTitle>回复层主</DialogTitle>
                                         </DialogHeader>
-                                        <Textarea class="h-32 rounded-2xl" v-model="myComment" placeholder="说点什么..."></Textarea>
+                                        <Textarea class="h-32 rounded-2xl" v-model="myComment"
+                                            placeholder="说点什么..."></Textarea>
                                         <DialogFooter class="flex flex-wrap gap-2">
-                                            <Dialog>
-                                                <DialogTrigger as-child>
-                                                    <Button :disabled="uploading" class="rounded-full px-4">
-                                                        <span class="icon-[charm--folder]"></span>
-                                                        {{ uploading ? "上传中" : fileCount > 0 ? `上传了${fileCount}张图片` :
-                                                            "上传图片（可选）" }}
-                                                    </Button>
-                                                </DialogTrigger>
-                                                <DialogContent class="md:max-w-4xl">
-                                                    <DialogHeader>
-                                                        <DialogTitle>上传图片</DialogTitle>
-                                                    </DialogHeader>
-                                                    <div>
-                                                        <FileUpload v-model:data="images" :max-files="1" />
-                                                    </div>
-                                                    <DialogFooter>
-                                                        <DialogClose as-child>
-                                                            <Button type="button" class="w-full" @click="uploadFiles()">
-                                                                提交
-                                                            </Button>
-                                                        </DialogClose>
-                                                    </DialogFooter>
-                                                </DialogContent>
-                                            </Dialog>
+                                            <Button class="rounded-full px-4" @click="showReplyDialog = true">
+                                                <span class="icon-[charm--folder]"></span>
+                                                上传图片
+                                            </Button>
+                                            <FileManager v-model:open="showReplyDialog" v-model="replyImg"
+                                                :max-files="1" upload-api="/api/common/upload"
+                                                delete-api="/api/common/delete"
+                                                :upload-extra-data="{ type: 'laolaoPC/forum/comment' }" />
                                             <DialogClose as-child class="ml-auto">
                                                 <Button :disabled="!myComment" class="rounded-full px-5"
                                                     @click="submitReply(comment.id)">
@@ -207,7 +192,8 @@
                             </Avatar>
                         </RouterLink>
                         <!-- 内容 -->
-                        <div class="w-full space-y-3 rounded-2xl border border-slate-100 bg-white/80 px-4 py-3 shadow-sm">
+                        <div
+                            class="w-full space-y-3 rounded-2xl border border-slate-100 bg-white/80 px-4 py-3 shadow-sm">
                             <div class="flex flex-wrap justify-between text-xs text-slate-500">
                                 <p class="font-semibold text-slate-800">{{ reply.user.name }}</p>
                                 <p>{{ formatTime(reply.createdAt) }}</p>
@@ -258,30 +244,14 @@
             <div class="mt-4 grid gap-3">
                 <Textarea v-model="myComment" class="h-32 rounded-2xl" placeholder="说点什么..."></Textarea>
                 <div class="flex flex-wrap items-center justify-between gap-3">
-                    <Dialog>
-                        <DialogTrigger as-child>
-                            <Button :disabled="uploading" class="rounded-full px-5">
-                                <span class="icon-[charm--folder]"></span>
-                                {{ uploading ? "上传中" : fileCount > 0 ? `上传了${fileCount}张图片` : "上传图片（可选）" }}
-                            </Button>
-                        </DialogTrigger>
-                        <DialogContent class="md:max-w-4xl">
-                            <DialogHeader>
-                                <DialogTitle>上传图片</DialogTitle>
-                            </DialogHeader>
-                            <div>
-                                <FileUpload v-model:data="images" :max-files="1" />
-                            </div>
-                            <DialogFooter class="sm:justify-start">
-                                <DialogClose as-child>
-                                    <Button type="button" class="w-full" @click="uploadFiles()">
-                                        提交
-                                    </Button>
-                                </DialogClose>
-                            </DialogFooter>
-                        </DialogContent>
-                    </Dialog>
-                    <Button @click="submitComment()" :disabled="!myComment || uploading"
+                    <Button class="rounded-full px-5" @click="showCommentDialog = true">
+                        <span class="icon-[charm--folder]"></span>
+                        上传图片
+                    </Button>
+                    <FileManager v-model:open="showCommentDialog" v-model="commentImg" :max-files="1"
+                        upload-api="/api/common/upload" delete-api="/api/common/delete"
+                        :upload-extra-data="{ type: 'laolaoPC/forum/comment' }" />
+                    <Button @click="submitComment()" :disabled="!myComment"
                         class="rounded-full px-6 shadow-lg shadow-orange-200/60">
                         <span class="icon-[charm--rocket]"></span>
                         发送！</Button>
@@ -303,7 +273,7 @@
     import dayjs from 'dayjs'
     import relativeTime from 'dayjs/plugin/relativeTime'
     import 'dayjs/locale/zh-cn'
-    import FileUpload from '@/components/front/common/Upload.vue';
+    import FileManager from '@/components/common/FileManager.vue'
     import { useForumCategoryStore } from '@/stores/ForumCategoryStore'
     const categoryStore = useForumCategoryStore()
     import { useUserStore } from '@/stores/UserStore'
@@ -445,12 +415,10 @@
         const response = await axios.post("/api/user/forum/comment", {
             id: post.value?.id,
             content: myComment.value,
-            images: url.value
+            images: commentImg.value
         })
         myComment.value = ''
-        images.value = []
-        fileCount.value = 0
-        url.value = []
+        commentImg.value = []
         if (post.value && response.data.data) {
             if (!post.value.comment) {
                 post.value.comment = []
@@ -467,7 +435,7 @@
             id: post.value?.id,
             parent: parent,
             content: myComment.value,
-            images: url.value
+            images: replyImg.value
         })
         const res = post.value?.comment.find(comment => comment.id === parent)
         if (response.data.code === 1 && res) {
@@ -480,9 +448,7 @@
             post.value!.commentCount += 1
         }
         myComment.value = ''
-        images.value = []
-        fileCount.value = 0
-        url.value = []
+        replyImg.value = []
     }
 
     // 删除帖子
@@ -584,43 +550,12 @@
         router.replace(`/forum/${post.value.categoryId}`)
     }
 
-    // 图片上传
-    const images = ref<File[]>([])
-    const fileCount = ref(0)
-    const uploading = ref<boolean>(false)
-    const url = ref([])
-
-    const uploadFiles = async () => {
-        if (images.value.length === 0) {
-            alert('请先选择文件')
-            return;
-        }
-
-        try {
-            // 创建 FormData 对象
-            const formData = new FormData()
-            // 将每个文件添加到 FormData 中
-            images.value.forEach(image => {
-                formData.append('images', image)
-                formData.append('type', "postImages")
-            });
-
-            // 发送 POST 请求
-            uploading.value = true
-            const response = await axios.post("/api/common/upload", formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-            });
-            fileCount.value = fileCount.value + response.data.data.count
-            url.value = response.data.data.images
-        } catch (error) {
-            console.error('上传失败:', error)
-        } finally {
-            uploading.value = false
-        }
-    }
-
+    // 控制弹窗开关
+    const showCommentDialog = ref(false)
+    const showReplyDialog = ref(false)
+    // 数据源：现有的图片 URL
+    const commentImg = ref<string[]>([])
+    const replyImg = ref<string[]>([])
 </script>
 
 <style scoped></style>

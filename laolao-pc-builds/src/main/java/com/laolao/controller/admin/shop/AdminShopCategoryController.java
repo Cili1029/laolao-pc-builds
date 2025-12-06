@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * 客户端商品分类相关
+ * 管理端商品分类相关
  */
 @RestController
 @RequestMapping("/admin/shop/category")
@@ -26,8 +26,8 @@ public class AdminShopCategoryController {
      * @return 商品分类数据
      */
     @GetMapping("list")
-    public Result<List<ShopCategory>> list() {
-        return adminShopCategoryService.get();
+    public Result<List<ShopCategory>> list(@RequestParam int type) {
+        return adminShopCategoryService.get(type);
     }
 
     /**
