@@ -57,7 +57,7 @@
                                             </div>
                                             <div class="grid gap-2">
                                                 <Label for="name">价格</Label>
-                                                <Input id="name" type="number" v-model="newBundle.price"/>
+                                                <Input id="name" type="number" v-model="newBundle.price" />
                                             </div>
                                             <div class="grid gap-2">
                                                 <Label for="name">描述</Label>
@@ -332,8 +332,8 @@
                                                                     搜索
                                                                 </Button>
                                                             </div>
-                                                            <div class=" max-h-100 overflow-y-auto scrollbar-edge">
-                                                                <Table>
+                                                            <div class="h-100 overflow-y-auto scrollbar-edge">
+                                                                <Table v-if="searchVariant.length > 0">
                                                                     <TableHeader>
                                                                         <TableRow>
                                                                             <TableHead class="w-[100px]">
@@ -388,6 +388,16 @@
                                                                         </TableRow>
                                                                     </TableBody>
                                                                 </Table>
+                                                                <div v-else
+                                                                    class="flex flex-col h-full items-center justify-center gap-4 text-center">
+                                                                    <div class="rounded-full bg-muted/30 p-4">
+                                                                        <Ghost
+                                                                            class="h-10 w-10 text-muted-foreground/60" />
+                                                                    </div>
+                                                                    <div class="space-y-1">
+                                                                        <h3 class="text-lg font-medium">输入组件名或Id进行查询</h3>
+                                                                    </div>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                         <DialogFooter>
@@ -559,7 +569,7 @@
     import { Input } from '@/components/ui/input'
     import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
     import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger, } from '@/components/ui/alert-dialog'
-    import { ChevronRight, MoreHorizontal, Trash2, ImageIcon, Plus, CircleOff, Circle } from 'lucide-vue-next'
+    import { ChevronRight, MoreHorizontal, Trash2, ImageIcon, Plus, CircleOff, Circle, Ghost } from 'lucide-vue-next'
     import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, } from '@/components/ui/dialog'
     import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationNext, PaginationPrevious, } from '@/components/ui/pagination'
     import dayjs from 'dayjs'

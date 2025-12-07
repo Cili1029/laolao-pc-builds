@@ -73,7 +73,7 @@
           { title: "分类标签", url: "/admin/shop/category" },
           { title: "组件", url: "/admin/shop/component" },
           { title: "整机", url: "/admin/shop/bundle" },
-          { title: "优惠券", url: "#" },
+          { title: "优惠券", url: "/admin/shop/coupon" },
         ],
       },
       {

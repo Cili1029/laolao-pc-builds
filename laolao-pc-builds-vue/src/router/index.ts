@@ -20,6 +20,7 @@ import ShopCategory from '@/components/admin/shop/ShopCategory.vue';
 import ForumCategory from '@/components/admin/forum/ForumCategory.vue';
 import Component from '@/components/admin/shop/Component.vue';
 import Bundle from '@/components/admin/shop/Bundle.vue';
+import ShopCoupon from '@/components/admin/shop/ShopCoupon.vue';
 
 const routes: Array<RouteRecordRaw> = [
   // 1. 用户端路由组
@@ -122,6 +123,11 @@ const routes: Array<RouteRecordRaw> = [
         path: 'shop/bundle',
         name: 'Bundle',
         component: Bundle,
+      },
+      {
+        path: 'shop/coupon',
+        name: 'shopCoupon',
+        component: ShopCoupon,
       },
     ]
   }

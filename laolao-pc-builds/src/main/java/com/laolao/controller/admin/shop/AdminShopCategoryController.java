@@ -81,7 +81,7 @@ public class AdminShopCategoryController {
      * @return 消息结果
      */
     @DeleteMapping("/delete")
-    public Result<String> add(@RequestParam int id) {
+    public Result<String> delete(@RequestParam int id) {
         return adminShopCategoryService.delete(id);
     }
 }
