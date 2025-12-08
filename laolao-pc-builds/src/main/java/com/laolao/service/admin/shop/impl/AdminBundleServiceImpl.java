@@ -2,7 +2,7 @@ package com.laolao.service.admin.shop.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.laolao.common.context.BaseContext;
+import com.laolao.common.context.UserContext;
 import com.laolao.common.result.Result;
 import com.laolao.converter.MapStruct;
 import com.laolao.mapper.admin.shop.AdminBundleMapper;
@@ -64,7 +64,7 @@ public class AdminBundleServiceImpl implements AdminBundleService {
 
     @Override
     public Result<String> add(AdminAddBundleDTO adminAddBundleDTO) {
-        adminAddBundleDTO.setCreatedBy(BaseContext.getCurrentId());
+        adminAddBundleDTO.setCreatedBy(UserContext.getCurrentId());
         adminBundleMapper.insert(adminAddBundleDTO);
         return Result.success("新增成功");
     }

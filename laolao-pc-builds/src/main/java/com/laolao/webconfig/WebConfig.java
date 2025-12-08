@@ -1,6 +1,8 @@
 package com.laolao.webconfig;
 
+import com.laolao.Interceptor.AdminInInterceptor;
 import com.laolao.Interceptor.SignInInterceptor;
+import com.laolao.Interceptor.SqlMarkInterceptor;
 import jakarta.annotation.Resource;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,6 +15,10 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class WebConfig implements WebMvcConfigurer {
     @Resource
     private SignInInterceptor signInInterceptor;
+    @Resource
+    private AdminInInterceptor adminInInterceptor;
+    @Resource
+    private SqlMarkInterceptor sqlMarkInterceptor;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
@@ -24,7 +30,16 @@ public class WebConfig implements WebMvcConfigurer {
                 .excludePathPatterns("/api/user/user/sign-up")
                 .excludePathPatterns("/api/user/user/profile")
                 .excludePathPatterns("/api/user/forum/post/hot")
-                .excludePathPatterns("/api/user/shop/products/hot");
+                .excludePathPatterns("/api/user/shop/products/hot")
+                .order(1);
+
+        registry.addInterceptor(adminInInterceptor)
+                .addPathPatterns("/api/admin/**")
+                .order(2);
+
+        registry.addInterceptor(sqlMarkInterceptor)
+                .addPathPatterns("/api/admin/**")
+                .order(3);
     }
 
     @Override

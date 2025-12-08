@@ -1,6 +1,6 @@
 package com.laolao.service.user.shop.impl;
 
-import com.laolao.common.context.BaseContext;
+import com.laolao.common.context.UserContext;
 import com.laolao.common.result.Result;
 import com.laolao.converter.MapStruct;
 import com.laolao.mapper.user.shop.BundleMapper;
@@ -32,7 +32,7 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public Result<List<CartProductVO>> getCartProductList() {
-        int userId = BaseContext.getCurrentId();
+        int userId = UserContext.getCurrentId();
         List<CartItem> cartItemList = cartMapper.getList(userId);
 
         // 组件的id
@@ -76,7 +76,7 @@ public class CartServiceImpl implements CartService {
         }
 
         // 查询购物车表里有没有这个商品
-        int userId = BaseContext.getCurrentId();
+        int userId = UserContext.getCurrentId();
         CartItem cartItem = mapStruct.cartProductDTOToCartItem(buyProductDTO);
         cartItem.setUserId(userId);
 
@@ -97,7 +97,7 @@ public class CartServiceImpl implements CartService {
     public Result<String> deleteFromCart(BuyProductDTO buyProductDTO) {
         // 判断数量是一个还是多个
         CartItem cartItem = mapStruct.cartProductDTOToCartItem(buyProductDTO);
-        cartItem.setUserId(BaseContext.getCurrentId());
+        cartItem.setUserId(UserContext.getCurrentId());
         CartItem res = cartMapper.isExists(cartItem);
         if (res == null) {
             return Result.error("购物车中不存在该商品");
@@ -115,7 +115,7 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public Result<String> clearCart() {
-        int userId = BaseContext.getCurrentId();
+        int userId = UserContext.getCurrentId();
         cartMapper.clear(userId);
         return Result.success("清空购物车！");
     }

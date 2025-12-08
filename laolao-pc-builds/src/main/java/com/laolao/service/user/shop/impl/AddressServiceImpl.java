@@ -1,6 +1,6 @@
 package com.laolao.service.user.shop.impl;
 
-import com.laolao.common.context.BaseContext;
+import com.laolao.common.context.UserContext;
 import com.laolao.common.result.Result;
 import com.laolao.common.utils.AMAPUtil;
 import com.laolao.converter.MapStruct;
@@ -41,7 +41,7 @@ public class AddressServiceImpl implements AddressService {
     }
 
     public Result<List<AddressVO>> getAddressList() {
-        int userId = BaseContext.getCurrentId();
+        int userId = UserContext.getCurrentId();
         List<Address> addressList = addressMapper.getList(userId);
         ArrayList<AddressVO> addressVOList = new ArrayList<>();
         for (Address address : addressList) {
@@ -53,7 +53,7 @@ public class AddressServiceImpl implements AddressService {
 
     @Override
     public Result<List<AddressVO>> addAddress(AddressDTO addressDTO) {
-        addressDTO.setUserId(BaseContext.getCurrentId());
+        addressDTO.setUserId(UserContext.getCurrentId());
         // 添加并设置为当前订单选择的地址
         addressMapper.insert(addressDTO);
         // 更新地址
@@ -70,7 +70,7 @@ public class AddressServiceImpl implements AddressService {
 
     @Override
     public Result<List<AddressVO>> updateAddress(AddressDTO addressDTO) {
-        addressDTO.setUserId(BaseContext.getCurrentId());
+        addressDTO.setUserId(UserContext.getCurrentId());
         addressMapper.update(addressDTO);
         Result<List<AddressVO>> addressList = getAddressList();
         addressList.setMsg("修改成功！");
@@ -79,7 +79,7 @@ public class AddressServiceImpl implements AddressService {
 
     @Override
     public Result<List<AddressVO>> delAddress(int id) {
-        int userId = BaseContext.getCurrentId();
+        int userId = UserContext.getCurrentId();
         addressMapper.delete(id, userId);
         Result<List<AddressVO>> addressList = getAddressList();
         addressList.setMsg("删除成功！");
@@ -89,7 +89,7 @@ public class AddressServiceImpl implements AddressService {
     @Transactional
     @Override
     public Result<List<AddressVO>> setDefault(int id) {
-        int userId = BaseContext.getCurrentId();
+        int userId = UserContext.getCurrentId();
         // 取消旧默认
         addressMapper.setDefault(0, null, userId);
         // 设置新默认

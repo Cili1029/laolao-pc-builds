@@ -1,7 +1,7 @@
 package com.laolao.service.user.shop.impl;
 
 import com.laolao.common.constant.MessageConstant;
-import com.laolao.common.context.BaseContext;
+import com.laolao.common.context.UserContext;
 import com.laolao.common.exception.UnknownError;
 import com.laolao.common.result.Result;
 import com.laolao.converter.MapStruct;
@@ -47,7 +47,7 @@ public class OrderServiceImpl implements OrderService {
         List<CartProductVO> data = cartProductList.getData();
         // 减库存
         // 组件的id
-        int userId = BaseContext.getCurrentId();
+        int userId = UserContext.getCurrentId();
         List<CartItem> cartItemList = cartMapper.getList(userId);
         List<IdAndQuantityVO> components = cartItemList.stream()
                 .filter(cartItem -> cartItem.getProductType() == 1)
@@ -114,7 +114,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Result<String> createOrderDirectly(BuyProductDTO buyProductDTO) {
-        int userId = BaseContext.getCurrentId();
+        int userId = UserContext.getCurrentId();
         IdAndQuantityVO idAndQuantityVO = new IdAndQuantityVO();
         idAndQuantityVO.setProductId(buyProductDTO.getProductId());
         idAndQuantityVO.setQuantity(buyProductDTO.getQuantity());
@@ -166,7 +166,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Result<Integer> getStatus(String number) {
-        int userId = BaseContext.getCurrentId();
+        int userId = UserContext.getCurrentId();
         Order order = orderMapper.selectOrder(userId, number);
         if (order.getStatus() != 1) {
             throw new UnknownError(MessageConstant.UNKNOWN_ERROR);
@@ -195,7 +195,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Result<String> changeAddress(ChangeOrderAddressDTO changeOrderAddressDTO) {
         // 查找地址
-        int userId = BaseContext.getCurrentId();
+        int userId = UserContext.getCurrentId();
         Address address = addressMapper.get(userId, changeOrderAddressDTO.getAddressId());
         // 更新地址
         Order order = new Order();
@@ -211,7 +211,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Result<List<OrdersVO>> getOrders() {
-        int userId = BaseContext.getCurrentId();
+        int userId = UserContext.getCurrentId();
         // 订单获取基础数据 并且只获取一张图片
         List<OrdersVO> orderList = orderMapper.selectOrders(userId);
         return Result.success(orderList);
@@ -220,7 +220,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Result<OrderDetailVO> getOrderDetail(String number) {
         // 获取的订单信息
-        int userId = BaseContext.getCurrentId();
+        int userId = UserContext.getCurrentId();
         Order order = orderMapper.selectOrder(userId, number);
         // 获取所包含的商品
         List<OrderDetail> orderDetailList = orderMapper.selectDetail(order.getNumber());
@@ -240,7 +240,7 @@ public class OrderServiceImpl implements OrderService {
         // 释放优惠券
         shopCouponMapper.cancelUseCoupon(cancelDTO.getNumber());
 
-        int userId = BaseContext.getCurrentId();
+        int userId = UserContext.getCurrentId();
         Order order = new Order();
         order.setUserId(userId);
         order.setNumber(cancelDTO.getNumber());
@@ -256,7 +256,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Result<String> pay(PayDTO payDTO) {
         // 付款流程省去。。。
-        int userId = BaseContext.getCurrentId();
+        int userId = UserContext.getCurrentId();
         Order order = new Order();
         order.setUserId(userId);
         order.setNumber(payDTO.getNumber());
@@ -268,7 +268,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Result<String> useCoupon(CouponDTO couponDTO) {
-        int userId = BaseContext.getCurrentId();
+        int userId = UserContext.getCurrentId();
         couponDTO.setUserId(userId);
         couponDTO.setStatus(1);
         couponDTO.setUsedAt(LocalDateTime.now());
@@ -286,7 +286,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Result<String> cancelCoupon(CouponDTO couponDTO) {
-        int userId = BaseContext.getCurrentId();
+        int userId = UserContext.getCurrentId();
         couponDTO.setUserId(userId);
         couponDTO.setStatus(0);
         couponDTO.setUsedAt(null);

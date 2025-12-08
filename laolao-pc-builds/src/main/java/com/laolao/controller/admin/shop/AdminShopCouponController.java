@@ -4,7 +4,6 @@ import com.github.pagehelper.PageInfo;
 import com.laolao.common.result.Result;
 import com.laolao.pojo.common.StatusDTO;
 import com.laolao.pojo.shop.dto.AdminShopCouponDTO;
-import com.laolao.pojo.shop.dto.AdminShopCategoryDTO;
 import com.laolao.pojo.shop.entity.ShopCoupon;
 import com.laolao.service.admin.shop.AdminShopCouponService;
 import jakarta.annotation.Resource;

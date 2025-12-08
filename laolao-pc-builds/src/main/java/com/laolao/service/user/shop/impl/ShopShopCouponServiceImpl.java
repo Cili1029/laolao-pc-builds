@@ -1,6 +1,6 @@
 package com.laolao.service.user.shop.impl;
 
-import com.laolao.common.context.BaseContext;
+import com.laolao.common.context.UserContext;
 import com.laolao.common.result.Result;
 import com.laolao.converter.MapStruct;
 import com.laolao.mapper.user.shop.ShopCouponMapper;
@@ -25,7 +25,7 @@ public class ShopShopCouponServiceImpl implements ShopCouponService {
 
     @Override
     public Result<List<ShopCouponVO>> ShowShopCoupon() {
-        List<ShopCoupon> couponList = shopCouponMapper.selectShopCoupon(BaseContext.getCurrentId());
+        List<ShopCoupon> couponList = shopCouponMapper.selectShopCoupon(UserContext.getCurrentId());
         List<ShopCouponVO> shopCouponVOS = new ArrayList<>();
         for (ShopCoupon coupon : couponList) {
             ShopCouponVO shopCouponVO = mapStruct.shopCouponToShopCouponVO(coupon);
@@ -36,13 +36,13 @@ public class ShopShopCouponServiceImpl implements ShopCouponService {
 
     @Override
     public Result<List<UserCouponVO>> showUserCoupon() {
-        List<UserCouponVO> couponList = shopCouponMapper.selectUserCoupon(BaseContext.getCurrentId(), 0);
+        List<UserCouponVO> couponList = shopCouponMapper.selectUserCoupon(UserContext.getCurrentId(), 0);
         return Result.success(couponList);
     }
 
     @Override
     public Result<String> getCoupon(GetCouponDTO getCouponDTO) {
-        int userId = BaseContext.getCurrentId();
+        int userId = UserContext.getCurrentId();
         UserCoupon userCoupon = UserCoupon.builder()
                 .userId(userId)
                 .couponId(getCouponDTO.getCouponId())
@@ -53,7 +53,7 @@ public class ShopShopCouponServiceImpl implements ShopCouponService {
 
     @Override
     public Result<List<UserCouponVO>> getAvailableCoupon(int userCouponId) {
-        List<UserCouponVO> couponList = shopCouponMapper.selectAvailableCoupon(BaseContext.getCurrentId(), userCouponId);
+        List<UserCouponVO> couponList = shopCouponMapper.selectAvailableCoupon(UserContext.getCurrentId(), userCouponId);
         return Result.success(couponList);
     }
 }

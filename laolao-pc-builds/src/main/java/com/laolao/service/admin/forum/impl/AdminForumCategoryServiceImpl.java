@@ -1,6 +1,6 @@
 package com.laolao.service.admin.forum.impl;
 
-import com.laolao.common.context.BaseContext;
+import com.laolao.common.context.UserContext;
 import com.laolao.common.result.Result;
 import com.laolao.mapper.admin.forum.AdminForumCategoryMapper;
 import com.laolao.pojo.forum.dto.AdminForumCategoryDTO;
@@ -37,7 +37,7 @@ public class AdminForumCategoryServiceImpl implements AdminForumCategoryService 
 
     @Override
     public Result<String> add(AdminForumCategoryDTO adminForumCategoryDTO) {
-        adminForumCategoryDTO.setCreatedBy(BaseContext.getCurrentId());
+        adminForumCategoryDTO.setCreatedBy(UserContext.getCurrentId());
         adminForumCategoryMapper.insert(adminForumCategoryDTO);
         return Result.success("新增成功");
     }

@@ -2,7 +2,7 @@ package com.laolao.service.admin.shop.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.laolao.common.context.BaseContext;
+import com.laolao.common.context.UserContext;
 import com.laolao.common.result.Result;
 import com.laolao.converter.MapStruct;
 import com.laolao.mapper.admin.shop.AdminComponentMapper;
@@ -72,7 +72,7 @@ public class AdminComponentServiceImpl implements AdminComponentService {
 
     @Override
     public Result<String> add(AdminAddComponentDTO adminAddComponentDTO) {
-        adminAddComponentDTO.setCreatedBy(BaseContext.getCurrentId());
+        adminAddComponentDTO.setCreatedBy(UserContext.getCurrentId());
         adminComponentMapper.insert(adminAddComponentDTO);
         return Result.success("新增成功");
     }

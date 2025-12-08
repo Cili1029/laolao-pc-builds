@@ -1,6 +1,6 @@
 package com.laolao.service.user.forum.impl;
 
-import com.laolao.common.context.BaseContext;
+import com.laolao.common.context.UserContext;
 import com.laolao.common.result.Result;
 import com.laolao.converter.MapStruct;
 import com.laolao.mapper.user.forum.CommentMapper;
@@ -82,7 +82,7 @@ public class PostServiceImpl implements PostService {
         List<CommentVO> commentVOList = new ArrayList<>();
         if (allCommentList.isEmpty()) {
             // 无评论
-            List<Like> likes = likeMapper.queryLike(BaseContext.getCurrentId(), likeTargets);
+            List<Like> likes = likeMapper.queryLike(UserContext.getCurrentId(), likeTargets);
             if (!likes.isEmpty()) {
                 // 点赞了
                 postVO.setLike(1);
@@ -94,7 +94,7 @@ public class PostServiceImpl implements PostService {
             // 帖子
             likeTargets.addAll(allCommentList.stream().map(comment -> new LikeTarget(2, comment.getId())).collect(Collectors.toCollection(ArrayList::new)));
 
-            List<Like> likes = likeMapper.queryLike(BaseContext.getCurrentId(), likeTargets);
+            List<Like> likes = likeMapper.queryLike(UserContext.getCurrentId(), likeTargets);
             //转为Map
             Map<String, Like> likeMap = likes.stream().collect(Collectors.toMap(
                     like -> like.getLikeType() + "_" + like.getLikeId(),
@@ -140,7 +140,7 @@ public class PostServiceImpl implements PostService {
 
         // 获取点赞信息
         ArrayList<LikeTarget> likeTargets = replyList.stream().map(reply -> new LikeTarget(2, reply.getId())).collect(Collectors.toCollection(ArrayList::new));
-        List<Like> likes = likeMapper.queryLike(BaseContext.getCurrentId(), likeTargets);
+        List<Like> likes = likeMapper.queryLike(UserContext.getCurrentId(), likeTargets);
         //转为Map
         Map<Integer, Like> likeMap = likes.stream().collect(Collectors.toMap(
                 Like::getLikeId,
@@ -190,7 +190,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public Result<PostSimpleVO> createPost(CreatePostDTO createPostDTO) {
         Post post = Post.builder()
-                .userId(BaseContext.getCurrentId())
+                .userId(UserContext.getCurrentId())
                 .categoryId(createPostDTO.getCategoryId())
                 .title(createPostDTO.getTitle())
                 .content(createPostDTO.getContent())
@@ -209,7 +209,7 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional
     public Result<String> deletePost(int id) {
-        int userId = BaseContext.getCurrentId();
+        int userId = UserContext.getCurrentId();
         // 先删评论
         commentMapper.deleteCommentByPostId(id, userId);
         // 删帖子

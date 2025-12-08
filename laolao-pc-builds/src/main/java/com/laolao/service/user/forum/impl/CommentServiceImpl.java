@@ -1,6 +1,6 @@
 package com.laolao.service.user.forum.impl;
 
-import com.laolao.common.context.BaseContext;
+import com.laolao.common.context.UserContext;
 import com.laolao.common.result.Result;
 import com.laolao.converter.MapStruct;
 import com.laolao.mapper.user.forum.CommentMapper;
@@ -35,7 +35,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public Result<CommentVO> addComment(AddCommentDTO addCommentDTO) {
-        int userId = BaseContext.getCurrentId();
+        int userId = UserContext.getCurrentId();
         User user = userMapper.getUser(userId);
         Map<Integer, User> userMap = new HashMap<>();
         userMap.put(userId, user);
@@ -60,7 +60,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public Result<CommentReplyVO> addReply(AddReplyDTO addReplyDTO) {
-        int userId = BaseContext.getCurrentId();
+        int userId = UserContext.getCurrentId();
         User user = userMapper.getUser(userId);
         Map<Integer, User> userMap = new HashMap<>();
         userMap.put(userId, user);
@@ -87,7 +87,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional
     public Result<String> deleteComment(int postId, int commentId) {
-        int userId = BaseContext.getCurrentId();
+        int userId = UserContext.getCurrentId();
         // 先删除主评论
         int res = commentMapper.deleteComment(commentId, userId);
         if (res == 0) {
@@ -106,7 +106,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public Result<String> deleteReply(int postId, int id) {
-        int userId = BaseContext.getCurrentId();
+        int userId = UserContext.getCurrentId();
         commentMapper.deleteComment(id, userId);
         postMapper.updateCommentCount(postId, -1, null);
         return Result.success("删除成功");

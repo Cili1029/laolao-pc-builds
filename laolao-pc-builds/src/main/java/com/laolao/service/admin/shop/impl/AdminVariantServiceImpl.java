@@ -1,6 +1,6 @@
 package com.laolao.service.admin.shop.impl;
 
-import com.laolao.common.context.BaseContext;
+import com.laolao.common.context.UserContext;
 import com.laolao.common.result.Result;
 import com.laolao.mapper.admin.shop.AdminComponentMapper;
 import com.laolao.mapper.admin.shop.AdminVariantMapper;
@@ -58,7 +58,7 @@ public class AdminVariantServiceImpl implements AdminVariantService {
                 .stock(adminAddVariantDTO.getStock())
                 .status(0)
                 .createdAt(LocalDateTime.now())
-                .createdBy(BaseContext.getCurrentId()).build();
+                .createdBy(UserContext.getCurrentId()).build();
         adminVariantMapper.insert(variant);
         return Result.success(variant, "添加成功！");
     }

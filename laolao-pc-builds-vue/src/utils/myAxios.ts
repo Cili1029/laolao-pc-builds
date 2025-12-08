@@ -40,7 +40,12 @@ request.interceptors.response.use(
                 case 401:
                     // 跳转到登录页
                     router.replace('/sign')
-                    msg = '该功能需要登录，请先登录'
+                    msg = '登录已过期，请重新登录'
+                    break
+                case 403:
+                    // 跳转到用户首页
+                    router.replace('/')
+                    msg = '非管理员，无权限！'
                     break
                 default:
                     msg = '未知错误'

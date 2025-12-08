@@ -1,6 +1,6 @@
 package com.laolao.service.admin.shop.impl;
 
-import com.laolao.common.context.BaseContext;
+import com.laolao.common.context.UserContext;
 import com.laolao.common.result.Result;
 import com.laolao.mapper.admin.shop.AdminShopCategoryMapper;
 import com.laolao.pojo.shop.dto.AdminShopCategoryDTO;
@@ -37,7 +37,7 @@ public class AdminShopCategoryServiceImpl implements AdminShopCategoryService {
 
     @Override
     public Result<String> add(AdminShopCategoryDTO adminShopCategoryDTO) {
-        adminShopCategoryDTO.setCreatedBy(BaseContext.getCurrentId());
+        adminShopCategoryDTO.setCreatedBy(UserContext.getCurrentId());
         adminShopCategoryMapper.insert(adminShopCategoryDTO);
         return Result.success("新增成功");
     }

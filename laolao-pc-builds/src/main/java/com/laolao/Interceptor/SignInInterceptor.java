@@ -1,7 +1,7 @@
 package com.laolao.Interceptor;
 
 import com.laolao.common.constant.JwtClaimsConstant;
-import com.laolao.common.context.BaseContext;
+import com.laolao.common.context.UserContext;
 import com.laolao.common.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
 import jakarta.annotation.Resource;
@@ -25,8 +25,7 @@ public class SignInInterceptor implements HandlerInterceptor {
         try {
             Claims claims = jwtUtil.parseJWT(jwt);
             int userId = Integer.parseInt(claims.get(JwtClaimsConstant.USER_ID).toString());
-            BaseContext.setCurrentId(userId);
-
+            UserContext.setCurrentId(userId);
             return true;
         }  catch (Exception e) {
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
@@ -37,7 +36,7 @@ public class SignInInterceptor implements HandlerInterceptor {
 
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
-        BaseContext.removeCurrentId();
+        UserContext.removeCurrentId();
     }
 
     public String getJwtFromCookie(Cookie[] cookies) {

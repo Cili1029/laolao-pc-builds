@@ -3,7 +3,7 @@ package com.laolao.service.user.user.impl;
 import com.laolao.common.constant.JwtClaimsConstant;
 import com.laolao.common.constant.MessageConstant;
 import com.laolao.common.constant.RedisConstant;
-import com.laolao.common.context.BaseContext;
+import com.laolao.common.context.UserContext;
 import com.laolao.common.utils.AliDirectMailUtil;
 import com.laolao.common.utils.NameUtil;
 import com.laolao.converter.MapStruct;
@@ -200,7 +200,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Result<String> update(UpdateUserVO updateUserVO) {
-        updateUserVO.setId(BaseContext.getCurrentId());
+        updateUserVO.setId(UserContext.getCurrentId());
         userMapper.updateUser(updateUserVO);
         return Result.success("修改成功！");
     }

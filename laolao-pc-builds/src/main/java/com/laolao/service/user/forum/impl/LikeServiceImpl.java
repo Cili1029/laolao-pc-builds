@@ -1,6 +1,6 @@
 package com.laolao.service.user.forum.impl;
 
-import com.laolao.common.context.BaseContext;
+import com.laolao.common.context.UserContext;
 import com.laolao.common.result.Result;
 import com.laolao.mapper.user.forum.CommentMapper;
 import com.laolao.mapper.user.forum.LikeMapper;
@@ -22,7 +22,7 @@ public class LikeServiceImpl implements LikeService {
 
     @Override
     public Result<Integer> like(LikeDTO likeDTO) {
-        int userId = BaseContext.getCurrentId();
+        int userId = UserContext.getCurrentId();
         // 先查询当前状态
         Integer currentStatus = likeMapper.getStatus(userId, likeDTO.getLikeType(), likeDTO.getLikeId());
         if (currentStatus == null) {
