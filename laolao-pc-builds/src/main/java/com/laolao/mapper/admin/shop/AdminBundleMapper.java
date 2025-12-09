@@ -3,9 +3,7 @@ package com.laolao.mapper.admin.shop;
 import com.laolao.pojo.common.StockOrQuantityDTO;
 import com.laolao.pojo.shop.dto.AdminBundleAddVariantDTO;
 import com.laolao.pojo.shop.entity.Bundle;
-import com.laolao.pojo.shop.dto.AdminAddBundleDTO;
 import com.laolao.pojo.shop.vo.AdminBundleVariantVO;
-import com.laolao.pojo.shop.dto.AdminUpdateBundleDTO;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -15,19 +13,20 @@ public interface AdminBundleMapper {
     @Select("select * from shop_bundle order by created_at desc")
     List<Bundle> selectBundle();
 
-    @Update("update shop_bundle set status = #{status} where id = #{id}")
-    void updateStatus(int id, int status);
+    @Update("update shop_bundle set status = #{status}, updated_by = #{updatedBy}, updated_at = #{updatedAt} where id = #{id}")
+    void updateStatus(Bundle bundle);
 
     @Delete("delete from shop_bundle where id = #{id}")
     void delete(int id);
 
-    @Insert("insert into shop_bundle(name, category_id, images, description, price, created_by) value (#{name}, #{categoryId}, #{images}, #{description}, #{price} , #{createdBy})")
-    void insert(AdminAddBundleDTO adminAddBundleDTO);
+    @Insert("insert into shop_bundle(name, category_id, images, description, price, created_by, created_at, updated_by, updated_at) " +
+            "value (#{name}, #{categoryId}, #{images}, #{description}, #{price} , #{createdBy}, #{createdAt}, #{updatedBy}, #{updatedAt})")
+    void insert(Bundle bundle);
 
-    @Update("update shop_bundle set name = #{name}, category_id = #{categoryId}, description = #{description}, price = #{price}, sort = #{sort}, images = #{images} where id = #{id}")
-    void update(AdminUpdateBundleDTO adminUpdateBundleDTO);
+    @Update("update shop_bundle set name = #{name}, category_id = #{categoryId}, description = #{description}, price = #{price}, sort = #{sort}, images = #{images}, updated_by = #{updatedBy}, updated_at = #{updatedAt} where id = #{id}")
+    void update(Bundle bundle);
 
-    @Update("update shop_bundle set stock = #{stock} where id = #{id}")
+    @Update("update shop_bundle set stock = #{stock}, updated_by = #{updatedBy}, updated_at = #{updatedAt} where id = #{id}")
     void updateStock(StockOrQuantityDTO stockOrQuantityDTO);
 
     @Select("""
@@ -39,7 +38,7 @@ public interface AdminBundleMapper {
             """)
     List<AdminBundleVariantVO> getVariant(int id);
 
-    @Update("update shop_bundle_configuration set quantity = #{quantity} where id = #{id}")
+    @Update("update shop_bundle_configuration set quantity = #{quantity}, updated_by = #{updatedBy}, updated_at = #{updatedAt}  where id = #{id}")
     void updateQuantity(StockOrQuantityDTO stockOrQuantityDTO);
 
     @Delete("delete from shop_bundle_configuration where id = #{id}")
@@ -52,6 +51,6 @@ public interface AdminBundleMapper {
             """)
     List<AdminBundleVariantVO> searchVariant(String searchContent);
 
-    @Insert("insert into shop_bundle_configuration(bundle_id, variant_id, quantity) value (#{bundleId}, #{variantId}, #{quantity})")
+    @Insert("insert into shop_bundle_configuration(bundle_id, variant_id, quantity, created_by, created_at, updated_by, updated_at) value (#{bundleId}, #{variantId}, #{quantity}, #{createdBy}, #{createdAt}, #{updatedBy}, #{updatedAt})")
     void insertVariant(AdminBundleAddVariantDTO adminBundleAddVariantDTO);
 }

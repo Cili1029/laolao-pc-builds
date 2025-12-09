@@ -2,6 +2,7 @@ package com.laolao.service.admin.shop.impl;
 
 import com.laolao.common.context.UserContext;
 import com.laolao.common.result.Result;
+import com.laolao.converter.MapStruct;
 import com.laolao.mapper.admin.shop.AdminShopCategoryMapper;
 import com.laolao.pojo.shop.dto.AdminShopCategoryDTO;
 import com.laolao.pojo.shop.entity.ShopCategory;
@@ -16,6 +17,8 @@ public class AdminShopCategoryServiceImpl implements AdminShopCategoryService {
 
     @Resource
     private AdminShopCategoryMapper adminShopCategoryMapper;
+    @Resource
+    private MapStruct mapStruct;
 
     @Override
     public Result<List<ShopCategory>> get(int type) {
@@ -25,20 +28,24 @@ public class AdminShopCategoryServiceImpl implements AdminShopCategoryService {
 
     @Override
     public Result<String> changeStatus(int id, int status) {
-        adminShopCategoryMapper.updateStatus(id, status);
+        ShopCategory shopCategory = new ShopCategory();
+        shopCategory.setId(id);
+        shopCategory.setStatus(status);
+        adminShopCategoryMapper.updateStatus(shopCategory);
         return Result.success(status == 1 ? "已启用！" : "已禁用！");
     }
 
     @Override
     public Result<String> update(AdminShopCategoryDTO adminShopCategoryDTO) {
-        adminShopCategoryMapper.update(adminShopCategoryDTO);
+        ShopCategory shopCategory = mapStruct.adminShopCategoryDTOToShopCategory(adminShopCategoryDTO);
+        adminShopCategoryMapper.update(shopCategory);
         return Result.success("修改成功");
     }
 
     @Override
     public Result<String> add(AdminShopCategoryDTO adminShopCategoryDTO) {
-        adminShopCategoryDTO.setCreatedBy(UserContext.getCurrentId());
-        adminShopCategoryMapper.insert(adminShopCategoryDTO);
+        ShopCategory shopCategory = mapStruct.adminShopCategoryDTOToShopCategory(adminShopCategoryDTO);
+        adminShopCategoryMapper.insert(shopCategory);
         return Result.success("新增成功");
     }
 

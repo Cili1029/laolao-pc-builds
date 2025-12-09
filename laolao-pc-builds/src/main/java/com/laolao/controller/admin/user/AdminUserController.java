@@ -1,5 +1,6 @@
 package com.laolao.controller.admin.user;
 
+import com.laolao.common.annotation.LogSql;
 import com.laolao.common.result.Result;
 import com.laolao.pojo.common.StatusDTO;
 import com.laolao.pojo.user.dto.AdminUserUpdateDTO;
@@ -35,6 +36,7 @@ public class AdminUserController {
      * @param statusDTO 账户Id
      * @return 结果信息
      */
+    @LogSql(description = "启用账户")
     @PatchMapping("/status/activate")
     public Result<String> activate(@RequestBody StatusDTO statusDTO) {
         return adminUserService.changeStatus(statusDTO.getId(), 1);
@@ -46,6 +48,7 @@ public class AdminUserController {
      * @param statusDTO 账户Id
      * @return 结果信息
      */
+    @LogSql(description = "禁用账户")
     @PatchMapping("/status/deactivate")
     public Result<String> deactivate(@RequestBody StatusDTO statusDTO) {
         return adminUserService.changeStatus(statusDTO.getId(), 0);
@@ -57,6 +60,7 @@ public class AdminUserController {
      * @param adminUserUpdateDTO 更新信息
      * @return 结果信息
      */
+    @LogSql(description = "更新账户")
     @PatchMapping("/update")
     public Result<String> update(@RequestBody AdminUserUpdateDTO adminUserUpdateDTO) {
         return adminUserService.updateUser(adminUserUpdateDTO);

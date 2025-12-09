@@ -1,5 +1,6 @@
 package com.laolao.controller.admin.shop;
 
+import com.laolao.common.annotation.LogSql;
 import com.laolao.common.result.Result;
 import com.laolao.pojo.common.StatusDTO;
 import com.laolao.pojo.common.StockOrQuantityDTO;
@@ -38,6 +39,7 @@ public class AdminVariantController {
      * @param statusDTO Id
      * @return 结果信息
      */
+    @LogSql(description = "启用版本")
     @PatchMapping("/activate")
     public Result<String> activate(@RequestBody StatusDTO statusDTO) {
         return adminVariantService.changeStatus(statusDTO.getId(), 1);
@@ -49,6 +51,7 @@ public class AdminVariantController {
      * @param statusDTO Id
      * @return 结果信息
      */
+    @LogSql(description = "禁用版本")
     @PatchMapping("/deactivate")
     public Result<String> deactivate(@RequestBody StatusDTO statusDTO) {
         return adminVariantService.changeStatus(statusDTO.getId(), 0);
@@ -59,6 +62,7 @@ public class AdminVariantController {
      *
      * @return 结果信息
      */
+    @LogSql(description = "删除版本")
     @DeleteMapping
     public Result<String> deactivate(@RequestParam int id) {
         return adminVariantService.delete(id);
@@ -70,6 +74,7 @@ public class AdminVariantController {
      * @param adminAddVariantDTO 基础信息
      * @return 新增的版本
      */
+    @LogSql(description = "添加版本")
     @PostMapping("/add")
     public Result<Variant> add(@RequestBody AdminAddVariantDTO adminAddVariantDTO) {
         return adminVariantService.add(adminAddVariantDTO);
@@ -81,6 +86,7 @@ public class AdminVariantController {
      * @param stockOrQuantityDTO 库存信息
      * @return 结果信息
      */
+    @LogSql(description = "更新版本库存")
     @PatchMapping("/stock")
     public Result<String> update(@RequestBody StockOrQuantityDTO stockOrQuantityDTO) {
         return adminVariantService.updateStock(stockOrQuantityDTO);
@@ -92,6 +98,7 @@ public class AdminVariantController {
      * @param adminUpdateVariantDTO 更新信息
      * @return 结果信息
      */
+    @LogSql(description = "更新版本")
     @PatchMapping("/update")
     public Result<String> update(@RequestBody AdminUpdateVariantDTO adminUpdateVariantDTO) {
         return adminVariantService.update(adminUpdateVariantDTO);

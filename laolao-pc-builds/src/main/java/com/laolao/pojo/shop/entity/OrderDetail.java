@@ -3,6 +3,7 @@ package com.laolao.pojo.shop.entity;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 
 @Getter
@@ -45,4 +46,9 @@ public class OrderDetail {
      * 单价
      */
     private BigDecimal price;
+
+    /**
+     * 创建时间
+     */
+    private LocalDateTime createdAt;
 }

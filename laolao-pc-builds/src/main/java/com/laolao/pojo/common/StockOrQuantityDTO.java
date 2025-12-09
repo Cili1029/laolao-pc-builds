@@ -2,6 +2,8 @@ package com.laolao.pojo.common;
 
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -22,4 +24,15 @@ public class StockOrQuantityDTO {
      * 数量
      */
     private int quantity;
+
+    /**
+     * 最后更新人
+     */
+    private int updatedBy;
+
+    /**
+     * 最后更新时间
+     */
+    private LocalDateTime updatedAt;
+
 }

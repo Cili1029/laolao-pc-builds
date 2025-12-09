@@ -234,7 +234,7 @@
         try {
             await axios.patch("/api/admin/user/update", {
                 id: newData.value?.id,
-                avatar: avatar.value,
+                avatar: avatar.value[0],
                 username: newData.value?.username,
                 name: newData.value?.name,
                 email: newData.value?.email,

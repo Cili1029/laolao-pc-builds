@@ -13,17 +13,26 @@ public class SqlMarkInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
-        // 拦截Controller
-        if (handler instanceof HandlerMethod) {
-            HandlerMethod handlerMethod = (HandlerMethod) handler;
-
-            // 检查注解(方法)
+        if (handler instanceof HandlerMethod handlerMethod) {
+            // 1. 获取方法上的注解
             LogSql methodAnnotation = handlerMethod.getMethodAnnotation(LogSql.class);
-            // 检查注解（类）
+            // 2. 获取类上的注解
             LogSql classAnnotation = handlerMethod.getBeanType().getAnnotation(LogSql.class);
-            // 只要有 @LogSql，就开启上下文标记
-            if (methodAnnotation != null || classAnnotation != null) {
-                SqlLogContext.enable();
+
+            // 3. 确定最终生效的注解 (方法优先，如果方法没有，再用类的)
+            LogSql targetAnnotation = (methodAnnotation != null) ? methodAnnotation : classAnnotation;
+
+            // 4. 只要有一个不为空，就处理
+            if (targetAnnotation != null) {
+                String desc = targetAnnotation.description();
+
+                // 处理描述为空的情况
+                if (desc == null || desc.isEmpty()) {
+                    desc = "未知业务";
+                }
+
+                // 存入 ThreadLocal
+                SqlLogContext.setBusinessName(desc);
             }
         }
         return true;

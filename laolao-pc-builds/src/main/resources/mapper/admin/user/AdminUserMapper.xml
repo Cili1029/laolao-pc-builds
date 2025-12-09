@@ -21,6 +21,12 @@
             <if test="admin != null">
                 admin = #{admin},
             </if>
+            <if test="updatedBy != null">
+                updated_by = #{updatedBy},
+            </if>
+            <if test="updatedAt != null">
+                updated_at = #{updatedAt}
+            </if>
         </set>
         where id = #{id}
     </update>

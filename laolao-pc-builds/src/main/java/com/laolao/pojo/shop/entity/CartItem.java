@@ -40,4 +40,9 @@ public class CartItem {
      * 添加时间
      */
     private LocalDateTime createdAt;
+
+    /**
+     * 最后更新时间
+     */
+    private LocalDateTime updatedAt;
 }

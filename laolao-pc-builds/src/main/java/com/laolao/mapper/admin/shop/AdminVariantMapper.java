@@ -12,11 +12,11 @@ public interface AdminVariantMapper {
     @Select("select * from shop_component_variant where component_id = #{id}")
     List<Variant> selectVariant(int id);
 
-    @Update("update shop_component_variant set status = #{status} where component_id = #{id}")
-    void updateVariantStatusByComponentId(int id, int status);
+    @Update("update shop_component_variant set status = #{status}, updated_by = #{updatedBy}, updated_at = #{updatedAt} where component_id = #{id}")
+    void updateVariantStatusByComponentId(Variant variant);
 
     @Update("update shop_component_variant set status = #{status} where id = #{id}")
-    void updateVariantStatusByVariantId(int id, int status);
+    void updateVariantStatusByVariantId(Variant variant);
 
     @Delete("delete from shop_component_variant where component_id = #{id}")
     void deleteByComponentId(int id);
@@ -33,7 +33,9 @@ public interface AdminVariantMapper {
                     stock,
                     status,
                     created_by,
-                    created_at
+                    created_at,
+                    updated_by,
+                    updated_at
                 ) value (
                     #{componentId},
                     #{variantName},
@@ -42,15 +44,17 @@ public interface AdminVariantMapper {
                     #{stock},
                     #{status},
                     #{createdBy},
-                    #{createdAt}
+                    #{createdAt},
+                    #{updatedBy},
+                    #{updatedAt}
                 )
             """)
     @Options(useGeneratedKeys = true, keyProperty = "id")
     void insert(Variant variant);
 
-    @Update("update shop_component_variant set stock = #{stock} where id = #{id};")
+    @Update("update shop_component_variant set stock = #{stock}, updated_by = #{updatedBy}, updated_at = #{updatedAt} where id = #{id}")
     void updateStock(StockOrQuantityDTO stockOrQuantityDTO);
 
-    @Update("update shop_component_variant set variant_name = #{variantName}, price = #{price}, description = #{description} where id = #{id};")
-    void update(AdminUpdateVariantDTO adminUpdateVariantDTO);
+    @Update("update shop_component_variant set variant_name = #{variantName}, price = #{price}, description = #{description}, updated_by = #{updatedBy}, updated_at = #{updatedAt} where id = #{id}")
+    void update(Variant variant);
 }

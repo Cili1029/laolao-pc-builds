@@ -1,6 +1,7 @@
 package com.laolao.controller.admin.shop;
 
 import com.github.pagehelper.PageInfo;
+import com.laolao.common.annotation.LogSql;
 import com.laolao.common.result.Result;
 import com.laolao.pojo.common.StatusDTO;
 import com.laolao.pojo.shop.dto.AdminAddComponentDTO;
@@ -37,6 +38,7 @@ public class AdminComponentController {
      * @param statusDTO Id
      * @return 结果信息
      */
+    @LogSql(description = "启用组件")
     @PatchMapping("/activate")
     public Result<String> activate(@RequestBody StatusDTO statusDTO) {
         return adminComponentService.changeStatus(statusDTO.getId(), 1);
@@ -48,6 +50,7 @@ public class AdminComponentController {
      * @param statusDTO Id
      * @return 结果信息
      */
+    @LogSql(description = "禁用组件")
     @PatchMapping("/deactivate")
     public Result<String> deactivate(@RequestBody StatusDTO statusDTO) {
         return adminComponentService.changeStatus(statusDTO.getId(), 0);
@@ -58,6 +61,7 @@ public class AdminComponentController {
      *
      * @return 结果信息
      */
+    @LogSql(description = "删除组件")
     @DeleteMapping
     public Result<String> deactivate(@RequestParam int id) {
         return adminComponentService.delete(id);
@@ -69,6 +73,7 @@ public class AdminComponentController {
      * @param adminAddComponentDTO 基础信息
      * @return 结果信息
      */
+    @LogSql(description = "添加组件")
     @PostMapping("/add")
     public Result<String> add(@RequestBody AdminAddComponentDTO adminAddComponentDTO) {
         return adminComponentService.add(adminAddComponentDTO);
@@ -80,6 +85,7 @@ public class AdminComponentController {
      * @param adminUpdateComponentDTO 更新信息
      * @return 结果信息
      */
+    @LogSql(description = "更新组件")
     @PatchMapping("/update")
     public Result<String> update(@RequestBody AdminUpdateComponentDTO adminUpdateComponentDTO) {
         return adminComponentService.update(adminUpdateComponentDTO);

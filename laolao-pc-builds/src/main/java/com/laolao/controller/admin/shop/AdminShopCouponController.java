@@ -1,6 +1,7 @@
 package com.laolao.controller.admin.shop;
 
 import com.github.pagehelper.PageInfo;
+import com.laolao.common.annotation.LogSql;
 import com.laolao.common.result.Result;
 import com.laolao.pojo.common.StatusDTO;
 import com.laolao.pojo.shop.dto.AdminShopCouponDTO;
@@ -35,6 +36,7 @@ public class AdminShopCouponController {
      * @param statusDTO 优惠券Id
      * @return 结果信息
      */
+    @LogSql(description = "启用优惠券")
     @PatchMapping("/activate")
     public Result<String> activate(@RequestBody StatusDTO statusDTO) {
         return adminCouponService.changeStatus(statusDTO.getId(), 1);
@@ -46,6 +48,7 @@ public class AdminShopCouponController {
      * @param statusDTO 优惠券Id
      * @return 结果信息
      */
+    @LogSql(description = "禁用优惠券")
     @PatchMapping("/deactivate")
     public Result<String> deactivate(@RequestBody StatusDTO statusDTO) {
         return adminCouponService.changeStatus(statusDTO.getId(), 0);
@@ -57,6 +60,7 @@ public class AdminShopCouponController {
      * @param adminShopCouponDTO 数据
      * @return 结果信息
      */
+    @LogSql(description = "更新优惠券")
     @PutMapping("/update")
     public Result<String> update(@RequestBody AdminShopCouponDTO adminShopCouponDTO) {
         return adminCouponService.update(adminShopCouponDTO);
@@ -68,6 +72,7 @@ public class AdminShopCouponController {
      * @param adminShopCouponDTO 数据
      * @return 结果消息
      */
+    @LogSql(description = "添加优惠券")
     @PostMapping("/add")
     public Result<String> add(@RequestBody AdminShopCouponDTO adminShopCouponDTO) {
         return adminCouponService.add(adminShopCouponDTO);
@@ -79,6 +84,7 @@ public class AdminShopCouponController {
      * @param id id
      * @return 消息结果
      */
+    @LogSql(description = "删除优惠券")
     @DeleteMapping
     public Result<String> delete(@RequestParam int id) {
         return adminCouponService.delete(id);

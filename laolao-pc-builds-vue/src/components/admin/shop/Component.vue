@@ -159,7 +159,7 @@
                                         <DialogTrigger as-child>
                                             <TableHead class="w-[50px] text-center">
                                                 <Button variant="outline"
-                                                    @click="updateComponentData = JSON.parse(JSON.stringify(component))">
+                                                    @click="updateComponentData = JSON.parse(JSON.stringify(component)), updateImg = component.images">
                                                     编辑
                                                 </Button>
                                             </TableHead>
@@ -208,7 +208,7 @@
                                                 </div>
                                             </div>
                                             <DialogFooter class="flex flex-col gap-3 sm:flex-row sm:justify-start">
-                                                <Button @click="updateImg = component.images, showUpdateDialog = true">
+                                                <Button @click="showUpdateDialog = true">
                                                     <span class="icon-[charm--folder]"></span>
                                                     图片管理
                                                 </Button>
@@ -722,6 +722,7 @@
     })
 
     const updateComponent = async (component: Component) => {
+        console.log(updateImg.value)
         try {
             await axios.patch("/api/admin/shop/component/update", {
                 id: component.id,
@@ -736,7 +737,7 @@
             component.commonDescription = updateComponentData.value.commonDescription
             component.sort = updateComponentData.value.sort,
             component.images = updateImg.value
-            addImg.value = []
+            updateImg.value = []
         } catch (error) {
             console.log(error)
         }

@@ -2,13 +2,13 @@ package com.laolao.service.admin.shop.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.laolao.common.context.UserContext;
 import com.laolao.common.result.Result;
 import com.laolao.converter.MapStruct;
 import com.laolao.mapper.admin.shop.AdminComponentMapper;
 import com.laolao.mapper.admin.shop.AdminVariantMapper;
 import com.laolao.pojo.shop.entity.Component;
 import com.laolao.pojo.shop.dto.AdminAddComponentDTO;
+import com.laolao.pojo.shop.entity.Variant;
 import com.laolao.pojo.shop.vo.AdminComponentVO;
 import com.laolao.pojo.shop.dto.AdminUpdateComponentDTO;
 import com.laolao.service.admin.shop.AdminComponentService;
@@ -55,9 +55,15 @@ public class AdminComponentServiceImpl implements AdminComponentService {
     public Result<String> changeStatus(int id, int status) {
         if (status == 0) {
             // 先禁用版本
-            adminVariantMapper.updateVariantStatusByComponentId(id, status);
+            Variant variant = new Variant();
+            variant.setId(id);
+            variant.setStatus(status);
+            adminVariantMapper.updateVariantStatusByComponentId(variant);
         }
-        adminComponentMapper.updateComponentStatus(id, status);
+        Component component = new Component();
+        component.setId(id);
+        component.setStatus(status);
+        adminComponentMapper.updateComponentStatus(component);
         return Result.success(status == 1 ? "已启用！" : "已禁用！");
     }
 
@@ -72,14 +78,15 @@ public class AdminComponentServiceImpl implements AdminComponentService {
 
     @Override
     public Result<String> add(AdminAddComponentDTO adminAddComponentDTO) {
-        adminAddComponentDTO.setCreatedBy(UserContext.getCurrentId());
-        adminComponentMapper.insert(adminAddComponentDTO);
+        Component component = mapStruct.adminAddComponentDTOToComponent(adminAddComponentDTO);
+        adminComponentMapper.insert(component);
         return Result.success("新增成功");
     }
 
     @Override
     public Result<String> update(AdminUpdateComponentDTO adminUpdateComponentDTO) {
-        adminComponentMapper.update(adminUpdateComponentDTO);
+        Component component = mapStruct.adminUpdateComponentDTOToComponent(adminUpdateComponentDTO);
+        adminComponentMapper.update(component);
         return Result.success("修改成功！");
     }
 }

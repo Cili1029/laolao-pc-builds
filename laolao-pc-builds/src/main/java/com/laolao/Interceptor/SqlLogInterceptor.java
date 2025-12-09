@@ -18,8 +18,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.text.DateFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -35,27 +33,33 @@ import java.util.regex.Matcher;
 public class SqlLogInterceptor implements Interceptor {
 
     private static final Logger log = LoggerFactory.getLogger(SqlLogInterceptor.class);
-    private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     @Override
     public Object intercept(Invocation invocation) throws Throwable {
         // 1. 【核心判断】如果没有标记，直接放行，不做任何处理，性能无损耗
-        if (!SqlLogContext.shouldLog()) {
+        // 1. 获取业务名称
+        String businessAt = SqlLogContext.getBusinessName();
+
+        // 如果为空，说明没加注解，直接放行
+        if (businessAt == null) {
             return invocation.proceed();
         }
 
-        Object result = null;
+        // 1. 记录开始时间戳 (用于计算耗时)
+        long startTimestamp = System.currentTimeMillis();
+
+        Object result;
         try {
             result = invocation.proceed(); // 执行 SQL
         } finally {
             try {
-                String ExecutionTime = LocalDateTime.now().format(TIME_FORMATTER);
+                long costTime = System.currentTimeMillis() - startTimestamp;
 
                 // 获取并格式化 SQL
                 String sql = getCompleteSql(invocation);
                 Integer adminId = UserContext.getCurrentId();
 
-                log.info("SQL监控 >> Execution Time: {} | Admin: {} | SQL: {}", ExecutionTime, adminId, sql);
+                log.info("[{}] Cost: {}ms | Admin: {} | SQL: {}", businessAt, costTime, adminId, sql);
             } catch (Exception e) {
                 log.warn("SQL日志记录失败", e);
             }
@@ -89,7 +93,7 @@ public class SqlLogInterceptor implements Interceptor {
     }
 
 //    /**
-//     * 获取完整 SQL
+//     * 获取完整 SQL（未处理PageHelper重复SQL问题）
 //     */
 //    private String getCompleteSql(Invocation invocation) {
 //        Object[] args = invocation.getArgs();
@@ -104,11 +108,11 @@ public class SqlLogInterceptor implements Interceptor {
      * 格式化 SQL：将 ? 替换为参数值
      */
     private String formatSql(Configuration configuration, BoundSql boundSql) {
-        String sql = boundSql.getSql().replaceAll("[\\s]+", " "); // 去除多余空格
+        String sql = boundSql.getSql().replaceAll("\\s+", " "); // 去除多余空格
         Object parameterObject = boundSql.getParameterObject();
         List<ParameterMapping> parameterMappings = boundSql.getParameterMappings();
 
-        if (parameterMappings.size() > 0 && parameterObject != null) {
+        if (!parameterMappings.isEmpty() && parameterObject != null) {
             TypeHandlerRegistry typeHandlerRegistry = configuration.getTypeHandlerRegistry();
             if (typeHandlerRegistry.hasTypeHandler(parameterObject.getClass())) {
                 sql = sql.replaceFirst("\\?", getParameterValue(parameterObject));
@@ -134,7 +138,7 @@ public class SqlLogInterceptor implements Interceptor {
     private String getParameterValue(Object obj) {
         String value;
         if (obj instanceof String) {
-            value = "'" + obj.toString() + "'";
+            value = "'" + obj + "'";
         } else if (obj instanceof Date) {
             DateFormat formatter = DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.DEFAULT, Locale.CHINA);
             value = "'" + formatter.format((Date) obj) + "'";

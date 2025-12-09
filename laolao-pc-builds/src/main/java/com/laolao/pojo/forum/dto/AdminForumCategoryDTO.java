@@ -3,6 +3,7 @@ package com.laolao.pojo.forum.dto;
 import lombok.*;
 
 
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -33,9 +34,4 @@ public class AdminForumCategoryDTO {
      * 排序
      */
     private int sort;
-
-    /**
-     * 创建人
-     */
-    private int createdBy;
 }

@@ -8,12 +8,11 @@ public class UserContext {
         USER.set(id);
     }
 
-    public static int getCurrentId() {
+    public static Integer getCurrentId() {
         return USER.get();
     }
 
     public static void removeCurrentId() {
         USER.remove();
     }
-
 }

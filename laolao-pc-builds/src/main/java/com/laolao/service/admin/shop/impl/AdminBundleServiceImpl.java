@@ -52,7 +52,10 @@ public class AdminBundleServiceImpl implements AdminBundleService {
     @Override
     @Transactional
     public Result<String> changeStatus(int id, int status) {
-        adminBundleMapper.updateStatus(id, status);
+        Bundle bundle = new Bundle();
+        bundle.setId(id);
+        bundle.setStatus(status);
+        adminBundleMapper.updateStatus(bundle);
         return Result.success(status == 1 ? "已启用！" : "已禁用！");
     }
 
@@ -64,14 +67,15 @@ public class AdminBundleServiceImpl implements AdminBundleService {
 
     @Override
     public Result<String> add(AdminAddBundleDTO adminAddBundleDTO) {
-        adminAddBundleDTO.setCreatedBy(UserContext.getCurrentId());
-        adminBundleMapper.insert(adminAddBundleDTO);
+        Bundle bundle = mapStruct.AdminAddBundleDTOToBundle(adminAddBundleDTO);
+        adminBundleMapper.insert(bundle);
         return Result.success("新增成功");
     }
 
     @Override
     public Result<String> update(AdminUpdateBundleDTO adminUpdateBundleDTO) {
-        adminBundleMapper.update(adminUpdateBundleDTO);
+        Bundle bundle = mapStruct.AdminUpdateBundleDTOToBundle(adminUpdateBundleDTO);
+        adminBundleMapper.update(bundle);
         return Result.success("修改成功！");
     }
 

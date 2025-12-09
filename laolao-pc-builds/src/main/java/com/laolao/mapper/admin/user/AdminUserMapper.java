@@ -1,6 +1,5 @@
 package com.laolao.mapper.admin.user;
 
-import com.laolao.pojo.user.dto.AdminUserUpdateDTO;
 import com.laolao.pojo.user.entity.User;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Update;
@@ -12,8 +11,8 @@ public interface AdminUserMapper {
 
     ArrayList<User> selectUser(String searchContent);
 
-    @Update("update user set status = #{status} where id = #{id}")
-    void updateStatus(int id, int status);
+    @Update("update user set status = #{status}, updated_by = #{updatedBy}, updated_at = #{updatedAt} where id = #{id}")
+    void updateStatus(User user);
 
-    void updateUser(AdminUserUpdateDTO adminUserUpdateDTO);
+    void updateUser(User user);
 }

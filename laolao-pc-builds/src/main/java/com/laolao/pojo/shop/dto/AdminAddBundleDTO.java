@@ -34,9 +34,4 @@ public class AdminAddBundleDTO {
      * 通用描述
      */
     private String price;
-
-    /**
-     * 创建人
-     */
-    private int createdBy;
 }

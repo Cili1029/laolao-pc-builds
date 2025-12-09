@@ -1,5 +1,6 @@
 package com.laolao.controller.admin.forum;
 
+import com.laolao.common.annotation.LogSql;
 import com.laolao.common.result.Result;
 import com.laolao.pojo.common.StatusDTO;
 import com.laolao.pojo.forum.dto.AdminForumCategoryDTO;
@@ -35,6 +36,7 @@ public class AdminForumCategoryController {
      * @param statusDTO 分类Id
      * @return 结果信息
      */
+    @LogSql(description = "启用论坛分类")
     @PatchMapping("/activate")
     public Result<String> activate(@RequestBody StatusDTO statusDTO) {
         return adminForumCategoryService.changeStatus(statusDTO.getId(), 1);
@@ -46,6 +48,7 @@ public class AdminForumCategoryController {
      * @param statusDTO 分类Id
      * @return 结果信息
      */
+    @LogSql(description = "禁用论坛分类")
     @PatchMapping("/deactivate")
     public Result<String> deactivate(@RequestBody StatusDTO statusDTO) {
         return adminForumCategoryService.changeStatus(statusDTO.getId(), 0);
@@ -57,6 +60,7 @@ public class AdminForumCategoryController {
      * @param adminForumCategoryDTO 更新信息
      * @return 结果信息
      */
+    @LogSql(description = "更新论坛分类")
     @PatchMapping("/update")
     public Result<String> update(@RequestBody AdminForumCategoryDTO adminForumCategoryDTO) {
         return adminForumCategoryService.update(adminForumCategoryDTO);
@@ -68,6 +72,7 @@ public class AdminForumCategoryController {
      * @param adminForumCategoryDTO 信息
      * @return 结果消息
      */
+    @LogSql(description = "新增论坛分类")
     @PostMapping("/add")
     public Result<String> add(@RequestBody AdminForumCategoryDTO adminForumCategoryDTO) {
         return adminForumCategoryService.add(adminForumCategoryDTO);
@@ -79,6 +84,7 @@ public class AdminForumCategoryController {
      * @param id id
      * @return 消息结果
      */
+    @LogSql(description = "删除论坛分类")
     @DeleteMapping("/delete")
     public Result<String> add(@RequestParam int id) {
         return adminForumCategoryService.delete(id);

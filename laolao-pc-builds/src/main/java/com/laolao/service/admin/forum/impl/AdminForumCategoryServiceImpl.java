@@ -1,7 +1,7 @@
 package com.laolao.service.admin.forum.impl;
 
-import com.laolao.common.context.UserContext;
 import com.laolao.common.result.Result;
+import com.laolao.converter.MapStruct;
 import com.laolao.mapper.admin.forum.AdminForumCategoryMapper;
 import com.laolao.pojo.forum.dto.AdminForumCategoryDTO;
 import com.laolao.pojo.forum.entity.ForumCategory;
@@ -16,6 +16,8 @@ public class AdminForumCategoryServiceImpl implements AdminForumCategoryService 
 
     @Resource
     private AdminForumCategoryMapper adminForumCategoryMapper;
+    @Resource
+    private MapStruct mapStruct;
 
     @Override
     public Result<List<ForumCategory>> get() {
@@ -25,20 +27,24 @@ public class AdminForumCategoryServiceImpl implements AdminForumCategoryService 
 
     @Override
     public Result<String> changeStatus(int id, int status) {
-        adminForumCategoryMapper.updateStatus(id, status);
+        ForumCategory forumCategory = new ForumCategory();
+        forumCategory.setId(id);
+        forumCategory.setStatus(status);
+        adminForumCategoryMapper.updateStatus(forumCategory);
         return Result.success(status == 1 ? "已启用！" : "已禁用！");
     }
 
     @Override
     public Result<String> update(AdminForumCategoryDTO adminForumCategoryDTO) {
-        adminForumCategoryMapper.update(adminForumCategoryDTO);
+        ForumCategory forumCategory = mapStruct.adminForumCategoryDTOToForumCategory(adminForumCategoryDTO);
+        adminForumCategoryMapper.update(forumCategory);
         return Result.success("修改成功");
     }
 
     @Override
     public Result<String> add(AdminForumCategoryDTO adminForumCategoryDTO) {
-        adminForumCategoryDTO.setCreatedBy(UserContext.getCurrentId());
-        adminForumCategoryMapper.insert(adminForumCategoryDTO);
+        ForumCategory forumCategory = mapStruct.adminForumCategoryDTOToForumCategory(adminForumCategoryDTO);
+        adminForumCategoryMapper.insert(forumCategory);
         return Result.success("新增成功");
     }
 

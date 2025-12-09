@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <!-- 1. 定义日志存储路径：./logs 表示当前运行目录下的 logs 文件夹 -->
+    <!-- 这样打包运行 java -jar app.jar 时，logs 文件夹就会生成在 jar 包旁边 -->
+    <property name="LOG_HOME" value="./logs" />
+
+    <!-- ========================================================= -->
+    <!-- 2. 定义专门用于 SQL 的输出器 (Appender)                   -->
+    <!-- ========================================================= -->
+    <appender name="SQL_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!-- 正在记录的文件名 -->
+        <file>${LOG_HOME}/Sql.log</file>
+
+        <!-- 滚动策略：每天生成一个新的日志文件 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- 归档文件名：Sql.2023-12-08.log -->
+            <fileNamePattern>${LOG_HOME}/Sql.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <!-- 保留 30 天 -->
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+
+        <!-- 日志格式 -->
+        <encoder>
+            <!-- 格式：时间 | 消息 -->
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %msg%n</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <!-- ========================================================= -->
+    <!-- 3. 定义标准控制台输出 (用于其他正常的日志)                -->
+    <!-- ========================================================= -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <!-- 彩色日志格式 -->
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %highlight(%-5level) %magenta([%thread]) %cyan(%logger{36}) - %msg%n</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <!-- ========================================================= -->
+    <!-- 4. 【核心配置】指定拦截器使用 SQL_FILE 输出器             -->
+    <!-- ========================================================= -->
+    <logger name="com.laolao.Interceptor.SqlLogInterceptor" level="INFO" additivity="false">
+        <appender-ref ref="SQL_FILE"/>
+    </logger>
+
+
+    <!-- ========================================================= -->
+    <!-- 5. 根日志配置 (其余所有日志走控制台)                      -->
+    <!-- ========================================================= -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE" />
+        <!-- 如果你也想把系统日志存文件，可以再定义一个 SYSTEM_FILE appender 并加在这里 -->
+    </root>
+
+</configuration>

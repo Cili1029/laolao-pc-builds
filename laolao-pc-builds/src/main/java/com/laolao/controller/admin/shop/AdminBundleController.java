@@ -1,6 +1,7 @@
 package com.laolao.controller.admin.shop;
 
 import com.github.pagehelper.PageInfo;
+import com.laolao.common.annotation.LogSql;
 import com.laolao.common.result.Result;
 import com.laolao.pojo.common.StatusDTO;
 import com.laolao.pojo.common.StockOrQuantityDTO;
@@ -41,6 +42,7 @@ public class AdminBundleController {
      * @param statusDTO Id
      * @return 结果信息
      */
+    @LogSql(description = "启用整机")
     @PatchMapping("/activate")
     public Result<String> activate(@RequestBody StatusDTO statusDTO) {
         return adminBundleService.changeStatus(statusDTO.getId(), 1);
@@ -52,6 +54,7 @@ public class AdminBundleController {
      * @param statusDTO Id
      * @return 结果信息
      */
+    @LogSql(description = "禁用整机")
     @PatchMapping("/deactivate")
     public Result<String> deactivate(@RequestBody StatusDTO statusDTO) {
         return adminBundleService.changeStatus(statusDTO.getId(), 0);
@@ -62,6 +65,7 @@ public class AdminBundleController {
      *
      * @return 结果信息
      */
+    @LogSql(description = "删除整机")
     @DeleteMapping
     public Result<String> deactivate(@RequestParam int id) {
         return adminBundleService.delete(id);
@@ -73,6 +77,7 @@ public class AdminBundleController {
      * @param adminAddBundleDTO 基础信息
      * @return 结果信息
      */
+    @LogSql(description = "添加整机")
     @PostMapping("/add")
     public Result<String> add(@RequestBody AdminAddBundleDTO adminAddBundleDTO) {
         return adminBundleService.add(adminAddBundleDTO);
@@ -84,6 +89,7 @@ public class AdminBundleController {
      * @param stockOrQuantityDTO 库存信息
      * @return 结果信息
      */
+    @LogSql(description = "更新整机库存")
     @PatchMapping("/stock")
     public Result<String> update(@RequestBody StockOrQuantityDTO stockOrQuantityDTO) {
         return adminBundleService.updateStock(stockOrQuantityDTO);
@@ -105,6 +111,7 @@ public class AdminBundleController {
      *
      * @return 组件数据
      */
+    @LogSql(description = "更新整机")
     @GetMapping("/variant")
     public Result<List<AdminBundleVariantVO>> list(@RequestParam int id) {
         return adminBundleService.getVariant(id);
@@ -116,6 +123,7 @@ public class AdminBundleController {
      * @param stockOrQuantityDTO 更新信息
      * @return 结果信息
      */
+    @LogSql(description = "更新整机组件数量")
     @PatchMapping("/variant/quantity")
     public Result<String> updateQuantity(@RequestBody StockOrQuantityDTO stockOrQuantityDTO) {
         return adminBundleService.updateQuantity(stockOrQuantityDTO);
@@ -127,6 +135,7 @@ public class AdminBundleController {
      * @param id 组件
      * @return 结果信息
      */
+    @LogSql(description = "删除整机组件")
     @DeleteMapping("/variant/delete")
     public Result<String> deleteVariant(@RequestParam int id) {
         return adminBundleService.deleteVariant(id);
@@ -149,6 +158,7 @@ public class AdminBundleController {
      * @param adminBundleAddVariantDTO 基础信息
      * @return 结果信息
      */
+    @LogSql(description = "添加整机组件")
     @PatchMapping("/variant/add")
     public Result<String> addVariant(@RequestBody AdminBundleAddVariantDTO adminBundleAddVariantDTO) {
         return adminBundleService.addVariant(adminBundleAddVariantDTO);

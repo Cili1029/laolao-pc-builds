@@ -36,13 +36,17 @@ public class AdminUserServiceImpl implements AdminUserService {
 
     @Override
     public Result<String> changeStatus(int id, int status) {
-        adminUserMapper.updateStatus(id, status);
+        User user = new User();
+        user.setId(id);
+        user.setStatus(status);
+        adminUserMapper.updateStatus(user);
         return Result.success(status == 1 ? "已启用！" : "已禁用！");
     }
 
     @Override
     public Result<String> updateUser(AdminUserUpdateDTO adminUserUpdateDTO) {
-        adminUserMapper.updateUser(adminUserUpdateDTO);
+        User user = mapStruct.adminUserUpdateDTOToUser(adminUserUpdateDTO);
+        adminUserMapper.updateUser(user);
         return Result.success("修改成功");
     }
 
