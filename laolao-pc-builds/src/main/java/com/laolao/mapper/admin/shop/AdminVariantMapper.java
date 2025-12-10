@@ -2,7 +2,6 @@ package com.laolao.mapper.admin.shop;
 
 import com.laolao.pojo.common.StockOrQuantityDTO;
 import com.laolao.pojo.shop.entity.Variant;
-import com.laolao.pojo.shop.dto.AdminUpdateVariantDTO;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;

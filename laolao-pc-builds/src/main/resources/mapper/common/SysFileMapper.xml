@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.laolao.mapper.common.SysFileMapper">
+    <insert id="insert">
+        insert into sys_file(url) values
+        <foreach collection="urls" item="url" separator=",">
+            (#{url})
+        </foreach>
+    </insert>
+
+    <update id="update">
+        update sys_file
+        set status = 1
+        where url in
+        <foreach collection="urls" item="url" open="(" close=")" separator=",">
+            #{url}
+        </foreach>
+    </update>
+</mapper>

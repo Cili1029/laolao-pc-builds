@@ -63,9 +63,7 @@ public class AdminVariantServiceImpl implements AdminVariantService {
                 .price(adminAddVariantDTO.getPrice())
                 .description(adminAddVariantDTO.getDescription())
                 .stock(adminAddVariantDTO.getStock())
-                .status(0)
-                .createdAt(LocalDateTime.now())
-                .createdBy(UserContext.getCurrentId()).build();
+                .status(0).build();
         adminVariantMapper.insert(variant);
         return Result.success(variant, "添加成功！");
     }

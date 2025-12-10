@@ -7,6 +7,11 @@ export const useCommonStore = defineStore('common', {
       searchContent: '',
       search: false,
     },
+    sidebar: {
+      user: false,
+      shop: false,
+      forum: false
+    }
   }),
 
   actions: {

@@ -24,11 +24,11 @@ public class WebConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(signInInterceptor)
                 .addPathPatterns("/**")
-                .excludePathPatterns("/api/user/user/email-code")
-                .excludePathPatterns("/api/user/user/sign-in/username")
-                .excludePathPatterns("/api/user/user/sign-in/email")
-                .excludePathPatterns("/api/user/user/sign-up")
-                .excludePathPatterns("/api/user/user/profile")
+                .excludePathPatterns("/api/common/user/email-code")
+                .excludePathPatterns("/api/common/user/sign-in/username")
+                .excludePathPatterns("/api/common/user/sign-in/email")
+                .excludePathPatterns("/api/common/user/sign-up")
+                .excludePathPatterns("/api/common/user/profile")
                 .excludePathPatterns("/api/user/forum/post/hot")
                 .excludePathPatterns("/api/user/shop/products/hot")
                 .order(1);

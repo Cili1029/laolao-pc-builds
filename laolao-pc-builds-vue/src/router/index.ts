@@ -9,7 +9,7 @@ import MyOrders from '@/components/front/shop/MyOrders.vue';
 import Forum from '@/components/front/forum/Forum.vue';
 import Post from '@/components/front/forum/Post.vue';
 import PostSimple from '@/components/front/forum/PostSimple.vue';
-import Sign from '@/components/front/user/Sign.vue';
+import Sign from '@/components/common/Sign.vue';
 import FrontUser from '@/components/front/user/User.vue';
 import Product from '@/components/front/shop/Product.vue';
 

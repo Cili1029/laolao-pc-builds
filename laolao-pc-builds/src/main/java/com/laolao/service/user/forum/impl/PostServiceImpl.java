@@ -3,10 +3,11 @@ package com.laolao.service.user.forum.impl;
 import com.laolao.common.context.UserContext;
 import com.laolao.common.result.Result;
 import com.laolao.converter.MapStruct;
+import com.laolao.mapper.common.SysFileMapper;
 import com.laolao.mapper.user.forum.CommentMapper;
 import com.laolao.mapper.user.forum.LikeMapper;
 import com.laolao.mapper.user.forum.PostMapper;
-import com.laolao.mapper.user.user.UserMapper;
+import com.laolao.mapper.common.UserCommonMapper;
 import com.laolao.pojo.forum.dto.CreatePostDTO;
 import com.laolao.pojo.forum.dto.LikeTarget;
 import com.laolao.pojo.forum.entity.Comment;
@@ -19,8 +20,8 @@ import com.laolao.service.user.forum.PostService;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -31,11 +32,13 @@ public class PostServiceImpl implements PostService {
     @Resource
     private MapStruct mapStruct;
     @Resource
-    private UserMapper userMapper;
+    private UserCommonMapper userCommonMapper;
     @Resource
     private CommentMapper commentMapper;
     @Resource
     private LikeMapper likeMapper;
+    @Resource
+    private SysFileMapper sysFileMapper;
 
     @Override
     public Result<List<PostSimpleVO>> getPostSimple(int categoryId) {
@@ -66,7 +69,7 @@ public class PostServiceImpl implements PostService {
         Set<Integer> allUserIdSet = allCommentList.stream().map(Comment::getUserId).collect(Collectors.toCollection(LinkedHashSet::new));
         // 将贴主放进去
         allUserIdSet.add(post.getUserId());
-        List<User> allUserList = userMapper.selectUser(new ArrayList<>(allUserIdSet));
+        List<User> allUserList = userCommonMapper.selectUser(new ArrayList<>(allUserIdSet));
         // 将用户转为id为key的索引
         Map<Integer, User> userMap = allUserList.stream().collect(Collectors.toMap(User::getId, user -> user));
         // 获取贴主
@@ -132,7 +135,7 @@ public class PostServiceImpl implements PostService {
         List<Comment> replyList = commentMapper.selectReply(id);
         // 获取所有评论的用户信息(set去重，看可能会有用户重复评论)
         Set<Integer> allUserIdSet = replyList.stream().map(Comment::getUserId).collect(Collectors.toCollection(LinkedHashSet::new));
-        List<User> allUserList = userMapper.selectUser(new ArrayList<>(allUserIdSet));
+        List<User> allUserList = userCommonMapper.selectUser(new ArrayList<>(allUserIdSet));
         // 将用户转为id为key的索引
         Map<Integer, User> userMap = allUserList.stream().collect(Collectors.toMap(User::getId, user -> user));
         // 写入头像
@@ -195,11 +198,10 @@ public class PostServiceImpl implements PostService {
                 .title(createPostDTO.getTitle())
                 .content(createPostDTO.getContent())
                 .images(createPostDTO.getImages())
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
                 .build();
-        if (post.getImages() == null || post.getImages().isEmpty()) {
-            post.setImages(null);
+        if (!CollectionUtils.isEmpty(createPostDTO.getImages())) {
+            post.setImages(createPostDTO.getImages());
+            sysFileMapper.update(post.getImages());
         }
         postMapper.insertPost(post);
         PostSimpleVO postSimpleVO = mapStruct.PostToSimpleVO(post);

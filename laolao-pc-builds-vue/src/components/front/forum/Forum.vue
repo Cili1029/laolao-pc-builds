@@ -69,7 +69,7 @@
                                         上传图片
                                     </Button>
                                     <FileManager v-model:open="showUploadDialog" v-model="postImg" :max-files="5"
-                                        upload-api="/api/common/upload" delete-api="/api/common/delete"
+                                        upload-api="/api/common/file/upload" delete-api="/api/common/file/delete"
                                         :upload-extra-data="{ type: 'laolaoPC/forum/post' }" />
                                     <DialogClose as-child class="sm:ml-auto">
                                         <Button type="submit" class="rounded-full px-6 shadow-lg shadow-orange-200/60"

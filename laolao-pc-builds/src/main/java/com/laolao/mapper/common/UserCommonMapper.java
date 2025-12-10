@@ -1,13 +1,12 @@
-package com.laolao.mapper.user.user;
+package com.laolao.mapper.common;
 
 import com.laolao.pojo.user.entity.User;
-import com.laolao.pojo.user.vo.UpdateUserVO;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
 @Mapper
-public interface UserMapper {
+public interface UserCommonMapper {
     User checkUserExists(String username, String email);
 
     @Insert("insert into user (id, username, password, name, email) " +
@@ -21,5 +20,5 @@ public interface UserMapper {
 
     List<User> selectUser(List<Integer> userIdList1);
 
-    void updateUser(UpdateUserVO updateUserVO);
+    void updateUser(User user);
 }

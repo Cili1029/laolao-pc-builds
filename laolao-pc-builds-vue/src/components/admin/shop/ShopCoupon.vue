@@ -14,112 +14,115 @@
                             <TableHead class="w-[80px] text-center">状态</TableHead>
                             <TableHead class="w-[120px] text-center hidden lg:table-cell">开始时间</TableHead>
                             <TableHead class="w-[120px] text-center hidden xl:table-cell">结束时间</TableHead>
-                            <TableHead class="w-[180px] text-center">操作</TableHead>
-                            <TableHead class="w-[50px] text-center p-0">
-                                <!-- 新增弹窗 -->
-                                <Dialog>
-                                    <DialogTrigger as-child>
-                                        <Button size="icon" variant="ghost"
-                                            class="h-8 w-8 hover:bg-background rounded-full">
-                                            <Plus class="h-4 w-4" />
-                                        </Button>
-                                    </DialogTrigger>
-                                    <DialogContent class="sm:max-w-[600px]">
-                                        <DialogHeader>
-                                            <DialogTitle>新增优惠券</DialogTitle>
-                                            <DialogDescription>配置新的优惠券规则。</DialogDescription>
-                                        </DialogHeader>
-                                        <div class="grid gap-4 py-4">
+                            <TableHead class="hidden xl:table-cell w-[120px] text-center">创建信息</TableHead>
+                            <TableHead class="hidden xl:table-cell w-[120px] text-center">最后更新</TableHead>
+                            <!-- 新增弹窗 -->
+                            <Dialog>
+                                <DialogTrigger as-child>
+                                    <TableHead class="w-[120px] text-center">
+                                        <div class="flex justify-between">
+                                            <p></p>
+                                            <p>操作</p>
+                                            <Button size="icon" variant="ghost" class="h-5 w-5 hover:bg-background">
+                                                <Plus class="h-3 w-3" />
+                                            </Button>
+                                        </div>
+                                    </TableHead>
+                                </DialogTrigger>
+                                <DialogContent class="sm:max-w-[600px]">
+                                    <DialogHeader>
+                                        <DialogTitle>新增优惠券</DialogTitle>
+                                        <DialogDescription>配置新的优惠券规则。</DialogDescription>
+                                    </DialogHeader>
+                                    <div class="grid gap-4 py-4">
+                                        <div class="grid gap-2">
+                                            <Label>优惠券名</Label>
+                                            <Input v-model="newCoupon.name" />
+                                        </div>
+
+                                        <div class="grid gap-2">
+                                            <Label>库存</Label>
+                                            <Input type="number" v-model="newCoupon.stock" />
+                                        </div>
+
+                                        <div class="grid gap-2">
+                                            <Label>描述</Label>
+                                            <Textarea v-model="newCoupon.description" class="resize-none" rows="3" />
+                                        </div>
+
+                                        <div class="grid grid-cols-2 gap-4">
                                             <div class="grid gap-2">
-                                                <Label>优惠券名</Label>
-                                                <Input v-model="newCoupon.name" />
+                                                <Label>最低使用金额 (¥)</Label>
+                                                <Input type="number" v-model="newCoupon.minimumAmount" />
                                             </div>
-
                                             <div class="grid gap-2">
-                                                <Label>库存</Label>
-                                                <Input type="number" v-model="newCoupon.stock" />
+                                                <Label>抵扣金额 (¥)</Label>
+                                                <Input type="number" v-model="newCoupon.discountAmount" />
+                                            </div>
+                                        </div>
+
+                                        <!-- 编辑日期选择 -->
+                                        <div class="grid grid-cols-2 gap-4">
+                                            <div class="flex flex-col gap-1">
+                                                <Label>开始时间</Label>
+                                                <Popover>
+                                                    <PopoverTrigger as-child>
+                                                        <Button variant="outline"
+                                                            :class="cn('w-full justify-start text-left font-normal', !newCoupon.validStartDate && 'text-muted-foreground')">
+                                                            <CalendarIcon class="mr-2 h-4 w-4" />{{
+                                                                newCoupon.validStartDate || "选择日期" }}
+                                                        </Button>
+                                                    </PopoverTrigger>
+                                                    <PopoverContent class="w-auto p-0">
+                                                        <Calendar v-model="startDateProxy" initial-focus />
+                                                    </PopoverContent>
+                                                </Popover>
+                                                <div class="flex space-x-1 items-center">
+                                                    <Input class="text-center px-1" type="number" :min="0" :max="23"
+                                                        v-model="newCoupon.validStartTime[0]" />
+                                                    <span class="text-muted-foreground">:</span>
+                                                    <Input class="text-center px-1" type="number" :min="0" :max="59"
+                                                        v-model="newCoupon.validStartTime[1]" />
+                                                    <span class="text-muted-foreground">:</span>
+                                                    <Input class="text-center px-1" type="number" :min="0" :max="59"
+                                                        v-model="newCoupon.validStartTime[2]" />
+                                                </div>
                                             </div>
 
-                                            <div class="grid gap-2">
-                                                <Label>描述</Label>
-                                                <Textarea v-model="newCoupon.description" class="resize-none"
-                                                    rows="3" />
-                                            </div>
-
-                                            <div class="grid grid-cols-2 gap-4">
-                                                <div class="grid gap-2">
-                                                    <Label>最低使用金额 (¥)</Label>
-                                                    <Input type="number" v-model="newCoupon.minimumAmount" />
-                                                </div>
-                                                <div class="grid gap-2">
-                                                    <Label>抵扣金额 (¥)</Label>
-                                                    <Input type="number" v-model="newCoupon.discountAmount" />
-                                                </div>
-                                            </div>
-
-                                            <!-- 编辑日期选择 -->
-                                            <div class="grid grid-cols-2 gap-4">
-                                                <div class="flex flex-col gap-1">
-                                                    <Label>开始时间</Label>
-                                                    <Popover>
-                                                        <PopoverTrigger as-child>
-                                                            <Button variant="outline"
-                                                                :class="cn('w-full justify-start text-left font-normal', !newCoupon.validStartDate && 'text-muted-foreground')">
-                                                                <CalendarIcon class="mr-2 h-4 w-4" />{{
-                                                                    newCoupon.validStartDate || "选择日期" }}
-                                                            </Button>
-                                                        </PopoverTrigger>
-                                                        <PopoverContent class="w-auto p-0">
-                                                            <Calendar v-model="startDateProxy" initial-focus />
-                                                        </PopoverContent>
-                                                    </Popover>
-                                                    <div class="flex space-x-1 items-center">
-                                                        <Input class="text-center px-1" type="number" :min="0" :max="23"
-                                                            v-model="newCoupon.validStartTime[0]" />
-                                                        <span class="text-muted-foreground">:</span>
-                                                        <Input class="text-center px-1" type="number" :min="0" :max="59"
-                                                            v-model="newCoupon.validStartTime[1]" />
-                                                        <span class="text-muted-foreground">:</span>
-                                                        <Input class="text-center px-1" type="number" :min="0" :max="59"
-                                                            v-model="newCoupon.validStartTime[2]" />
-                                                    </div>
-                                                </div>
-
-                                                <!-- 结束时间 -->
-                                                <div class="flex flex-col gap-1">
-                                                    <Label>结束时间</Label>
-                                                    <Popover>
-                                                        <PopoverTrigger as-child>
-                                                            <Button variant="outline"
-                                                                :class="cn('w-full justify-start text-left font-normal', !newCoupon.validEndDate && 'text-muted-foreground')">
-                                                                <CalendarIcon class="mr-2 h-4 w-4" />{{
-                                                                    newCoupon.validEndDate || "选择日期" }}
-                                                            </Button>
-                                                        </PopoverTrigger>
-                                                        <PopoverContent class="w-auto p-0">
-                                                            <Calendar v-model="endDateProxy" initial-focus />
-                                                        </PopoverContent>
-                                                    </Popover>
-                                                    <div class="flex space-x-1 items-center">
-                                                        <Input class="text-center px-1" type="number" :min="0" :max="23"
-                                                            v-model="newCoupon.validEndTime[0]" />
-                                                        <span class="text-muted-foreground">:</span>
-                                                        <Input class="text-center px-1" type="number" :min="0" :max="59"
-                                                            v-model="newCoupon.validEndTime[1]" />
-                                                        <span class="text-muted-foreground">:</span>
-                                                        <Input class="text-center px-1" type="number" :min="0" :max="59"
-                                                            v-model="newCoupon.validEndTime[2]" />
-                                                    </div>
+                                            <!-- 结束时间 -->
+                                            <div class="flex flex-col gap-1">
+                                                <Label>结束时间</Label>
+                                                <Popover>
+                                                    <PopoverTrigger as-child>
+                                                        <Button variant="outline"
+                                                            :class="cn('w-full justify-start text-left font-normal', !newCoupon.validEndDate && 'text-muted-foreground')">
+                                                            <CalendarIcon class="mr-2 h-4 w-4" />{{
+                                                                newCoupon.validEndDate || "选择日期" }}
+                                                        </Button>
+                                                    </PopoverTrigger>
+                                                    <PopoverContent class="w-auto p-0">
+                                                        <Calendar v-model="endDateProxy" initial-focus />
+                                                    </PopoverContent>
+                                                </Popover>
+                                                <div class="flex space-x-1 items-center">
+                                                    <Input class="text-center px-1" type="number" :min="0" :max="23"
+                                                        v-model="newCoupon.validEndTime[0]" />
+                                                    <span class="text-muted-foreground">:</span>
+                                                    <Input class="text-center px-1" type="number" :min="0" :max="59"
+                                                        v-model="newCoupon.validEndTime[1]" />
+                                                    <span class="text-muted-foreground">:</span>
+                                                    <Input class="text-center px-1" type="number" :min="0" :max="59"
+                                                        v-model="newCoupon.validEndTime[2]" />
                                                 </div>
                                             </div>
                                         </div>
-                                        <DialogFooter>
-                                            <DialogClose as-child><Button type="submit"
-                                                    @click="addCoupon()">确认添加</Button></DialogClose>
-                                        </DialogFooter>
-                                    </DialogContent>
-                                </Dialog>
-                            </TableHead>
+                                    </div>
+                                    <DialogFooter>
+                                        <DialogClose as-child><Button type="submit" @click="addCoupon()">确认添加</Button>
+                                        </DialogClose>
+                                    </DialogFooter>
+                                </DialogContent>
+                            </Dialog>
                         </TableRow>
                     </TableHeader>
 
@@ -141,13 +144,26 @@
                                     <span class="flex h-2 w-2 rounded-full"
                                         :class="coupon.status === 1 ? 'bg-green-500' : 'bg-red-500'" />
                                     <span class="text-sm text-muted-foreground">{{ coupon.status === 1 ? "启用" : "停用"
-                                        }}</span>
+                                    }}</span>
                                 </div>
                             </TableCell>
                             <TableCell class="hidden lg:table-cell text-center text-muted-foreground">{{
                                 dayjs(coupon.validStartTime).format('YYYY-MM-DD') }}</TableCell>
                             <TableCell class="hidden xl:table-cell text-center text-muted-foreground">{{
                                 dayjs(coupon.validEndTime).format('YYYY-MM-DD') }}</TableCell>
+                            <TableCell
+                                class="hidden xl:table-cell text-center text-[10px] text-muted-foreground leading-tight">
+                                <div>{{ coupon.createdBy }}</div>
+                                <div class="opacity-70 mt-0.5">{{ dayjs(coupon.createdAt).format('YYYY-MM-DD') }}
+                                </div>
+                            </TableCell>
+
+                            <TableCell
+                                class="hidden xl:table-cell text-center text-[10px] text-muted-foreground leading-tight">
+                                <div>{{ coupon.updatedBy }}</div>
+                                <div class="opacity-70 mt-0.5">{{ dayjs(coupon.updatedAt).format('YYYY-MM-DD') }}
+                                </div>
+                            </TableCell>
                             <TableCell class="text-center">
                                 <div class="flex items-center justify-center gap-2">
 
@@ -288,7 +304,6 @@
                                     </AlertDialog>
                                 </div>
                             </TableCell>
-                            <TableCell></TableCell>
                         </TableRow>
                     </TableBody>
                 </Table>
@@ -348,6 +363,10 @@
         status: number
         validStartTime: string // ISO String
         validEndTime: string   // ISO String
+        createdBy: string
+        createdAt: string
+        updatedBy: string
+        updatedAt: string
     }
 
     const coupons = ref<Coupon[]>([])

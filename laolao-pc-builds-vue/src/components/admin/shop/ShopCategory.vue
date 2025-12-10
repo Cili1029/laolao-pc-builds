@@ -9,8 +9,8 @@
                     <TableHead>分类信息</TableHead>
                     <TableHead class="text-center w-[100px]">状态</TableHead>
                     <TableHead class="text-center w-[80px]">排序权重</TableHead>
-                    <TableHead class="hidden text-center md:table-cell">创建人</TableHead>
-                    <TableHead class="hidden text-center md:table-cell">创建时间</TableHead>
+                    <TableHead class="hidden text-center md:table-cell">创建信息</TableHead>
+                    <TableHead class="hidden text-center md:table-cell">最后更新</TableHead>
                     <Dialog>
                         <DialogTrigger as-child>
                             <TableHead class="w-[50px]">
@@ -46,7 +46,7 @@
                                         </div>
                                     </div>
                                     <FileManager v-model:open="showAddDialog" v-model="newCategory.image" :max-files="1"
-                                        upload-api="/api/common/upload" delete-api="/api/common/delete"
+                                        upload-api="/api/common/file/upload" delete-api="/api/common/file/delete"
                                         :upload-extra-data="{ type: 'laolaoPC/shop/category' }" />
                                 </div>
 
@@ -127,14 +127,18 @@
                         <span class="font-mono text-sm">{{ category.sort }}</span>
                     </TableCell>
 
-                    <!-- 创建人 -->
-                    <TableCell class="hidden text-center md:table-cell text-sm text-muted-foreground">
-                        {{ category.createdBy }}
+                    <!-- 创建信息 -->
+                    <TableCell class="hidden xl:table-cell text-center text-[10px] text-muted-foreground leading-tight">
+                        <div>{{ category.createdBy }}</div>
+                        <div class="mt-0.5">{{ dayjs(category.createdAt).format('YYYY-MM-DD') }}
+                        </div>
                     </TableCell>
-
-                    <!-- 创建时间 -->
-                    <TableCell class="hidden text-center md:table-cell text-sm text-muted-foreground">
-                        {{ dayjs(category.createdAt).format('YYYY-MM-DD') }}
+                    
+                    <!-- 最后更新 -->
+                    <TableCell class="hidden xl:table-cell text-center text-[10px] text-muted-foreground leading-tight">
+                        <div>{{ category.updatedBy }}</div>
+                        <div class="mt-0.5">{{ dayjs(category.updatedAt).format('YYYY-MM-DD') }}
+                        </div>
                     </TableCell>
 
                     <!-- 操作 -->
@@ -168,8 +172,8 @@
                                                 </div>
                                             </div>
                                             <FileManager v-model:open="showUpdateDialog" v-model="updateData.image"
-                                                :max-files="1" upload-api="/api/common/upload"
-                                                delete-api="/api/common/delete"
+                                                :max-files="1" upload-api="/api/common/file/upload"
+                                                delete-api="/api/common/file/delete"
                                                 :upload-extra-data="{ type: 'laolaoPC/shop/category' }" />
                                         </div>
 
@@ -301,6 +305,8 @@
         sort: number
         createdBy: string
         createdAt: string
+        updatedBy: string
+        updatedAt: string
     }
 
     interface NewCategory {

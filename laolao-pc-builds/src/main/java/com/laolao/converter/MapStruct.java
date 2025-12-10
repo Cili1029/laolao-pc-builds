@@ -11,6 +11,7 @@ import com.laolao.pojo.shop.vo.*;
 import com.laolao.pojo.user.dto.AdminUserUpdateDTO;
 import com.laolao.pojo.user.entity.User;
 import com.laolao.pojo.user.vo.AdminUserVO;
+import com.laolao.pojo.user.dto.UpdateUserDTO;
 import com.laolao.pojo.user.vo.UserSimpleVO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -52,6 +53,8 @@ public interface MapStruct {
     Order addressDTOToOrder(AddressDTO addressDTO);
 
     ShopCouponVO shopCouponToShopCouponVO(ShopCoupon shopCoupon);
+
+    User updateUserVOToUser(UpdateUserDTO updateUserDTO);
 
     // 论坛的
     ForumCategoryVO ForumCategoryToCategoryVO(ForumCategory forumCategory);

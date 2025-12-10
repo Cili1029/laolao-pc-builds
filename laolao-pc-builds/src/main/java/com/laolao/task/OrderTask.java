@@ -22,7 +22,7 @@ public class OrderTask {
     public void cleanupExpiredOrders() {
         LocalDateTime expire = LocalDateTime.now().minusMinutes(15);
         // 查找过期订单
-        List<Order> orders =  orderMapper.getExpireOrders(1, expire);
+        List<Order> orders =  orderMapper.getExpireOrders(expire);
         if (!orders.isEmpty()) {
             for (Order order : orders) {
                 // 释放优惠券

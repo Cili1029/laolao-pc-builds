@@ -1,7 +1,7 @@
 package com.laolao.Interceptor;
 
 import com.laolao.common.context.UserContext;
-import com.laolao.mapper.user.user.UserMapper;
+import com.laolao.mapper.common.UserCommonMapper;
 import com.laolao.pojo.user.entity.User;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,13 +14,13 @@ import org.springframework.web.servlet.HandlerInterceptor;
 public class AdminInInterceptor implements HandlerInterceptor {
 
     @Resource
-    private UserMapper userMapper;
+    private UserCommonMapper userCommonMapper;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         int userId = UserContext.getCurrentId();
         // 后期可以改成Redis
-        User user = userMapper.getUser(userId);
+        User user = userCommonMapper.getUser(userId);
         if (user != null && user.getAdmin() == 1) {
             // 是管理员，放行
             return true;

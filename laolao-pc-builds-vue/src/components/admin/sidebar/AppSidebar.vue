@@ -41,58 +41,69 @@
   import NavProjects from '@/components/admin/sidebar/NavProjects.vue'
   import NavUser from '@/components/admin/sidebar/NavUser.vue'
   import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail, SidebarMenu, SidebarMenuItem, SidebarMenuButton } from '@/components/ui/sidebar'
+  import { computed } from 'vue'
+  import { useUserStore } from '@/stores/UserStore'
+  const userStore = useUserStore()
+  import { useRoute } from 'vue-router'
+  const route = useRoute()
 
   const props = withDefaults(defineProps<SidebarProps>(), {
     collapsible: "icon",
   })
 
   // 数据源
-  const data = {
-    user: {
-      name: "shadcn",
-      email: "m@example.com",
-      avatar: "/avatars/shadcn.jpg",
-    },
-    navMain: [
-      {
-        title: "用户",
-        url: "#",
-        icon: User,
-        isActive: true,
-        items: [
-          { title: "用户信息", url: "/admin/user" },
-          { title: "订单", url: "#" },
-        ],
+  const data = computed(() => {
+    // 如果当前 URL 开头是 '/admin/shop'，那么“商城”这一组就该展开
+    const isPathActive = (prefix: string) => route.path.startsWith(prefix)
+
+    return {
+      user: {
+        name: userStore.user.name,
+        username: userStore.user.username,
+        avatar: userStore.user.avatar,
       },
-      {
-        title: "商城",
-        url: "#",
-        icon: Store,
-        isActive: false,
-        items: [
-          { title: "分类标签", url: "/admin/shop/category" },
-          { title: "组件", url: "/admin/shop/component" },
-          { title: "整机", url: "/admin/shop/bundle" },
-          { title: "优惠券", url: "/admin/shop/coupon" },
-        ],
-      },
-      {
-        title: "论坛",
-        url: "#",
-        icon: BotMessageSquare,
-        isActive: false,
-        items: [
-          { title: "分类标签", url: "/admin/forum/category" },
-          { title: "帖子", url: "#" },
-          { title: "评论", url: "#" },
-        ],
-      },
-    ],
-    projects: [
-      { name: "销售统计", url: "#", icon: Frame },
-      { name: "测试", url: "/admin/test", icon: PieChart },
-      { name: "Travel", url: "#", icon: Map },
-    ],
-  }
+      navMain: [
+        {
+          title: "用户",
+          url: "#",
+          icon: User,
+          isActive: isPathActive('/admin/user'),
+          items: [
+            { title: "用户信息", url: "/admin/user" },
+            { title: "订单", url: "/admin/user/orders" },
+          ],
+        },
+        {
+          title: "商城",
+          url: "#",
+          icon: Store,
+          isActive: isPathActive('/admin/shop'),
+          items: [
+            { title: "分类标签", url: "/admin/shop/category" },
+            { title: "组件", url: "/admin/shop/component" },
+            { title: "整机", url: "/admin/shop/bundle" },
+            { title: "优惠券", url: "/admin/shop/coupon" },
+          ],
+        },
+        {
+          title: "论坛",
+          url: "#",
+          icon: BotMessageSquare,
+          // 自动判断
+          isActive: isPathActive('/admin/forum'),
+          items: [
+            { title: "分类标签", url: "/admin/forum/category" },
+            { title: "帖子", url: "/admin/forum/post" },
+            { title: "评论", url: "/admin/forum/comment" },
+          ],
+        },
+      ],
+      projects: [
+        { name: "销售统计", url: "#", icon: Frame },
+        { name: "测试", url: "/admin/test", icon: PieChart },
+        { name: "Travel", url: "#", icon: Map },
+      ],
+    }
+  })
 
 </script>

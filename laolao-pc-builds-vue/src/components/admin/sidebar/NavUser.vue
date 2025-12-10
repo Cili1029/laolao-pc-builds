@@ -13,7 +13,7 @@
             </Avatar>
             <div class="grid flex-1 text-left text-sm leading-tight">
               <span class="truncate font-medium">{{ user.name }}</span>
-              <span class="truncate text-xs">{{ user.email }}</span>
+              <span class="truncate text-xs">{{ user.username }}</span>
             </div>
             <ChevronsUpDown class="ml-auto size-4" />
           </SidebarMenuButton>
@@ -30,7 +30,7 @@
               </Avatar>
               <div class="grid flex-1 text-left text-sm leading-tight">
                 <span class="truncate font-semibold">{{ user.name }}</span>
-                <span class="truncate text-xs">{{ user.email }}</span>
+                <span class="truncate text-xs">{{ user.username }}</span>
               </div>
             </div>
           </DropdownMenuLabel>
@@ -57,9 +57,10 @@
             </DropdownMenuItem>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>
+          <DropdownMenuItem @click="signOut"
+            class="cursor-pointer rounded-lg text-red-500 hover:bg-red-50 hover:text-red-600 focus:bg-red-50 focus:text-red-600">
             <LogOut />
-            Log out
+            <span>退出登录</span>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -72,14 +73,42 @@
   import { Avatar, AvatarFallback, AvatarImage, } from '@/components/ui/avatar'
   import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger, } from '@/components/ui/dropdown-menu'
   import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar, } from '@/components/ui/sidebar'
+  import { toast } from "vue-sonner"
+  import axios from '@/utils/myAxios'
+  import { useRouter } from 'vue-router'
+  const router = useRouter()
+  import { useUserStore } from '@/stores/UserStore'
+  const userStore = useUserStore()
 
   const props = defineProps<{
     user: {
       name: string
-      email: string
+      username: string
       avatar: string
     }
   }>()
 
   const { isMobile } = useSidebar()
+
+  // 回主页
+  const goHome = () => {
+    router.push('/home');
+  }
+
+  // 退出登录
+  const signOut = async () => {
+    try {
+      await axios.get('/api/common/user/sign-out')
+      goHome()
+    } catch (error) {
+      toast("嗨！", {
+        description: "退出登录遇到问题，但已清除本地状态",
+        action: {
+          label: '我知道了',
+        },
+      })
+    } finally {
+      userStore.clearUser()
+    }
+  }
 </script>

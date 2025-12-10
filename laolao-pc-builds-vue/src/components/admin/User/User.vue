@@ -10,6 +10,7 @@
                     <TableHead class="text-center">权限</TableHead>
                     <TableHead class="text-center">状态</TableHead>
                     <TableHead class="hidden text-center md:table-cell">加入时间</TableHead>
+                    <TableHead class="hidden text-center md:table-cell">最后更新</TableHead>
                     <TableHead class="text-center">操作</TableHead>
                 </TableRow>
             </TableHeader>
@@ -62,6 +63,13 @@
                         {{ dayjs(user.createdAt).format('YYYY-MM-DD') }}
                     </TableCell>
 
+                    <!-- 最后更新 -->
+                    <TableCell class="hidden xl:table-cell text-center text-[10px] text-muted-foreground leading-tight">
+                        <div>{{ user.updatedBy }}</div>
+                        <div class="mt-0.5">{{ dayjs(user.updatedAt).format('YYYY-MM-DD') }}
+                        </div>
+                    </TableCell>
+
                     <!-- 操作按钮 -->
                     <TableCell class="text-center">
                         <div class="flex justify-center gap-2">
@@ -90,7 +98,7 @@
                                                 </div>
                                             </div>
                                             <FileManager v-model:open="showUploadDialog" v-model="avatar" :max-files="1"
-                                                upload-api="/api/common/upload" delete-api="/api/common/delete"
+                                                upload-api="/api/common/file/upload" delete-api="/api/common/file/delete"
                                                 :upload-extra-data="{ type: 'laolaoPC/user/avatar' }" />
                                         </div>
 
@@ -116,8 +124,7 @@
                                     </div>
                                     <DialogFooter>
                                         <DialogClose as-child>
-                                            <Button type="submit" @click="update(user.id)"
-                                                :disabled="!newData!.name"
+                                            <Button type="submit" @click="update(user.id)" :disabled="!newData!.name"
                                                 class="bg-indigo-600 hover:bg-indigo-700 w-full sm:w-auto">
                                                 保存更改
                                             </Button>
@@ -196,6 +203,8 @@
         status: number
         admin: number
         createdAt: string
+        updatedBy: string
+        updatedAt: string
     }
 
     const users = ref<User[]>([])

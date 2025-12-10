@@ -9,12 +9,12 @@
                     <TableHead class="w-[100px]">描述</TableHead>
                     <TableHead class="text-center w-[100px]">状态</TableHead>
                     <TableHead class="text-center w-[80px]">排序权重</TableHead>
-                    <TableHead class="hidden text-center md:table-cell">创建人</TableHead>
-                    <TableHead class="hidden text-center md:table-cell">创建时间</TableHead>
+                    <TableHead class="hidden xl:table-cell w-[120px] text-center">创建信息</TableHead>
+                    <TableHead class="hidden xl:table-cell w-[120px] text-center">最后更新</TableHead>
                     <!-- 新增 -->
                     <Dialog>
                         <DialogTrigger as-child>
-                            <TableHead class="w-[50px] text-center">
+                            <TableHead class="w-[120px] text-center">
                                 <div class="flex justify-between">
                                     <p></p>
                                     <p>操作</p>
@@ -26,8 +26,8 @@
                         </DialogTrigger>
                         <DialogContent class="sm:max-w-[500px]">
                             <DialogHeader>
-                                <DialogTitle>编辑分类</DialogTitle>
-                                <DialogDescription>修改分类的详细信息。</DialogDescription>
+                                <DialogTitle>新增分类</DialogTitle>
+                                <DialogDescription></DialogDescription>
                             </DialogHeader>
 
                             <div class="grid gap-6 py-4">
@@ -46,7 +46,7 @@
                                         </div>
                                     </div>
                                     <FileManager v-model:open="showAddDialog" v-model="newCategory.image" :max-files="1"
-                                        upload-api="/api/common/upload" delete-api="/api/common/delete"
+                                        upload-api="/api/common/file/upload" delete-api="/api/common/file/delete"
                                         :upload-extra-data="{ type: 'laolaoPC/forum/category' }" />
                                 </div>
 
@@ -116,14 +116,16 @@
                         <span class="font-mono text-sm">{{ category.sort }}</span>
                     </TableCell>
 
-                    <!-- 创建人 -->
-                    <TableCell class="hidden text-center md:table-cell text-sm text-muted-foreground">
-                        {{ category.createdBy }}
+                    <TableCell class="hidden xl:table-cell text-center text-[10px] text-muted-foreground leading-tight">
+                        <div>{{ category.createdBy }}</div>
+                        <div class="opacity-70 mt-0.5">{{ dayjs(category.createdAt).format('YYYY-MM-DD') }}
+                        </div>
                     </TableCell>
 
-                    <!-- 创建时间 -->
-                    <TableCell class="hidden text-center md:table-cell text-sm text-muted-foreground">
-                        {{ dayjs(category.createdAt).format('YYYY-MM-DD') }}
+                    <TableCell class="hidden xl:table-cell text-center text-[10px] text-muted-foreground leading-tight">
+                        <div>{{ category.updatedBy }}</div>
+                        <div class="opacity-70 mt-0.5">{{ dayjs(category.updatedAt).format('YYYY-MM-DD') }}
+                        </div>
                     </TableCell>
 
                     <!-- 操作 -->
@@ -156,9 +158,9 @@
                                                 </div>
                                             </div>
                                             <FileManager v-model:open="showUpdateDialog" v-model="updateData.image"
-                                                :max-files="1" upload-api="/api/common/upload"
-                                                delete-api="/api/common/delete"
-                                                :upload-extra-data="{ type: 'laolaoPC/shop/category' }" />
+                                                :max-files="1" upload-api="/api/common/file/upload"
+                                                delete-api="/api/common/file/delete"
+                                                :upload-extra-data="{ type: 'laolaoPC/forum/category' }" />
                                         </div>
 
                                         <!-- 表单字段区域 -->
@@ -275,6 +277,8 @@
         sort: number
         createdBy: string
         createdAt: string
+        updatedBy: string
+        updatedAt: string
     }
 
     interface NewCategory {

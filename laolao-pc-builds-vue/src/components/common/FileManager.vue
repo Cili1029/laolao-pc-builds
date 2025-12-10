@@ -211,8 +211,7 @@
                 headers: { 'Content-Type': 'multipart/form-data' }
             })
 
-            // 假设后端返回: { data: { images: ['url1', 'url2'] } }
-            const serverUrls = res.data.data?.images || []
+            const serverUrls = res.data.data || []
 
             if (serverUrls.length > 0) {
                 // 更新双向绑定数据

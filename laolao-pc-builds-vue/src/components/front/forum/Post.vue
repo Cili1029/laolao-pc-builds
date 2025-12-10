@@ -135,8 +135,8 @@
                                                 上传图片
                                             </Button>
                                             <FileManager v-model:open="showReplyDialog" v-model="replyImg"
-                                                :max-files="1" upload-api="/api/common/upload"
-                                                delete-api="/api/common/delete"
+                                                :max-files="1" upload-api="/api/common/file/upload"
+                                                delete-api="/api/common/file/delete"
                                                 :upload-extra-data="{ type: 'laolaoPC/forum/comment' }" />
                                             <DialogClose as-child class="ml-auto">
                                                 <Button :disabled="!myComment" class="rounded-full px-5"
@@ -249,7 +249,7 @@
                         上传图片
                     </Button>
                     <FileManager v-model:open="showCommentDialog" v-model="commentImg" :max-files="1"
-                        upload-api="/api/common/upload" delete-api="/api/common/delete"
+                        upload-api="/api/common/file/upload" delete-api="/api/common/file/delete"
                         :upload-extra-data="{ type: 'laolaoPC/forum/comment' }" />
                     <Button @click="submitComment()" :disabled="!myComment"
                         class="rounded-full px-6 shadow-lg shadow-orange-200/60">

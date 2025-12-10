@@ -179,7 +179,7 @@
     const getEmailCode = async (email: string) => {
         try {
             isSendingCode.value = true
-            await axios.post('/api/user/user/email-code', {
+            await axios.post('/api/common/user/email-code', {
                 email: email
             })
             countDown.value = 60
@@ -220,7 +220,7 @@
     const signUp = async () => {
         try {
             isLoading.value = true
-            const response = await axios.post("/api/user/user/sign-up", {
+            const response = await axios.post("/api/common/user/sign-up", {
                 username: signUpDetails.value!.username,
                 password: signUpDetails.value!.password,
                 email: signUpDetails.value!.email,
@@ -252,7 +252,7 @@
     const SignInWithUsername = async () => {
         try {
             isLoading.value = true
-            const response = await axios.post("/api/user/user/sign-in/username", {
+            const response = await axios.post("/api/common/user/sign-in/username", {
                 username: signInDetails.value!.username,
                 password: signInDetails.value!.password
             })
@@ -270,7 +270,7 @@
     const signInWithEmail = async () => {
         try {
             isLoading.value = true
-            const response = await axios.post("/api/user/user/sign-in/email", {
+            const response = await axios.post("/api/common/user/sign-in/email", {
                 email: signInDetails.value!.email,
                 emailCode: signInDetails.value!.emailCode
             })

@@ -28,7 +28,7 @@ public interface OrderMapper {
     Order selectOrderById(int id);
 
     @Select("select * from shop_order where status = 1 and created_at < #{expire}")
-    List<Order> getExpireOrders(int i, LocalDateTime expire);
+    List<Order> getExpireOrders(LocalDateTime expire);
 
     List<OrdersVO> selectOrders(int userId);
 

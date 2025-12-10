@@ -40,7 +40,6 @@ public class OrderController {
         return orderService.createOrderDirectly(buyProductDTO);
     }
 
-
     /**
      * 获取订单状态
      * 为1才能进入结算页面

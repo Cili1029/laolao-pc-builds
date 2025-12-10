@@ -3,12 +3,15 @@ package com.laolao.service.admin.forum.impl;
 import com.laolao.common.result.Result;
 import com.laolao.converter.MapStruct;
 import com.laolao.mapper.admin.forum.AdminForumCategoryMapper;
+import com.laolao.mapper.common.SysFileMapper;
 import com.laolao.pojo.forum.dto.AdminForumCategoryDTO;
 import com.laolao.pojo.forum.entity.ForumCategory;
 import com.laolao.service.admin.forum.AdminForumCategoryService;
 import jakarta.annotation.Resource;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -18,6 +21,8 @@ public class AdminForumCategoryServiceImpl implements AdminForumCategoryService 
     private AdminForumCategoryMapper adminForumCategoryMapper;
     @Resource
     private MapStruct mapStruct;
+    @Resource
+    private SysFileMapper sysFileMapper;
 
     @Override
     public Result<List<ForumCategory>> get() {
@@ -38,6 +43,12 @@ public class AdminForumCategoryServiceImpl implements AdminForumCategoryService 
     public Result<String> update(AdminForumCategoryDTO adminForumCategoryDTO) {
         ForumCategory forumCategory = mapStruct.adminForumCategoryDTOToForumCategory(adminForumCategoryDTO);
         adminForumCategoryMapper.update(forumCategory);
+        // 修改文件状态
+        if (StringUtils.isNoneBlank(adminForumCategoryDTO.getImage())) {
+            ArrayList<String> urls = new ArrayList<>();
+            urls.add(adminForumCategoryDTO.getImage());
+            sysFileMapper.update(urls);
+        }
         return Result.success("修改成功");
     }
 
@@ -45,6 +56,12 @@ public class AdminForumCategoryServiceImpl implements AdminForumCategoryService 
     public Result<String> add(AdminForumCategoryDTO adminForumCategoryDTO) {
         ForumCategory forumCategory = mapStruct.adminForumCategoryDTOToForumCategory(adminForumCategoryDTO);
         adminForumCategoryMapper.insert(forumCategory);
+        // 修改文件状态
+        if (StringUtils.isNoneBlank(adminForumCategoryDTO.getImage())) {
+            ArrayList<String> urls = new ArrayList<>();
+            urls.add(adminForumCategoryDTO.getImage());
+            sysFileMapper.update(urls);
+        }
         return Result.success("新增成功");
     }
 

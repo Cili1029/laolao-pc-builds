@@ -18,6 +18,7 @@
                             <TableHead class="w-[80px] text-center">状态</TableHead>
                             <TableHead class="w-[60px] text-center">排序权重</TableHead>
                             <TableHead class="hidden xl:table-cell w-[120px] text-center">创建信息</TableHead>
+                            <TableHead class="hidden xl:table-cell w-[120px] text-center">最后更新</TableHead>
                             <TableHead class="w-[80px] text-center">操作</TableHead>
                             <Dialog>
                                 <DialogTrigger as-child>
@@ -72,8 +73,8 @@
                                             上传图片
                                         </Button>
                                         <FileManager v-model:open="showAddDialog" v-model="newBundle.images"
-                                            :max-files="5" upload-api="/api/common/upload"
-                                            delete-api="/api/common/delete"
+                                            :max-files="5" upload-api="/api/common/file/upload"
+                                            delete-api="/api/common/file/delete"
                                             :upload-extra-data="{ type: 'laolaoPC/shop/bundle' }" />
                                         <DialogClose as-child class="sm:ml-auto">
                                             <Button type="submit" @click="addBundle()"
@@ -171,6 +172,13 @@
                                     </div>
                                 </TableCell>
 
+                                <TableCell
+                                    class="hidden xl:table-cell text-center text-[10px] text-muted-foreground leading-tight">
+                                    <div>{{ bundle.updatedBy }}</div>
+                                    <div class="opacity-70 mt-0.5">{{ dayjs(bundle.updatedAt).format('YYYY-MM-DD') }}
+                                    </div>
+                                </TableCell>
+
                                 <TableCell @click.stop
                                     class="hidden xl:table-cell text-center text-[10px] text-muted-foreground leading-tight">
                                     <div class="flex items-center justify-center gap-1">
@@ -265,7 +273,7 @@
                                                     </Button>
                                                     <FileManager v-model:open="showUpdateDialog"
                                                         v-model="updateBundleData.images" :max-files="5"
-                                                        upload-api="/api/common/upload" delete-api="/api/common/delete"
+                                                        upload-api="/api/common/file/upload" delete-api="/api/common/file/delete"
                                                         :upload-extra-data="{ type: 'laolaoPC/shop/bundle' }" />
                                                     <DialogClose as-child class="sm:ml-auto">
                                                         <Button type="submit" @click="updateBundle(bundle)"
@@ -305,8 +313,8 @@
 
                             <!-- 子行：版本列表 -->
                             <TableRow v-if="openId === bundle.id">
-                                <TableCell colspan="12" class="p-0 border-t-0 bg-muted/20 shadow-inner">
-                                    <div class="pl-12 pr-4 py-3">
+                                <TableCell colspan="14" class="p-0 border-t-0 bg-muted/20 shadow-inner">
+                                    <div class="px-12 py-3">
                                         <div class="rounded-md border bg-background overflow-hidden">
                                             <div
                                                 class="flex items-center justify-between bg-muted/30 px-3 py-1.5 border-b">
@@ -395,7 +403,8 @@
                                                                             class="h-10 w-10 text-muted-foreground/60" />
                                                                     </div>
                                                                     <div class="space-y-1">
-                                                                        <h3 class="text-lg font-medium">输入组件名或Id进行查询</h3>
+                                                                        <h3 class="text-lg font-medium">输入组件名或Id进行查询
+                                                                        </h3>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -509,7 +518,6 @@
                                     </div>
                                 </TableCell>
                             </TableRow>
-
                         </template>
                     </TableBody>
                 </Table>
@@ -630,6 +638,8 @@
         sort: number
         createdBy: string
         createdAt: string
+        updatedBy: string
+        updatedAt: string
         variants?: Variant[]
     }
 
@@ -655,6 +665,7 @@
             })
             const resData = response.data.data
             bundles.value = resData.list
+            console.log(bundles.value)
             total.value = resData.total
         } catch (error) {
             console.log(error)

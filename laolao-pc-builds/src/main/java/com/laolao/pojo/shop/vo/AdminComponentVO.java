@@ -58,6 +58,16 @@ public class AdminComponentVO{
     private LocalDateTime createdAt;
 
     /**
+     * 最后更新人
+     */
+    private int updatedBy;
+
+    /**
+     * 最后更新时间
+     */
+    private LocalDateTime updatedAt;
+
+    /**
      * 包含的组件版本
      */
     private List<Variant> variants;

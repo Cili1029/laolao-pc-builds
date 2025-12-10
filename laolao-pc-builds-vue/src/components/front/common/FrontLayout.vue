@@ -220,7 +220,7 @@
 
 <script setup lang="ts">
   // 脚本内容完全保持不变
-  import { ref, onMounted, computed } from 'vue'
+  import { ref, computed } from 'vue'
   import axios from '@/utils/myAxios'
   import { useRoute } from 'vue-router'
   const route = useRoute()
@@ -238,49 +238,15 @@
   const userStore = useUserStore()
   import { useCommonStore } from '@/stores/CommonStore'
   const commonStore = useCommonStore()
-
-
-  // 组件挂载时检查登录状态
-  onMounted(() => {
-    getProfile()
-  })
-
   // 回主页
   const goHome = () => {
     router.push('/home');
   }
 
-  interface User {
-    id: number
-    avatar: string
-    username: string
-    name: string
-  }
-
-  const user = ref<User>({
-    id: 0,
-    avatar: '',
-    username: '',
-    name: '',
-  })
-
-  const getProfile = async () => {
-    try {
-      const response = await axios.get('/api/user/user/profile')
-
-      if (response.data.code === 1) {
-        user.value = response.data.data
-        userStore.setUser(user.value)
-      }
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
   // 退出登录
   const signOut = async () => {
     try {
-      await axios.get('/api/user/user/sign-out')
+      await axios.get('/api/common/user/sign-out')
       goHome()
     } catch (error) {
       toast("嗨！", {

@@ -3,23 +3,21 @@ package com.laolao.common.utils;
 import java.util.Random;
 
 public class NameUtil {
-    private static final String[] ADJECTIVES = {
-            "愤怒的", "快乐的", "神秘的", "勇敢的", "安静的",
-            "疯狂的", "优雅的", "敏捷的", "强大的", "智慧的",
-            "狡猾的", "孤独的", "不朽的", "混沌的", "神圣的"
-    };
 
-    private static final String[] NOUNS = {
-            "小鸟", "老虎", "巨龙", "狐狸", "恶龙",
-            "骑士", "法师", "刺客", "巫师", "勇士",
-            "凤凰", "巨人", "恶魔", "天使", "战神"
+    private static final String[] NAMES = {
+            "海绵宝宝", "纽曼", "帕奇柏金斯", "海霸王", "龙虾拉里", "海神",
+            "飞行荷兰人", "企鹅男孩", "美人鱼战士", "泡芙老师", "小蜗",
+            "珍珍", "凯伦", "痞老板", "珊迪", "蟹阿金", "章鱼哥",
+            "派大星", "彼得", "路易斯", "梅根", "克里斯", "饺子", "布莱恩",
+            "老乔", "Q哥", "黑哥", "休伊", "布彻尔", "法兰奇", "MM", "喜美子",
+            "祖国人", "星光", "深海", "梅芙女王", "火车头", "玄色", "风暴前线",
+            "士兵男孩"
     };
 
     private static final Random RANDOM = new Random();
 
-    public static String generateName() {
-        String adjective = ADJECTIVES[RANDOM.nextInt(ADJECTIVES.length)];
-        String noun = NOUNS[RANDOM.nextInt(NOUNS.length)];
-        return adjective + noun;
+    public static String getName() {
+        int randomIndex = RANDOM.nextInt(NAMES.length);
+        return NAMES[randomIndex];
     }
 }

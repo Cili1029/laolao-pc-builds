@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.laolao.mapper.user.user.UserMapper">
+<mapper namespace="com.laolao.mapper.common.UserCommonMapper">
     <update id="updateUser">
         update user
         <set>
@@ -11,6 +11,12 @@
             </if>
             <if test="name != null and name != ''">
                 name = #{name},
+            </if>
+            <if test="updatedBy != null">
+                updated_by = #{updatedBy},
+            </if>
+            <if test="updatedAt != null">
+                updated_at = #{updatedAt}
             </if>
         </set>
         where id = #{id}

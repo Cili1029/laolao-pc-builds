@@ -2,10 +2,10 @@ package com.laolao.service.admin.shop.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.laolao.common.context.UserContext;
 import com.laolao.common.result.Result;
 import com.laolao.converter.MapStruct;
 import com.laolao.mapper.admin.shop.AdminBundleMapper;
+import com.laolao.mapper.common.SysFileMapper;
 import com.laolao.pojo.common.StockOrQuantityDTO;
 import com.laolao.pojo.shop.dto.AdminAddBundleDTO;
 import com.laolao.pojo.shop.dto.AdminBundleAddVariantDTO;
@@ -17,6 +17,7 @@ import jakarta.annotation.Resource;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +28,8 @@ public class AdminBundleServiceImpl implements AdminBundleService {
     private MapStruct mapStruct;
     @Resource
     private AdminBundleMapper adminBundleMapper;
+    @Resource
+    private SysFileMapper sysFileMapper;
 
 
     @Override
@@ -69,6 +72,10 @@ public class AdminBundleServiceImpl implements AdminBundleService {
     public Result<String> add(AdminAddBundleDTO adminAddBundleDTO) {
         Bundle bundle = mapStruct.AdminAddBundleDTOToBundle(adminAddBundleDTO);
         adminBundleMapper.insert(bundle);
+        // 修改文件状态
+        if (!CollectionUtils.isEmpty(adminAddBundleDTO.getImages())) {
+            sysFileMapper.update(adminAddBundleDTO.getImages());
+        }
         return Result.success("新增成功");
     }
 
@@ -76,6 +83,10 @@ public class AdminBundleServiceImpl implements AdminBundleService {
     public Result<String> update(AdminUpdateBundleDTO adminUpdateBundleDTO) {
         Bundle bundle = mapStruct.AdminUpdateBundleDTOToBundle(adminUpdateBundleDTO);
         adminBundleMapper.update(bundle);
+        // 修改文件状态
+        if (!CollectionUtils.isEmpty(adminUpdateBundleDTO.getImages())) {
+            sysFileMapper.update(adminUpdateBundleDTO.getImages());
+        }
         return Result.success("修改成功！");
     }
 

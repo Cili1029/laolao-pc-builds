@@ -1,4 +1,4 @@
-package com.laolao.pojo.user.vo;
+package com.laolao.pojo.user.dto;
 
 import lombok.*;
 
@@ -8,7 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 @ToString
 @Builder
-public class UpdateUserVO {
+public class UpdateUserDTO {
     /**
      * 用户Id
      */

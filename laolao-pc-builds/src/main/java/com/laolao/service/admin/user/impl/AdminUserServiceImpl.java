@@ -3,11 +3,13 @@ package com.laolao.service.admin.user.impl;
 import com.laolao.common.result.Result;
 import com.laolao.converter.MapStruct;
 import com.laolao.mapper.admin.user.AdminUserMapper;
+import com.laolao.mapper.common.SysFileMapper;
 import com.laolao.pojo.user.dto.AdminUserUpdateDTO;
 import com.laolao.pojo.user.entity.User;
 import com.laolao.pojo.user.vo.AdminUserVO;
 import com.laolao.service.admin.user.AdminUserService;
 import jakarta.annotation.Resource;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -19,6 +21,8 @@ public class AdminUserServiceImpl implements AdminUserService {
     private AdminUserMapper adminUserMapper;
     @Resource
     private MapStruct mapStruct;
+    @Resource
+    private SysFileMapper sysFileMapper;
 
     @Override
     public Result<List<AdminUserVO>> getUser() {
@@ -47,6 +51,11 @@ public class AdminUserServiceImpl implements AdminUserService {
     public Result<String> updateUser(AdminUserUpdateDTO adminUserUpdateDTO) {
         User user = mapStruct.adminUserUpdateDTOToUser(adminUserUpdateDTO);
         adminUserMapper.updateUser(user);
+        if (StringUtils.isNoneBlank(adminUserUpdateDTO.getAvatar())) {
+            List<String> images = new ArrayList<>();
+            images.add(adminUserUpdateDTO.getAvatar());
+            sysFileMapper.update(images);
+        }
         return Result.success("修改成功");
     }
 

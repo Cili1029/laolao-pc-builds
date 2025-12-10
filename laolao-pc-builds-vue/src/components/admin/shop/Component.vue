@@ -16,6 +16,7 @@
                             <TableHead class="w-[80px] text-center">状态</TableHead>
                             <TableHead class="w-[60px] text-center">排序权重</TableHead>
                             <TableHead class="hidden xl:table-cell w-[120px] text-center">创建信息</TableHead>
+                            <TableHead class="hidden xl:table-cell w-[120px] text-center">最后更新</TableHead>
                             <TableHead class="w-[80px] text-center">操作</TableHead>
                             <Dialog>
                                 <DialogTrigger as-child>
@@ -153,6 +154,15 @@
                                     <div class="opacity-70 mt-0.5">{{ dayjs(component.createdAt).format('YYYY-MM-DD') }}
                                     </div>
                                 </TableCell>
+
+                                <TableCell
+                                    class="hidden xl:table-cell text-center text-[10px] text-muted-foreground leading-tight">
+                                    <div>{{ component.updatedBy }}</div>
+                                    <div class="opacity-70 mt-0.5">{{ dayjs(component.updatedAt).format('YYYY-MM-DD') }}
+                                    </div>
+                                </TableCell>
+
+
                                 <TableCell @click.stop
                                     class="hidden xl:table-cell text-center text-[10px] text-muted-foreground leading-tight">
                                     <Dialog>
@@ -213,9 +223,9 @@
                                                     图片管理
                                                 </Button>
                                                 <FileManager v-model:open="showUpdateDialog" v-model="updateImg"
-                                                    :max-files="5" upload-api="/api/common/upload"
-                                                    delete-api="/api/common/delete"
-                                                    :upload-extra-data="{ type: 'laolaoPC/components' }" />
+                                                    :max-files="5" upload-api="/api/common/file/upload"
+                                                    delete-api="/api/common/file/delete"
+                                                    :upload-extra-data="{ type: 'laolaoPC/shop/components' }" />
                                                 <DialogClose as-child class="sm:ml-auto">
                                                     <Button type="submit" @click="updateComponent(component)"
                                                         :disabled="!updateComponentData.name || !updateComponentData.categoryId">
@@ -254,7 +264,7 @@
                             <!-- 子行：版本列表 -->
                             <TableRow v-if="openId === component.id">
                                 <TableCell colspan="12" class="p-0 border-t-0 bg-muted/20 shadow-inner">
-                                    <div class="pl-12 pr-4 py-3">
+                                    <div class="px-12 py-3">
                                         <div class="rounded-md border bg-background overflow-hidden">
                                             <div
                                                 class="flex items-center justify-between bg-muted/30 px-3 py-1.5 border-b">
@@ -327,6 +337,8 @@
                                                         </TableHead>
                                                         <TableHead class="h-8 w-[120px] text-center text-xs">创建信息
                                                         </TableHead>
+                                                        <TableHead class="h-8 w-[120px] text-center text-xs">最后更新
+                                                        </TableHead>
                                                         <TableHead class="h-8 w-[140px] text-center text-xs">操作
                                                         </TableHead>
                                                     </TableRow>
@@ -364,10 +376,17 @@
                                                             </div>
                                                         </TableCell>
                                                         <TableCell
-                                                            class="py-2 text-center text-[10px] flex flex-col items-center">
+                                                            class="py-2 text-center text-[10px] items-center">
                                                             <div>{{ variant.createdBy }}</div>
                                                             <div class="opacity-70 mt-0.5">{{
                                                                 dayjs(variant.createdAt).format('YYYY-MM-DD') }}
+                                                            </div>
+                                                        </TableCell>
+                                                        <TableCell
+                                                            class="py-2 text-center text-[10px] items-center">
+                                                            <div>{{ variant.updatedBy }}</div>
+                                                            <div class="opacity-70 mt-0.5">{{
+                                                                dayjs(variant.updatedAt).format('YYYY-MM-DD') }}
                                                             </div>
                                                         </TableCell>
                                                         <TableCell class="py-2 text-center">
@@ -511,8 +530,8 @@
         </AlertDialog>
 
         
-        <FileManager v-model:open="showAddDialog" v-model="addImg" :max-files="5" upload-api="/api/common/upload"
-            delete-api="/api/common/delete" :upload-extra-data="{ type: 'components' }" />
+        <FileManager v-model:open="showAddDialog" v-model="addImg" :max-files="5" upload-api="/api/common/file/upload"
+            delete-api="/api/common/file/delete" :upload-extra-data="{ type: 'laolaoPC/shop/components' }" />
     </div>
 </template>
 
@@ -580,6 +599,8 @@
         status: number
         createdBy: string
         createdAt: string
+        updatedBy: string
+        updatedAt: string
     }
 
     interface Component {
@@ -592,6 +613,8 @@
         sort: number
         createdBy: string
         createdAt: string
+        updatedBy: string
+        updatedAt: string
         variants?: Variant[]
     }
 

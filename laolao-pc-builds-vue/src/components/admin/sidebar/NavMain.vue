@@ -2,8 +2,7 @@
   <SidebarGroup>
     <SidebarGroupLabel>Platform</SidebarGroupLabel>
     <SidebarMenu>
-      <Collapsible v-for="item in items" :key="item.title" as-child :default-open="item.isActive"
-        class="group/collapsible">
+      <Collapsible v-for="item in items" :key="item.title + item.isActive" as-child :default-open="item.isActive" class="group/collapsible" >
         <SidebarMenuItem>
           <CollapsibleTrigger as-child>
             <SidebarMenuButton :tooltip="item.title">
@@ -17,7 +16,7 @@
             <SidebarMenuSub>
               <SidebarMenuSubItem v-for="subItem in item.items" :key="subItem.title">
                 <SidebarMenuSubButton as-child>
-                  <router-link :to="subItem.url">
+                  <router-link :to="subItem.url" active-class="bg-sidebar-accent text-sidebar-accent-foreground font-medium">
                     <span>{{ subItem.title }}</span>
                   </router-link>
                 </SidebarMenuSubButton>

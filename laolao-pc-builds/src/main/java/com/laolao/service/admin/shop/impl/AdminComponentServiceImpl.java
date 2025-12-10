@@ -6,6 +6,7 @@ import com.laolao.common.result.Result;
 import com.laolao.converter.MapStruct;
 import com.laolao.mapper.admin.shop.AdminComponentMapper;
 import com.laolao.mapper.admin.shop.AdminVariantMapper;
+import com.laolao.mapper.common.SysFileMapper;
 import com.laolao.pojo.shop.entity.Component;
 import com.laolao.pojo.shop.dto.AdminAddComponentDTO;
 import com.laolao.pojo.shop.entity.Variant;
@@ -16,6 +17,7 @@ import jakarta.annotation.Resource;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +30,8 @@ public class AdminComponentServiceImpl implements AdminComponentService {
     private AdminComponentMapper adminComponentMapper;
     @Resource
     private AdminVariantMapper adminVariantMapper;
+    @Resource
+    private SysFileMapper sysFileMapper;
 
 
     @Override
@@ -80,6 +84,10 @@ public class AdminComponentServiceImpl implements AdminComponentService {
     public Result<String> add(AdminAddComponentDTO adminAddComponentDTO) {
         Component component = mapStruct.adminAddComponentDTOToComponent(adminAddComponentDTO);
         adminComponentMapper.insert(component);
+        // 修改文件状态
+        if (!CollectionUtils.isEmpty(adminAddComponentDTO.getImages())) {
+            sysFileMapper.update(adminAddComponentDTO.getImages());
+        }
         return Result.success("新增成功");
     }
 
@@ -87,6 +95,10 @@ public class AdminComponentServiceImpl implements AdminComponentService {
     public Result<String> update(AdminUpdateComponentDTO adminUpdateComponentDTO) {
         Component component = mapStruct.adminUpdateComponentDTOToComponent(adminUpdateComponentDTO);
         adminComponentMapper.update(component);
+        // 修改文件状态
+        if (!CollectionUtils.isEmpty(adminUpdateComponentDTO.getImages())) {
+            sysFileMapper.update(adminUpdateComponentDTO.getImages());
+        }
         return Result.success("修改成功！");
     }
 }

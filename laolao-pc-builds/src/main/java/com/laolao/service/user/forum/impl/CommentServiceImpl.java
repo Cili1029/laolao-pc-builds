@@ -3,9 +3,10 @@ package com.laolao.service.user.forum.impl;
 import com.laolao.common.context.UserContext;
 import com.laolao.common.result.Result;
 import com.laolao.converter.MapStruct;
+import com.laolao.mapper.common.SysFileMapper;
 import com.laolao.mapper.user.forum.CommentMapper;
 import com.laolao.mapper.user.forum.PostMapper;
-import com.laolao.mapper.user.user.UserMapper;
+import com.laolao.mapper.common.UserCommonMapper;
 import com.laolao.pojo.forum.dto.AddCommentDTO;
 import com.laolao.pojo.forum.dto.AddReplyDTO;
 import com.laolao.pojo.forum.entity.Comment;
@@ -18,6 +19,7 @@ import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
+import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -25,18 +27,20 @@ import java.util.*;
 @Service
 public class CommentServiceImpl implements CommentService {
     @Resource
-    private UserMapper userMapper;
+    private UserCommonMapper userCommonMapper;
     @Resource
     private CommentMapper commentMapper;
     @Resource
     private MapStruct mapStruct;
     @Resource
     private PostMapper postMapper;
+    @Resource
+    private SysFileMapper sysFileMapper;
 
     @Override
     public Result<CommentVO> addComment(AddCommentDTO addCommentDTO) {
         int userId = UserContext.getCurrentId();
-        User user = userMapper.getUser(userId);
+        User user = userCommonMapper.getUser(userId);
         Map<Integer, User> userMap = new HashMap<>();
         userMap.put(userId, user);
         // 构建评论
@@ -45,10 +49,11 @@ public class CommentServiceImpl implements CommentService {
                 .userId(userId)
                 .content(addCommentDTO.getContent())
                 .images(addCommentDTO.getImages())
-                .createdAt(LocalDateTime.now())
                 .build();
-        if (comment.getImages() == null || comment.getImages().isEmpty()) {
-            comment.setImages(null);
+        // 修改文件状态
+        if (!CollectionUtils.isEmpty(addCommentDTO.getImages())) {
+            comment.setImages(addCommentDTO.getImages());
+            sysFileMapper.update(addCommentDTO.getImages());
         }
         // 写入数据库
         commentMapper.insertComment(comment);
@@ -61,7 +66,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public Result<CommentReplyVO> addReply(AddReplyDTO addReplyDTO) {
         int userId = UserContext.getCurrentId();
-        User user = userMapper.getUser(userId);
+        User user = userCommonMapper.getUser(userId);
         Map<Integer, User> userMap = new HashMap<>();
         userMap.put(userId, user);
         // 构建评论
@@ -71,10 +76,11 @@ public class CommentServiceImpl implements CommentService {
                 .parent(addReplyDTO.getParent())
                 .content(addReplyDTO.getContent())
                 .images(addReplyDTO.getImages())
-                .createdAt(LocalDateTime.now())
                 .build();
-        if (comment.getImages() == null || comment.getImages().isEmpty()) {
-            comment.setImages(null);
+        // 修改文件状态
+        if (!CollectionUtils.isEmpty(addReplyDTO.getImages())) {
+            comment.setImages(addReplyDTO.getImages());
+            sysFileMapper.update(addReplyDTO.getImages());
         }
         // 写入数据库
         commentMapper.insertReply(comment);

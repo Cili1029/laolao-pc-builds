@@ -177,8 +177,8 @@
       </div>
     </div>
 
-    <FileManager v-model:open="showUploadDialog" v-model="avatar" :max-files="1" upload-api="/api/common/upload"
-      delete-api="/api/common/delete" :upload-extra-data="{ type: 'laolaoPC/user/avatar' }" />
+    <FileManager v-model:open="showUploadDialog" v-model="avatar" :max-files="1" upload-api="/api/common/file/upload"
+      delete-api="/api/common/file/delete" :upload-extra-data="{ type: 'laolaoPC/user/avatar' }" />
   </div>
 </template>
 
@@ -277,8 +277,9 @@
     try {
       if (avatar.value[0] !== user.value?.user.avatar || newName.value !== user.value?.user.name) {
         await axios.post("/api/user/user/update", {
+          id: user.value?.user.id,
           name: newName.value,
-          avatar: avatar.value
+          avatar: avatar.value[0]
         })
         user.value!.user.name = newName.value
         user.value!.user.avatar = avatar.value[0]!
