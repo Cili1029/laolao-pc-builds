@@ -57,23 +57,45 @@
                                     class="icon-[material-symbols--thumb-up-outline] text-2xl"></span>
                                 <span v-else class="icon-[material-symbols--thumb-up] text-2xl text-orange-500"></span>
                             </Button>
-                            <AlertDialog v-if="post?.user.id === userStore.user.id">
-                                <AlertDialogTrigger as-child>
-                                    <p class="cursor-pointer text-xs text-slate-400 hover:text-orange-500">删除帖子</p>
-                                </AlertDialogTrigger>
-                                <AlertDialogContent>
-                                    <AlertDialogHeader>
-                                        <AlertDialogTitle>确定要删除该帖子吗？</AlertDialogTitle>
-                                        <AlertDialogDescription>
-                                            操作一旦完成无法撤回，请谨慎选择
-                                        </AlertDialogDescription>
-                                    </AlertDialogHeader>
-                                    <AlertDialogFooter>
-                                        <AlertDialogCancel>算了</AlertDialogCancel>
-                                        <AlertDialogAction @click="deletePost(post?.id)">删除</AlertDialogAction>
-                                    </AlertDialogFooter>
-                                </AlertDialogContent>
-                            </AlertDialog>
+                            <div class="flex items-center space-x-2">
+                                <AlertDialog v-if="post?.user.id === userStore.user.id || userStore.user.admin === 1">
+                                    <AlertDialogTrigger as-child>
+                                        <p class="cursor-pointer text-xs text-slate-400 hover:text-orange-500">删除帖子</p>
+                                    </AlertDialogTrigger>
+                                    <AlertDialogContent>
+                                        <AlertDialogHeader>
+                                            <AlertDialogTitle>确定要删除该帖子吗？</AlertDialogTitle>
+                                            <AlertDialogDescription>
+                                                操作一旦完成无法撤回，请谨慎选择
+                                            </AlertDialogDescription>
+                                        </AlertDialogHeader>
+                                        <AlertDialogFooter>
+                                            <AlertDialogCancel>算了</AlertDialogCancel>
+                                            <AlertDialogAction @click="deletePost(post?.id)">删除</AlertDialogAction>
+                                        </AlertDialogFooter>
+                                    </AlertDialogContent>
+                                </AlertDialog>
+
+                                <AlertDialog v-if="userStore.user.admin === 1">
+                                    <AlertDialogTrigger as-child>
+                                        <p class="cursor-pointer text-xs text-slate-400 hover:text-orange-500">彻底删除
+                                        </p>
+                                    </AlertDialogTrigger>
+                                    <AlertDialogContent>
+                                        <AlertDialogHeader>
+                                            <AlertDialogTitle>确定要删除该回复吗？</AlertDialogTitle>
+                                            <AlertDialogDescription>
+                                                操作一旦完成无法撤回，请谨慎选择
+                                            </AlertDialogDescription>
+                                        </AlertDialogHeader>
+                                        <AlertDialogFooter>
+                                            <AlertDialogCancel>算了</AlertDialogCancel>
+                                            <AlertDialogAction @click="adminDeletePost()">删除
+                                            </AlertDialogAction>
+                                        </AlertDialogFooter>
+                                    </AlertDialogContent>
+                                </AlertDialog>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -159,23 +181,48 @@
                                         <span v-else class="icon-[material-symbols--thumb-up] text-orange-500"></span>
                                     </div>
                                 </div>
-                                <AlertDialog v-if="comment.user.id === userStore.user.id">
-                                    <AlertDialogTrigger as-child>
-                                        <p class="cursor-pointer text-xs text-slate-400 hover:text-orange-500">删除评论</p>
-                                    </AlertDialogTrigger>
-                                    <AlertDialogContent>
-                                        <AlertDialogHeader>
-                                            <AlertDialogTitle>确定要删除该评论吗？</AlertDialogTitle>
-                                            <AlertDialogDescription>
-                                                操作一旦完成无法撤回，请谨慎选择
-                                            </AlertDialogDescription>
-                                        </AlertDialogHeader>
-                                        <AlertDialogFooter>
-                                            <AlertDialogCancel>算了</AlertDialogCancel>
-                                            <AlertDialogAction @click="deleteComment(comment.id)">删除</AlertDialogAction>
-                                        </AlertDialogFooter>
-                                    </AlertDialogContent>
-                                </AlertDialog>
+                                <div class="flex items-center space-x-2">
+                                    <AlertDialog
+                                        v-if="comment.user.id === userStore.user.id || userStore.user.admin === 1">
+                                        <AlertDialogTrigger as-child>
+                                            <p class="cursor-pointer text-xs text-slate-400 hover:text-orange-500">删除评论
+                                            </p>
+                                        </AlertDialogTrigger>
+                                        <AlertDialogContent>
+                                            <AlertDialogHeader>
+                                                <AlertDialogTitle>确定要删除该评论吗？</AlertDialogTitle>
+                                                <AlertDialogDescription>
+                                                    操作一旦完成无法撤回，请谨慎选择
+                                                </AlertDialogDescription>
+                                            </AlertDialogHeader>
+                                            <AlertDialogFooter>
+                                                <AlertDialogCancel>算了</AlertDialogCancel>
+                                                <AlertDialogAction @click="deleteComment(comment.id)">删除
+                                                </AlertDialogAction>
+                                            </AlertDialogFooter>
+                                        </AlertDialogContent>
+                                    </AlertDialog>
+
+                                    <AlertDialog v-if="userStore.user.admin === 1">
+                                        <AlertDialogTrigger as-child>
+                                            <p class="cursor-pointer text-xs text-slate-400 hover:text-orange-500">彻底删除
+                                            </p>
+                                        </AlertDialogTrigger>
+                                        <AlertDialogContent>
+                                            <AlertDialogHeader>
+                                                <AlertDialogTitle>确定要删除该回复吗？</AlertDialogTitle>
+                                                <AlertDialogDescription>
+                                                    操作一旦完成无法撤回，请谨慎选择
+                                                </AlertDialogDescription>
+                                            </AlertDialogHeader>
+                                            <AlertDialogFooter>
+                                                <AlertDialogCancel>算了</AlertDialogCancel>
+                                                <AlertDialogAction @click="adminDeleteComment(1, comment.id)">删除
+                                                </AlertDialogAction>
+                                            </AlertDialogFooter>
+                                        </AlertDialogContent>
+                                    </AlertDialog>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -214,24 +261,48 @@
                                         <span v-else class="icon-[material-symbols--thumb-up] text-orange-500"></span>
                                     </div>
                                 </div>
-                                <AlertDialog v-if="reply.user.id === userStore.user.id">
-                                    <AlertDialogTrigger as-child>
-                                        <p class="cursor-pointer text-xs text-slate-400 hover:text-orange-500">删除回复</p>
-                                    </AlertDialogTrigger>
-                                    <AlertDialogContent>
-                                        <AlertDialogHeader>
-                                            <AlertDialogTitle>确定要删除该回复吗？</AlertDialogTitle>
-                                            <AlertDialogDescription>
-                                                操作一旦完成无法撤回，请谨慎选择
-                                            </AlertDialogDescription>
-                                        </AlertDialogHeader>
-                                        <AlertDialogFooter>
-                                            <AlertDialogCancel>算了</AlertDialogCancel>
-                                            <AlertDialogAction @click="deleteReply(comment.id, reply.id)">删除
-                                            </AlertDialogAction>
-                                        </AlertDialogFooter>
-                                    </AlertDialogContent>
-                                </AlertDialog>
+                                <div class="flex items-center space-x-2">
+                                    <AlertDialog
+                                        v-if="reply.user.id === userStore.user.id || userStore.user.admin === 1">
+                                        <AlertDialogTrigger as-child>
+                                            <p class="cursor-pointer text-xs text-slate-400 hover:text-orange-500">删除回复
+                                            </p>
+                                        </AlertDialogTrigger>
+                                        <AlertDialogContent>
+                                            <AlertDialogHeader>
+                                                <AlertDialogTitle>确定要删除该回复吗？</AlertDialogTitle>
+                                                <AlertDialogDescription>
+                                                    操作一旦完成无法撤回，请谨慎选择
+                                                </AlertDialogDescription>
+                                            </AlertDialogHeader>
+                                            <AlertDialogFooter>
+                                                <AlertDialogCancel>算了</AlertDialogCancel>
+                                                <AlertDialogAction @click="deleteReply(comment.id, reply.id)">删除
+                                                </AlertDialogAction>
+                                            </AlertDialogFooter>
+                                        </AlertDialogContent>
+                                    </AlertDialog>
+
+                                    <AlertDialog v-if="userStore.user.admin === 1">
+                                        <AlertDialogTrigger as-child>
+                                            <p class="cursor-pointer text-xs text-slate-400 hover:text-orange-500">彻底删除
+                                            </p>
+                                        </AlertDialogTrigger>
+                                        <AlertDialogContent>
+                                            <AlertDialogHeader>
+                                                <AlertDialogTitle>确定要删除该回复吗？</AlertDialogTitle>
+                                                <AlertDialogDescription>
+                                                    操作一旦完成无法撤回，请谨慎选择
+                                                </AlertDialogDescription>
+                                            </AlertDialogHeader>
+                                            <AlertDialogFooter>
+                                                <AlertDialogCancel>算了</AlertDialogCancel>
+                                                <AlertDialogAction @click="adminDeleteComment(2, reply.id)">删除
+                                                </AlertDialogAction>
+                                            </AlertDialogFooter>
+                                        </AlertDialogContent>
+                                    </AlertDialog>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -556,6 +627,29 @@
     // 数据源：现有的图片 URL
     const commentImg = ref<string[]>([])
     const replyImg = ref<string[]>([])
+
+    // 管理员功能
+    const adminDeleteComment = async (type: number, commentId: number) => {
+        try {
+            await axios.delete(`/api/admin/forum/post/comment/${type}/${commentId}`)
+        } catch (error) {
+            console.log(error)
+        }
+        getPost(id)
+    }
+
+    const adminDeletePost = async () => {
+        try {
+            await axios.delete("/api/admin/forum/post", {
+                params: {
+                    id: post.value.id
+                }
+            })
+        } catch (error) {
+            console.log(error)
+        }
+        router.push(`/forum/${post.value.categoryId}`)
+    }
 </script>
 
 <style scoped></style>

@@ -5,6 +5,7 @@ interface User {
     avatar: string
     username: string
     name: string
+    admin: number
 }
 
 export const useUserStore = defineStore('user', {
@@ -13,17 +14,19 @@ export const useUserStore = defineStore('user', {
             id: 0,
             avatar: '',
             username: '',
-            name: ''
+            name: '',
+            admin: 0
         } as User,
         signedIn: false
     }),
 
     actions: {
-        setUser(category: User) {
-            this.user.id = category.id
-            this.user.avatar = category.avatar
-            this.user.username = category.username
-            this.user.name = category.name
+        setUser(user: User) {
+            this.user.id = user.id
+            this.user.avatar = user.avatar
+            this.user.username = user.username
+            this.user.name = user.name
+            this.user.admin = user.admin
             this.signedIn = true
         },
 
@@ -32,6 +35,7 @@ export const useUserStore = defineStore('user', {
             this.user.avatar = ''
             this.user.username = ''
             this.user.name = ''
+            this.user.admin = 0
             this.signedIn = false
         }
     }

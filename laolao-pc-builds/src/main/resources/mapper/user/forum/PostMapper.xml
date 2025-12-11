@@ -10,8 +10,12 @@
                 comment_count = comment_count + #{delta},
             </if>
             <if test="now != null">
-                updated_at = #{now}
+                commented_at = #{now},
             </if>
+            <if test="commentedBy != null">
+                commented_by = #{commentedBy}
+            </if>
+
         </set>
         WHERE id = #{id}
     </update>

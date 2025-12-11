@@ -225,7 +225,7 @@
                                                 <FileManager v-model:open="showUpdateDialog" v-model="updateImg"
                                                     :max-files="5" upload-api="/api/common/file/upload"
                                                     delete-api="/api/common/file/delete"
-                                                    :upload-extra-data="{ type: 'laolaoPC/shop/components' }" />
+                                                    :upload-extra-data="{ type: 'laolaoPC/shop/component' }" />
                                                 <DialogClose as-child class="sm:ml-auto">
                                                     <Button type="submit" @click="updateComponent(component)"
                                                         :disabled="!updateComponentData.name || !updateComponentData.categoryId">
@@ -531,7 +531,7 @@
 
         
         <FileManager v-model:open="showAddDialog" v-model="addImg" :max-files="5" upload-api="/api/common/file/upload"
-            delete-api="/api/common/file/delete" :upload-extra-data="{ type: 'laolaoPC/shop/components' }" />
+            delete-api="/api/common/file/delete" :upload-extra-data="{ type: 'laolaoPC/shop/component' }" />
     </div>
 </template>
 

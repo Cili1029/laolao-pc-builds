@@ -94,7 +94,6 @@
           items: [
             { title: "分类标签", url: "/admin/forum/category" },
             { title: "帖子", url: "/admin/forum/post" },
-            { title: "评论", url: "/admin/forum/comment" },
           ],
         },
       ],

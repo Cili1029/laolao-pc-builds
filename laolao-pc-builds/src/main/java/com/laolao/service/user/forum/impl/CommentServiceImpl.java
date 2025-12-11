@@ -57,7 +57,7 @@ public class CommentServiceImpl implements CommentService {
         }
         // 写入数据库
         commentMapper.insertComment(comment);
-        postMapper.updateCommentCount(addCommentDTO.getId(), 1, LocalDateTime.now());
+        postMapper.updateCommentCount(addCommentDTO.getId(), 1, LocalDateTime.now(), UserContext.getCurrentId());
         List<CommentVO> commentVOList = new ArrayList<>();
         setUserToComment(userMap, Collections.singletonList(comment), commentVOList, null, 1);
         return Result.success(commentVOList.get(0), "发表成功！");
@@ -84,7 +84,7 @@ public class CommentServiceImpl implements CommentService {
         }
         // 写入数据库
         commentMapper.insertReply(comment);
-        postMapper.updateCommentCount(addReplyDTO.getId(), 1, LocalDateTime.now());
+        postMapper.updateCommentCount(addReplyDTO.getId(), 1, LocalDateTime.now(), UserContext.getCurrentId());
         List<CommentReplyVO> commentReplyVOList = new ArrayList<>();
         setUserToComment(userMap, Collections.singletonList(comment), null, commentReplyVOList, 2);
         return Result.success(commentReplyVOList.get(0), "发表成功！");
@@ -93,9 +93,8 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional
     public Result<String> deleteComment(int postId, int commentId) {
-        int userId = UserContext.getCurrentId();
         // 先删除主评论
-        int res = commentMapper.deleteComment(commentId, userId);
+        int res = commentMapper.deleteComment(commentId);
         if (res == 0) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return Result.error("删除失败：评论不存在或无权限");
@@ -103,18 +102,17 @@ public class CommentServiceImpl implements CommentService {
         // 删除该评论下的所有回复
         int delta = commentMapper.deleteReplyByParent(commentId);
         if (delta > 0) {
-            postMapper.updateCommentCount(postId, -(1 + delta), null);
+            postMapper.updateCommentCount(postId, -(1 + delta), null, null);
         } else {
-            postMapper.updateCommentCount(postId, -1, null);
+            postMapper.updateCommentCount(postId, -1, null, null);
         }
         return Result.success("删除成功");
     }
 
     @Override
     public Result<String> deleteReply(int postId, int id) {
-        int userId = UserContext.getCurrentId();
-        commentMapper.deleteComment(id, userId);
-        postMapper.updateCommentCount(postId, -1, null);
+        commentMapper.deleteComment(id);
+        postMapper.updateCommentCount(postId, -1, null, null);
         return Result.success("删除成功");
     }
 

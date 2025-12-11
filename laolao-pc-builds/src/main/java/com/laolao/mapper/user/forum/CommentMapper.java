@@ -21,14 +21,14 @@ public interface CommentMapper {
     @Options(useGeneratedKeys = true, keyProperty = "id")
     void insertReply(Comment comment);
 
-    @Update("update forum_comment set status = 2 where id = #{id} and user_id = #{userId}")
-    int deleteComment(int id, int userId);
+    @Update("update forum_comment set status = 0 where id = #{id}")
+    int deleteComment(int id);
 
-    @Update("update forum_comment set status = 2 where parent = #{id}")
+    @Update("update forum_comment set status = 0 where parent = #{id}")
     int deleteReplyByParent(int id);
 
-    @Update("update forum_comment set status = 2 where post_id = #{id} and user_id = #{userId}")
-    void deleteCommentByPostId(int id, int userId);
+    @Update("update forum_comment set status = 0 where post_id = #{id}")
+    void deleteCommentByPostId(int id);
 
     @Update("update forum_comment set like_count = like_count + #{delta} where id = #{likeId}")
     void updateLikeCount(int likeId, int delta);

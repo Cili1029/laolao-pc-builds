@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -198,6 +199,8 @@ public class PostServiceImpl implements PostService {
                 .title(createPostDTO.getTitle())
                 .content(createPostDTO.getContent())
                 .images(createPostDTO.getImages())
+                .commentedBy(UserContext.getCurrentId())
+                .commentedAt(LocalDateTime.now())
                 .build();
         if (!CollectionUtils.isEmpty(createPostDTO.getImages())) {
             post.setImages(createPostDTO.getImages());
@@ -211,11 +214,10 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional
     public Result<String> deletePost(int id) {
-        int userId = UserContext.getCurrentId();
         // 先删评论
-        commentMapper.deleteCommentByPostId(id, userId);
+        commentMapper.deleteCommentByPostId(id);
         // 删帖子
-        postMapper.delete(id, userId);
+        postMapper.delete(id);
         return Result.success("删除成功");
     }
 }

@@ -27,4 +27,9 @@ public class UserSimpleVO {
      * 用户名
      */
     private String name;
+
+    /**
+     * 管理权限
+     */
+    private int admin;
 }

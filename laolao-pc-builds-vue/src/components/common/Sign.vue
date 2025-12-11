@@ -293,6 +293,7 @@
         avatar: string
         username: string
         name: string
+        admin: number
     }
 
     const user = ref<User>({
@@ -300,6 +301,7 @@
         avatar: '',
         username: '',
         name: '',
+        admin: 0
     })
 
     // 登陆后存进Pinia

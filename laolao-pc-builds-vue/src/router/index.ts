@@ -13,7 +13,6 @@ import Sign from '@/components/common/Sign.vue';
 import FrontUser from '@/components/front/user/User.vue';
 import Product from '@/components/front/shop/Product.vue';
 
-import Test from '@/components/admin/test.vue';
 import AdminLayout from '@/components/admin/AdminLayout.vue';
 import AdminUser from '@/components/admin/user/User.vue';
 import ShopCategory from '@/components/admin/shop/ShopCategory.vue';
@@ -21,6 +20,7 @@ import ForumCategory from '@/components/admin/forum/ForumCategory.vue';
 import Component from '@/components/admin/shop/Component.vue';
 import Bundle from '@/components/admin/shop/Bundle.vue';
 import ShopCoupon from '@/components/admin/shop/ShopCoupon.vue';
+import AdminPost from '@/components/admin/forum/Post.vue';
 
 const routes: Array<RouteRecordRaw> = [
   // 1. 用户端路由组
@@ -95,11 +95,6 @@ const routes: Array<RouteRecordRaw> = [
     redirect: '/admin/user',
     children: [
       {
-        path: 'test',
-        name: 'Test',
-        component: Test,
-      },
-      {
         path: 'user',
         name: 'AdminUser',
         component: AdminUser,
@@ -126,8 +121,13 @@ const routes: Array<RouteRecordRaw> = [
       },
       {
         path: 'shop/coupon',
-        name: 'shopCoupon',
+        name: 'ShopCoupon',
         component: ShopCoupon,
+      },
+      {
+        path: 'forum/post',
+        name: 'AdminPost',
+        component: AdminPost,
       },
     ]
   }

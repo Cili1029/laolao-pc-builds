@@ -65,7 +65,7 @@
                         <p class="w-12 text-center text-base font-bold text-slate-900">{{ simple.likeCount
                             }}</p>
                         <p class="w-24 text-center text-sm font-bold text-slate-900">{{
-                            formatTime(simple.updatedAt) }}</p>
+                            formatTime(simple.commentedAt) }}</p>
                     </div>
                 </div>
             </div>
@@ -93,7 +93,8 @@
         title: string
         likeCount: number
         commentCount: number
-        updatedAt: string
+        commentedBy: number
+        commentedAt: string
     }
     const postSimple = ref<PostSimple[]>([])
 

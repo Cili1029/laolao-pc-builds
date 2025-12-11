@@ -63,7 +63,22 @@ public class Post {
     private LocalDateTime createdAt;
 
     /**
-     * 最后更新时间（最后评论）
+     * 最后评论人
+     */
+    private int commentedBy;
+
+    /**
+     * 最后评论时间
+     */
+    private LocalDateTime commentedAt;
+
+    /**
+     * 最后更新人
+     */
+    private Integer updatedBy;
+
+    /**
+     * 最后更新时间
      */
     private LocalDateTime updatedAt;
 

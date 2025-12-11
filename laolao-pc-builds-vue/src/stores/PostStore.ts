@@ -1,4 +1,3 @@
-import type PostSimple from '@/components/forum/PostSimple.vue'
 import { defineStore } from 'pinia'
 
 // 帖子简单信息
@@ -8,7 +7,8 @@ interface PostSimple {
     title: string
     likeCount: number
     commentCount: number
-    updatedAt: string
+    commentedBy: number
+    commentedAt: string
 }
 
 export const usePostStore = defineStore('post', {
@@ -18,7 +18,8 @@ export const usePostStore = defineStore('post', {
             title: '',
             likeCount: 0,
             commentCount: 0,
-            updatedAt: ''
+            commentedBy: 0,
+            commentedAt: ''
         } as PostSimple,
         signedIn: false
     }),
@@ -30,7 +31,7 @@ export const usePostStore = defineStore('post', {
             this.postSimple.title = postSimple.title
             this.postSimple.likeCount = postSimple.likeCount
             this.postSimple.commentCount = postSimple.commentCount
-            this.postSimple.updatedAt = postSimple.updatedAt
+            this.postSimple.commentedAt = postSimple.commentedAt
         }
     }
 })

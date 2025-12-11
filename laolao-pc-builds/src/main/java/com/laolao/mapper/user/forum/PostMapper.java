@@ -17,17 +17,18 @@ public interface PostMapper {
     @Select("select * from forum_post where category_id = #{categoryId} and title like concat('%',#{searchContent},'%')")
     List<Post> searchPostSimple(int categoryId, String searchContent);
 
-    @Insert("insert into forum_post(user_id, category_id, title, content, images, created_at, updated_at) value (#{userId}, #{categoryId}, #{title}, #{content}, #{images}, #{createdAt}, #{updatedAt})")
+    @Insert("insert into forum_post(user_id, category_id, title, content, images, created_at, commented_by ,commented_at) " +
+            "value (#{userId}, #{categoryId}, #{title}, #{content}, #{images}, #{createdAt}, #{commentedBy}, #{commentedAt})")
     @Options(useGeneratedKeys = true, keyProperty = "id")
     void insertPost(Post post);
 
-    @Update("update forum_post set status = 2 where id = #{id} and user_id = #{userId}")
-    void delete(int id, int userId);
+    @Update("update forum_post set status = 0 where id = #{id}")
+    void delete(int id);
 
-    @Update("update forum_post set like_count = like_count + #{delta}, updated_at = updated_at where id = #{likeId}")
+    @Update("update forum_post set like_count = like_count + #{delta} where id = #{likeId}")
     void updateLikeCount(int likeId, int delta);
 
-    void updateCommentCount(int id, int delta, LocalDateTime now);
+    void updateCommentCount(int id, int delta, LocalDateTime now, Integer commentedBy);
 
     @Select("select * from forum_post where user_id = #{id} and status = 1")
     List<Post> selectPostByUserid(Integer id);

@@ -36,9 +36,14 @@ public class PostSimpleVO {
     private int commentCount;
 
     /**
-     * 最后更新时间（最后评论）
+     * 最后评论人
      */
-    private LocalDateTime updatedAt;
+    private int commentedBy;
+
+    /**
+     * 最后评论时间
+     */
+    private LocalDateTime commentedAt;
 
     /**
      * 热度分数
