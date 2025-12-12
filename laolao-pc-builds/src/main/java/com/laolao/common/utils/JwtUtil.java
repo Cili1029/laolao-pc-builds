@@ -25,8 +25,8 @@ public class JwtUtil {
 
     /**
      * 生成jwt
-     * @param claims    内容
-     * @return          jwt令牌
+     * @param claims 内容
+     * @return jwt令牌
      */
     public String createJWT(Map<String, Object> claims) {
         // 设置过期时间
@@ -41,8 +41,8 @@ public class JwtUtil {
 
     /**
      * jwt解密
-     * @param jwt       jwt令牌
-     * @return          {userId=1, username=laolao, exp=1760444574}
+     * @param jwt jwt令牌
+     * @return {userId=1, username=laolao, exp=1760444574}
      */
     public Claims parseJWT(String jwt) {
 

@@ -157,6 +157,7 @@ public class CommonUserServiceImpl implements CommonUserService {
         claims.put(JwtClaimsConstant.USER_ID, user.getId());
         claims.put(JwtClaimsConstant.USERNAME, user.getUsername());
         claims.put(JwtClaimsConstant.NAME, user.getName());
+        claims.put(JwtClaimsConstant.ADMIN, user.getAdmin());
         String jwt = jwtUtil.createJWT(claims);
 
         // 存入Cookie
