@@ -1,4 +1,4 @@
-package com.laolao.Interceptor;
+package com.laolao.common.interceptor;
 
 import com.laolao.common.annotation.LogSql;
 import com.laolao.common.context.SqlLogContext;

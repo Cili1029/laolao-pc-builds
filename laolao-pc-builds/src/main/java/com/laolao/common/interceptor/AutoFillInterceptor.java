@@ -1,4 +1,4 @@
-package com.laolao.Interceptor;
+package com.laolao.common.interceptor;
 
 import com.laolao.common.context.UserContext;
 import org.apache.ibatis.executor.Executor;

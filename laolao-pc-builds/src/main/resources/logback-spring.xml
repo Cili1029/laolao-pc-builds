@@ -42,7 +42,7 @@
     <!-- ========================================================= -->
     <!-- 4. 【核心配置】指定拦截器使用 SQL_FILE 输出器             -->
     <!-- ========================================================= -->
-    <logger name="com.laolao.Interceptor.SqlLogInterceptor" level="INFO" additivity="false">
+    <logger name="com.laolao.common.interceptor.SqlLogInterceptor" level="INFO" additivity="false">
         <appender-ref ref="SQL_FILE"/>
     </logger>
 

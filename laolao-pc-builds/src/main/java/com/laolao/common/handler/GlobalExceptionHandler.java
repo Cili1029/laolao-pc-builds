@@ -1,4 +1,4 @@
-package com.laolao.handler;
+package com.laolao.common.handler;
 
 import com.laolao.common.exception.BaseException;
 import com.laolao.common.result.Result;

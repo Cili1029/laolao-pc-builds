@@ -1,8 +1,8 @@
-package com.laolao.webconfig;
+package com.laolao.common.webconfig;
 
-import com.laolao.Interceptor.AdminInInterceptor;
-import com.laolao.Interceptor.SignInInterceptor;
-import com.laolao.Interceptor.SqlMarkInterceptor;
+import com.laolao.common.interceptor.AdminInInterceptor;
+import com.laolao.common.interceptor.SignInInterceptor;
+import com.laolao.common.interceptor.SqlMarkInterceptor;
 import jakarta.annotation.Resource;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.bind.annotation.RestController;
