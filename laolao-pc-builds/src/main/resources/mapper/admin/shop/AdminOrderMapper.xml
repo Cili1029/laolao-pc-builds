@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.laolao.mapper.admin.shop.AdminOrderMapper">
+    <select id="select" resultType="com.laolao.pojo.shop.entity.Order">
+        select *
+        from shop_order
+        where
+            status = #{status} and (status != 6 or cancel_reason != '订单超时')
+        order by
+            case status
+                when 2 then checkout_time
+                when 3 then delivery_time
+                when 4 then delivery_time
+                when 5 then receive_time
+                when 6 then cancel_time
+            end desc
+    </select>
+</mapper>

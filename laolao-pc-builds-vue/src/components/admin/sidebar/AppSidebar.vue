@@ -70,7 +70,7 @@
           isActive: isPathActive('/admin/user'),
           items: [
             { title: "用户信息", url: "/admin/user" },
-            { title: "订单", url: "/admin/user/orders" },
+            { title: "订单", url: "/admin/user/order" },
           ],
         },
         {

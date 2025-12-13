@@ -4,6 +4,8 @@ import com.laolao.common.constant.MessageConstant;
 import com.laolao.common.context.UserContext;
 import com.laolao.common.exception.UnknownError;
 import com.laolao.common.result.Result;
+import com.laolao.common.result.WsMessage;
+import com.laolao.common.websocket.NotificationHandler;
 import com.laolao.converter.MapStruct;
 import com.laolao.mapper.user.shop.*;
 import com.laolao.pojo.shop.dto.*;
@@ -39,6 +41,8 @@ public class OrderServiceImpl implements OrderService {
     private BundleMapper bundleMapper;
     @Resource
     private ShopCouponMapper shopCouponMapper;
+    @Resource
+    private NotificationHandler notificationHandler;
 
     @Transactional
     @Override
@@ -263,6 +267,8 @@ public class OrderServiceImpl implements OrderService {
         order.setStatus(2);
         order.setCheckoutTime(LocalDateTime.now());
         orderMapper.update(order);
+        // websocket通知管理员
+        notificationHandler.sendToAllAdmins(WsMessage.of("new_order", "订单号：" + payDTO.getNumber()));
         return Result.success("付款成功");
     }
 

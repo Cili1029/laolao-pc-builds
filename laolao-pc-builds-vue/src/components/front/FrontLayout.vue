@@ -219,8 +219,7 @@
 </template>
 
 <script setup lang="ts">
-  // 脚本内容完全保持不变
-  import { ref, computed } from 'vue'
+  import { ref, computed, watch, onUnmounted } from 'vue'
   import axios from '@/utils/myAxios'
   import { useRoute } from 'vue-router'
   const route = useRoute()
@@ -238,6 +237,26 @@
   const userStore = useUserStore()
   import { useCommonStore } from '@/stores/CommonStore'
   const commonStore = useCommonStore()
+  import { useWebSocketStore } from '@/stores/websocketStore'
+  const wsStore = useWebSocketStore()
+
+  watch(
+    () => userStore.user.id,
+    (newId) => {
+      if (newId) {
+        wsStore.connect()
+      } else {
+        wsStore.disconnect()
+      }
+    },
+    { immediate: true } // 初始化时立即执行一次
+  )
+
+  onUnmounted(() => {
+    wsStore.disconnect()
+  })
+
+
   // 回主页
   const goHome = () => {
     router.push('/home');

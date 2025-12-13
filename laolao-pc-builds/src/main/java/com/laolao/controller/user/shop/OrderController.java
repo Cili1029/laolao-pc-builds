@@ -106,7 +106,6 @@ public class OrderController {
     }
 
     /**
-     *
      * 付款
      * @param payDTO 订单号
      * @return 结果信息

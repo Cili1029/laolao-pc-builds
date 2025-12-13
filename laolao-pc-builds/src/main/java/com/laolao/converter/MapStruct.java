@@ -91,4 +91,6 @@ public interface MapStruct {
     ShopCategory adminShopCategoryDTOToShopCategory(AdminShopCategoryDTO adminShopCategoryDTO);
 
     Component adminAddComponentDTOToComponent(AdminAddComponentDTO adminAddComponentDTO);
+
+    AdminOrderVO orderToAdminOrderVO(Order order);
 }

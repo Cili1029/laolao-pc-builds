@@ -43,6 +43,18 @@ public class NotificationHandler extends TextWebSocketHandler {
         }
     }
 
+    @Override
+    protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
+        // 收到心跳
+        if ("ping".equals(message.getPayload())) {
+            try {
+                session.sendMessage(new TextMessage("pong"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     // 连接关闭
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
@@ -58,19 +70,29 @@ public class NotificationHandler extends TextWebSocketHandler {
      * 发送消息给指定用户
      */
     public void sendToUser(Integer userId, String message) {
+        // 去大池子里找
         WebSocketSession session = USER_SESSIONS.get(userId);
-        sendMessage(session, message);
+        if (session != null && session.isOpen()) {
+            try {
+                session.sendMessage(new TextMessage(message));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     /**
      * 发送消息给所有管理员
      */
     public void sendToAllAdmins(String message) {
-        if (ADMIN_SESSIONS.isEmpty()) {
-            return;
-        }
         for (WebSocketSession session : ADMIN_SESSIONS.values()) {
-            sendMessage(session, message);
+            if (session.isOpen()) {
+                try {
+                    session.sendMessage(new TextMessage(message));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 

@@ -4,6 +4,8 @@ import com.laolao.common.constant.JwtClaimsConstant;
 import com.laolao.common.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
@@ -22,11 +24,20 @@ public class WebSocketInterceptor implements HandshakeInterceptor {
 
     @Override
     public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Map<String, Object> attributes) {
-        if (request instanceof ServletServerHttpRequest servletRequest) {
-            // 从 URL 参数中获取 token
-            String token = servletRequest.getServletRequest().getParameter("jwt_token");
+        if (request instanceof ServletServerHttpRequest) {
+            HttpServletRequest servletRequest = ((ServletServerHttpRequest) request).getServletRequest();
+            Cookie[] cookies = servletRequest.getCookies();
+            String token = null;
+            if (cookies != null) {
+                for (Cookie cookie : cookies) {
+                    if (cookie.getName().equals("jwt_token")) {
+                        token = cookie.getValue();
+                        break;
+                    }
+                }
+            }
 
-            // 2. 校验 Token 提取userId和管理员权限
+            // 校验 Token 提取userId和管理员权限
             if (StringUtils.isNotBlank(token)) {
                 try {
                     Claims claims = jwtUtil.parseJWT(token);

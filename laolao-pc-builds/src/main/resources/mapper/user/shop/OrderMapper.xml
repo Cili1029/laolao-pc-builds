@@ -68,7 +68,7 @@
                      ROW_NUMBER() OVER (PARTITION BY o.number ORDER BY od.id) as rn
               FROM shop_order o
                        JOIN shop_order_detail od ON o.id = od.order_id
-              WHERE user_id = #{userId} order by created_at desc) t
+              WHERE user_id = #{userId} order by o.created_at desc) t
         WHERE rn = 1;
     </select>
 </mapper>

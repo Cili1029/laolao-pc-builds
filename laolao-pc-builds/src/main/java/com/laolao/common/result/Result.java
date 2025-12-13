@@ -1,10 +1,15 @@
 package com.laolao.common.result;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.io.Serializable;
 
 /**
  * 后端统一返回结果
  */
+@Setter
+@Getter
 public class Result<T> implements Serializable {
 
     private Integer code; //编码：1成功，0为失败
@@ -52,27 +57,4 @@ public class Result<T> implements Serializable {
         return result;
     }
 
-    public Integer getCode() {
-        return code;
-    }
-
-    public void setCode(Integer code) {
-        this.code = code;
-    }
-
-    public String getMsg() {
-        return msg;
-    }
-
-    public void setMsg(String msg) {
-        this.msg = msg;
-    }
-
-    public T getData() {
-        return data;
-    }
-
-    public void setData(T data) {
-        this.data = data;
-    }
 }

@@ -1,8 +1,8 @@
 // src/router/index.ts
 import { createRouter, createWebHistory } from 'vue-router'
 import type { RouteRecordRaw } from 'vue-router';
-import frontLayout from '@/components/front/common/FrontLayout.vue';
-import Home from '@/components/front/common/Home.vue'
+import frontLayout from '@/components/front/FrontLayout.vue';
+import Home from '@/components/front/Home.vue'
 import Shop from '@/components/front/shop/Shop.vue';
 import Order from '@/components/front/shop/Order.vue';
 import MyOrders from '@/components/front/shop/MyOrders.vue';
@@ -21,6 +21,7 @@ import Component from '@/components/admin/shop/Component.vue';
 import Bundle from '@/components/admin/shop/Bundle.vue';
 import ShopCoupon from '@/components/admin/shop/ShopCoupon.vue';
 import AdminPost from '@/components/admin/forum/Post.vue';
+import AdminOrder from '@/components/admin/shop/Order.vue';
 
 const routes: Array<RouteRecordRaw> = [
   // 1. 用户端路由组
@@ -128,6 +129,11 @@ const routes: Array<RouteRecordRaw> = [
         path: 'forum/post',
         name: 'AdminPost',
         component: AdminPost,
+      },
+      {
+        path: 'user/order',
+        name: 'AdminOrder',
+        component: AdminOrder,
       },
     ]
   }

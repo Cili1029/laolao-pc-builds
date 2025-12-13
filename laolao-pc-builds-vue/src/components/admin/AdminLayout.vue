@@ -29,5 +29,26 @@
   import { Button } from '@/components/ui/button'
   import { Input } from '@/components/ui/input'
   import { useCommonStore } from '@/stores/CommonStore'
+  import { onUnmounted, watch } from 'vue'
   const commonStore = useCommonStore()
+  import { useUserStore } from '@/stores/UserStore'
+  const userStore = useUserStore()
+  import { useWebSocketStore } from '@/stores/websocketStore'
+  const wsStore = useWebSocketStore()
+
+  watch(
+    () => userStore.user.id,
+    (newId) => {
+      if (newId) {
+        wsStore.connect()
+      } else {
+        wsStore.disconnect()
+      }
+    },
+    { immediate: true } // 初始化时立即执行一次
+  )
+
+  onUnmounted(() => {
+    wsStore.disconnect()
+  })
 </script>
