@@ -2,6 +2,8 @@ package com.laolao.pojo.shop.dto;
 
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -17,4 +19,9 @@ public class AdminOrderRejectDTO {
      * 订单拒绝原因
      */
     private String rejectionReason;
+
+    /**
+     * 订单拒绝时间
+     */
+    private LocalDateTime cancelTime;
 }

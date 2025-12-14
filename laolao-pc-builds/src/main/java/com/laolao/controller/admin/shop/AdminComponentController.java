@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 /**
- * 管理端组件相关
+ * 管理端-组件相关
  */
 @RestController
 @RequestMapping("/admin/shop/component")

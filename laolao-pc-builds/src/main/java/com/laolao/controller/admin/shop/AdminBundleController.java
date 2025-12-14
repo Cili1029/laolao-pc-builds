@@ -17,7 +17,7 @@ import java.util.List;
 
 
 /**
- * 管理端整机相关
+ * 管理端-整机相关
  */
 @RestController
 @RequestMapping("/admin/shop/bundle")

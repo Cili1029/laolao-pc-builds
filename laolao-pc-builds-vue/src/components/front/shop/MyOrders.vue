@@ -100,10 +100,26 @@
                                             </AlertDialogFooter>
                                         </AlertDialogContent>
                                     </AlertDialog>
-                                    <Button v-if="order.status == 3 || order.status == 4"
-                                        class="rounded-full bg-slate-900 text-white hover:bg-slate-800">
-                                        确认收货
-                                    </Button>
+                                    <AlertDialog v-if="order.status == 3 || order.status == 4">
+                                        <AlertDialogTrigger as-child>
+                                            <Button class="rounded-full bg-slate-900 text-white hover:bg-slate-800">
+                                                确认收货
+                                            </Button>
+                                        </AlertDialogTrigger>
+                                        <AlertDialogContent>
+                                            <AlertDialogHeader>
+                                                <AlertDialogTitle>确定收货吗?</AlertDialogTitle>
+                                                <AlertDialogDescription>
+                                                    1123
+                                                </AlertDialogDescription>
+                                            </AlertDialogHeader>
+                                            <AlertDialogFooter>
+                                                <AlertDialogCancel>取消</AlertDialogCancel>
+                                                <AlertDialogAction @click="receive(order.number)">确认收货
+                                                </AlertDialogAction>
+                                            </AlertDialogFooter>
+                                        </AlertDialogContent>
+                                    </AlertDialog>
                                 </div>
                             </div>
                         </div>
@@ -144,6 +160,13 @@
                         <!-- 右侧：信息 (可滚动) -->
                         <div class="w-full md:w-5/12 bg-white p-6 overflow-y-auto h-[400px] md:h-auto">
                             <div class="space-y-6">
+                                <div v-if="detail?.trackingNo"
+                                    class="bg-blue-50/50 px-4 py-2 my-2 rounded-lg border border-blue-50 space-y-2">
+                                    <div class="flex justify-between text-xs text-gray-500">
+                                        <span>订单号</span>
+                                        <span>{{ detail.trackingNo }}</span>
+                                    </div>
+                                </div>
                                 <!-- 金额块 -->
                                 <div class="bg-blue-50/50 p-4 rounded-lg border border-blue-50 space-y-2">
                                     <div class="flex justify-between text-xs text-gray-500">
@@ -181,21 +204,41 @@
                                     </div>
                                 </div>
 
-                                <!-- 时间线 -->
+                                <!-- 时间线及原因 -->
                                 <div class="border-t border-gray-100 pt-4 space-y-2 text-xs text-gray-500">
+                                    <p v-if="detail?.createdAt" class="flex justify-between">
+                                        <span>创建时间</span><span>{{
+                                            dayjs(detail?.createdAt).format('YYYY-MM-DD HH:mm:ss') }}</span>
+                                    </p>
                                     <p v-if="detail?.checkoutTime" class="flex justify-between">
                                         <span>支付时间</span><span>{{
                                             dayjs(detail?.checkoutTime).format('YYYY-MM-DD HH:mm:ss') }}</span>
                                     </p>
-                                    <p v-if="detail?.deliveryTime" class="flex justify-between">
+                                    <p v-if="detail?.shipTime" class="flex justify-between">
                                         <span>发货时间</span><span>{{
-                                            dayjs(detail?.deliveryTime).format('YYYY-MM-DD HH:mm:ss') }}</span>
+                                            dayjs(detail?.shipTime).format('YYYY-MM-DD HH:mm:ss') }}</span>
                                     </p>
-                                    <p v-if="detail?.receiveTime" class="flex justify-between"><span>完成时间</span><span>{{
-                                        dayjs(detail?.receiveTime).format('YYYY-MM-DD HH:mm:ss') }}</span></p>
+                                    <p v-if="detail?.arrivalTime" class="flex justify-between">
+                                        <span>到货时间</span><span>{{
+                                            dayjs(detail?.arrivalTime).format('YYYY-MM-DD HH:mm:ss') }}</span>
+                                    </p>
+                                    <p v-if="detail?.receiveTime" class="flex justify-between">
+                                        <span>完成时间</span>
+                                        <span>{{ dayjs(detail?.receiveTime).format('YYYY-MM-DD HH:mm:ss') }}</span>
+                                    </p>
                                     <p v-if="detail?.cancelTime" class="flex justify-between text-red-500">
-                                        <span>取消时间</span><span>{{
-                                            dayjs(detail?.cancelTime).format('YYYY-MM-DD HH:mm:ss') }}</span>
+                                        <span>
+                                            {{ detail?.cancelReason ? "取消时间" : "拒绝时间" }}
+                                        </span>
+                                        <span>{{ dayjs(detail?.cancelTime).format('YYYY-MM-DD HH:mm:ss') }}</span>
+                                    </p>
+                                    <p v-if="detail?.cancelReason" class="flex justify-between text-red-500">
+                                        <span>取消原因</span>
+                                        <span>{{ detail.cancelReason }}</span>
+                                    </p>
+                                    <p v-if="detail?.rejectionReason" class="flex justify-between text-red-500">
+                                        <span>拒绝原因</span>
+                                        <span>{{ detail.rejectionReason }}</span>
                                     </p>
                                 </div>
                             </div>
@@ -289,13 +332,15 @@
         consignee: string
         phone: string
         address: string
+        trackingNo: number
+        createdAt: string
+        checkoutTime: string
+        shipTime: string
+        arrivalTime: string
+        receiveTime: string
+        cancelTime: string
         cancelReason: string
         rejectionReason: string
-        checkoutTime: string
-        cancelTime: string
-        deliveryTime: string
-        receiveTime: string
-        createdAt: string
     }
     const detail = ref<Detail>()
 
@@ -341,6 +386,20 @@
             }
         } catch (error) {
             console.log(error)
+        }
+    }
+
+    // 确认收货
+    const receive = async (number: string) => {
+        try {
+            await axios.patch("/api/user/shop/order/receive", {}, {
+                params: {
+                    number: number
+                }
+            })
+            orders.value.find(order => order.number === number)!.status = 5
+        } catch (error) {
+            console.error(error)
         }
     }
 </script>

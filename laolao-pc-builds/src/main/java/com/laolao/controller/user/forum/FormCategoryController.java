@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 /**
- * 论坛帖子分类相关
+ * 用户端-论坛帖子分类相关
  */
 @RestController
 @RequestMapping("/user/forum/category")

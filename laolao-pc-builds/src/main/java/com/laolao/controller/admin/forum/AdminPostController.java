@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 /**
- * 客户端帖子相关
+ * 管理端-帖子相关
  */
 @RestController
 @RequestMapping("/admin/forum/post")

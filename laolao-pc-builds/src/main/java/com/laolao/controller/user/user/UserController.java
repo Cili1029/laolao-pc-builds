@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * 用户相关
+ * 用户端-用户相关
  */
 @RestController
 @RequestMapping("/user/user")

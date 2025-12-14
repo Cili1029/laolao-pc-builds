@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * 论坛帖子相关
+ * 用户端-论坛帖子相关
  */
 @RestController
 @RequestMapping("/user/forum/post")

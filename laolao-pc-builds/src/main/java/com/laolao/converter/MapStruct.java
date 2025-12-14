@@ -93,4 +93,6 @@ public interface MapStruct {
     Component adminAddComponentDTOToComponent(AdminAddComponentDTO adminAddComponentDTO);
 
     AdminOrderVO orderToAdminOrderVO(Order order);
+
+    AdminOrderDetailVO orderDetailToorderDetailVO(OrderDetail orderDetail);
 }

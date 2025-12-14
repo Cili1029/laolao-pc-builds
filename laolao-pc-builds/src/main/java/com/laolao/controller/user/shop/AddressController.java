@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * 收货地址相关
+ * 用户端-收货地址相关
  */
 @RestController
 @RequestMapping("/user/shop/address")

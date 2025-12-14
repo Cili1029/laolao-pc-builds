@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 /**
- * 商品分类相关
+ * 用户端-商品分类相关
  */
 @RestController
 @RequestMapping("/user/shop/category")

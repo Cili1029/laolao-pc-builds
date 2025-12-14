@@ -36,6 +36,11 @@ public class AdminOrderVO {
     private String address;
 
     /**
+     * 快递单号
+     */
+    private String trackingNo;
+
+    /**
      * 订单取消原因
      */
     private String cancelReason;
@@ -58,7 +63,12 @@ public class AdminOrderVO {
     /**
      * 发货时间
      */
-    private LocalDateTime deliveryTime;
+    private LocalDateTime shipTime;
+
+    /**
+     * 到货时间
+     */
+    private LocalDateTime arrivalTime;
 
     /**
      * 确认收货时间

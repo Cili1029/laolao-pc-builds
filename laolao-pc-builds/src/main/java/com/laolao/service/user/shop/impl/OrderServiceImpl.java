@@ -169,6 +169,12 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public Result<String> receive(String number) {
+        orderMapper.receiveOrder(number, LocalDateTime.now());
+        return Result.success("确认收货成功");
+    }
+
+    @Override
     public Result<Integer> getStatus(String number) {
         int userId = UserContext.getCurrentId();
         Order order = orderMapper.selectOrder(userId, number);

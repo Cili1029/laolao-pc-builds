@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * 客户端帖子分类相关
+ * 管理端-帖子分类相关
  */
 @RestController
 @RequestMapping("/admin/forum/category")

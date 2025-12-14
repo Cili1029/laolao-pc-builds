@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * 管理端组件版本相关
+ * 管理端-组件版本相关
  */
 @RestController
 @RequestMapping("/admin/shop/variant")

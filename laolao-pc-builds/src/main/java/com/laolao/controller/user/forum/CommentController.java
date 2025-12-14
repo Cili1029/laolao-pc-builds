@@ -10,7 +10,7 @@ import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * 评论功能相关
+ * 用户端-评论相关
  */
 @RestController
 @RequestMapping("/user/forum/comment")

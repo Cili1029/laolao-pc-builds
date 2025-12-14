@@ -40,4 +40,11 @@ public interface OrderMapper {
 
     @Update("update shop_order set discount_amount = #{discountAmount}, user_coupon_id = #{userCouponId}, status = #{status}, cancel_reason = #{cancelReason}, cancel_time = #{cancelTime} where user_id = #{userId} and number = #{number}")
     void updateExpire(Order order);
+
+
+    @Update("update shop_order set status = 4, arrival_time = #{now} where status = 3 and ship_time < #{expire}")
+    void arrivalOrder(LocalDateTime expire, LocalDateTime now);
+
+    @Update("update shop_order set status = 5, receive_time = #{now} where number = #{number}")
+    void receiveOrder(String number, LocalDateTime now);
 }

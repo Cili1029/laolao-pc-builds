@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * 管理端商品分类相关
+ * 管理端-商品分类相关
  */
 @RestController
 @RequestMapping("/admin/shop/category")

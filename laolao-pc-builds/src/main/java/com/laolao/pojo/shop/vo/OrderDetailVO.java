@@ -53,6 +53,41 @@ public class OrderDetailVO {
     private String address;
 
     /**
+     * 快递单号
+     */
+    private String trackingNo;
+
+    /**
+     * 创建时间
+     */
+    private LocalDateTime createdAt;
+
+    /**
+     * 支付时间
+     */
+    private LocalDateTime checkoutTime;
+
+    /**
+     * 发货时间
+     */
+    private LocalDateTime shipTime;
+
+    /**
+     * 到货时间
+     */
+    private LocalDateTime arrivalTime;
+
+    /**
+     * 确认收货时间
+     */
+    private LocalDateTime receiveTime;
+
+    /**
+     * 订单取消时间
+     */
+    private LocalDateTime cancelTime;
+
+    /**
      * 订单取消原因
      */
     private String cancelReason;
@@ -61,29 +96,4 @@ public class OrderDetailVO {
      * 订单拒绝原因
      */
     private String rejectionReason;
-
-    /**
-     * 支付时间
-     */
-    private LocalDateTime checkoutTime;
-
-    /**
-     * 订单取消时间
-     */
-    private LocalDateTime cancelTime;
-
-    /**
-     * 发货时间
-     */
-    private LocalDateTime deliveryTime;
-
-    /**
-     * 确认收货时间
-     */
-    private LocalDateTime receiveTime;
-
-    /**
-     * 创建时间
-     */
-    private LocalDateTime createdAt;
 }

@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * 优惠券相关
+ * 用户端-优惠券相关
  */
 @RestController
 @RequestMapping("/user/shop/coupon")

@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 /**
- * 管理端优惠券相关
+ * 管理端-优惠券相关
  */
 @RestController
 @RequestMapping("/admin/shop/coupon")

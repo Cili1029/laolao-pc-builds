@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * 论坛点赞相关
+ * 用户端-论坛点赞相关
  */
 @RestController
 @RequestMapping("/user/forum/like")

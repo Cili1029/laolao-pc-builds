@@ -30,4 +30,6 @@ public interface OrderService {
     Result<String> cancelCoupon(CouponDTO couponDTO);
 
     Result<String> createOrderDirectly(BuyProductDTO buyProductDTO);
+
+    Result<String> receive(String number);
 }

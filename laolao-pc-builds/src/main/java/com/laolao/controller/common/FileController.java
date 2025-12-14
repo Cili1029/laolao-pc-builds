@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 通用上传接口相关
+ * 通用-上传相关
  */
 @RestController
 @RequestMapping("/common/file")

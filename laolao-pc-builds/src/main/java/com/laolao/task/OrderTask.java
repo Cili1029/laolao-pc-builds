@@ -37,4 +37,11 @@ public class OrderTask {
             }
         }
     }
+
+    // 模拟快递到达
+    @Scheduled(cron = "0 0/5 * * * ?")
+    public void arrivalOrders() {
+        LocalDateTime expire = LocalDateTime.now().minusMinutes(5);
+        orderMapper.arrivalOrder(expire, LocalDateTime.now());
+    }
 }

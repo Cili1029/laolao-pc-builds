@@ -6,13 +6,17 @@ import com.laolao.common.result.Result;
 import com.laolao.converter.MapStruct;
 import com.laolao.mapper.admin.shop.AdminOrderMapper;
 import com.laolao.pojo.shop.dto.AdminOrderRejectDTO;
+import com.laolao.pojo.shop.dto.AdminOrderShipDTO;
 import com.laolao.pojo.shop.entity.Order;
+import com.laolao.pojo.shop.entity.OrderDetail;
+import com.laolao.pojo.shop.vo.AdminOrderDetailVO;
 import com.laolao.pojo.shop.vo.AdminOrderVO;
 import com.laolao.service.admin.shop.AdminOrderService;
 import jakarta.annotation.Resource;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,7 +50,27 @@ public class AdminOrderServiceImpl implements AdminOrderService {
 
     @Override
     public Result<String> rejectOrder(AdminOrderRejectDTO adminOrderRejectDTO) {
+        adminOrderRejectDTO.setCancelTime(LocalDateTime.now());
         adminOrderMapper.rejectOrder(adminOrderRejectDTO);
         return Result.success("已拒单！");
+    }
+
+    @Override
+    public Result<String> ship(AdminOrderShipDTO adminOrderShipDTO) {
+        adminOrderShipDTO.setStatus(3);
+        adminOrderShipDTO.setShipTime(LocalDateTime.now());
+        adminOrderMapper.ship(adminOrderShipDTO);
+        return Result.success("已发货！");
+    }
+
+    @Override
+    public Result<List<AdminOrderDetailVO>> getProduct(Integer orderId) {
+        List<OrderDetail> orderDetailList = adminOrderMapper.selectOrderDetails(orderId);
+        List<AdminOrderDetailVO> adminOrderDetailVOList = new ArrayList<>();
+        for (OrderDetail orderDetail : orderDetailList) {
+            AdminOrderDetailVO adminOrderDetailVO =  mapStruct.orderDetailToorderDetailVO(orderDetail);
+            adminOrderDetailVOList.add(adminOrderDetailVO);
+        }
+        return Result.success(adminOrderDetailVOList);
     }
 }

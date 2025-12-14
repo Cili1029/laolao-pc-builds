@@ -38,14 +38,17 @@
                             <TableHead class="w-[180px] text-xs">订单信息</TableHead>
                             <TableHead class="w-[200px] text-xs">收货信息</TableHead>
                             <TableHead class="min-w-[200px] text-xs">配送地址</TableHead>
+                            <TableHead v-if="currentStatus === 3 || currentStatus === 4" class="min-[180px] text-xs">
+                                快递单号</TableHead>
                             <TableHead class="w-[140px] text-center text-xs">
                                 <span v-if="currentStatus === 2">支付时间</span>
                                 <span v-if="currentStatus === 3">发货时间</span>
                                 <span v-if="currentStatus === 4">送达时间</span>
                                 <span v-if="currentStatus === 5">确认收货时间</span>
-                                <span v-if="currentStatus === 6">原因</span>
+                                <span v-if="currentStatus === 6">取消时间</span>
                             </TableHead>
-                            <TableHead v-if="currentStatus !== 6" class="w-[140px] text-center text-xs">操作</TableHead>
+                            <TableHead v-if="currentStatus === 6" class="w-[140px] text-center text-xs">取消原因</TableHead>
+                            <TableHead v-if="currentStatus === 2" class="w-[140px] text-center text-xs">操作</TableHead>
                         </TableRow>
                     </TableHeader>
 
@@ -61,16 +64,102 @@
                                 <div class="flex flex-col gap-1">
                                     <span class="font-medium text-sm font-mono tracking-tight">{{ order.number }}</span>
                                     <div class="flex items-center">
-                                        <Button variant="link" size="sm" class="h-auto p-0 text-xs text-blue-600">
-                                            查看商品详情
-                                        </Button>
+                                        <Dialog>
+                                            <DialogTrigger as-child>
+                                                <Button @click="getDetail(order.id)" variant="ghost" size="sm"
+                                                    class="h-8 px-2 text-xs text-blue-600 hover:text-blue-700 hover:bg-blue-50">
+                                                    <ListTodo class="mr-1 h-3 w-3" />
+                                                    商品详情
+                                                </Button>
+                                            </DialogTrigger>
+
+                                            <DialogContent class="sm:max-w-[800px]">
+                                                <DialogHeader>
+                                                    <DialogTitle class="flex items-center gap-2">
+                                                        <span>订单商品明细</span>
+                                                        <Badge variant="outline"
+                                                            class="font-normal text-muted-foreground">
+                                                            #{{ order.number }}
+                                                        </Badge>
+                                                    </DialogTitle>
+                                                    <DialogDescription>
+                                                        共 {{ details.length }} 件商品，下单时间：{{
+                                                            dayjs(order.checkoutTime).format('YYYY-MM-DD HH:mm') }}
+                                                    </DialogDescription>
+                                                </DialogHeader>
+
+                                                <div class="max-h-[60vh] overflow-y-auto">
+                                                    <Table>
+                                                        <TableHeader>
+                                                            <TableRow class="bg-muted/50">
+                                                                <TableHead class="min-w-[200px]">商品信息</TableHead>
+                                                                <TableHead class="text-right">单价</TableHead>
+                                                                <TableHead class="text-center w-[100px]">数量</TableHead>
+                                                                <TableHead class="text-right">小计</TableHead>
+                                                            </TableRow>
+                                                        </TableHeader>
+
+                                                        <TableBody>
+                                                            <TableRow v-for="detail in details" :key="detail.id">
+                                                                <TableCell>
+                                                                    <div class="flex flex-col gap-1">
+                                                                        <span class="font-medium text-sm">
+                                                                            {{ detail.name }}
+                                                                        </span>
+                                                                        <div
+                                                                            class="flex items-center gap-2 text-xs text-muted-foreground">
+                                                                            <span
+                                                                                class="bg-muted px-1.5 py-0.5 rounded">
+                                                                                {{ detail.variantName || '默认规格' }}
+                                                                            </span>
+                                                                            <span>ID: {{ detail.id }}</span>
+                                                                        </div>
+                                                                    </div>
+                                                                </TableCell>
+
+                                                                <!-- 单价 -->
+                                                                <TableCell class="text-right font-mono">
+                                                                    ¥{{ Number(detail.price).toFixed(2) }}
+                                                                </TableCell>
+
+                                                                <!-- 数量 -->
+                                                                <TableCell class="text-center font-medium">
+                                                                    x {{ detail.quantity }}
+                                                                </TableCell>
+
+                                                                <!-- 小计 -->
+                                                                <TableCell
+                                                                    class="text-right font-mono font-medium text-foreground">
+                                                                    ¥{{ (Number(detail.price) *
+                                                                        detail.quantity).toFixed(2) }}
+                                                                </TableCell>
+                                                            </TableRow>
+                                                        </TableBody>
+
+                                                        <!-- 底部总计 -->
+                                                        <TableFooter class="bg-transparent border-t-2">
+                                                            <TableRow>
+                                                                <TableCell colspan="3"
+                                                                    class="text-right font-medium text-muted-foreground">
+                                                                    订单总金额
+                                                                </TableCell>
+                                                                <TableCell
+                                                                    class="text-right font-bold text-lg text-red-600">
+                                                                    ¥{{ calculateTotal(details) }}
+                                                                </TableCell>
+                                                            </TableRow>
+                                                        </TableFooter>
+                                                    </Table>
+                                                </div>
+                                            </DialogContent>
+                                        </Dialog>
                                     </div>
                                 </div>
                             </TableCell>
 
                             <!-- 收货信息：合并姓名和电话 -->
                             <TableCell class="py-3">
-                                <div class="flex flex-col">
+                                <div v-if="order.consignee" class="flex flex-col">
                                     <div class="flex items-center gap-2">
                                         <User class="h-3.5 w-3.5" />
                                         <span class="text-sm font-medium">{{ order.consignee }}</span>
@@ -84,12 +173,17 @@
 
                             <!-- 地址 -->
                             <TableCell class="py-3">
-                                <div class="flex items-center max-w-[250px]">
+                                <div v-if="order.address" class="flex items-center max-w-[250px]">
                                     <MapPin class="h-3.5 w-3.5" />
                                     <TableCell class="text-xs leading-snug line-clamp-2">
                                         {{ order.address }}
                                     </TableCell>
                                 </div>
+                            </TableCell>
+
+                            <!-- 快递单号 -->
+                            <TableCell v-if="currentStatus === 3 || currentStatus === 4" class="py-3">
+                                <span class="font-medium text-sm font-mono tracking-tight">{{ order.trackingNo }}</span>
                             </TableCell>
 
                             <!-- 时间/原因 -->
@@ -105,19 +199,19 @@
 
                                 <div v-if="currentStatus === 3" class="flex flex-col items-center gap-1">
                                     <span class="text-xs font-mono">
-                                        {{ dayjs(order.deliveryTime).format('YYYY-MM-DD') }}
+                                        {{ dayjs(order.shipTime).format('YYYY-MM-DD') }}
                                     </span>
                                     <span class="text-[10px]">
-                                        {{ dayjs(order.deliveryTime).format('HH:mm') }}
+                                        {{ dayjs(order.shipTime).format('HH:mm') }}
                                     </span>
                                 </div>
 
                                 <div v-if="currentStatus === 4" class="flex flex-col items-center gap-1">
                                     <span class="text-xs font-mono">
-                                        {{ dayjs(order.deliveryTime).format('YYYY-MM-DD') }}
+                                        {{ dayjs(order.arrivalTime).format('YYYY-MM-DD') }}
                                     </span>
                                     <span class="text-[10px]">
-                                        {{ dayjs(order.deliveryTime).format('HH:mm') }}
+                                        {{ dayjs(order.arrivalTime).format('HH:mm') }}
                                     </span>
                                 </div>
 
@@ -131,6 +225,17 @@
                                 </div>
 
                                 <div v-if="currentStatus === 6" class="flex flex-col items-center gap-1">
+                                    <span class="text-xs font-mono">
+                                        {{ dayjs(order.cancelTime).format('YYYY-MM-DD') }}
+                                    </span>
+                                    <span class="text-[10px]">
+                                        {{ dayjs(order.cancelTime).format('HH:mm') }}
+                                    </span>
+                                </div>
+                            </TableCell>
+
+                            <TableCell v-if="currentStatus === 6">
+                                <div class="flex flex-col items-center gap-1">
                                     <span v-if="order.rejectionReason">
                                         {{ order.rejectionReason }}
                                     </span>
@@ -138,14 +243,42 @@
                                         {{ order.cancelReason }}
                                     </span>
                                 </div>
-
                             </TableCell>
 
-                            <TableCell v-if="currentStatus !== 6" class="text-center py-3">
+                            <TableCell v-if="currentStatus === 2" class="text-center py-3">
                                 <div class="flex items-center justify-center gap-2">
-                                    <Button>
-                                        发货
-                                    </Button>
+                                    <Dialog>
+                                        <DialogTrigger as-child>
+                                            <Button>
+                                                发货
+                                            </Button>
+                                        </DialogTrigger>
+                                        <DialogContent class="sm:max-w-[425px]">
+                                            <DialogHeader>
+                                                <DialogTitle>发货</DialogTitle>
+                                                <DialogDescription>
+                                                    请谨慎填写订单号
+                                                </DialogDescription>
+                                            </DialogHeader>
+                                            <div class="grid gap-3">
+                                                <Label>订单号</Label>
+                                                <Input v-model="trackingNo" />
+                                            </div>
+                                            <DialogFooter>
+                                                <DialogClose as-child>
+                                                    <Button variant="outline">
+                                                        取消
+                                                    </Button>
+                                                </DialogClose>
+                                                <DialogClose as-child>
+                                                    <Button @click="ship(order.id)" :disabled="trackingNo === ''"
+                                                        type="submit">
+                                                        发货
+                                                    </Button>
+                                                </DialogClose>
+                                            </DialogFooter>
+                                        </DialogContent>
+                                    </Dialog>
 
                                     <AlertDialog>
                                         <AlertDialogTrigger as-child>
@@ -250,14 +383,18 @@
 <script setup lang="ts">
     import { onMounted, ref, watch, } from 'vue'
     import axios from '@/utils/myAxios'
-    import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+    import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, TableFooter } from '@/components/ui/table'
     import { Button } from '@/components/ui/button'
-    import { User, Phone, MapPin, Ghost } from 'lucide-vue-next'
+    import { User, Phone, MapPin, Ghost, ListTodo } from 'lucide-vue-next'
     import { toast } from "vue-sonner"
     import { ButtonGroup } from '@/components/ui/button-group'
     import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
     import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger, } from '@/components/ui/alert-dialog'
     import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationNext, PaginationPrevious } from '@/components/ui/pagination'
+    import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, } from '@/components/ui/dialog'
+    import { Input } from '@/components/ui/input'
+    import { Badge } from '@/components/ui/badge'
+    import { Label } from '@/components/ui/label'
     import dayjs from 'dayjs'
     import relativeTime from 'dayjs/plugin/relativeTime'
     import 'dayjs/locale/zh-cn'
@@ -270,6 +407,8 @@
         consignee: string
         phone: string
         address: string
+        // 快递单号
+        trackingNo: string | null
         // 订单取消原因
         cancelReason: string | null
         // 订单拒绝原因
@@ -279,7 +418,9 @@
         // 订单取消时间
         cancelTime: string | null
         // 发货时间
-        deliveryTime: string | null
+        shipTime: string | null
+        // 到货时间
+        arrivalTime: string | null
         // 确认收货时间
         receiveTime: string | null
     }
@@ -337,5 +478,49 @@
         } catch (error) {
             console.log(error)
         }
+    }
+
+    const trackingNo = ref('')
+    const ship = async (id: number) => {
+        try {
+            await axios.patch("/api/admin/shop/order/ship", {
+                id: id,
+                trackingNo: trackingNo.value
+            })
+            getOrder(currentStatus.value)
+            trackingNo.value = ''
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+    interface Detail {
+        id: number
+        name: string
+        variantName: string
+        quantity: number
+        price: number
+    }
+    const details = ref<Detail[]>([])
+
+    const getDetail = async (id: number) => {
+        try {
+            const response = await axios.get("/api/admin/shop/order/detail", {
+                params: {
+                    orderId: id
+                }
+            })
+            details.value = response.data.data
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    const calculateTotal = (items: any[]) => {
+        if (!items || items.length === 0) return '0.00'
+        const total = items.reduce((sum, item) => {
+            return sum + (Number(item.price) * Number(item.quantity))
+        }, 0)
+        return total.toFixed(2)
     }
 </script>

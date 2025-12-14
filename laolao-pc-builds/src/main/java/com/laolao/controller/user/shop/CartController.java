@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * 购物车相关
+ * 用户端-购物车相关
  */
 @RestController
 @RequestMapping("/user/shop/cart")

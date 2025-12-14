@@ -11,8 +11,8 @@
         order by
             case status
                 when 2 then checkout_time
-                when 3 then delivery_time
-                when 4 then delivery_time
+                when 3 then ship_time
+                when 4 then arrival_time
                 when 5 then receive_time
                 when 6 then cancel_time
             end desc

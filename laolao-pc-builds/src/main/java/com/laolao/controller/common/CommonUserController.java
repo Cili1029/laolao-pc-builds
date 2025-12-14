@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 /**
- * 用户相关
+ * 通用-用户相关
  */
 @RestController
 @RequestMapping("/common/user")
