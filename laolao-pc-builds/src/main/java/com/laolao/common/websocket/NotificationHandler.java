@@ -1,5 +1,10 @@
 package com.laolao.common.websocket;
 
+import com.laolao.common.result.WsMessage;
+import com.laolao.mapper.dashboard.UserDashboardMapper;
+import com.laolao.pojo.dashboard.vo.OnlineUserVO;
+import com.laolao.pojo.dashboard.vo.UserDashboardVO;
+import jakarta.annotation.Resource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -7,11 +12,15 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 public class NotificationHandler extends TextWebSocketHandler {
+    @Resource
+    private UserDashboardMapper userDashboardMapper;
 
     /**
      * 存储在线用户的 Session
@@ -37,32 +46,27 @@ public class NotificationHandler extends TextWebSocketHandler {
             if (admin == 1) {
                 ADMIN_SESSIONS.put(userId, session);
             }
-            System.out.println("用户上线: " + userId + (admin == 1 ? " (管理员)" : ""));
+            broadcastOnlineCount();
         } else {
             session.close();
         }
     }
 
     @Override
-    protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-        // 收到心跳
+    protected void handleTextMessage(WebSocketSession session, TextMessage message) {
         if ("ping".equals(message.getPayload())) {
-            try {
-                session.sendMessage(new TextMessage("pong"));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            sendMessage(session, "pong");
         }
     }
 
     // 连接关闭
     @Override
-    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
+    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
         Integer userId = (Integer) session.getAttributes().get("userId");
         if (userId != null) {
             USER_SESSIONS.remove(userId);
             ADMIN_SESSIONS.remove(userId);
-            System.out.println("用户下线: " + userId);
+            broadcastOnlineCount();
         }
     }
 
@@ -70,15 +74,8 @@ public class NotificationHandler extends TextWebSocketHandler {
      * 发送消息给指定用户
      */
     public void sendToUser(Integer userId, String message) {
-        // 去大池子里找
         WebSocketSession session = USER_SESSIONS.get(userId);
-        if (session != null && session.isOpen()) {
-            try {
-                session.sendMessage(new TextMessage(message));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+        sendMessage(session, message);
     }
 
     /**
@@ -86,9 +83,20 @@ public class NotificationHandler extends TextWebSocketHandler {
      */
     public void sendToAllAdmins(String message) {
         for (WebSocketSession session : ADMIN_SESSIONS.values()) {
-            if (session.isOpen()) {
+            sendMessage(session, message);
+        }
+    }
+
+    // 提取通用发送逻辑，处理异常
+    private void sendMessage(WebSocketSession session, String message) {
+        if (session != null && session.isOpen()) {
+            // 关键点：对 session 对象加锁
+            // 保证同一时刻，只有一个线程能往这个 session 写数据
+            synchronized (session) {
                 try {
-                    session.sendMessage(new TextMessage(message));
+                    if (session.isOpen()) { // 双重检查
+                        session.sendMessage(new TextMessage(message));
+                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -96,14 +104,27 @@ public class NotificationHandler extends TextWebSocketHandler {
         }
     }
 
-    // 提取通用发送逻辑，处理异常
-    private void sendMessage(WebSocketSession session, String message) {
-        if (session != null && session.isOpen()) {
-            try {
-                session.sendMessage(new TextMessage(message));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+    /**
+     * 广播在线人数更新
+     */
+    private void broadcastOnlineCount() {
+        // 获取当前人数
+        int totalCount = USER_SESSIONS.size();
+        // 获取前5个用户的 ID
+        List<Integer> ids = USER_SESSIONS.keySet().stream()
+                .limit(5)
+                .toList();
+        List<UserDashboardVO> onlineUserList;
+        if (ids.isEmpty()) {
+            onlineUserList = new ArrayList<>(); // 没人在线，给空列表
+        } else {
+            onlineUserList = userDashboardMapper.selectOnlineUser(ids);
         }
+        // 组装 VO
+        OnlineUserVO onlineUserVO = new OnlineUserVO();
+        onlineUserVO.setOnlineCount(totalCount);
+        onlineUserVO.setOnlineUsers(onlineUserList);
+        String jsonMessage = WsMessage.of("online_users", onlineUserVO);
+        sendToAllAdmins(jsonMessage);
     }
 }

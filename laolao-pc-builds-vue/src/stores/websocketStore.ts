@@ -1,8 +1,10 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { toast } from 'vue-sonner'
+import { useCommonStore } from '@/stores/CommonStore'
 
 export const useWebSocketStore = defineStore('websocket', () => {
+    const commonStore = useCommonStore()
     const socket = ref<WebSocket | null>(null)
     const isConnected = ref(false)
     let heartbeatTimer: any = null
@@ -64,11 +66,15 @@ export const useWebSocketStore = defineStore('websocket', () => {
                     })
                     break
 
-                case 'order_shipped':
-                    // 用户收到发货
-                    toast.success('发货提醒', {
-                        description: data.content,
-                    })
+                // case 'order_shipped':
+                //     // 用户收到发货
+                //     toast.success('发货提醒', {
+                //         description: data.content,
+                //     })
+                //     break
+
+                case 'online_users':
+                    commonStore.onlineUser = data.data
                     break
 
                 default:

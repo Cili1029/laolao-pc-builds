@@ -98,7 +98,7 @@
         },
       ],
       projects: [
-        { name: "销售统计", url: "#", icon: Frame },
+        { name: "用户统计", url: "/admin/dashboard/user", icon: Frame },
         { name: "测试", url: "/admin/test", icon: PieChart },
         { name: "Travel", url: "#", icon: Map },
       ],

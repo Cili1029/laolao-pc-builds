@@ -15,7 +15,7 @@
             @click="commonStore.search.search = true">搜索</Button>
         </div>
       </header>
-      <div class=" flex flex-1 p-2 pt-0">
+      <div class="flex flex-1 p-2 pt-0">
         <RouterView />
       </div>
     </SidebarInset>

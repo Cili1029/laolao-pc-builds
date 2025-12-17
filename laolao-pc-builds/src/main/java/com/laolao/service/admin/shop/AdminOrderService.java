@@ -4,7 +4,6 @@ import com.github.pagehelper.PageInfo;
 import com.laolao.common.result.Result;
 import com.laolao.pojo.shop.dto.AdminOrderRejectDTO;
 import com.laolao.pojo.shop.dto.AdminOrderShipDTO;
-import com.laolao.pojo.shop.entity.OrderDetail;
 import com.laolao.pojo.shop.vo.AdminOrderDetailVO;
 import com.laolao.pojo.shop.vo.AdminOrderVO;
 

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.laolao.mapper.dashboard.UserDashboardMapper">
+    <select id="selectOnlineUser" resultType="com.laolao.pojo.dashboard.vo.UserDashboardVO">
+        SELECT id, username, avatar
+        FROM user
+        <where>
+            <if test="onlineUsersIds != null and onlineUsersIds.size() > 0">
+                id in
+                <foreach collection="onlineUsersIds" item="id" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </if>
+        </where>
+    </select>
+</mapper>
