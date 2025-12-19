@@ -112,7 +112,7 @@ public class NotificationHandler extends TextWebSocketHandler {
         int totalCount = USER_SESSIONS.size();
         // 获取前5个用户的 ID
         List<Integer> ids = USER_SESSIONS.keySet().stream()
-                .limit(5)
+                .limit(4)
                 .toList();
         List<UserDashboardVO> onlineUserList;
         if (ids.isEmpty()) {

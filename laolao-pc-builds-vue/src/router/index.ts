@@ -22,7 +22,8 @@ import Bundle from '@/components/admin/shop/Bundle.vue';
 import ShopCoupon from '@/components/admin/shop/ShopCoupon.vue';
 import AdminPost from '@/components/admin/forum/Post.vue';
 import AdminOrder from '@/components/admin/shop/Order.vue';
-import UserStatistics from '@/components/admin/dashboard/UserDashboard.vue';
+import UserDashboard from '@/components/admin/dashboard/UserDashboard.vue';
+import ShopDashboard from '@/components/admin/dashboard/ShopDashboard.vue';
 
 const routes: Array<RouteRecordRaw> = [
   // 1. 用户端路由组
@@ -139,7 +140,12 @@ const routes: Array<RouteRecordRaw> = [
       {
         path: 'dashboard/user',
         name: 'UserStatistics',
-        component: UserStatistics,
+        component: UserDashboard,
+      },
+      {
+        path: 'dashboard/shop',
+        name: 'ShopDashboard',
+        component: ShopDashboard,
       },
     ]
   }

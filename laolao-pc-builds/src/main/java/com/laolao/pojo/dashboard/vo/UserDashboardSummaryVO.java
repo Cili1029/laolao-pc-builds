@@ -28,7 +28,7 @@ public class UserDashboardSummaryVO {
     /**
      * 每月新增用户数
      */
-    private List<MonthCountVO> monthCounts;
+    private List<MonthDataVO> monthCounts;
 
 }
 

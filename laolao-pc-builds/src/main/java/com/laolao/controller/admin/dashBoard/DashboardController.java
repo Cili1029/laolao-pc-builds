@@ -1,8 +1,8 @@
 package com.laolao.controller.admin.dashBoard;
 
 import com.laolao.common.result.Result;
+import com.laolao.pojo.dashboard.vo.ShopDashboardSummaryVO;
 import com.laolao.pojo.dashboard.vo.UserDashboardSummaryVO;
-import com.laolao.service.admin.dashboard.UserDashboardService;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/admin/dashboard")
-public class UserDashboardController {
+public class DashboardController {
     @Resource
-    private UserDashboardService userDashboardService;
+    private com.laolao.service.admin.dashboard.DashboardService DashboardService;
 
     /**
      * 获取用户汇总数据
@@ -23,7 +23,17 @@ public class UserDashboardController {
      * @return 汇总数据
      */
     @GetMapping("/user_summary")
-    public Result<UserDashboardSummaryVO> list() {
-        return userDashboardService.getSummary();
+    public Result<UserDashboardSummaryVO> getUserSummary() {
+        return DashboardService.getUserSummary();
+    }
+
+    /**
+     * 获取商城汇总数据
+     *
+     * @return 汇总数据
+     */
+    @GetMapping("/shop_summary")
+    public Result<ShopDashboardSummaryVO> getShopSummary() {
+        return DashboardService.getShopSummary();
     }
 }

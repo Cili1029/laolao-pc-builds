@@ -7,7 +7,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class MonthCountVO {
+public class MonthDataVO {
     private String month;
-    private Long count;
+    private int value;
 }

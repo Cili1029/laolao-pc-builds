@@ -36,7 +36,7 @@
 <script setup lang="ts">
   import type { SidebarProps } from '@/components/ui/sidebar'
   import logo from '@/assets/logo.jpg'
-  import { User, Store, BotMessageSquare, Frame, Map, PieChart, } from "lucide-vue-next"
+  import { User, Store, BotMessageSquare, MessageSquare, Contact, ShoppingCart } from "lucide-vue-next"
   import NavMain from '@/components/admin/sidebar/NavMain.vue'
   import NavProjects from '@/components/admin/sidebar/NavProjects.vue'
   import NavUser from '@/components/admin/sidebar/NavUser.vue'
@@ -98,9 +98,9 @@
         },
       ],
       projects: [
-        { name: "用户统计", url: "/admin/dashboard/user", icon: Frame },
-        { name: "测试", url: "/admin/test", icon: PieChart },
-        { name: "Travel", url: "#", icon: Map },
+        { name: "用户统计", url: "/admin/dashboard/user", icon: Contact },
+        { name: "商城统计", url: "/admin/dashboard/shop", icon: ShoppingCart },
+        { name: "论坛统计", url: "#", icon: MessageSquare },
       ],
     }
   })

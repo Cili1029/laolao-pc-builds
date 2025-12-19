@@ -1,0 +1,73 @@
+package com.laolao.service.admin.dashboard.Impl;
+
+import com.laolao.common.result.Result;
+import com.laolao.mapper.dashboard.ShopDashboardMapper;
+import com.laolao.mapper.dashboard.UserDashboardMapper;
+import com.laolao.pojo.dashboard.vo.*;
+import com.laolao.service.admin.dashboard.DashboardService;
+import jakarta.annotation.Resource;
+import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.temporal.TemporalAdjusters;
+import java.util.List;
+
+@Service
+public class DashboardServiceImpl implements DashboardService {
+    @Resource
+    private UserDashboardMapper userDashboardMapper;
+    @Resource
+    private ShopDashboardMapper shopDashboardMapper;
+
+    @Override
+    public Result<UserDashboardSummaryVO> getUserSummary() {
+        UserDashboardSummaryVO userDashboardSummaryVO = new UserDashboardSummaryVO();
+        // 总用户
+        userDashboardSummaryVO.setTotalCount(userDashboardMapper.selectTotalUser());
+
+        // 新用户
+        LocalDateTime monthStart = LocalDateTime.of(
+                LocalDate.now().with(TemporalAdjusters.firstDayOfMonth()), // 本月第一天
+                LocalTime.MIN // 00:00:00
+        );
+        List<UserDashboardVO> newUserList = userDashboardMapper.selectNewUser(monthStart);
+        if (!CollectionUtils.isEmpty(newUserList)) {
+            userDashboardSummaryVO.setNewCount(newUserList.size());
+            userDashboardSummaryVO.setNewUsers(newUserList);
+        }
+
+        // 表数据
+        List<MonthDataVO> monthDataVOList = userDashboardMapper.selectMonthCount();
+        userDashboardSummaryVO.setMonthCounts(monthDataVOList);
+        return Result.success(userDashboardSummaryVO);
+    }
+
+    @Override
+    public Result<ShopDashboardSummaryVO> getShopSummary() {
+        // 获取商品数据
+        ShopDashboardSummaryVO shopDashboardSummaryVO = new ShopDashboardSummaryVO();
+        shopDashboardSummaryVO.setComponentCount(shopDashboardMapper.selectComponentCount());
+        shopDashboardSummaryVO.setBundleCount(shopDashboardMapper.selectBundleCount());
+
+        // 本月销售额
+        LocalDateTime monthStart = LocalDateTime.of(
+                LocalDate.now().with(TemporalAdjusters.firstDayOfMonth()), // 本月第一天
+                LocalTime.MIN // 00:00:00
+        );
+        CompleteOrderDataVO completeOrderDataVO =  shopDashboardMapper.selectMonthSalesAmount(monthStart);
+        shopDashboardSummaryVO.setCompletedOrderCount(completeOrderDataVO.getCompletedOrderCount());
+        shopDashboardSummaryVO.setMonthSalesAmount(completeOrderDataVO.getMonthSalesAmount());
+        shopDashboardSummaryVO.setOrderCount(shopDashboardMapper.selectOrderCount(monthStart));
+
+        // 表数据
+        List<MonthOrderAmountVO> monthDataVOList = shopDashboardMapper.selectMonthAmount();
+        shopDashboardSummaryVO.setMonthAmount(monthDataVOList);
+
+        // 六个最高销售商品
+        shopDashboardSummaryVO.setMonthProducts(shopDashboardMapper.getHot(monthStart));
+        return Result.success(shopDashboardSummaryVO);
+    }
+}

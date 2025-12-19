@@ -1,24 +1,30 @@
 <template>
-    <div class="flex flex-col w-full px-3 py-3 space-y-6">
-        <div class="grid gap-6 md:grid-cols-3">
+    <div class="flex flex-col w-full h-full px-3 py-3 space-y-6 overflow-hidden">
+        <div class="grid gap-6 md:grid-cols-3 shrink-0">
             <!-- 当前在线 -->
-            <Card>
-                <CardHeader class="flex flex-row items-center justify-between space-y-0">
-                    <CardTitle class="text-sm font-medium">当前在线</CardTitle>
-                    <Activity class="h-4 w-4 text-muted-foreground" />
+            <Card class="hover:shadow-md transition-shadow">
+                <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle class="text-xs font-medium text-muted-foreground uppercase tracking-wider">实时在线
+                    </CardTitle>
+                    <Activity class="h-4 w-4 text-green-500" />
                 </CardHeader>
                 <CardContent>
-                    <div class="text-2xl font-bold">{{ commonStore.onlineUser.onlineCount }}</div>
-                    <div class="flex items-center justify-between mt-4">
-                        <!-- 头像堆叠组件 -->
-                        <div class="flex -space-x-3 overflow-hidden">
-                            <TooltipProvider v-for="user in commonStore.onlineUser.onlineUsers" :key="user.id">
+                    <div class="text-2xl font-bold tracking-tight text-green-600">
+                        {{ commonStore.onlineUser.onlineCount }}
+                    </div>
+                    <div class="flex items-center justify-between mt-3">
+                        <div class="flex -space-x-2.5 overflow-hidden">
+                            <!-- 只取前4个头像，避免挤爆 -->
+                            <TooltipProvider v-for="user in commonStore.onlineUser.onlineUsers.slice(0, 4)"
+                                :key="user.id">
                                 <Tooltip>
                                     <TooltipTrigger as-child>
                                         <Avatar
-                                            class="inline-block h-8 w-8 rounded-full border-2 border-background cursor-pointer hover:z-10 hover:scale-110 transition-transform">
+                                            class="h-7 w-7 border-2 border-background ring-1 ring-black/5 transition-transform hover:scale-110 hover:z-20">
                                             <AvatarImage :src="user.avatar" />
-                                            <AvatarFallback>{{ user.username.substring(0, 2) }}</AvatarFallback>
+                                            <AvatarFallback class="text-[10px] bg-green-100 text-green-700">
+                                                {{ user.username.substring(0, 2) }}
+                                            </AvatarFallback>
                                         </Avatar>
                                     </TooltipTrigger>
                                     <TooltipContent>
@@ -26,107 +32,106 @@
                                     </TooltipContent>
                                 </Tooltip>
                             </TooltipProvider>
-                            <!-- 超过5个显示 +N -->
-                            <div v-if="commonStore.onlineUser.onlineCount > 5"
-                                class="flex h-8 w-8 items-center justify-center rounded-full border-2 border-background bg-muted text-[10px] font-medium text-muted-foreground hover:z-10">
-                                +{{ commonStore.onlineUser.onlineCount - 3 }}
+                            <!-- 剩余人数提示 -->
+                            <div v-if="commonStore.onlineUser.onlineCount > 4"
+                                class="flex h-7 w-7 items-center justify-center rounded-full border-2 border-background bg-muted text-[10px] font-medium text-muted-foreground">
+                                +{{ commonStore.onlineUser.onlineCount - 4 }}
                             </div>
                         </div>
-                        <p class="text-xs text-muted-foreground">实时活跃中</p>
+                        <span
+                            class="text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-green-100 text-green-700">LIVE</span>
                     </div>
                 </CardContent>
             </Card>
 
-            <!-- 今日新增 -->
-            <Card>
+            <!-- 2. 本月新增 -->
+            <Card class="hover:shadow-md transition-shadow">
                 <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle class="text-sm font-medium">本月新增用户</CardTitle>
-                    <UserPlus class="h-4 w-4 text-muted-foreground" />
+                    <CardTitle class="text-xs font-medium text-muted-foreground uppercase tracking-wider">本月新增
+                    </CardTitle>
+                    <UserPlus class="h-4 w-4 text-blue-500" />
                 </CardHeader>
                 <CardContent>
-                    <div class="text-2xl font-bold">+{{ summary.newCount }}</div>
-                    <div class="flex items-center justify-between mt-4">
-                        <div class="flex -space-x-3 overflow-hidden">
-                            <TooltipProvider v-for="user in summary.newUsers" :key="user.id">
+                    <div class="text-2xl font-bold tracking-tight text-blue-600">
+                        +{{ summary.newCount }}
+                    </div>
+                    <div class="flex items-center justify-between mt-3">
+                        <div class="flex -space-x-2.5 overflow-hidden">
+                            <TooltipProvider v-for="user in (summary.newUsers || []).slice(0, 4)" :key="user.id">
                                 <Tooltip>
                                     <TooltipTrigger as-child>
                                         <Avatar
-                                            class="inline-block h-8 w-8 rounded-full border-2 border-background cursor-pointer hover:z-10 hover:scale-110 transition-transform">
+                                            class="h-7 w-7 border-2 border-background ring-1 ring-black/5 transition-transform hover:scale-110 hover:z-20">
                                             <AvatarImage :src="user.avatar" />
-                                            <AvatarFallback>{{ user.name.substring(0, 2) }}</AvatarFallback>
+                                            <AvatarFallback class="text-[10px] bg-blue-100 text-blue-700">
+                                                {{ user.name.substring(0, 2) }}
+                                            </AvatarFallback>
                                         </Avatar>
                                     </TooltipTrigger>
                                     <TooltipContent>
-                                        <p>新用户: {{ user.name }}</p>
+                                        <p>欢迎新用户: {{ user.name }}</p>
                                     </TooltipContent>
                                 </Tooltip>
                             </TooltipProvider>
                         </div>
-                        <p class="text-xs text-muted-foreground">
-                            较上个月 <span class="text-green-500 font-medium">↑ 12%</span>
+                        <p class="text-[11px] text-muted-foreground">
+                            <span class="text-green-500 font-bold">↑ 12%</span> 较上月
                         </p>
                     </div>
                 </CardContent>
             </Card>
 
-            <!-- 总用户数 -->
-            <Card>
+            <!-- 3. 总用户数 -->
+            <Card class="hover:shadow-md transition-shadow">
                 <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle class="text-sm font-medium">平台总用户</CardTitle>
-                    <Users class="h-4 w-4 text-muted-foreground" />
+                    <CardTitle class="text-xs font-medium text-muted-foreground uppercase tracking-wider">平台总用户
+                    </CardTitle>
+                    <Users class="h-4 w-4 text-purple-500" />
                 </CardHeader>
                 <CardContent>
-                    <div class="text-2xl font-bold">{{ summary.totalCount }}</div>
-                    <p class="text-xs text-muted-foreground mt-4">
-                        总注册量持续增长中
-                    </p>
-                    <div class="mt-2 h-1.5 w-full bg-secondary rounded-full overflow-hidden">
-                        <div class="h-full bg-primary w-[75%] rounded-full" /> <!-- 模拟进度条装饰 -->
+                    <div class="text-2xl font-bold tracking-tight text-purple-600">
+                        {{ summary.totalCount.toLocaleString() }}
+                    </div>
+                    <div class="mt-4">
+                        <div class="flex justify-between text-[10px] mb-1.5">
+                            <span class="text-muted-foreground">年度目标进度</span>
+                            <span class="font-medium text-purple-700">75%</span>
+                        </div>
+                        <div class="h-1.5 w-full bg-purple-100 rounded-full overflow-hidden">
+                            <!-- 这里的 w-[75%] 实际开发中可以根据比例动态计算 -->
+                            <div class="h-full bg-purple-500 rounded-full transition-all duration-1000"
+                                style="width: 75%" />
+                        </div>
                     </div>
                 </CardContent>
             </Card>
         </div>
 
-        <Card class="mt-auto">
-            <CardHeader>
-                <CardTitle>用户增长趋势</CardTitle>
-                <CardDescription>近12个月每月新增用户数</CardDescription>
+        <Card class="flex-1 min-h-0 flex flex-col">
+            <CardHeader class="shrink-0">
+                <CardTitle>月销售额趋势</CardTitle>
+                <CardDescription>近12个月每月月销售额</CardDescription>
             </CardHeader>
-            <CardContent>
-                <ChartContainer :config="chartConfig" class="max-h-[256px] w-full 2xl:max-h-[464px]">
-                    <VisXYContainer :data="summary.monthCounts" :margin="{ left: -24 }" :y-domain="[0, undefined]">
-                        <VisLine :x="(_: Data, i: number) => i" :y="(d: Data) => d.count"
-                            :color="chartConfig.count.color" :curve-type="CurveType.Linear" />
-                        <VisAxis type="x" :x="(_: Data, i: number) => i" :tick-line="false" :domain-line="false"
-                            :grid-line="false" :tick-values="summary.monthCounts.map((_, i) => i)" :tick-format="(i: number) => {
-                                const item = summary.monthCounts[i];
-                                return item!.month
-                            }" />
-                        <VisAxis type="y" :num-ticks="3" :tick-line="false" :domain-line="false" />
-                        <ChartTooltip />
-                        <ChartCrosshair
-                            :template="componentToString(chartConfig, ChartTooltipContent, { hideLabel: true })"
-                            :color="chartConfig.count.color" />
-                    </VisXYContainer>
-                </ChartContainer>
+            <CardContent class="flex-1 min-h-0 p-0 relative">
+                <v-chart class="h-full w-full" :option="salesTrendOption" autoresize />
             </CardContent>
-            <CardFooter class="flex-col items-start gap-2 text-sm">
-            </CardFooter>
+            <CardFooter class="hidden"></CardFooter>
         </Card>
     </div>
 </template>
 
 <script setup lang="ts">
-    import { ref, onMounted } from 'vue'
+    import { ref, onMounted, computed } from 'vue'
     import axios from '@/utils/myAxios'
     import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
     import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
     import { Activity, Users, UserPlus } from 'lucide-vue-next'
-    import type { ChartConfig, } from "@/components/ui/chart"
-    import { CurveType } from "@unovis/ts"
-    import { VisAxis, VisLine, VisXYContainer } from "@unovis/vue"
     import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, } from "@/components/ui/card"
-    import { ChartContainer, ChartCrosshair, ChartTooltip, ChartTooltipContent, componentToString, } from "@/components/ui/chart"
+    import { use } from 'echarts/core'
+    import { CanvasRenderer } from 'echarts/renderers'
+    import { GridComponent, TooltipComponent } from 'echarts/components'
+    import { BarChart, LineChart } from 'echarts/charts'
+    import VChart from 'vue-echarts'
     import { useCommonStore } from '@/stores/CommonStore'
     const commonStore = useCommonStore()
 
@@ -142,16 +147,16 @@
         avatar: string;
     }
 
-    interface MonthCount {
+    interface MonthData {
         month: string
-        count: number
+        value: number
     }
 
     interface SummaryData {
         newCount: number
         newUsers: UserSimple[]
         totalCount: number
-        monthCounts: MonthCount[]
+        monthCounts: MonthData[]
     }
 
     const summary = ref<SummaryData>({
@@ -170,12 +175,68 @@
         }
     }
 
-    type Data = typeof summary.value.monthCounts[number]
+    // 2. 注册组件
+    use([CanvasRenderer, BarChart, LineChart, GridComponent, TooltipComponent])
 
-    const chartConfig = {
-        count: {
-            label: "新增用户",
-            color: "var(--chart-1)",
-        },
-    } satisfies ChartConfig
+    // 3. 新增月销售额趋势的配置
+    const salesTrendOption = computed(() => {
+        return {
+            tooltip: {
+                trigger: 'axis',
+                backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                textStyle: { color: '#000' },
+                // 格式化悬浮提示
+                formatter: (params: any) => {
+                    const data = params[0]
+                    return `${data.name}<br/>销售额: <span style="font-weight:bold">￥${data.value.toLocaleString()}</span>`
+                }
+            },
+            grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '3%',
+                top: '10%',
+                containLabel: true
+            },
+            xAxis: {
+                type: 'category',
+                boundaryGap: false, // 坐标轴两端不留白，折线贴边
+                data: summary.value.monthCounts.map(item => item.month),
+                axisLine: { show: false },
+                axisTick: { show: false },
+                axisLabel: { color: '#888' }
+            },
+            yAxis: {
+                type: 'value',
+                splitLine: {
+                    lineStyle: { type: 'dashed', color: '#eee' }
+                },
+                axisLabel: { color: '#888' }
+            },
+            series: [
+                {
+                    name: '销售额',
+                    type: 'line',
+                    data: summary.value.monthCounts.map(item => item.value),
+                    smooth: true, // 设置为 true 则为平滑曲线，false 则为直线
+                    showSymbol: false,
+                    lineStyle: {
+                        width: 3,
+                        color: '#3b82f6'
+                    },
+                    // 渐变面积填充 (可选，让图表更好看)
+                    areaStyle: {
+                        color: {
+                            type: 'linear',
+                            x: 0, y: 0, x2: 0, y2: 1,
+                            colorStops: [
+                                { offset: 0, color: 'rgba(59, 130, 246, 0.2)' },
+                                { offset: 1, color: 'rgba(59, 130, 246, 0)' }
+                            ]
+                        }
+                    }
+                }
+            ]
+        }
+    })
 </script>

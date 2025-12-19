@@ -1,23 +1,22 @@
 <template>
   <SidebarProvider>
     <AppSidebar />
-    <SidebarInset>
+    <SidebarInset class="flex flex-col min-h-screen bg-background">
       <header
-        class="flex justify-between h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
+        class="flex justify-between h-16 shrink-0 items-center gap-2 sticky top-0 bg-background/80 backdrop-blur z-10 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
         <div class="flex items-center gap-2 px-4">
           <SidebarTrigger class="-ml-1" />
           <Separator orientation="vertical" class="mr-2 data-[orientation=vertical]:h-4" />
         </div>
-        <!-- 根据当前页面判断是否显示搜索框 -->
         <div class="flex pr-2 w-full max-w-sm items-center space-x-2">
           <Input v-model="commonStore.search.searchContent" placeholder="搜索点什么..." />
           <Button :disabled="!(commonStore.search.searchContent.length > 0)"
             @click="commonStore.search.search = true">搜索</Button>
         </div>
       </header>
-      <div class="flex flex-1 p-2 pt-0">
+      <main class="flex-1 p-2 pt-0 overflow-y-auto">
         <RouterView />
-      </div>
+      </main>
     </SidebarInset>
   </SidebarProvider>
 </template>

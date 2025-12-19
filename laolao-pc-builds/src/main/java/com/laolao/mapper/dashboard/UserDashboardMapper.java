@@ -1,6 +1,6 @@
 package com.laolao.mapper.dashboard;
 
-import com.laolao.pojo.dashboard.vo.MonthCountVO;
+import com.laolao.pojo.dashboard.vo.MonthDataVO;
 import com.laolao.pojo.dashboard.vo.UserDashboardVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -17,7 +17,7 @@ public interface UserDashboardMapper {
             "and created_at <= NOW()")
     List<UserDashboardVO> selectNewUser(LocalDateTime today);
 
-    @Select("select count(id) from user ")
+    @Select("select count(id) from user")
     int selectTotalUser();
 
     @Select("""
@@ -30,12 +30,12 @@ public interface UserDashboardMapper {
                     FROM MonthSequence
                     WHERE raw_date < DATE_FORMAT(CURDATE(), '%Y-%m-01'))
                 SELECT m.month_str AS month,
-                        COUNT(u.id) AS count
+                        COUNT(u.id) AS value
                 FROM MonthSequence m
                             LEFT JOIN
                         user u ON DATE_FORMAT(u.created_at, '%Y-%m') = m.month_str
                 GROUP BY m.month_str
                 ORDER BY m.month_str;
             """)
-    List<MonthCountVO> selectMonthCount();
+    List<MonthDataVO> selectMonthCount();
 }
