@@ -1,6 +1,7 @@
-package com.laolao.controller.admin.dashBoard;
+package com.laolao.controller.admin.dashboard;
 
 import com.laolao.common.result.Result;
+import com.laolao.pojo.dashboard.vo.ForumDashboardSummaryVO;
 import com.laolao.pojo.dashboard.vo.ShopDashboardSummaryVO;
 import com.laolao.pojo.dashboard.vo.UserDashboardSummaryVO;
 import jakarta.annotation.Resource;
@@ -35,5 +36,15 @@ public class DashboardController {
     @GetMapping("/shop_summary")
     public Result<ShopDashboardSummaryVO> getShopSummary() {
         return DashboardService.getShopSummary();
+    }
+
+    /**
+     * 获取论坛汇总数据
+     *
+     * @return 汇总数据
+     */
+    @GetMapping("/forum_summary")
+    public Result<ForumDashboardSummaryVO> getForumSummary() {
+        return DashboardService.getForumSummary();
     }
 }

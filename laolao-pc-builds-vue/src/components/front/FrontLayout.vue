@@ -165,6 +165,13 @@
                   <span class="icon-[charm--gift] mr-2"></span>
                   <span>我的优惠券</span>
                 </DropdownMenuItem>
+                <RouterLink to="/admin" v-if="userStore.user.admin === 1">
+                  <DropdownMenuItem
+                    class="cursor-pointer rounded-lg hover:bg-orange-50 hover:text-orange-600 focus:bg-orange-50 focus:text-orange-600">
+                    <ShieldUser class="mr-2" />
+                    <span>管理端</span>
+                  </DropdownMenuItem>
+                </RouterLink>
                 <DropdownMenuSeparator class="bg-gray-100" />
                 <DropdownMenuItem @click="signOut"
                   class="cursor-pointer rounded-lg text-red-500 hover:bg-red-50 hover:text-red-600 focus:bg-red-50 focus:text-red-600">
@@ -227,6 +234,7 @@
   import CouponDialog from '@/components/front/shop/CouponDialog.vue';
   import { toast } from "vue-sonner"
   import 'vue-sonner/style.css'
+  import { ShieldUser } from 'lucide-vue-next';
   import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger, } from "@/components/ui/sheet"
   import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
   import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"

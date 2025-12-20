@@ -1,6 +1,7 @@
 package com.laolao.service.admin.dashboard.Impl;
 
 import com.laolao.common.result.Result;
+import com.laolao.mapper.dashboard.ForumDashboardMapper;
 import com.laolao.mapper.dashboard.ShopDashboardMapper;
 import com.laolao.mapper.dashboard.UserDashboardMapper;
 import com.laolao.pojo.dashboard.vo.*;
@@ -21,6 +22,9 @@ public class DashboardServiceImpl implements DashboardService {
     private UserDashboardMapper userDashboardMapper;
     @Resource
     private ShopDashboardMapper shopDashboardMapper;
+    @Resource
+    private ForumDashboardMapper forumDashboardMapper;
+
 
     @Override
     public Result<UserDashboardSummaryVO> getUserSummary() {
@@ -69,5 +73,24 @@ public class DashboardServiceImpl implements DashboardService {
         // 六个最高销售商品
         shopDashboardSummaryVO.setMonthProducts(shopDashboardMapper.getHot(monthStart));
         return Result.success(shopDashboardSummaryVO);
+    }
+
+    @Override
+    public Result<ForumDashboardSummaryVO> getForumSummary() {
+        ForumDashboardSummaryVO forumDashboardSummaryVO = new ForumDashboardSummaryVO();
+        forumDashboardSummaryVO.setCategoryCount(forumDashboardMapper.getCategoryCount());
+        PostCommentVO postCommentVO = forumDashboardMapper.getPostComment();
+        forumDashboardSummaryVO.setPostCount(postCommentVO.getPostCount());
+        forumDashboardSummaryVO.setCommentCount(postCommentVO.getCommentCount());
+
+        LocalDateTime monthStart = LocalDateTime.of(
+                LocalDate.now().with(TemporalAdjusters.firstDayOfMonth()), // 本月第一天
+                LocalTime.MIN // 00:00:00
+        );
+        forumDashboardSummaryVO.setMonthPostCount(forumDashboardMapper.getMonthPostCount(monthStart));
+        forumDashboardSummaryVO.setMonthCommentCount(forumDashboardMapper.getMonthCommentCount(monthStart));
+        forumDashboardSummaryVO.setAllMonthPostCount(forumDashboardMapper.getAllMonthPostCount());
+        forumDashboardSummaryVO.setHotCategories(forumDashboardMapper.getHotCategories());
+        return Result.success(forumDashboardSummaryVO);
     }
 }

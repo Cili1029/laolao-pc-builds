@@ -22,9 +22,11 @@
 
 ### 管理端功能
 
+- **数据统计 Dashboard**：提供用户、商城、论坛三个维度的数据可视化仪表盘，包含趋势图表、排名统计、实时数据等。
 - **用户管理**：用户信息查看、编辑、状态管理。
 - **商城管理**：商品分类、配件管理、整机套餐管理、优惠券管理、商品变体管理。
 - **论坛管理**：论坛分类管理、帖子审核与管理、评论管理。
+- **实时通知**：基于 WebSocket 的实时在线用户统计、新订单通知等功能。
 
 ### 通用能力
 
@@ -32,13 +34,15 @@
 - `laolao_pc_builds.sql` 提供完整数据库初始化脚本，开箱即用。
 - 文件上传管理，支持阿里云 OSS 存储。
 - SQL 日志记录与拦截器，便于调试与监控。
+- WebSocket 实时通信，支持在线用户统计、实时通知推送。
+- 数据可视化，基于 ECharts 的图表展示，支持趋势分析、排名统计等。
 
 ## 技术栈
 
 | 层级 | 技术 |
 | ---- | ---- |
-| 后端 | Spring Boot 3.5.6 · Spring Web / WebFlux · MyBatis 3.0.5 & PageHelper 2.1.1 · MySQL 8.x · Redis · MapStruct 1.6.3 · JWT (jjwt 0.13.0) · Alibaba OSS 3.18.3 & DirectMail · Druid 1.2.27 · Lombok 1.18.42 · Spring AOP · 定时任务（@Scheduled） |
-| 前端 | Vue 3.5.22 + TypeScript 5.9.3 + Vite 7.1.7 · Pinia 3.0.3 · Vue Router 4.5.1 · Tailwind CSS v4.1.14 · shadcn-vue (reka-ui 2.6.1) · Axios 1.12.2 · lucide-vue-next 0.544.0 · @vueuse/core 13.9.0 · vue-sonner 2.0.9 · vue3-cookies 1.0.6 · dayjs 1.11.18 |
+| 后端 | Spring Boot 3.5.6 · Spring Web / WebFlux · Spring WebSocket · MyBatis 3.0.5 & PageHelper 2.1.1 · MySQL 8.x · Redis · MapStruct 1.6.3 · JWT (jjwt 0.13.0) · Alibaba OSS 3.18.3 & DirectMail · Druid 1.2.27 · Lombok 1.18.42 · Spring AOP · 定时任务（@Scheduled） |
+| 前端 | Vue 3.5.22 + TypeScript 5.9.3 + Vite 7.1.7 · Pinia 3.0.3 · Vue Router 4.5.1 · Tailwind CSS v4.1.14 · shadcn-vue (reka-ui 2.6.1) · Axios 1.12.2 · lucide-vue-next 0.544.0 · @vueuse/core 13.9.0 · vue-sonner 2.0.9 · vue3-cookies 1.0.6 · dayjs 1.11.18 · ECharts 6.0.0 & vue-echarts 8.0.1 · @tanstack/vue-table 8.21.3 |
 | 配套 | Maven Wrapper · npm / Node.js 20+ · 阿里云对象存储（OSS）· 阿里云邮件推送（DirectMail）· 高德地图开放平台 Web 服务 API |
 
 ## 目录结构
@@ -61,7 +65,8 @@
 ├─ laolao-pc-builds/             # Spring Boot 后端
 │  ├─ src/main/java/com/laolao/
 │  │  ├─ controller/             # 控制器层
-│  │  │  ├─ admin/               # 管理端接口（用户、商城、论坛）
+│  │  │  ├─ admin/               # 管理端接口（用户、商城、论坛、Dashboard）
+│  │  │  │  └─ dashboard/       # Dashboard 统计接口
 │  │  │  ├─ user/                # 用户端接口（商城、论坛、用户）
 │  │  │  └─ common/              # 通用接口（文件上传、用户信息）
 │  │  ├─ service/                # 业务逻辑层
@@ -71,7 +76,8 @@
 │  │  ├─ mapper/                 # MyBatis 数据访问层
 │  │  │  ├─ admin/               # 管理端 Mapper
 │  │  │  ├─ user/                # 用户端 Mapper
-│  │  │  └─ common/              # 通用 Mapper
+│  │  │  ├─ common/              # 通用 Mapper
+│  │  │  └─ dashboard/          # Dashboard 统计 Mapper
 │  │  ├─ pojo/                   # 实体类、DTO、VO
 │  │  │  ├─ shop/                # 商城相关实体
 │  │  │  ├─ forum/               # 论坛相关实体
@@ -84,7 +90,8 @@
 │  │  │  ├─ handler/             # 处理器（全局异常、类型转换）
 │  │  │  ├─ properties/          # 配置属性类
 │  │  │  ├─ result/              # 统一响应结果
-│  │  │  └─ utils/               # 工具类（JWT、OSS、邮件、地图）
+│  │  │  ├─ utils/               # 工具类（JWT、OSS、邮件、地图）
+│  │  │  └─ websocket/           # WebSocket 处理器与拦截器
 │  │  ├─ converter/              # MapStruct 转换器
 │  │  ├─ Interceptor/            # 拦截器（登录、管理员、SQL日志、自动填充）
 │  │  ├─ task/                   # 定时任务（订单超时处理、文件清理）
@@ -104,6 +111,7 @@
    │  ├─ components/              # 组件目录
    │  │  ├─ admin/               # 管理端组件
    │  │  │  ├─ AdminLayout.vue   # 管理端布局
+   │  │  │  ├─ dashboard/        # Dashboard 统计组件（用户、商城、论坛）
    │  │  │  ├─ shop/             # 商城管理组件
    │  │  │  ├─ forum/            # 论坛管理组件
    │  │  │  ├─ user/             # 用户管理组件
@@ -119,7 +127,8 @@
    │  │  ├─ UserStore.ts         # 用户状态
    │  │  ├─ PostStore.ts         # 帖子状态
    │  │  ├─ ForumCategoryStore.ts # 论坛分类状态
-   │  │  └─ CommonStore.ts       # 通用状态
+   │  │  ├─ CommonStore.ts       # 通用状态
+   │  │  └─ websocketStore.ts    # WebSocket 连接状态
    │  ├─ router/                 # 路由配置
    │  │  └─ index.ts             # 路由定义
    │  ├─ utils/                  # 工具函数
@@ -221,7 +230,7 @@ Vite Dev Server 默认在 `http://localhost:5173` 运行，`vite.config.ts` 已�
 
 ### 前端配置（vite.config.ts）
 
-- **代理配置**：`/api` 请求自动代理到 `http://localhost:8080`
+- **代理配置**：`/api` 请求自动代理到 `http://localhost:8080`，`/ws` WebSocket 连接自动代理到 `ws://localhost:8080`
 - **路径别名**：`@` 指向 `src` 目录
 
 > **提示**：开发阶段如暂不接入云服务，可将 OSS / 邮件逻辑替换为本地实现或 Mock。生产环境请务必修改默认密钥和配置。
@@ -254,6 +263,13 @@ Vite Dev Server 默认在 `http://localhost:5173` 运行，`vite.config.ts` 已�
 
 - **订单超时处理**：每 5 分钟检查一次，自动关闭超过 15 分钟未支付的订单，并释放已使用的优惠券。
 
+### WebSocket 实时通信
+
+- **在线用户统计**：实时统计并广播在线用户数量变化。
+- **实时通知推送**：支持向指定用户或所有管理员推送消息（如新订单通知）。
+- **心跳机制**：30 秒心跳检测，自动重连，保证连接稳定性。
+- **连接管理**：区分普通用户和管理员会话，支持多客户端连接。
+
 ### 拦截器机制
 
 - **登录拦截器**：验证用户 JWT Token，保护需要登录的接口。
@@ -265,6 +281,12 @@ Vite Dev Server 默认在 `http://localhost:5173` 运行，`vite.config.ts` 已�
 
 - **Redis 缓存**：缓存热点数据，提升查询性能。
 - **用户状态缓存**：缓存用户登录状态和基本信息。
+
+### 数据可视化
+
+- **Dashboard 仪表盘**：管理端提供用户、商城、论坛三个维度的数据统计仪表盘。
+- **ECharts 图表**：使用 ECharts 实现趋势图、柱状图、排名图等多种数据可视化。
+- **实时数据更新**：Dashboard 数据支持实时刷新，结合 WebSocket 实现动态更新。
 
 ### 文件管理
 
@@ -278,11 +300,13 @@ Vite Dev Server 默认在 `http://localhost:5173` 运行，`vite.config.ts` 已�
 - [x] 用户系统（登录、注册、个人中心）
 - [x] 管理端（用户管理、商品管理、论坛管理）
 - [x] 定时任务（订单超时处理）
+- [x] WebSocket 实时通信（在线用户统计、实时通知）
+- [x] Dashboard 数据可视化（用户、商城、论坛统计）
 - [ ] 订单支付通道对接（支付宝 / 微信）
 - [ ] 实时聊天 / 评论 @ 通知
 - [ ] 产品推荐算法（基于用户行为的配置推荐）
 - [ ] 商品库存预警
-- [ ] 数据统计与分析
+- [ ] 更多数据统计与分析功能
 
 ## 项目结构说明
 

@@ -4,7 +4,7 @@
             <!-- 当前在线 -->
             <Card class="hover:shadow-md transition-shadow">
                 <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle class="text-xs font-medium text-muted-foreground uppercase tracking-wider">实时在线
+                    <CardTitle class="text-sm font-medium">实时在线
                     </CardTitle>
                     <Activity class="h-4 w-4 text-green-500" />
                 </CardHeader>
@@ -47,7 +47,7 @@
             <!-- 2. 本月新增 -->
             <Card class="hover:shadow-md transition-shadow">
                 <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle class="text-xs font-medium text-muted-foreground uppercase tracking-wider">本月新增
+                    <CardTitle class="text-sm font-medium">本月新增
                     </CardTitle>
                     <UserPlus class="h-4 w-4 text-blue-500" />
                 </CardHeader>
@@ -84,7 +84,7 @@
             <!-- 3. 总用户数 -->
             <Card class="hover:shadow-md transition-shadow">
                 <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle class="text-xs font-medium text-muted-foreground uppercase tracking-wider">平台总用户
+                    <CardTitle class="text-sm font-medium">平台总用户
                     </CardTitle>
                     <Users class="h-4 w-4 text-purple-500" />
                 </CardHeader>
@@ -109,8 +109,8 @@
 
         <Card class="flex-1 min-h-0 flex flex-col">
             <CardHeader class="shrink-0">
-                <CardTitle>月销售额趋势</CardTitle>
-                <CardDescription>近12个月每月月销售额</CardDescription>
+                <CardTitle>新增用户趋势</CardTitle>
+                <CardDescription>近12个月每月新增用户</CardDescription>
             </CardHeader>
             <CardContent class="flex-1 min-h-0 p-0 relative">
                 <v-chart class="h-full w-full" :option="salesTrendOption" autoresize />

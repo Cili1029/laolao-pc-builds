@@ -24,6 +24,7 @@ import AdminPost from '@/components/admin/forum/Post.vue';
 import AdminOrder from '@/components/admin/shop/Order.vue';
 import UserDashboard from '@/components/admin/dashboard/UserDashboard.vue';
 import ShopDashboard from '@/components/admin/dashboard/ShopDashboard.vue';
+import ForumDashboard from '@/components/admin/dashboard/ForumDashboard.vue';
 
 const routes: Array<RouteRecordRaw> = [
   // 1. 用户端路由组
@@ -95,7 +96,7 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/admin',
     component: AdminLayout,
-    redirect: '/admin/user',
+    redirect: '/admin/dashboard/user',
     children: [
       {
         path: 'user',
@@ -146,6 +147,11 @@ const routes: Array<RouteRecordRaw> = [
         path: 'dashboard/shop',
         name: 'ShopDashboard',
         component: ShopDashboard,
+      },
+      {
+        path: 'dashboard/forum',
+        name: 'ForumDashboard',
+        component: ForumDashboard,
       },
     ]
   }

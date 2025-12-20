@@ -89,7 +89,6 @@
           title: "论坛",
           url: "#",
           icon: BotMessageSquare,
-          // 自动判断
           isActive: isPathActive('/admin/forum'),
           items: [
             { title: "分类标签", url: "/admin/forum/category" },
@@ -100,7 +99,7 @@
       projects: [
         { name: "用户统计", url: "/admin/dashboard/user", icon: Contact },
         { name: "商城统计", url: "/admin/dashboard/shop", icon: ShoppingCart },
-        { name: "论坛统计", url: "#", icon: MessageSquare },
+        { name: "论坛统计", url: "/admin/dashboard/forum", icon: MessageSquare },
       ],
     }
   })
