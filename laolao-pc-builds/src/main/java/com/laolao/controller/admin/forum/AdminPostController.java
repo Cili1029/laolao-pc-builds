@@ -24,8 +24,8 @@ public class AdminPostController {
      * @return 帖子数据
      */
     @GetMapping()
-    public Result<PageInfo<Post>> getPost(Integer pageNum, Integer pageSize) {
-        return adminPostService.getPost(pageNum, pageSize);
+    public Result<PageInfo<Post>> getPost(Integer pageNum, Integer pageSize, String searchContent) {
+        return adminPostService.getPost(pageNum, pageSize, searchContent);
     }
 
     /**

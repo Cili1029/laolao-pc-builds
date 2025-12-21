@@ -14,6 +14,7 @@ import com.laolao.pojo.shop.entity.Bundle;
 import com.laolao.pojo.shop.vo.*;
 import com.laolao.service.admin.shop.AdminBundleService;
 import jakarta.annotation.Resource;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,9 +34,12 @@ public class AdminBundleServiceImpl implements AdminBundleService {
 
 
     @Override
-    public Result<PageInfo<AdminBundleVO>> getBundle(Integer pageNum, Integer pageSize) {
+    public Result<PageInfo<AdminBundleVO>> getBundle(Integer pageNum, Integer pageSize, String searchContent) {
         PageHelper.startPage(pageNum, pageSize);
-        List<Bundle> bundleList = adminBundleMapper.selectBundle();
+        List<Bundle> bundleList = StringUtils.isNotBlank(searchContent)
+                ? adminBundleMapper.search(searchContent)
+                : adminBundleMapper.selectBundle();
+
         List<AdminBundleVO> adminBundleVOList = new ArrayList<>();
         for (Bundle bundle : bundleList) {
             AdminBundleVO vo = mapStruct.bundleToAdminBundleVO(bundle);

@@ -12,7 +12,7 @@ import java.util.List;
 
 
 public interface AdminBundleService {
-    Result<PageInfo<AdminBundleVO>> getBundle(Integer pageNum, Integer pageSize);
+    Result<PageInfo<AdminBundleVO>> getBundle(Integer pageNum, Integer pageSize, String searchContent);
 
     Result<String> changeStatus(int id, int status);
 

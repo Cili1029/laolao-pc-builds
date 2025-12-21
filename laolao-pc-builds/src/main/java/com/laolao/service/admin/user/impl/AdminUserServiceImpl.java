@@ -1,5 +1,7 @@
 package com.laolao.service.admin.user.impl;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.laolao.common.result.Result;
 import com.laolao.converter.MapStruct;
 import com.laolao.mapper.admin.user.AdminUserMapper;
@@ -10,6 +12,7 @@ import com.laolao.pojo.user.vo.AdminUserVO;
 import com.laolao.service.admin.user.AdminUserService;
 import jakarta.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -25,17 +28,25 @@ public class AdminUserServiceImpl implements AdminUserService {
     private SysFileMapper sysFileMapper;
 
     @Override
-    public Result<List<AdminUserVO>> getUser() {
-        List<AdminUserVO> adminUserVOS = new ArrayList<>();
+    public Result<PageInfo<AdminUserVO>> getUser(Integer pageNum, Integer pageSize, String searchContent) {
+        PageHelper.startPage(pageNum, pageSize);
+        ArrayList<User> userList = StringUtils.isNotBlank(searchContent)
+                ? adminUserMapper.selectUser(searchContent)
+                : adminUserMapper.selectUser(null);
 
-        ArrayList<User> userList = adminUserMapper.selectUser(null);
+        List<AdminUserVO> adminUserVOS = new ArrayList<>();
         for (User user : userList) {
             AdminUserVO adminUserVO;
             adminUserVO = mapStruct.userToAdminUserVO(user);
             adminUserVOS.add(adminUserVO);
         }
 
-        return Result.success(adminUserVOS);
+        PageInfo<User> userPageInfo = new PageInfo<>(userList);
+        PageInfo<AdminUserVO> adminUserVOPageInfo = new PageInfo<>(adminUserVOS);
+        BeanUtils.copyProperties(userPageInfo, adminUserVOPageInfo);
+        adminUserVOPageInfo.setList(adminUserVOS);
+
+        return Result.success(adminUserVOPageInfo);
     }
 
     @Override
@@ -57,19 +68,5 @@ public class AdminUserServiceImpl implements AdminUserService {
             sysFileMapper.update(images);
         }
         return Result.success("修改成功");
-    }
-
-    @Override
-    public Result<List<AdminUserVO>> searchUser(String searchContent) {
-        List<AdminUserVO> adminUserVOS = new ArrayList<>();
-
-        ArrayList<User> userList = adminUserMapper.selectUser(searchContent);
-        for (User user : userList) {
-            AdminUserVO adminUserVO;
-            adminUserVO = mapStruct.userToAdminUserVO(user);
-            adminUserVOS.add(adminUserVO);
-        }
-
-        return Result.success(adminUserVOS);
     }
 }

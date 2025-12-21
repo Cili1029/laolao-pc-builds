@@ -24,4 +24,9 @@ public interface AdminShopCouponMapper {
             "discount_amount = #{discountAmount}, stock = #{stock}, valid_start_time = #{validStartTime}, valid_end_time = #{validEndTime}, updated_by = #{updatedBy}, updated_at = #{updatedAt} " +
             "where id = #{id}")
     void update(ShopCoupon shopCoupon);
+
+    @Select("select * from shop_coupon " +
+            "where id like concat('%',#{searchContent},'%') or name like concat('%',#{searchContent},'%')" +
+            "order by status desc")
+    List<ShopCoupon> search(String searchContent);
 }

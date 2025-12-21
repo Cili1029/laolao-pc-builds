@@ -1,10 +1,7 @@
 <template>
-    <!-- 根容器：占满父容器，相对定位 -->
     <div class="h-full w-full overflow-hidden relative">
-        <!-- 表格滚动区域：填充分页上方所有空间 -->
-        <div class="absolute inset-0 bottom-16 overflow-y-auto">
-            <!-- 表格区域 -->
-            <div class="flex-1 overflow-auto">
+        <div class="absolute inset-0 bottom-16 overflow-y-auto scrollbar-edge">
+            <div class="h-full overflow-auto">
                 <Table v-if="posts && posts.length > 0">
                     <TableHeader>
                         <TableRow class="bg-muted/40 hover:bg-muted/40 sticky top-0 z-10 shadow-sm">
@@ -161,19 +158,18 @@
                     </TableBody>
                 </Table>
 
-                <!-- 空状态 -->
-                <div v-else class="flex flex-col h-[400px] items-center justify-center gap-4 text-center">
+                <div v-else class="flex flex-col h-full items-center justify-center gap-4 text-center">
                     <div class="rounded-full bg-muted/30 p-4">
-                        <Ghost class="h-12 w-12 text-muted-foreground/60" />
+                        <Ghost class="h-10 w-10 text-muted-foreground/60" />
                     </div>
                     <div class="space-y-1">
-                        <h3 class="text-xl font-medium">暂无帖子</h3>
-                        <p class="text-base text-muted-foreground">
-                            当前没有任何帖子数据，或者未找到匹配的结果。
+                        <h3 class="text-lg font-medium">暂无数据</h3>
+                        <p class="text-sm text-muted-foreground">
+                            当前没有任何用户数据，或者未找到匹配的结果。
                         </p>
                     </div>
-                    <Button variant="outline" size="default" @click="getCategory">
-                        刷新数据
+                    <Button variant="outline" size="sm" @click="getPost()">
+                        返回全部数据
                     </Button>
                 </div>
             </div>
@@ -216,6 +212,19 @@
     import { Ghost } from 'lucide-vue-next'
     import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationNext, PaginationPrevious, } from '@/components/ui/pagination'
     import Post from '@/components/front/forum/Post.vue'
+    import { useCommonStore } from '@/stores/CommonStore'
+    const commonStore = useCommonStore()
+
+    watch(
+        () => commonStore.search.search,
+        (newSearch) => {
+            if (newSearch) {
+                getPost()
+                commonStore.search.search = false
+                commonStore.search.searchContent = ''
+            }
+        }
+    )
 
     onMounted(() => {
         getCategory()
@@ -239,7 +248,7 @@
 
     const getCategory = async () => {
         try {
-            const response = await axios.get("/api/admin/forum/category/list")
+            const response = await axios.get("/api/admin/forum/category/other_need")
             categories.value = response.data.data
         } catch (error) {
             console.log(error)
@@ -280,7 +289,8 @@
             const response = await axios.get("/api/admin/forum/post", {
                 params: {
                     pageNum: pageNum.value,
-                    pageSize: pageSize.value
+                    pageSize: pageSize.value,
+                    searchContent: commonStore.search.searchContent
                 }
             })
             const resData = response.data.data

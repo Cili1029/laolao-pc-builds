@@ -21,4 +21,8 @@ public interface AdminForumCategoryMapper {
 
     @Delete("delete from forum_category where id = #{id}")
     void delete(int id);
+
+    @Select("select * from forum_category " +
+            "where id like concat('%',#{searchContent},'%') or name like concat('%',#{searchContent},'%')")
+    List<ForumCategory> search(String searchContent);
 }

@@ -9,6 +9,7 @@ import com.laolao.pojo.shop.dto.AdminShopCouponDTO;
 import com.laolao.pojo.shop.entity.ShopCoupon;
 import com.laolao.service.admin.shop.AdminShopCouponService;
 import jakarta.annotation.Resource;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,9 +23,11 @@ public class AdminShopCouponServiceImpl implements AdminShopCouponService {
     private MapStruct mapStruct;
 
     @Override
-    public Result<PageInfo<ShopCoupon>> getCoupon(Integer pageNum, Integer pageSize) {
+    public Result<PageInfo<ShopCoupon>> getCoupon(Integer pageNum, Integer pageSize, String searchContent) {
         PageHelper.startPage(pageNum, pageSize);
-        List<ShopCoupon> shopCouponList =  adminShopCouponMapper.select();
+        List<ShopCoupon> shopCouponList = StringUtils.isNoneBlank(searchContent)
+                ? adminShopCouponMapper.search(searchContent)
+                : adminShopCouponMapper.select();
         PageInfo<ShopCoupon> res = new PageInfo<>(shopCouponList);
         return Result.success(res);
     }

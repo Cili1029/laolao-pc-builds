@@ -26,8 +26,8 @@ public class AdminShopCouponController {
      * @return 优惠券数据
      */
     @GetMapping
-    public Result<PageInfo<ShopCoupon>> getCoupon(Integer pageNum, Integer pageSize) {
-        return adminCouponService.getCoupon(pageNum, pageSize);
+    public Result<PageInfo<ShopCoupon>> getCoupon(Integer pageNum, Integer pageSize, String searchContent) {
+        return adminCouponService.getCoupon(pageNum, pageSize, searchContent);
     }
 
     /**

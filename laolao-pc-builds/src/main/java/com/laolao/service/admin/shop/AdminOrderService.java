@@ -11,7 +11,7 @@ import java.util.List;
 
 
 public interface AdminOrderService {
-    Result<PageInfo<AdminOrderVO>> getCoupon(Integer status, Integer pageNum, Integer pageSize);
+    Result<PageInfo<AdminOrderVO>> getCoupon(Integer status, String searchContent, Integer pageNum, Integer pageSize);
 
     Result<String> rejectOrder(AdminOrderRejectDTO adminOrderRejectDTO);
 

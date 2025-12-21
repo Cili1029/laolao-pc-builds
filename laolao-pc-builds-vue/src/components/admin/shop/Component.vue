@@ -1,10 +1,8 @@
 <template>
-    <!-- 根容器：占满父容器，相对定位 -->
     <div class="h-full w-full overflow-hidden relative">
-        <!-- 表格滚动区域：填充分页上方所有空间 -->
-        <div class="absolute inset-0 bottom-16 overflow-y-auto">
+        <div class="absolute inset-0 bottom-16 overflow-y-auto scrollbar-edge">
             <div class="rounded-md border bg-background shadow-sm h-full flex flex-col">
-                <Table>
+                <Table v-if="components && components.length > 0">
                     <TableHeader>
                         <TableRow class="bg-muted/40 hover:bg-muted/40">
                             <TableHead class="w-[40px] px-2"></TableHead>
@@ -375,15 +373,13 @@
                                                                 </span>
                                                             </div>
                                                         </TableCell>
-                                                        <TableCell
-                                                            class="py-2 text-center text-[10px] items-center">
+                                                        <TableCell class="py-2 text-center text-[10px] items-center">
                                                             <div>{{ variant.createdBy }}</div>
                                                             <div class="opacity-70 mt-0.5">{{
                                                                 dayjs(variant.createdAt).format('YYYY-MM-DD') }}
                                                             </div>
                                                         </TableCell>
-                                                        <TableCell
-                                                            class="py-2 text-center text-[10px] items-center">
+                                                        <TableCell class="py-2 text-center text-[10px] items-center">
                                                             <div>{{ variant.updatedBy }}</div>
                                                             <div class="opacity-70 mt-0.5">{{
                                                                 dayjs(variant.updatedAt).format('YYYY-MM-DD') }}
@@ -489,8 +485,24 @@
                         </template>
                     </TableBody>
                 </Table>
+
+                <div v-else class="flex flex-col h-full items-center justify-center gap-4 text-center">
+                    <div class="rounded-full bg-muted/30 p-4">
+                        <Ghost class="h-10 w-10 text-muted-foreground/60" />
+                    </div>
+                    <div class="space-y-1">
+                        <h3 class="text-lg font-medium">暂无数据</h3>
+                        <p class="text-sm text-muted-foreground">
+                            当前没有任何用户数据，或者未找到匹配的结果。
+                        </p>
+                    </div>
+                    <Button variant="outline" size="sm" @click="getComponent()">
+                        返回全部数据
+                    </Button>
+                </div>
             </div>
         </div>
+
 
         <!-- 分页固定区域：底部固定 -->
         <div class="absolute bottom-0 left-0 right-0 h-16 border-t flex items-center p-2">
@@ -529,7 +541,7 @@
             </AlertDialogContent>
         </AlertDialog>
 
-        
+
         <FileManager v-model:open="showAddDialog" v-model="addImg" :max-files="5" upload-api="/api/common/file/upload"
             delete-api="/api/common/file/delete" :upload-extra-data="{ type: 'laolaoPC/shop/component' }" />
     </div>
@@ -549,7 +561,7 @@
     import { Input } from '@/components/ui/input'
     import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
     import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger, } from '@/components/ui/alert-dialog'
-    import { ChevronRight, MoreHorizontal, Trash2, ImageIcon, Plus, CircleOff, Circle } from 'lucide-vue-next'
+    import { ChevronRight, MoreHorizontal, Trash2, ImageIcon, Plus, CircleOff, Circle, Ghost } from 'lucide-vue-next'
     import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, } from '@/components/ui/dialog'
     import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationNext, PaginationPrevious, } from '@/components/ui/pagination'
     import dayjs from 'dayjs'
@@ -557,6 +569,19 @@
     import 'dayjs/locale/zh-cn'
     dayjs.extend(relativeTime)
     dayjs.locale('zh-cn')
+    import { useCommonStore } from '@/stores/CommonStore'
+    const commonStore = useCommonStore()
+
+    watch(
+        () => commonStore.search.search,
+        (newSearch) => {
+            if (newSearch) {
+                getComponent()
+                commonStore.search.search = false
+                commonStore.search.searchContent = ''
+            }
+        }
+    )
 
     onMounted(() => {
         getComponent()
@@ -578,8 +603,8 @@
 
     const getCategory = async () => {
         try {
-            const response = await axios.get("/api/admin/shop/category/list", {
-                params:{
+            const response = await axios.get("/api/admin/shop/category/other_need", {
+                params: {
                     type: 1
                 }
             })
@@ -635,7 +660,8 @@
             const response = await axios.get("/api/admin/shop/component", {
                 params: {
                     pageNum: pageNum.value,
-                    pageSize: pageSize.value
+                    pageSize: pageSize.value,
+                    searchContent: commonStore.search.searchContent
                 }
             })
             const resData = response.data.data
@@ -759,7 +785,7 @@
             component.categoryId = updateComponentData.value.categoryId
             component.commonDescription = updateComponentData.value.commonDescription
             component.sort = updateComponentData.value.sort,
-            component.images = updateImg.value
+                component.images = updateImg.value
             updateImg.value = []
         } catch (error) {
             console.log(error)
@@ -868,7 +894,6 @@
         component.variants = variantsData
         openId.value = id
     }
-
 
     // 控制弹窗开关
     const showAddDialog = ref(false)

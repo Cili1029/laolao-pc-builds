@@ -2,9 +2,9 @@
     <!-- 根容器：占满父容器，相对定位 -->
     <div class="h-full w-full overflow-hidden relative">
         <!-- 表格滚动区域：填充分页上方所有空间 -->
-        <div class="absolute inset-0 bottom-16 overflow-y-auto">
+        <div class="absolute inset-0 bottom-16 overflow-y-auto scrollbar-edge">
             <div class="rounded-md border bg-background shadow-sm h-full flex flex-col">
-                <Table>
+                <Table v-if="bundles && bundles.length > 0">
                     <TableHeader>
                         <TableRow class="bg-muted/40 hover:bg-muted/40">
                             <TableHead class="w-[40px] px-2"></TableHead>
@@ -273,7 +273,8 @@
                                                     </Button>
                                                     <FileManager v-model:open="showUpdateDialog"
                                                         v-model="updateBundleData.images" :max-files="5"
-                                                        upload-api="/api/common/file/upload" delete-api="/api/common/file/delete"
+                                                        upload-api="/api/common/file/upload"
+                                                        delete-api="/api/common/file/delete"
                                                         :upload-extra-data="{ type: 'laolaoPC/shop/bundle' }" />
                                                     <DialogClose as-child class="sm:ml-auto">
                                                         <Button type="submit" @click="updateBundle(bundle)"
@@ -521,6 +522,21 @@
                         </template>
                     </TableBody>
                 </Table>
+
+                <div v-else class="flex flex-col h-full items-center justify-center gap-4 text-center">
+                    <div class="rounded-full bg-muted/30 p-4">
+                        <Ghost class="h-10 w-10 text-muted-foreground/60" />
+                    </div>
+                    <div class="space-y-1">
+                        <h3 class="text-lg font-medium">暂无数据</h3>
+                        <p class="text-sm text-muted-foreground">
+                            当前没有任何用户数据，或者未找到匹配的结果。
+                        </p>
+                    </div>
+                    <Button variant="outline" size="sm" @click="getBundle()">
+                        返回全部数据
+                    </Button>
+                </div>
             </div>
         </div>
 
@@ -585,6 +601,19 @@
     import 'dayjs/locale/zh-cn'
     dayjs.extend(relativeTime)
     dayjs.locale('zh-cn')
+    import { useCommonStore } from '@/stores/CommonStore'
+    const commonStore = useCommonStore()
+
+    watch(
+        () => commonStore.search.search,
+        (newSearch) => {
+            if (newSearch) {
+                getBundle()
+                commonStore.search.search = false
+                commonStore.search.searchContent = ''
+            }
+        }
+    )
 
     onMounted(() => {
         getBundle()
@@ -606,7 +635,7 @@
 
     const getCategory = async () => {
         try {
-            const response = await axios.get("/api/admin/shop/category/list", {
+            const response = await axios.get("/api/admin/shop/category/other_need", {
                 params: {
                     type: 2
                 }
@@ -660,7 +689,8 @@
             const response = await axios.get("/api/admin/shop/bundle", {
                 params: {
                     pageNum: pageNum.value,
-                    pageSize: pageSize.value
+                    pageSize: pageSize.value,
+                    searchContent: commonStore.search.searchContent
                 }
             })
             const resData = response.data.data

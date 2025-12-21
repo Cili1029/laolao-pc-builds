@@ -1,5 +1,5 @@
 <template>
-    <div class="w-full rounded-md border bg-background">
+    <div class="h-full w-full overflow-hidden relative">
         <!-- 有数据时显示表格 -->
         <Table v-if="categories && categories.length > 0">
             <TableHeader>
@@ -241,11 +241,29 @@
                 返回全部数据
             </Button>
         </div>
+
+        <!-- 分页固定区域：底部固定 -->
+        <div class="absolute bottom-0 left-0 right-0 h-16 border-t flex items-center p-2">
+            <Pagination v-if="total > 0" v-model:page="pageNum" :total="total" :items-per-page="pageSize"
+                :sibling-count="1" show-edges>
+                <PaginationContent v-slot="{ items }">
+                    <PaginationPrevious />
+                    <template v-for="(item, index) in items">
+                        <PaginationItem v-if="item.type === 'page'" :key="index" :value="item.value"
+                            :is-active="item.value === pageNum">
+                            {{ item.value }}
+                        </PaginationItem>
+                        <PaginationEllipsis v-else :key="item.type" :index="index" />
+                    </template>
+                    <PaginationNext />
+                </PaginationContent>
+            </Pagination>
+        </div>
     </div>
 </template>
 
 <script setup lang="ts">
-    import { onMounted, ref } from 'vue';
+    import { onMounted, ref, watch } from 'vue';
     import axios from '@/utils/myAxios'
     import dayjs from 'dayjs'
     import relativeTime from 'dayjs/plugin/relativeTime'
@@ -260,8 +278,22 @@
     import { Label } from '@/components/ui/label'
     import FileManager from '@/components/common/FileManager.vue';
     import { Textarea } from '@/components/ui/textarea'
+    import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationNext, PaginationPrevious, } from '@/components/ui/pagination'
     import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger, } from '@/components/ui/alert-dialog'
     import { Ghost, Plus } from 'lucide-vue-next'
+    import { useCommonStore } from '@/stores/CommonStore'
+    const commonStore = useCommonStore()
+
+    watch(
+        () => commonStore.search.search,
+        (newSearch) => {
+            if (newSearch) {
+                getCategory()
+                commonStore.search.search = false
+                commonStore.search.searchContent = ''
+            }
+        }
+    )
 
 
     onMounted(() => {
@@ -288,11 +320,29 @@
     }
 
     const categories = ref<Category[]>([])
+    const pageNum = ref(1)
+    const pageSize = ref(10)
+    const total = ref(0)
+
+    watch(
+        () => pageNum.value,
+        () => {
+            getCategory()
+        }
+    )
 
     const getCategory = async () => {
         try {
-            const response = await axios.get("/api/admin/forum/category/list")
-            categories.value = response.data.data
+            const response = await axios.get("/api/admin/forum/category/list", {
+                params: {
+                    pageNum: pageNum.value,
+                    pageSize: pageSize.value,
+                    searchContent: commonStore.search.searchContent
+                }
+            })
+            const resData = response.data.data
+            categories.value = resData.list
+            total.value = resData.total
         } catch (error) {
             console.log(error)
         }

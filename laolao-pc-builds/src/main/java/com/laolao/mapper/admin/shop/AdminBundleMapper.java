@@ -53,4 +53,9 @@ public interface AdminBundleMapper {
 
     @Insert("insert into shop_bundle_configuration(bundle_id, variant_id, quantity, created_by, created_at, updated_by, updated_at) value (#{bundleId}, #{variantId}, #{quantity}, #{createdBy}, #{createdAt}, #{updatedBy}, #{updatedAt})")
     void insertVariant(AdminBundleAddVariantDTO adminBundleAddVariantDTO);
+
+    @Select("select * from shop_bundle " +
+            "where id like concat('%',#{searchContent},'%') or name like concat('%',#{searchContent},'%')" +
+            "order by created_at desc")
+    List<Bundle> search(String searchContent);
 }

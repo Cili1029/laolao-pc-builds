@@ -10,7 +10,7 @@ import java.util.List;
 
 @Mapper
 public interface AdminOrderMapper {
-    List<Order> select(Integer status);
+    List<Order> select(Integer status, String searchContent);
 
     @Update("update shop_order set status = 6, cancel_time = #{cancelTime}, rejection_reason = #{rejectionReason} where id = #{id}")
     void rejectOrder(AdminOrderRejectDTO adminOrderRejectDTO);

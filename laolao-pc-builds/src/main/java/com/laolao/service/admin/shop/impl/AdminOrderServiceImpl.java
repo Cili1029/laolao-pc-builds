@@ -29,9 +29,9 @@ public class AdminOrderServiceImpl implements AdminOrderService {
     private MapStruct mapStruct;
 
     @Override
-    public Result<PageInfo<AdminOrderVO>> getCoupon(Integer status, Integer pageNum, Integer pageSize) {
+    public Result<PageInfo<AdminOrderVO>> getCoupon(Integer status, String searchContent, Integer pageNum, Integer pageSize) {
         PageHelper.startPage(pageNum, pageSize);
-        List<Order> orderList = adminOrderMapper.select(status);
+        List<Order> orderList = adminOrderMapper.select(status, searchContent);
         List<AdminOrderVO> adminOrderVOList = new ArrayList<>();
         for (Order order : orderList) {
             AdminOrderVO vo = mapStruct.orderToAdminOrderVO(order);
@@ -68,7 +68,7 @@ public class AdminOrderServiceImpl implements AdminOrderService {
         List<OrderDetail> orderDetailList = adminOrderMapper.selectOrderDetails(orderId);
         List<AdminOrderDetailVO> adminOrderDetailVOList = new ArrayList<>();
         for (OrderDetail orderDetail : orderDetailList) {
-            AdminOrderDetailVO adminOrderDetailVO =  mapStruct.orderDetailToorderDetailVO(orderDetail);
+            AdminOrderDetailVO adminOrderDetailVO = mapStruct.orderDetailToorderDetailVO(orderDetail);
             adminOrderDetailVOList.add(adminOrderDetailVO);
         }
         return Result.success(adminOrderDetailVOList);

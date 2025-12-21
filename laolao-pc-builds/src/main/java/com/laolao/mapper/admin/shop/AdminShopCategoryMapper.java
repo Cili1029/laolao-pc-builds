@@ -7,7 +7,7 @@ import java.util.List;
 
 @Mapper
 public interface AdminShopCategoryMapper {
-    List<ShopCategory> select(int type);
+    List<ShopCategory> select(Integer type);
 
     @Update("update shop_category set status = #{status}, updated_by = #{updatedBy}, updated_at = #{updatedAt} where id = #{id}")
     void updateStatus(ShopCategory shopCategory);
@@ -20,4 +20,8 @@ public interface AdminShopCategoryMapper {
 
     @Delete("delete from shop_category where id = #{id}")
     void delete(int id);
+
+    @Select("select * from shop_category " +
+            "where id like concat('%',#{searchContent},'%') or name like concat('%',#{searchContent},'%')")
+    List<ShopCategory> search(String searchContent);
 }

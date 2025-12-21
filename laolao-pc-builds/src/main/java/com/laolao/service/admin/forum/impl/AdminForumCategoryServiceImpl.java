@@ -1,5 +1,7 @@
 package com.laolao.service.admin.forum.impl;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.laolao.common.result.Result;
 import com.laolao.converter.MapStruct;
 import com.laolao.mapper.admin.forum.AdminForumCategoryMapper;
@@ -25,9 +27,13 @@ public class AdminForumCategoryServiceImpl implements AdminForumCategoryService 
     private SysFileMapper sysFileMapper;
 
     @Override
-    public Result<List<ForumCategory>> get() {
-        List<ForumCategory> forumCategoryList=  adminForumCategoryMapper.select();
-        return Result.success(forumCategoryList);
+    public Result<PageInfo<ForumCategory>> get(Integer pageNum, Integer pageSize, String searchContent) {
+        PageHelper.startPage(pageNum, pageSize);
+        List<ForumCategory> forumCategoryList = StringUtils.isNotBlank(searchContent)
+                ? adminForumCategoryMapper.search(searchContent)
+                : adminForumCategoryMapper.select();
+        PageInfo<ForumCategory> forumCategoryPageInfo = new PageInfo<>(forumCategoryList);
+        return Result.success(forumCategoryPageInfo);
     }
 
     @Override
@@ -69,5 +75,11 @@ public class AdminForumCategoryServiceImpl implements AdminForumCategoryService 
     public Result<String> delete(int id) {
         adminForumCategoryMapper.delete(id);
         return Result.success("删除成功");
+    }
+
+    @Override
+    public Result<List<ForumCategory>> getNeed(Integer type) {
+        List<ForumCategory> forumCategoryList = adminForumCategoryMapper.select();
+        return Result.success(forumCategoryList);
     }
 }

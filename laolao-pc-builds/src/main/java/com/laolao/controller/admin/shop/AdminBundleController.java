@@ -32,8 +32,8 @@ public class AdminBundleController {
      * @return 组件数据
      */
     @GetMapping
-    public Result<PageInfo<AdminBundleVO>> list(Integer pageNum, Integer pageSize) {
-        return adminBundleService.getBundle(pageNum, pageSize);
+    public Result<PageInfo<AdminBundleVO>> list(Integer pageNum, Integer pageSize, String searchContent) {
+        return adminBundleService.getBundle(pageNum, pageSize, searchContent);
     }
 
     /**

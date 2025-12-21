@@ -1,5 +1,6 @@
 package com.laolao.controller.admin.shop;
 
+import com.github.pagehelper.PageInfo;
 import com.laolao.common.annotation.LogSql;
 import com.laolao.common.result.Result;
 import com.laolao.pojo.shop.dto.AdminShopCategoryDTO;
@@ -27,8 +28,8 @@ public class AdminShopCategoryController {
      * @return 商品分类数据
      */
     @GetMapping("list")
-    public Result<List<ShopCategory>> list(@RequestParam int type) {
-        return adminShopCategoryService.get(type);
+    public Result<PageInfo<ShopCategory>> list(Integer pageNum, Integer pageSize, String searchContent) {
+        return adminShopCategoryService.get(pageNum, pageSize, searchContent);
     }
 
     /**
@@ -89,5 +90,15 @@ public class AdminShopCategoryController {
     @DeleteMapping("/delete")
     public Result<String> delete(@RequestParam int id) {
         return adminShopCategoryService.delete(id);
+    }
+
+    /**
+     * 其他功能所需的Category
+     *
+     * @return 商品分类数据
+     */
+    @GetMapping("other_need")
+    public Result<List<ShopCategory>> need(Integer type) {
+        return adminShopCategoryService.getNeed(type);
     }
 }

@@ -17,4 +17,8 @@ public interface AdminPostMapper {
     @Delete("delete from forum_post where id = #{id}")
     void delete(Integer id);
 
+    @Select("select * from forum_post " +
+            "where id like concat('%',#{searchContent},'%') or title like concat('%',#{searchContent},'%') or content like concat('%',#{searchContent},'%')" +
+            "order by created_at desc")
+    List<Post> search(String searchContent);
 }

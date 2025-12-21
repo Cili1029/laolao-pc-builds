@@ -24,4 +24,9 @@ public interface AdminComponentMapper {
 
     @Update("update shop_component set name = #{name}, category_id = #{categoryId}, common_description = #{commonDescription}, sort = #{sort}, images = #{images}, updated_by = #{updatedBy}, updated_at = #{updatedAt} where id = #{id}")
     void update(Component component);
+
+    @Select("select * from shop_component " +
+            "where id like concat('%',#{searchContent},'%') or name like concat('%',#{searchContent},'%') " +
+            "order by created_at desc")
+    List<Component> search(String searchContent);
 }

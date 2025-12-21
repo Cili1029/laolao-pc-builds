@@ -14,10 +14,6 @@ interface OnlineUser {
 export const useCommonStore = defineStore('common', {
   state: () => ({
     isShowFunction: true,
-    search: {
-      searchContent: '',
-      search: false,
-    },
     sidebar: {
       user: false,
       shop: false,
@@ -26,15 +22,16 @@ export const useCommonStore = defineStore('common', {
     onlineUser: {
       onlineCount: 0, // 初始值为 0（数字类型）
       onlineUsers: [] // 初始值为空数组（UserSimple 数组类型）
-    } as OnlineUser
+    } as OnlineUser,
+    search: {
+      search:false,
+      searchContent:''
+    }
   }),
 
   actions: {
     setShowFunction(status: boolean) {
       this.isShowFunction = status;
-    },
-    setSearchContent(content: string) {
-      this.search.searchContent = content
     },
   },
 })

@@ -137,7 +137,7 @@
                     <div class="flex flex-col md:flex-row flex-1 overflow-hidden">
                         <!-- 左侧：商品列表 (可滚动) -->
                         <div
-                            class="w-full md:w-7/12 bg-gray-50/30 p-6 overflow-y-auto border-r border-gray-100 h-[300px] md:h-auto">
+                            class="w-full md:w-7/12 bg-gray-50/30 p-6 overflow-y-auto scrollbar-edge border-r border-gray-100 h-[300px] md:h-auto">
                             <div class="space-y-3">
                                 <div v-for="product in detail?.products" :key="detail?.number"
                                     class="bg-white rounded-lg p-3 flex gap-3 shadow-sm border border-gray-100">
@@ -158,7 +158,7 @@
                         </div>
 
                         <!-- 右侧：信息 (可滚动) -->
-                        <div class="w-full md:w-5/12 bg-white p-6 overflow-y-auto h-[400px] md:h-auto">
+                        <div class="w-full md:w-5/12 bg-white p-6 overflow-y-auto scrollbar-edge h-[400px] md:h-auto">
                             <div class="space-y-6">
                                 <div v-if="detail?.trackingNo"
                                     class="bg-blue-50/50 px-4 py-2 my-2 rounded-lg border border-blue-50 space-y-2">

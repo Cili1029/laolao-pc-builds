@@ -14,6 +14,7 @@ import com.laolao.pojo.shop.vo.AdminComponentVO;
 import com.laolao.pojo.shop.dto.AdminUpdateComponentDTO;
 import com.laolao.service.admin.shop.AdminComponentService;
 import jakarta.annotation.Resource;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,9 +36,12 @@ public class AdminComponentServiceImpl implements AdminComponentService {
 
 
     @Override
-    public Result<PageInfo<AdminComponentVO>> getComponent(Integer pageNum, Integer pageSize) {
+    public Result<PageInfo<AdminComponentVO>> getComponent(Integer pageNum, Integer pageSize, String searchContent) {
         PageHelper.startPage(pageNum, pageSize);
-        List<Component> componentList = adminComponentMapper.selectComponent();
+        List<Component> componentList = StringUtils.isNotBlank(searchContent)
+                ? adminComponentMapper.search(searchContent)
+                : adminComponentMapper.selectComponent();
+
         List<AdminComponentVO> adminComponentVOList = new ArrayList<>();
         for (Component component : componentList) {
             AdminComponentVO vo = mapStruct.componentToAdminComponentVO(component);

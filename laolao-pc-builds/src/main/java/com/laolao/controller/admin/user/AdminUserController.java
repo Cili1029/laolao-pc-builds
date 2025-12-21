@@ -1,5 +1,6 @@
 package com.laolao.controller.admin.user;
 
+import com.github.pagehelper.PageInfo;
 import com.laolao.common.annotation.LogSql;
 import com.laolao.common.result.Result;
 import com.laolao.pojo.common.StatusDTO;
@@ -9,7 +10,6 @@ import com.laolao.service.admin.user.AdminUserService;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 /**
  * 管理端-用户相关
@@ -26,8 +26,8 @@ public class AdminUserController {
      * @return 用户数据
      */
     @GetMapping
-    public Result<List<AdminUserVO>> getEmailCode() {
-        return adminUserService.getUser();
+    public Result<PageInfo<AdminUserVO>> getUser(Integer pageNum, Integer pageSize, String searchContent) {
+        return adminUserService.getUser(pageNum, pageSize, searchContent);
     }
 
     /**
@@ -64,17 +64,6 @@ public class AdminUserController {
     @PatchMapping("/update")
     public Result<String> update(@RequestBody AdminUserUpdateDTO adminUserUpdateDTO) {
         return adminUserService.updateUser(adminUserUpdateDTO);
-    }
-
-    /**
-     * 模糊搜索
-     *
-     * @param searchContent 搜索内容
-     * @return 用户数据
-     */
-    @GetMapping("/search")
-    public Result<List<AdminUserVO>> searchUser(@RequestParam String searchContent) {
-        return adminUserService.searchUser(searchContent);
     }
 }
 

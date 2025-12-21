@@ -1,5 +1,5 @@
 <template>
-    <div class="h-full w-full rounded-md border bg-background">
+    <div class="h-full w-full overflow-hidden relative">
         <Table v-if="users && users.length > 0">
             <!-- 表头 -->
             <TableHeader>
@@ -98,7 +98,8 @@
                                                 </div>
                                             </div>
                                             <FileManager v-model:open="showUploadDialog" v-model="avatar" :max-files="1"
-                                                upload-api="/api/common/file/upload" delete-api="/api/common/file/delete"
+                                                upload-api="/api/common/file/upload"
+                                                delete-api="/api/common/file/delete"
                                                 :upload-extra-data="{ type: 'laolaoPC/user/avatar' }" />
                                         </div>
 
@@ -151,9 +152,27 @@
                     当前没有任何用户数据，或者未找到匹配的结果。
                 </p>
             </div>
-            <Button variant="outline" size="sm" @click="getUser">
+            <Button variant="outline" size="sm" @click="getUser()">
                 返回全部数据
             </Button>
+        </div>
+        
+        <!-- 分页固定区域：底部固定 -->
+        <div class="absolute bottom-0 left-0 right-0 h-16 border-t flex items-center p-2">
+            <Pagination v-if="total > 0" v-model:page="pageNum" :total="total" :items-per-page="pageSize"
+                :sibling-count="1" show-edges>
+                <PaginationContent v-slot="{ items }">
+                    <PaginationPrevious />
+                    <template v-for="(item, index) in items">
+                        <PaginationItem v-if="item.type === 'page'" :key="index" :value="item.value"
+                            :is-active="item.value === pageNum">
+                            {{ item.value }}
+                        </PaginationItem>
+                        <PaginationEllipsis v-else :key="item.type" :index="index" />
+                    </template>
+                    <PaginationNext />
+                </PaginationContent>
+            </Pagination>
         </div>
     </div>
 </template>
@@ -175,21 +194,22 @@
     import { Label } from '@/components/ui/label'
     import FileManager from '@/components/common/FileManager.vue'
     import { Checkbox } from '@/components/ui/checkbox'
+    import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationNext, PaginationPrevious, } from '@/components/ui/pagination'
+    import { Ghost, } from 'lucide-vue-next'
     import { useCommonStore } from '@/stores/CommonStore'
     const commonStore = useCommonStore()
-    import { Ghost } from 'lucide-vue-next'
-
 
     onMounted(() => {
         getUser()
     })
-
+    
     watch(
         () => commonStore.search.search,
-        () => {
-            if (commonStore.search.search) {
-                search()
+        (newSearch) => {
+            if (newSearch) {
+                getUser()
                 commonStore.search.search = false
+                commonStore.search.searchContent = ''
             }
         }
     )
@@ -208,12 +228,29 @@
     }
 
     const users = ref<User[]>([])
+    const pageNum = ref(1)
+    const pageSize = ref(10)
+    const total = ref(0)
+
+    watch(
+        () => pageNum.value,
+        () => {
+            getUser()
+        }
+    )
 
     const getUser = async () => {
-        commonStore.search.searchContent = ''
         try {
-            const response = await axios.get("/api/admin/user")
-            users.value = response.data.data
+            const response = await axios.get("/api/admin/user", {
+                params: {
+                    pageNum: pageNum.value,
+                    pageSize: pageSize.value,
+                    searchContent: commonStore.search.searchContent
+                }
+            })
+            const resData = response.data.data
+            users.value = resData.list
+            total.value = resData.total
         } catch (error) {
             console.log(error)
         }
@@ -252,19 +289,6 @@
             const index = users.value!.findIndex(user => user.id === userId)
             users.value![index] = newData.value!
             avatar.value = []
-        } catch (error) {
-            console.log(error)
-        }
-    }
-
-    const search = async () => {
-        try {
-            const response = await axios.get("/api/admin/user/search", {
-                params: {
-                    searchContent: commonStore.search.searchContent
-                }
-            })
-            users.value = response.data.data
         } catch (error) {
             console.log(error)
         }

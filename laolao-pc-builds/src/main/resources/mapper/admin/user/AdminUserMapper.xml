@@ -35,7 +35,7 @@
         select * from user
         <where>
             <if test="searchContent != null and searchContent != '' ">
-                username like concat('%',#{searchContent},'%')
+                id like concat('%',#{searchContent},'%') or username like concat('%',#{searchContent},'%') or email like concat('%',#{searchContent},'%')
             </if>
         </where>
     </select>

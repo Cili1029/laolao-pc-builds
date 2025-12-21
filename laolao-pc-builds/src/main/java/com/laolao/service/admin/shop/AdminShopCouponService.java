@@ -7,7 +7,7 @@ import com.laolao.pojo.shop.entity.ShopCoupon;
 
 
 public interface AdminShopCouponService {
-    Result<PageInfo<ShopCoupon>> getCoupon(Integer pageNum, Integer pageSize);
+    Result<PageInfo<ShopCoupon>> getCoupon(Integer pageNum, Integer pageSize, String searchContent);
 
     Result<String> changeStatus(int id, int status);
 

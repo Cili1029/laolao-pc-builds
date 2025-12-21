@@ -1,8 +1,8 @@
 <template>
     <div class="h-full w-full overflow-hidden relative">
-        <div class="absolute inset-0 bottom-16 overflow-y-auto">
+        <div class="absolute inset-0 bottom-16 overflow-y-auto scrollbar-edge">
             <div class="rounded-md border bg-background shadow-sm h-full flex flex-col">
-                <Table>
+                <Table v-if="coupons && coupons.length > 0">
                     <TableHeader>
                         <TableRow class="bg-muted/40 hover:bg-muted/40 sticky top-0 z-10 shadow-sm border-b">
                             <TableHead class="w-[60px] text-center">ID</TableHead>
@@ -144,7 +144,7 @@
                                     <span class="flex h-2 w-2 rounded-full"
                                         :class="coupon.status === 1 ? 'bg-green-500' : 'bg-red-500'" />
                                     <span class="text-sm text-muted-foreground">{{ coupon.status === 1 ? "启用" : "停用"
-                                    }}</span>
+                                        }}</span>
                                 </div>
                             </TableCell>
                             <TableCell class="hidden lg:table-cell text-center text-muted-foreground">{{
@@ -307,6 +307,21 @@
                         </TableRow>
                     </TableBody>
                 </Table>
+
+                <div v-else class="flex flex-col h-full items-center justify-center gap-4 text-center">
+                    <div class="rounded-full bg-muted/30 p-4">
+                        <Ghost class="h-10 w-10 text-muted-foreground/60" />
+                    </div>
+                    <div class="space-y-1">
+                        <h3 class="text-lg font-medium">暂无数据</h3>
+                        <p class="text-sm text-muted-foreground">
+                            当前没有任何用户数据，或者未找到匹配的结果。
+                        </p>
+                    </div>
+                    <Button variant="outline" size="sm" @click="getCoupon()">
+                        返回全部数据
+                    </Button>
+                </div>
             </div>
         </div>
         <!-- 分页 -->
@@ -332,14 +347,13 @@
 <script setup lang="ts">
     import { onMounted, ref, watch, computed, toRef, type Ref } from 'vue'
     import axios from '@/utils/myAxios'
-    // ... 引入UI组件 (保持不变)
     import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
     import { Button } from '@/components/ui/button'
     import { Label } from '@/components/ui/label'
     import { Textarea } from '@/components/ui/textarea'
     import { Input } from '@/components/ui/input'
     import { parseDate, type DateValue } from '@internationalized/date'
-    import { CalendarIcon, Trash2, Plus, Edit } from 'lucide-vue-next'
+    import { CalendarIcon, Trash2, Plus, Edit, Ghost } from 'lucide-vue-next'
     import { cn } from '@/lib/utils'
     import { Calendar } from '@/components/ui/calendar'
     import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
@@ -351,6 +365,19 @@
     import 'dayjs/locale/zh-cn'
     dayjs.extend(relativeTime)
     dayjs.locale('zh-cn')
+    import { useCommonStore } from '@/stores/CommonStore'
+    const commonStore = useCommonStore()
+
+    watch(
+        () => commonStore.search.search,
+        (newSearch) => {
+            if (newSearch) {
+                getCoupon()
+                commonStore.search.search = false
+                commonStore.search.searchContent = ''
+            }
+        }
+    )
 
     // --- 数据定义 ---
     interface Coupon {
@@ -383,7 +410,8 @@
             const response = await axios.get("/api/admin/shop/coupon", {
                 params: {
                     pageNum: pageNum.value,
-                    pageSize: pageSize.value
+                    pageSize: pageSize.value,
+                    searchContent: commonStore.search.searchContent
                 }
             })
             const resData = response.data.data

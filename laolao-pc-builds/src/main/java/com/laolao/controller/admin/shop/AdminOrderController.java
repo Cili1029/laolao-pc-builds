@@ -29,8 +29,8 @@ public class AdminOrderController {
      * @return 订单数据
      */
     @GetMapping
-    public Result<PageInfo<AdminOrderVO>> getOrder(Integer status, Integer pageNum, Integer pageSize) {
-        return adminOrderService.getCoupon(status, pageNum, pageSize);
+    public Result<PageInfo<AdminOrderVO>> getOrder(Integer status, String searchContent, Integer pageNum, Integer pageSize) {
+        return adminOrderService.getCoupon(status, searchContent, pageNum, pageSize);
     }
 
     /**

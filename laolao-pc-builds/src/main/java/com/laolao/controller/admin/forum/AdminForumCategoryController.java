@@ -1,5 +1,6 @@
 package com.laolao.controller.admin.forum;
 
+import com.github.pagehelper.PageInfo;
 import com.laolao.common.annotation.LogSql;
 import com.laolao.common.result.Result;
 import com.laolao.pojo.common.StatusDTO;
@@ -10,6 +11,7 @@ import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
 
 /**
  * 管理端-帖子分类相关
@@ -26,8 +28,8 @@ public class AdminForumCategoryController {
      * @return 帖子分类数据
      */
     @GetMapping("list")
-    public Result<List<ForumCategory>> list() {
-        return adminForumCategoryService.get();
+    public Result<PageInfo<ForumCategory>> list(Integer pageNum, Integer pageSize, String searchContent) {
+        return adminForumCategoryService.get(pageNum, pageSize, searchContent);
     }
 
     /**
@@ -88,5 +90,15 @@ public class AdminForumCategoryController {
     @DeleteMapping("/delete")
     public Result<String> add(@RequestParam int id) {
         return adminForumCategoryService.delete(id);
+    }
+
+    /**
+     * 其他功能所需的Category
+     *
+     * @return 商品分类数据
+     */
+    @GetMapping("other_need")
+    public Result<List<ForumCategory>> need(Integer type) {
+        return adminForumCategoryService.getNeed(type);
     }
 }

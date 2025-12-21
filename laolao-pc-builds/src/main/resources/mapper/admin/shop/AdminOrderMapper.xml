@@ -8,6 +8,10 @@
         from shop_order
         where
             status = #{status} and (status != 6 or cancel_reason != '订单超时')
+        <if test="searchContent != null and searchContent != ''">
+            and id like concat('%',#{searchContent},'%') or number like concat('%',#{searchContent},'%')
+            or consignee like concat('%',#{searchContent},'%') or phone like concat('%',#{searchContent},'%')
+        </if>
         order by
             case status
                 when 2 then checkout_time

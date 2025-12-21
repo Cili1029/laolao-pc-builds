@@ -28,8 +28,8 @@ public class AdminComponentController {
      * @return 组件数据
      */
     @GetMapping
-    public Result<PageInfo<AdminComponentVO>> list(Integer pageNum, Integer pageSize) {
-        return adminComponentService.getComponent(pageNum, pageSize);
+    public Result<PageInfo<AdminComponentVO>> list(Integer pageNum, Integer pageSize, String searchContent) {
+        return adminComponentService.getComponent(pageNum, pageSize, searchContent);
     }
 
     /**

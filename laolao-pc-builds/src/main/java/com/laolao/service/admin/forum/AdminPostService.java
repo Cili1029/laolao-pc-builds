@@ -6,7 +6,7 @@ import com.laolao.pojo.forum.entity.Post;
 
 
 public interface AdminPostService {
-    Result<PageInfo<Post>> getPost(Integer pageNum, Integer pageSize);
+    Result<PageInfo<Post>> getPost(Integer pageNum, Integer pageSize, String searchContent);
 
     Result<String> updateCategory(Integer id, int categoryId);
 

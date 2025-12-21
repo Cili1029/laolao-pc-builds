@@ -8,7 +8,7 @@ import com.laolao.pojo.shop.dto.AdminUpdateComponentDTO;
 
 
 public interface AdminComponentService {
-    Result<PageInfo<AdminComponentVO>> getComponent(Integer pageNum, Integer pageSize);
+    Result<PageInfo<AdminComponentVO>> getComponent(Integer pageNum, Integer pageSize, String searchContent);
 
     Result<String> changeStatus(int id, int status);
 

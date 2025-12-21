@@ -1,36 +1,50 @@
 <template>
     <div class="h-full w-full overflow-hidden relative bg-muted/10 p-2">
         <div class="absolute inset-0 bottom-14 overflow-hidden rounded-lg border bg-background shadow-sm flex flex-col">
-            <ButtonGroup class="p-2">
-                <Button @click="currentStatus = 2, getOrder(2)" variant="outline"
-                    :class="currentStatus === 2 ? 'bg-accent text-accent-foreground' : 'text-muted-foreground'"
-                    class="h-8 text-xs font-medium">
-                    待发货
-                </Button>
-                <Button @click="currentStatus = 3, getOrder(3)" variant="outline"
-                    :class="currentStatus === 3 ? 'bg-accent text-accent-foreground' : 'text-muted-foreground'"
-                    class="h-8 text-xs font-medium">
-                    物流中
-                </Button>
-                <Button @click="currentStatus = 4, getOrder(4)" variant="outline"
-                    :class="currentStatus === 4 ? 'bg-accent text-accent-foreground' : 'text-muted-foreground'"
-                    class="h-8 text-xs font-medium">
-                    待收货
-                </Button>
-                <Button @click="currentStatus = 5, getOrder(5)" variant="outline"
-                    :class="currentStatus === 5 ? 'bg-accent text-accent-foreground' : 'text-muted-foreground'"
-                    class="h-8 text-xs font-medium">
-                    已完成
-                </Button>
-                <Button @click="currentStatus = 6, getOrder(6)" variant="outline"
-                    :class="currentStatus === 6 ? 'bg-accent text-accent-foreground' : 'text-muted-foreground'"
-                    class="h-8 text-xs font-medium">
-                    已取消
-                </Button>
-            </ButtonGroup>
+            <div class="flex items-center p-2">
+                <ButtonGroup>
+                    <Button @click="currentStatus = 2, getOrder(2)" variant="outline"
+                        :class="currentStatus === 2 ? 'bg-accent text-accent-foreground' : 'text-muted-foreground'"
+                        class="h-8 text-xs font-medium">
+                        待发货
+                    </Button>
+                    <Button @click="currentStatus = 3, getOrder(3)" variant="outline"
+                        :class="currentStatus === 3 ? 'bg-accent text-accent-foreground' : 'text-muted-foreground'"
+                        class="h-8 text-xs font-medium">
+                        物流中
+                    </Button>
+                    <Button @click="currentStatus = 4, getOrder(4)" variant="outline"
+                        :class="currentStatus === 4 ? 'bg-accent text-accent-foreground' : 'text-muted-foreground'"
+                        class="h-8 text-xs font-medium">
+                        待收货
+                    </Button>
+                    <Button @click="currentStatus = 5, getOrder(5)" variant="outline"
+                        :class="currentStatus === 5 ? 'bg-accent text-accent-foreground' : 'text-muted-foreground'"
+                        class="h-8 text-xs font-medium">
+                        已完成
+                    </Button>
+                    <Button @click="currentStatus = 6, getOrder(6)" variant="outline"
+                        :class="currentStatus === 6 ? 'bg-accent text-accent-foreground' : 'text-muted-foreground'"
+                        class="h-8 text-xs font-medium">
+                        已取消
+                    </Button>
+                </ButtonGroup>
+
+                <ButtonGroup class="ml-auto">
+                    <Button @click="getOrder(currentStatus)" variant="outline" aria-label="Refresh">
+                        <RotateCw />
+                    </Button>
+                    <Input v-model="searchContent" placeholder="搜索点什么..." />
+                    <Button @click="getOrder(currentStatus)" :disabled="searchContent.length === 0" variant="outline"
+                        aria-label="Search">
+                        <SearchIcon />
+                    </Button>
+                </ButtonGroup>
+            </div>
+
 
             <!-- 表格区域 -->
-            <div class="flex-1 overflow-y-auto">
+            <div class="flex-1 overflow-y-auto scrollbar-edge">
                 <Table v-if="orders.length > 0">
                     <TableHeader>
                         <TableRow class="bg-muted/40 hover:bg-muted/40 sticky top-0 z-10 border-b">
@@ -88,7 +102,7 @@
                                                     </DialogDescription>
                                                 </DialogHeader>
 
-                                                <div class="max-h-[60vh] overflow-y-auto">
+                                                <div class="max-h-[60vh] overflow-y-auto scrollbar-edge">
                                                     <Table>
                                                         <TableHeader>
                                                             <TableRow class="bg-muted/50">
@@ -377,7 +391,6 @@
             </Pagination>
         </div>
     </div>
-
 </template>
 
 <script setup lang="ts">
@@ -385,7 +398,7 @@
     import axios from '@/utils/myAxios'
     import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, TableFooter } from '@/components/ui/table'
     import { Button } from '@/components/ui/button'
-    import { User, Phone, MapPin, Ghost, ListTodo } from 'lucide-vue-next'
+    import { User, Phone, MapPin, Ghost, ListTodo, SearchIcon, RotateCw } from 'lucide-vue-next'
     import { toast } from "vue-sonner"
     import { ButtonGroup } from '@/components/ui/button-group'
     import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -438,12 +451,14 @@
         () => getOrder(currentStatus.value))
 
     const currentStatus = ref(2)
+    const searchContent = ref("")
 
     const getOrder = async (status: number) => {
         try {
             const response = await axios.get("/api/admin/shop/order", {
                 params: {
                     status: status,
+                    searchContent: searchContent.value,
                     pageNum: pageNum.value,
                     pageSize: pageSize.value
                 }

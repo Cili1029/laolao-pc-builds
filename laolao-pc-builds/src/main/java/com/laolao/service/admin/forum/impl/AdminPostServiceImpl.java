@@ -8,6 +8,7 @@ import com.laolao.mapper.admin.forum.AdminPostMapper;
 import com.laolao.pojo.forum.entity.Post;
 import com.laolao.service.admin.forum.AdminPostService;
 import jakarta.annotation.Resource;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,9 +21,11 @@ public class AdminPostServiceImpl implements AdminPostService {
     private AdminCommentMapper adminCommentMapper;
 
     @Override
-    public Result<PageInfo<Post>> getPost(Integer pageNum, Integer pageSize) {
+    public Result<PageInfo<Post>> getPost(Integer pageNum, Integer pageSize, String searchContent) {
         PageHelper.startPage(pageNum, pageSize);
-        List<Post> postList = adminPostMapper.select();
+        List<Post> postList = StringUtils.isNotBlank(searchContent)
+                ? adminPostMapper.search(searchContent)
+                : adminPostMapper.select();
         PageInfo<Post> pageInfo = new PageInfo<>(postList);
         return Result.success(pageInfo);
     }

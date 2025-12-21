@@ -1,5 +1,7 @@
 package com.laolao.service.admin.shop.impl;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.laolao.common.result.Result;
 import com.laolao.converter.MapStruct;
 import com.laolao.mapper.admin.shop.AdminShopCategoryMapper;
@@ -25,9 +27,13 @@ public class AdminShopCategoryServiceImpl implements AdminShopCategoryService {
     private SysFileMapper sysFileMapper;
 
     @Override
-    public Result<List<ShopCategory>> get(int type) {
-        List<ShopCategory> shopCategoryList =  adminShopCategoryMapper.select(type);
-        return Result.success(shopCategoryList);
+    public Result<PageInfo<ShopCategory>> get(Integer pageNum, Integer pageSize, String searchContent) {
+        PageHelper.startPage(pageNum, pageSize);
+        List<ShopCategory> shopCategoryList = StringUtils.isNotBlank(searchContent)
+                ? adminShopCategoryMapper.search(searchContent)
+                : adminShopCategoryMapper.select(null);
+        PageInfo<ShopCategory> shopCategoryPageInfo = new PageInfo<>(shopCategoryList);
+        return Result.success(shopCategoryPageInfo);
     }
 
     @Override
@@ -69,5 +75,11 @@ public class AdminShopCategoryServiceImpl implements AdminShopCategoryService {
     public Result<String> delete(int id) {
         adminShopCategoryMapper.delete(id);
         return Result.success("删除成功");
+    }
+
+    @Override
+    public Result<List<ShopCategory>> getNeed(Integer type) {
+        List<ShopCategory> categoryList = adminShopCategoryMapper.select(type);
+        return Result.success(categoryList);
     }
 }
