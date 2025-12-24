@@ -21,7 +21,7 @@
             <!-- 编辑头像的小提示 (仅自己可见) -->
             <div v-if="userStore.user.id === user?.user.id"
               class="absolute inset-0 rounded-full bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-              <span class="icon-[material-symbols--edit-outline] text-white text-2xl"></span>
+              <SquarePen class="text-white" />
             </div>
           </div>
 
@@ -37,7 +37,7 @@
               <DialogTrigger as-child>
                 <Button v-show="userStore.user.id === user?.user.id" variant="outline"
                   class="rounded-full px-6 border-gray-300 hover:bg-gray-50 hover:text-indigo-600 transition-colors">
-                  <span class="icon-[material-symbols--edit-square-outline] mr-2"></span>
+                  <SquarePen />
                   编辑资料
                 </Button>
               </DialogTrigger>
@@ -93,14 +93,18 @@
           <button @click="changeType(1)"
             class="flex-1 sm:flex-none px-8 py-4 text-sm font-bold border-b-2 transition-colors flex items-center justify-center gap-2"
             :class="currentType === 1 ? 'border-indigo-500 text-indigo-600 bg-indigo-50/50' : 'border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50'">
-            <span class="icon-[humbleicons--chat] text-lg"></span>
-            <span>{{ userStore.user.id === user?.user.id ? "我" : "Ta" }}的帖子</span>
+            <MessageSquareMore class="w-[1em] h-[1em]" />
+            <span>
+              {{ userStore.user.id === user?.user.id ? "我" : "Ta" }}的帖子
+            </span>
           </button>
           <button @click="changeType(2)"
             class="flex-1 sm:flex-none px-8 py-4 text-sm font-bold border-b-2 transition-colors flex items-center justify-center gap-2"
             :class="currentType === 2 ? 'border-indigo-500 text-indigo-600 bg-indigo-50/50' : 'border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50'">
-            <span class="icon-[material-symbols--thumb-up-outline] text-lg"></span>
-            <span>{{ userStore.user.id === user?.user.id ? "我" : "Ta" }}点赞的</span>
+            <ThumbsUp class="w-[1em] h-[1em]" />
+            <span>
+              {{ userStore.user.id === user?.user.id ? "我" : "Ta" }}点赞的
+            </span>
           </button>
         </div>
 
@@ -132,12 +136,18 @@
               <div
                 class="flex items-center justify-between sm:justify-end gap-6 text-sm text-gray-400 w-full sm:w-auto mt-1 sm:mt-0">
                 <p class="w-12 flex items-center justify-center gap-1">
-                  <span class="icon-[material-symbols--comment-outline]"></span>{{ userPost.commentCount }}
+                  <MessageSquareMore class="w-[1em] h-[1em]" />
+                  <span>
+                    {{ userPost.commentCount }}
+                  </span>
                 </p>
                 <p class="w-12 flex items-center justify-center gap-1">
-                  <span class="icon-[material-symbols--thumb-up-outline]"></span>{{ userPost.likeCount }}
+                  <ThumbsUp class="w-[1em] h-[1em]" />
+                  <span>
+                    {{ userPost.likeCount }}
+                  </span>
                 </p>
-                <p class="w-16 text-center">{{ formatTime(userPost.updatedAt) }}</p>
+                <p class="w-16 text-center">{{ formatTime(userPost.commentedAt) }}</p>
               </div>
             </div>
           </div>
@@ -155,23 +165,28 @@
               <div
                 class="flex items-center justify-between sm:justify-end gap-6 text-sm text-gray-400 w-full sm:w-auto mt-1 sm:mt-0">
                 <p class="w-12 flex items-center justify-center gap-1">
-                  <span class="icon-[material-symbols--comment-outline]"></span>{{ likePost.commentCount }}
+                  <MessageSquareMore class="w-[1em] h-[1em]" />
+                  <span>
+                    {{ likePost.commentCount }}
+                  </span>
                 </p>
                 <p class="w-12 flex items-center justify-center gap-1">
-                  <span class="icon-[material-symbols--thumb-up-outline]"></span>{{ likePost.likeCount }}
+                  <ThumbsUp class="w-[1em] h-[1em]" />
+                  <span>
+                    {{ likePost.likeCount }}
+                  </span>
                 </p>
-                <p class="w-16 text-center">{{ formatTime(likePost.updatedAt) }}</p>
+                <p class="w-16 text-center">{{ formatTime(likePost.commentedAt) }}</p>
               </div>
             </div>
           </div>
 
           <!-- 空状态 -->
-          <div v-else class="h-full flex flex-col items-center justify-center text-gray-300 py-20">
-            <div class="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mb-4">
-              <span class="icon-[material-symbols--post-add] text-4xl text-gray-300" v-if="currentType === 1"></span>
-              <span class="icon-[material-symbols--favorite-outline] text-4xl text-gray-300" v-else></span>
+          <div v-else class="flex flex-col justify-center items-center h-full">
+            <div class="bg-gray-100 p-6 rounded-full shadow-inner">
+              <Ghost class="w-20 h-20 text-gray-300"></Ghost>
             </div>
-            <p class="font-medium text-gray-400">暂无相关记录</p>
+            <div class="font-bold">空空如也！</div>
           </div>
         </div>
       </div>
@@ -199,6 +214,7 @@
   import dayjs from 'dayjs'
   import relativeTime from 'dayjs/plugin/relativeTime'
   import 'dayjs/locale/zh-cn'
+  import { Ghost, MessageSquareMore, SquarePen, ThumbsUp } from 'lucide-vue-next'
   // 初始化dayjs
   dayjs.extend(relativeTime)
   dayjs.locale('zh-cn')
@@ -226,7 +242,7 @@
     title: string
     likeCount: number
     commentCount: number
-    updatedAt: string
+    commentedAt: string
   }
 
   interface User {

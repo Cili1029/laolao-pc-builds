@@ -62,7 +62,7 @@
 
                                     <DialogFooter class="flex flex-col gap-3 sm:flex-row sm:justify-start">
                                         <Button @click="showAddDialog = true">
-                                            <span class="icon-[charm--folder]"></span>
+                                            <Image />
                                             上传图片
                                         </Button>
                                         <DialogClose as-child class="sm:ml-auto">
@@ -217,7 +217,7 @@
                                             </div>
                                             <DialogFooter class="flex flex-col gap-3 sm:flex-row sm:justify-start">
                                                 <Button @click="showUpdateDialog = true">
-                                                    <span class="icon-[charm--folder]"></span>
+                                                    <Image />
                                                     图片管理
                                                 </Button>
                                                 <FileManager v-model:open="showUpdateDialog" v-model="updateImg"
@@ -561,7 +561,7 @@
     import { Input } from '@/components/ui/input'
     import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
     import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger, } from '@/components/ui/alert-dialog'
-    import { ChevronRight, MoreHorizontal, Trash2, ImageIcon, Plus, CircleOff, Circle, Ghost } from 'lucide-vue-next'
+    import { ChevronRight, MoreHorizontal, Trash2, ImageIcon, Plus, CircleOff, Circle, Ghost, Image } from 'lucide-vue-next'
     import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, } from '@/components/ui/dialog'
     import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationNext, PaginationPrevious, } from '@/components/ui/pagination'
     import dayjs from 'dayjs'

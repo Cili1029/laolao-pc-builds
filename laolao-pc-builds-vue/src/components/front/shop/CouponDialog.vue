@@ -5,8 +5,10 @@
       <DialogContent class="sm:max-w-md p-0 overflow-hidden bg-gray-50 border-none shadow-2xl rounded-2xl">
         <DialogHeader class="px-6 py-4 bg-white border-b border-gray-100">
           <DialogTitle class="text-xl font-bold text-gray-800 flex items-center gap-2">
-            <span class="icon-[charm--ticket] text-orange-500 text-2xl"></span>
-            {{ props.type === 1 ? "领券中心" : props.type === 2 ? "我的优惠券" : "选择优惠券" }}
+            <Ticket />
+            <span>
+              {{ props.type === 1 ? "领券中心" : props.type === 2 ? "我的优惠券" : "选择优惠券" }}
+            </span>
           </DialogTitle>
           <DialogDescription class="hidden"></DialogDescription>
         </DialogHeader>
@@ -59,7 +61,7 @@
             <!-- 空状态 -->
             <div v-else class="flex flex-col items-center justify-center h-full text-gray-300 gap-3">
               <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center">
-                <span class="icon-[charm--ticket] text-4xl text-gray-300"></span>
+                <Ticket class="text-gray-300" />
               </div>
               <p class="text-sm font-medium">暂时没有可领取的优惠券</p>
             </div>
@@ -106,9 +108,9 @@
                 </div>
               </div>
             </template>
-            <div v-else class="flex flex-col items-center justify-center h-full text-gray-300 gap-3">
-              <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center">
-                <span class="icon-[mdi--ticket-percent-outline] text-4xl text-gray-300"></span>
+            <div v-else class="flex flex-col items-center justify-center h-full gap-3">
+              <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center text-gray-400">
+                <TicketX class="w-12 h-12"/>
               </div>
               <p class="text-sm font-medium">您还没有优惠券</p>
             </div>
@@ -146,15 +148,15 @@
                     <!-- 选择框图标 -->
                     <div class="w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors"
                       :class="userCouponId === coupon.id ? 'border-orange-500 bg-orange-500' : 'border-gray-300 group-hover:border-orange-300'">
-                      <span v-if="userCouponId === coupon.id" class="icon-[charm--tick] text-white text-xs"></span>
+                      <CircleCheckBig v-if="userCouponId === coupon.id" class="text-white"></CircleCheckBig>
                     </div>
                   </div>
                 </div>
               </div>
             </template>
-            <div v-else class="flex flex-col items-center justify-center h-full text-gray-300 gap-3">
-              <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center">
-                <span class="icon-[mdi--ticket-confirmation-outline] text-4xl text-gray-300"></span>
+            <div v-else class="flex flex-col items-center justify-center h-full gap-3">
+              <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center text-gray-400">
+                <TicketX class="w-12 h-12"/>
               </div>
               <p class="text-sm font-medium">暂无可用优惠券</p>
             </div>
@@ -173,6 +175,7 @@
   import dayjs from 'dayjs'
   import 'dayjs/locale/zh-cn'
   import { useRouter } from 'vue-router'
+import { CircleCheckBig, Ticket, TicketX } from "lucide-vue-next"
   const router = useRouter()
 
   const props = defineProps({

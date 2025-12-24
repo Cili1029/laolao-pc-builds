@@ -86,7 +86,7 @@ public class CartServiceImpl implements CartService {
             cartMapper.add(cartItem);
         } else {
             // 有，加数量
-            cartMapper.updateQuantity(cartItem, +buyProductDTO.getQuantity());
+            cartMapper.updateQuantity(cartItem, +1);
         }
 
         return Result.success("加入购物车了！");

@@ -19,15 +19,18 @@
         <div class="flex space-x-2 items-center">
           <router-link :to="`/buy/${0}`" v-show="commonStore.isShowFunction"
             class="cursor-pointer text-sm font-medium text-gray-600 hover:text-orange-600 hover:bg-orange-50 px-3 py-1.5 rounded-full transition-all flex items-center gap-1">
-            <span class="icon-[mage--shop]"></span>商城
+            <Store class="w-[1em] h-[1em]" />
+            <span>商城</span>
           </router-link>
           <router-link :to="`/forum/${-1}`" v-show="commonStore.isShowFunction"
             class="cursor-pointer text-sm font-medium text-gray-600 hover:text-orange-600 hover:bg-orange-50 px-3 py-1.5 rounded-full transition-all flex items-center gap-1">
-            <span class="icon-[material-symbols--forum-outline-rounded]"></span>社区
+            <MessagesSquare class="w-[1em] h-[1em]" />
+            <span>社区</span>
           </router-link>
           <span @click="showCouponDialog(1)"
             class="cursor-pointer text-sm font-medium text-gray-600 hover:text-orange-600 hover:bg-orange-50 px-3 py-1.5 rounded-full transition-all flex items-center gap-1">
-            <span class="icon-[charm--gift]"></span> 更多优惠券
+            <Gift class="w-[1em] h-[1em]" />
+            <span>更多优惠券</span>
           </span>
 
           <!-- 购物车 -->
@@ -36,19 +39,22 @@
               @click="showCart()">
               <span
                 class="cursor-pointer text-sm font-medium text-gray-600 hover:text-orange-600 hover:bg-orange-50 px-3 py-1.5 rounded-full transition-all flex items-center gap-1">
-                <span class="icon-[mdi--cart-outline]"></span>购物车
+                <ShoppingCart class="w-[1em] h-[1em]" />
+                <span>我的购物车</span>
               </span>
             </SheetTrigger>
             <SheetContent class="gap-0 flex flex-col h-full bg-white/95 backdrop-blur-sm">
               <SheetHeader class="px-6 py-4 border-b border-gray-100">
                 <SheetTitle class="flex items-center gap-2 text-xl font-bold text-gray-900">
-                  <span class="icon-[mdi--cart] text-orange-500"></span> 我的购物车
+                  <ShoppingCart class="w-[1em] h-[1em]" />
+                  <span>我的购物车</span>
                 </SheetTitle>
                 <SheetDescription>
                   <p class="text-xs text-gray-400 hover:text-red-500 transition-colors cursor-pointer flex items-center gap-1 mt-1"
                     :class="{ 'opacity-50 cursor-not-allowed': products.length === 0 }"
                     @click="products.length > 0 && clear()">
-                    <span class="icon-[mdi--trash-can-outline]"></span> 清空购物车
+                    <Trash class="w-[1em] h-[1em]" />
+                    <span>我的购物车</span>
                   </p>
                 </SheetDescription>
               </SheetHeader>
@@ -77,13 +83,13 @@
                         <Button variant="ghost" size="icon"
                           class="h-6 w-6 rounded hover:bg-white hover:shadow-sm hover:text-orange-600"
                           @click="quantity(product, 0)">
-                          <span class="icon-[mdi--minus] h-3 w-3"></span>
+                           <Minus />
                         </Button>
                         <span class="text-sm font-bold w-4 text-center">{{ product.quantity }}</span>
                         <Button variant="ghost" size="icon"
                           class="h-6 w-6 rounded hover:bg-white hover:shadow-sm hover:text-orange-600"
                           @click="quantity(product, 1)">
-                          <span class="icon-[mdi--plus] h-3 w-3"></span>
+                          <Plus />
                         </Button>
                       </div>
                     </div>
@@ -94,7 +100,7 @@
               <!-- 空状态 -->
               <div v-else class="flex-1 flex flex-col justify-center items-center h-full text-gray-300 gap-4">
                 <div class="bg-gray-50 p-6 rounded-full shadow-inner">
-                  <span class="icon-[mdi--cart-off] text-6xl text-gray-300"></span>
+                  <CandyOff class="h-15 w-15"/>
                 </div>
                 <div class="text-center">
                   <p class="font-bold text-gray-400">购物车空空如也</p>
@@ -149,33 +155,33 @@
                 <RouterLink :to="`/user/${userStore.user.id}`">
                   <DropdownMenuItem
                     class="cursor-pointer rounded-lg hover:bg-orange-50 hover:text-orange-600 focus:bg-orange-50 focus:text-orange-600">
-                    <span class="icon-[charm--person] mr-2"></span>
+                    <User />
                     <span>个人信息</span>
                   </DropdownMenuItem>
                 </RouterLink>
                 <RouterLink to="/my-orders">
                   <DropdownMenuItem
                     class="cursor-pointer rounded-lg hover:bg-orange-50 hover:text-orange-600 focus:bg-orange-50 focus:text-orange-600">
-                    <span class="icon-[charm--clipboard] mr-2"></span>
+                    <Clipboard />
                     <span>我的订单</span>
                   </DropdownMenuItem>
                 </RouterLink>
                 <DropdownMenuItem @click="showCouponDialog(2)"
                   class="cursor-pointer rounded-lg hover:bg-orange-50 hover:text-orange-600 focus:bg-orange-50 focus:text-orange-600">
-                  <span class="icon-[charm--gift] mr-2"></span>
+                  <Gift />
                   <span>我的优惠券</span>
                 </DropdownMenuItem>
                 <RouterLink to="/admin" v-if="userStore.user.admin === 1">
                   <DropdownMenuItem
                     class="cursor-pointer rounded-lg hover:bg-orange-50 hover:text-orange-600 focus:bg-orange-50 focus:text-orange-600">
-                    <ShieldUser class="mr-2" />
+                    <ShieldUser />
                     <span>管理端</span>
                   </DropdownMenuItem>
                 </RouterLink>
                 <DropdownMenuSeparator class="bg-gray-100" />
                 <DropdownMenuItem @click="signOut"
                   class="cursor-pointer rounded-lg text-red-500 hover:bg-red-50 hover:text-red-600 focus:bg-red-50 focus:text-red-600">
-                  <span class="icon-[picon--exit] mr-2"></span>
+                  <LogOut />
                   <span>退出登录</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -234,7 +240,7 @@
   import CouponDialog from '@/components/front/shop/CouponDialog.vue';
   import { toast } from "vue-sonner"
   import 'vue-sonner/style.css'
-  import { ShieldUser } from 'lucide-vue-next';
+  import { CandyOff, Clipboard, Gift, LogOut, MessagesSquare, Minus, Plus, ShieldUser, ShoppingCart, Store, Trash, User } from 'lucide-vue-next';
   import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger, } from "@/components/ui/sheet"
   import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
   import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"

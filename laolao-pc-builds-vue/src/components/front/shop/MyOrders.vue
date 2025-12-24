@@ -190,7 +190,7 @@
                                 <div class="space-y-3 text-sm">
                                     <div v-if="detail?.consignee" class="flex gap-3">
                                         <div
-                                            class="flex-shrink-0 w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 icon-[lucide--map-pin] text-xs">
+                                            class="flex-shrink-0 w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 text-xs">
                                             📍</div>
                                         <div>
                                             <div class="font-bold text-gray-800">
@@ -253,11 +253,11 @@
                 </DialogContent>
             </Dialog>
         </div>
-        <div v-else class="flex justify-center items-center h-full">
-            <div class="flex flex-col items-center">
-                <span class="icon-[noto--enraged-face] text-9xl"></span>
-                <div class="font-bold">什么也没有！</div>
+        <div v-else class="flex flex-col justify-center items-center h-full">
+            <div class="bg-gray-100 p-6 rounded-full shadow-inner">
+                <Ghost class="w-20 h-20"></Ghost>
             </div>
+            <div class="font-bold">空空如也！</div>
         </div>
     </div>
 </template>
@@ -275,6 +275,7 @@
     import dayjs from 'dayjs'
     import 'dayjs/locale/zh-cn'
     import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+    import { Ghost } from 'lucide-vue-next';
 
     onMounted(() => {
         getOrders()

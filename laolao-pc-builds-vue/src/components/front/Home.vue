@@ -15,8 +15,7 @@
                         <div class="flex items-start justify-between mb-6">
                             <div
                                 class="p-4 bg-blue-500 rounded-2xl shadow-lg shadow-blue-500/30 group-hover:scale-110 transition-transform duration-300">
-                                <span
-                                    class="icon-[material-symbols--shopping-cart-outline] text-4xl text-white block"></span>
+                                <shopping-cart class="h-9 w-9 text-white block"></shopping-cart>
                             </div>
                             <p
                                 class="px-4 py-2 bg-blue-50 text-blue-600 rounded-full text-sm font-semibold hover:bg-blue-100 transition-colors">
@@ -44,8 +43,7 @@
                         <div class="flex items-start justify-between mb-6">
                             <div
                                 class="p-4 bg-emerald-500 rounded-2xl shadow-lg shadow-emerald-500/30 group-hover:scale-110 transition-transform duration-300">
-                                <span
-                                    class="icon-[material-symbols--forum-outline-rounded] text-4xl text-white block"></span>
+                                <messages-square class="h-9 w-9 text-white block"></messages-square>
                             </div>
                             <p
                                 class="px-4 py-2 bg-emerald-50 text-emerald-600 rounded-full text-sm font-semibold hover:bg-emerald-100 transition-colors">
@@ -100,9 +98,10 @@
                                 <div class="flex items-center">
                                     <span
                                         class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-orange-50 text-orange-600 text-xs font-medium border border-orange-100">
-                                        <span
-                                            class="icon-[material-symbols--local-fire-department-rounded] text-xs"></span>
-                                        热销 {{ product.sales }}
+                                        <Flame class="w-[1em] h-[1em]" />
+                                        <span>
+                                            热销 {{ product.sales }}
+                                        </span>
                                     </span>
                                 </div>
                             </div>
@@ -116,7 +115,7 @@
 
                                 <button @click.stop.prevent="addToCart(product.productType, product.id)"
                                     class="w-10 h-10 flex items-center justify-center rounded-full bg-gray-900 text-white shadow-md group-hover:scale-110 transition-all duration-300 hover:bg-blue-600">
-                                    <span class="icon-[material-symbols--shopping-cart-outline] text-xl"></span>
+                                    <ShoppingCart class="w-6 h-6" />
                                 </button>
                             </div>
                         </router-link>
@@ -155,12 +154,16 @@
 
                                     <div class="flex items-center gap-4 text-xs text-gray-400">
                                         <span class="flex items-center gap-1">
-                                            <span class="icon-[material-symbols--thumb-up-outline] text-sm"></span>
-                                            {{ simple.likeCount }}
+                                            <ThumbsUp class="w-[1em] h-[1em]" />
+                                            <span>
+                                                {{ simple.likeCount }}
+                                            </span>
                                         </span>
                                         <span class="flex items-center gap-1">
-                                            <span class="icon-[material-symbols--comment-outline] text-sm"></span>
-                                            {{ simple.commentCount }}
+                                            <MessageSquareText class="w-[1em] h-[1em]" />
+                                            <span>
+                                                {{ simple.commentCount }}
+                                            </span>
                                         </span>
                                         <span class="ml-auto text-gray-300">{{ formatDate(simple.updatedAt) }}</span>
                                     </div>
@@ -182,6 +185,7 @@
     import { onMounted, ref, onUnmounted } from 'vue';
     import axios from '@/utils/myAxios'
     import { useCommonStore } from '@/stores/CommonStore'
+    import { Flame, MessageSquareText, MessagesSquare, ShoppingCart, ThumbsUp } from 'lucide-vue-next';
     const commonStore = useCommonStore()
 
     // 工具函数：简单的日期格式化

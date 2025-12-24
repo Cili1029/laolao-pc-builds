@@ -53,9 +53,7 @@
                         </div>
                         <div class="flex items-center gap-2">
                             <Button variant="ghost" class="rounded-full px-4" @click="like(1, post!.id, 0)">
-                                <span v-if="post?.like === 0"
-                                    class="icon-[material-symbols--thumb-up-outline] text-2xl"></span>
-                                <span v-else class="icon-[material-symbols--thumb-up] text-2xl text-orange-500"></span>
+                                <ThumbsUp :class="post?.like ? 'text-orange-500' : null" />
                             </Button>
                             <div class="flex items-center space-x-2">
                                 <AlertDialog v-if="post?.user.id === userStore.user.id || userStore.user.admin === 1">
@@ -134,12 +132,15 @@
                             <div class="flex flex-wrap items-center gap-2">
                                 <div v-if="replyMap.has(comment.id)">
                                     <Button v-if="!replyMap.get(comment.id)" variant="secondary"
-                                        class="rounded-full px-4"
-                                        @click="openReply(comment.id), getReply(comment.id)">{{ comment.replyCount
-                                        }}条回复<span class="icon-[charm--chevron-down]"></span></Button>
+                                        class="rounded-full px-4" @click="openReply(comment.id), getReply(comment.id)">
+                                        {{ comment.replyCount }}条回复
+                                        <ChevronDown />
+                                    </Button>
                                     <Button v-else variant="secondary" class="rounded-full px-4"
-                                        @click="openReply(comment.id)">{{ comment.replyCount
-                                        }}条回复<span class="icon-[charm--chevron-up]"></span></Button>
+                                        @click="openReply(comment.id)">
+                                        {{ comment.replyCount }}条回复
+                                        <ChevronUp />
+                                    </Button>
                                 </div>
                                 <Dialog>
                                     <DialogTrigger as-child>
@@ -153,8 +154,8 @@
                                             placeholder="说点什么..."></Textarea>
                                         <DialogFooter class="flex flex-wrap gap-2">
                                             <Button class="rounded-full px-4" @click="showReplyDialog = true">
-                                                <span class="icon-[charm--folder]"></span>
-                                                上传图片
+                                                <Image class="w-[1em] h-[1em]" />
+                                                <span>上传图片</span>
                                             </Button>
                                             <FileManager v-model:open="showReplyDialog" v-model="replyImg"
                                                 :max-files="1" upload-api="/api/common/file/upload"
@@ -163,7 +164,7 @@
                                             <DialogClose as-child class="ml-auto">
                                                 <Button :disabled="!myComment" class="rounded-full px-5"
                                                     @click="submitReply(comment.id)">
-                                                    <span class="icon-[charm--rocket]"></span>
+                                                    <Rocket />
                                                     发送！
                                                 </Button>
                                             </DialogClose>
@@ -176,9 +177,7 @@
                                     <p class="text-base font-semibold">{{ comment.likeCount }}</p>
                                     <div @click="like(2, comment?.id, 0)"
                                         class="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 text-xl transition hover:bg-slate-200">
-                                        <span v-if="comment?.like === 0"
-                                            class="icon-[material-symbols--thumb-up-outline]"></span>
-                                        <span v-else class="icon-[material-symbols--thumb-up] text-orange-500"></span>
+                                        <ThumbsUp :class="comment?.like !== 0 ? 'text-orange-500' : null" />
                                     </div>
                                 </div>
                                 <div class="flex items-center space-x-2">
@@ -256,9 +255,7 @@
                                     <p class="text-base font-semibold">{{ reply.likeCount }}</p>
                                     <div @click="like(2, reply?.id, reply.parent)"
                                         class="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-lg transition hover:bg-slate-200">
-                                        <span v-if="reply?.like === 0"
-                                            class="icon-[material-symbols--thumb-up-outline]"></span>
-                                        <span v-else class="icon-[material-symbols--thumb-up] text-orange-500"></span>
+                                        <ThumbsUp :class="reply?.like !== 0 ? 'text-orange-500' : null" />
                                     </div>
                                 </div>
                                 <div class="flex items-center space-x-2">
@@ -316,16 +313,17 @@
                 <Textarea v-model="myComment" class="h-32 rounded-2xl" placeholder="说点什么..."></Textarea>
                 <div class="flex flex-wrap items-center justify-between gap-3">
                     <Button class="rounded-full px-5" @click="showCommentDialog = true">
-                        <span class="icon-[charm--folder]"></span>
-                        上传图片
+                        <Image class="w-[1em] h-[1em]" />
+                        <span>上传图片</span>
                     </Button>
                     <FileManager v-model:open="showCommentDialog" v-model="commentImg" :max-files="1"
                         upload-api="/api/common/file/upload" delete-api="/api/common/file/delete"
                         :upload-extra-data="{ type: 'laolaoPC/forum/comment' }" />
                     <Button @click="submitComment()" :disabled="!myComment"
                         class="rounded-full px-6 shadow-lg shadow-orange-200/60">
-                        <span class="icon-[charm--rocket]"></span>
-                        发送！</Button>
+                        <Rocket />
+                        发送！
+                    </Button>
                 </div>
             </div>
         </div>
@@ -350,6 +348,7 @@
     import { useUserStore } from '@/stores/UserStore'
     const userStore = useUserStore()
     import router from '@/router'
+    import { ChevronDown, ChevronUp, Image, Rocket, ThumbsUp } from 'lucide-vue-next'
 
 
     // 初始化dayjs

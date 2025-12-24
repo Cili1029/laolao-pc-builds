@@ -138,6 +138,12 @@ public class OrderController {
     }
 
 
+    /**
+     * 收货
+     *
+     * @param number 订单号
+     * @return 结果信息
+     */
     @PatchMapping("/receive")
     public Result<String> receive(@RequestParam String number) {
         return orderService.receive(number);

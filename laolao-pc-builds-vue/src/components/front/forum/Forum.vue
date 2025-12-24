@@ -65,17 +65,16 @@
                                 </div>
                                 <DialogFooter class="flex flex-col gap-3 sm:flex-row sm:justify-start">
                                     <Button class="rounded-full px-5" @click="showUploadDialog = true">
-                                        <span class="icon-[charm--folder]"></span>
-                                        上传图片
+                                        <Image class="w-[1em] h-[1em]" />
+                                        <span>上传图片</span>
                                     </Button>
                                     <FileManager v-model:open="showUploadDialog" v-model="postImg" :max-files="5"
                                         upload-api="/api/common/file/upload" delete-api="/api/common/file/delete"
                                         :upload-extra-data="{ type: 'laolaoPC/forum/post' }" />
                                     <DialogClose as-child class="sm:ml-auto">
                                         <Button type="submit" class="rounded-full px-6 shadow-lg shadow-orange-200/60"
-                                            :disabled="!title || !content || !(categoryId !== 0)"
-                                            @click="create()">
-                                            <span class="icon-[charm--rocket]"></span>
+                                            :disabled="!title || !content || !(categoryId !== 0)" @click="create()">
+                                            <Rocket />
                                             发布！
                                         </Button>
                                     </DialogClose>
@@ -129,6 +128,7 @@
     const route = useRoute()
     const router = useRouter()
     import { usePostStore } from '@/stores/PostStore'
+import { Image, Rocket } from 'lucide-vue-next'
     const postStore = usePostStore()
 
     const categoryStore = useForumCategoryStore()
@@ -194,7 +194,7 @@
         categoryId.value = 0
         title.value = ''
         content.value = ''
-        postImg.value =[]
+        postImg.value = []
     }
 
     // 控制弹窗开关
