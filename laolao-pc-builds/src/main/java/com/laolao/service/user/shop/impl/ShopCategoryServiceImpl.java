@@ -7,6 +7,7 @@ import com.laolao.pojo.shop.vo.ShopCategoryVO;
 import com.laolao.common.result.Result;
 import com.laolao.service.user.shop.ShopCategoryService;
 import jakarta.annotation.Resource;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -20,6 +21,7 @@ public class ShopCategoryServiceImpl implements ShopCategoryService {
     private MapStruct mapStruct;
 
     @Override
+    @Cacheable(value = "shop#1440", key = "T(com.laolao.common.constant.RedisConstant).SHOP_CATEGORY")
     public Result<List<ShopCategoryVO>> list() {
         List<ShopCategory> shopCategoryList = shopCategoryMapper.get();
 

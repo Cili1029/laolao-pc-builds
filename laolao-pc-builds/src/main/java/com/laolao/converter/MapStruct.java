@@ -34,7 +34,7 @@ public interface MapStruct {
 
     VariantVO variantToVariantVO(Variant variant);
 
-    ProductVO bundleToComponentVO(Bundle bundle);
+    ProductVO bundleToProductVO(Bundle bundle);
 
     CartItem cartProductDTOToCartItem(BuyProductDTO buyProductDTO);
 
