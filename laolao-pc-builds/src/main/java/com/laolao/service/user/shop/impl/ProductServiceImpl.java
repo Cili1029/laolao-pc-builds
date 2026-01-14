@@ -1,8 +1,7 @@
 package com.laolao.service.user.shop.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.laolao.common.constant.RedisConstant;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.laolao.converter.MapStruct;
 import com.laolao.mapper.user.shop.BundleMapper;
 import com.laolao.mapper.user.shop.ComponentMapper;
@@ -14,13 +13,10 @@ import com.laolao.common.result.Result;
 import com.laolao.service.user.shop.ProductService;
 import jakarta.annotation.Resource;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -31,13 +27,8 @@ public class ProductServiceImpl implements ProductService {
     private BundleMapper bundleMapper;
     @Resource
     private MapStruct mapStruct;
-    @Resource
-    StringRedisTemplate stringRedisTemplate;
-
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     @Override
-//    @Cacheable(value = "shop#720", key = "T(com.laolao.common.constant.RedisConstant).SHOP_COMPONENT_SIMPLE_KEY + #categoryId")
     public Result<List<ProductVO>> getComponentListWithCategoryId(int categoryId) {
         List<ProductVO> productVoList;
         productVoList = componentMapper.getByConditions(categoryId, null);
@@ -46,7 +37,6 @@ public class ProductServiceImpl implements ProductService {
 
 
     @Override
-//    @Cacheable(value = "shop#720", key = "T(com.laolao.common.constant.RedisConstant).SHOP_BUNDLE_SIMPLE_KEY + #categoryId")
     public Result<List<ProductVO>> getBundleListWithCategoryId(int categoryId) {
         List<ProductVO> productVoList = new ArrayList<>();
         List<Bundle> bundles = bundleMapper.getByConditions(categoryId, null);
@@ -85,31 +75,13 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Result<List<ProductVO>> getHot(int count) {
-        List<ProductVO> productVOS;
-        // 查询部件的销售排行
-        productVOS = componentMapper.getHot(count);
-        // 查询捆绑销售的销售排行
-        List<Bundle> bundleList = bundleMapper.getHot(count);
-        for (Bundle bundle : bundleList) {
-            ProductVO productVO = mapStruct.bundleToProductVO(bundle);
-            productVOS.add(productVO);
-        }
-        // 排序
-        // 为0时是获得全部产品
-        List<ProductVO> sortedRes = productVOS.stream().sorted(Comparator.comparing(ProductVO::getSales).reversed()).toList();
-        if (count != 0) {
-            sortedRes = sortedRes.stream().limit(count).toList();
-        }
-
-        Result<List<ProductVO>> success = new Result<>();
-        success.setData(sortedRes);
-        try {
-            String key ="shop::" + (count == 0 ? RedisConstant.SHOP_HOT_ALL : RedisConstant.SHOP_HOT_HOME);
-            long expireTime = count == 0 ? 12L : 1L;
-            stringRedisTemplate.opsForValue().set(key, OBJECT_MAPPER.writeValueAsString(success), expireTime, TimeUnit.HOURS);
-        } catch (JsonProcessingException ignored) {
-        }
+    @Cacheable(value = "shop#60",
+            key = "#pageSize == 5 ? (T(com.laolao.common.constant.RedisConstant).SHOP_HOT_HOME + #pageNum) : (T(com.laolao.common.constant.RedisConstant).SHOP_HOT_ALL + #pageNum)")
+    public Result<PageInfo<ProductVO>> getHot(Integer pageNum, Integer pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
+        List<ProductVO> Res = componentMapper.getHot();
+        Result<PageInfo<ProductVO>> success = new Result<>();
+        success.setData(new PageInfo<>(Res));
         return success;
     }
 

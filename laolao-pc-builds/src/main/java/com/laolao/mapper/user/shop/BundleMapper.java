@@ -33,6 +33,4 @@ public interface BundleMapper {
 
     @Select("select name, images->>'$[0]' AS image, price from shop_bundle where id = #{id}")
     OrderProductVO selectOrderBundle(int productId);
-
-    List<Bundle> getHot(int count);
 }

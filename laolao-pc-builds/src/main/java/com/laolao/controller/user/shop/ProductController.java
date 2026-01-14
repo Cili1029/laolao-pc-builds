@@ -1,5 +1,6 @@
 package com.laolao.controller.user.shop;
 
+import com.github.pagehelper.PageInfo;
 import com.laolao.pojo.shop.vo.BundleDetailsVO;
 import com.laolao.pojo.shop.vo.ComponentDetailsVO;
 import com.laolao.pojo.shop.vo.ProductVO;
@@ -85,11 +86,10 @@ public class ProductController {
     /**
      * 获取热门商品
      *
-     * @param count 数量
      * @return 帖子简单信息
      */
     @GetMapping("/hot")
-    public Result<List<ProductVO>> getHot(int count) {
-        return productService.getHot(count);
+    public Result<PageInfo<ProductVO>> getHot(Integer pageNum, Integer pageSize) {
+        return productService.getHot(pageNum, pageSize);
     }
 }

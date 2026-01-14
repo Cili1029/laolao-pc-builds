@@ -1,5 +1,6 @@
 package com.laolao.service.user.forum;
 
+import com.github.pagehelper.PageInfo;
 import com.laolao.common.result.Result;
 import com.laolao.pojo.forum.dto.CreatePostDTO;
 import com.laolao.pojo.forum.vo.CommentReplyVO;
@@ -21,5 +22,5 @@ public interface PostService {
 
     Result<List<CommentReplyVO>> getReply(int id);
 
-    Result<List<PostSimpleVO>> getHot(int count);
+    Result<PageInfo<PostSimpleVO>> getHot(Integer pageNum, Integer pageSize);
 }

@@ -1,5 +1,6 @@
 package com.laolao.service.user.shop;
 
+import com.github.pagehelper.PageInfo;
 import com.laolao.pojo.shop.vo.BundleDetailsVO;
 import com.laolao.pojo.shop.vo.ComponentDetailsVO;
 import com.laolao.pojo.shop.vo.ProductVO;
@@ -14,7 +15,7 @@ public interface ProductService {
 
     Result<List<ProductVO>> searchByName(int categoryId, String searchContent);
 
-    Result<List<ProductVO>> getHot(int count);
+    Result<PageInfo<ProductVO>> getHot(Integer pageNum, Integer pageSize);
 
     Result<ComponentDetailsVO> getComponentDetails(int id);
 

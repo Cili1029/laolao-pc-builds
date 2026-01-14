@@ -20,99 +20,109 @@
             <div class="hidden md:block w-[100px]"></div>
         </div>
 
-        <!-- 分类选择区域 -->
-        <div class="p-4 rounded-b-xl bg-white border-t border-gray-100">
-            <div class="flex flex-wrap gap-3 overflow-x-auto pb-2">
-                <span v-for="category in categories" :key="category.id" @click="() => {
-                    if (category.id !== currentCategory.id) {
-                        ShowComponent(category);
-                    }
-                }" class="cursor-pointer select-none group flex items-center gap-2 px-3 py-3 rounded-xl border-2 transition-all duration-300 ease-in-out whitespace-nowrap"
-                    :class="category.id === currentCategory.id
-                        ? 'border-orange-200 text-orange-600'
-                        : 'text-gray-600 hover:border-orange-200 hover:text-orange-500'">
-                    <img :src="category.image" class="h-6 w-6 rounded object-cover" />
-                    <span class="font-medium text-sm">{{ category.name }}</span>
-                </span>
-            </div>
-        </div>
-
         <!-- 商品列表区域 -->
-        <div class="flex-1 overflow-hidden">
-            <div class="h-full overflow-y-auto scrollbar-edge scrollbar-track-transparent pb-20">
-                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 p-3">
-                    <router-link :to="`/buy/product/${all.productType}/${all.id}`" v-show="currentCategory.id === 0"
-                        class="group bg-white rounded-2xl overflow-hidden border border-gray-100 hover:border-gray-100 transition-all duration-300 relative z-10 hover:z-50 hover:scale-105 hover:shadow-lg"
-                        v-for="all in allProducts" :key="`${all.productType}-${all.id}`">
-                        <!-- 图片容器 -->
-                        <div class="relative w-full aspect-square bg-gray-50 overflow-hidden">
-                            <img :src="all.image" class="w-full h-full" />
-                            <!-- 遮罩层，增加质感 -->
-                            <div
-                                class="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-300">
-                            </div>
-                        </div>
-
-                        <!-- 内容区域 -->
-                        <div class="p-4 flex flex-col flex-1">
-                            <h4
-                                class="font-medium text-gray-800 mb-2 line-clamp-2 h-[calc(2*1.6em)] text-sm leading-relaxed group-hover:text-orange-600 transition-colors">
-                                {{ all.name }}
-                            </h4>
-
-                            <div class="mt-auto pt-2 flex items-end justify-between w-full">
-                                <div>
-                                    <p class="flex items-baseline gap-0.5 text-orange-600 font-bold">
-                                        <span class="text-xs">￥</span>
-                                        <span class="text-xl">{{ all.price }}</span>
-                                        <span v-if="all.productType === 1"
-                                            class="text-xs text-gray-400 font-normal ml-1">起</span>
-                                    </p>
-                                </div>
-                                <div class="bg-orange-50 px-2 py-0.5 rounded text-xs font-medium text-orange-600/80">
-                                    {{ all.sales > 0 ? all.sales + "+人付款" : "新品上架" }}
-                                </div>
-                            </div>
-                        </div>
-                    </router-link>
-
-                    <router-link :to="`/buy/product/${product.productType}/${product.id}`"
-                        v-show="currentCategory.id !== 0"
-                        class="group bg-white rounded-2xl overflow-hidden border border-gray-100 hover:border-gray-100 transition-all duration-300 relative z-10 hover:z-50 hover:scale-105 hover:shadow-lg"
-                        v-for="product in products" :key="`${product.productType}-${product.id}`">
-
-                        <!-- 图片容器 -->
-                        <div class="relative w-full aspect-square bg-gray-50 overflow-hidden">
-                            <img :src="product.image" class="w-full h-full" />
-                            <!-- 遮罩层，增加质感 -->
-                            <div
-                                class="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-300">
-                            </div>
-                        </div>
-
-                        <!-- 内容区域 -->
-                        <div class="p-4 flex flex-col flex-1">
-                            <h4
-                                class="font-medium text-gray-800 mb-2 line-clamp-2 h-[calc(2*1.6em)] text-sm leading-relaxed  group-hover:text-orange-600 transition-colors">
-                                {{ product.name }}
-                            </h4>
-
-                            <div class="mt-auto pt-2 flex items-end justify-between w-full">
-                                <div>
-                                    <p class="flex items-baseline gap-0.5 text-orange-600 font-bold">
-                                        <span class="text-xs">￥</span>
-                                        <span class="text-xl">{{ product.price }}</span>
-                                        <span v-if="product.productType === 1"
-                                            class="text-xs text-gray-400 font-normal ml-1">起</span>
-                                    </p>
-                                </div>
-                                <div class="bg-orange-50 px-2 py-0.5 rounded text-xs font-medium text-orange-600/80">
-                                    {{ product.sales > 0 ? product.sales + "+人付款" : "新品上架" }}
-                                </div>
-                            </div>
-                        </div>
-                    </router-link>
+        <div class="flex-1 h-full overflow-y-auto scrollbar-edge scrollbar-track-transparent pb-20">
+            <!-- 分类选择区域 -->
+            <div class="p-4 rounded-b-xl bg-white border-t border-gray-100">
+                <div class="flex flex-wrap gap-3 overflow-x-auto pb-2">
+                    <span v-for="category in categories" :key="category.id" @click="() => {
+                        if (category.id !== currentCategory.id) {
+                            ShowComponent(category);
+                        }
+                    }" class="cursor-pointer select-none group flex items-center gap-2 px-3 py-3 rounded-xl border-2 transition-all duration-300 ease-in-out whitespace-nowrap"
+                        :class="category.id === currentCategory.id
+                            ? 'border-orange-200 text-orange-600'
+                            : 'text-gray-600 hover:border-orange-200 hover:text-orange-500'">
+                        <img :src="category.image" class="h-6 w-6 rounded object-cover" />
+                        <span class="font-medium text-sm">{{ category.name }}</span>
+                    </span>
                 </div>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 p-3">
+                <router-link :to="`/buy/product/${all.productType}/${all.id}`" v-show="currentCategory.id === 0"
+                    class="group bg-white rounded-2xl overflow-hidden border border-gray-100 hover:border-gray-100 transition-all duration-300 relative z-10 hover:z-50 hover:scale-105 hover:shadow-lg"
+                    v-for="all in allProducts" :key="`${all.productType}-${all.id}`">
+                    <!-- 图片容器 -->
+                    <div class="relative w-full aspect-square bg-gray-50 overflow-hidden">
+                        <img :src="all.image" class="w-full h-full" />
+                        <!-- 遮罩层，增加质感 -->
+                        <div class="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-300">
+                        </div>
+                    </div>
+
+                    <!-- 内容区域 -->
+                    <div class="p-4 flex flex-col flex-1">
+                        <h4
+                            class="font-medium text-gray-800 mb-2 line-clamp-2 h-[calc(2*1.6em)] text-sm leading-relaxed group-hover:text-orange-600 transition-colors">
+                            {{ all.name }}
+                        </h4>
+
+                        <div class="mt-auto pt-2 flex items-end justify-between w-full">
+                            <div>
+                                <p class="flex items-baseline gap-0.5 text-orange-600 font-bold">
+                                    <span class="text-xs">￥</span>
+                                    <span class="text-xl">{{ all.price }}</span>
+                                    <span v-if="all.productType === 1"
+                                        class="text-xs text-gray-400 font-normal ml-1">起</span>
+                                </p>
+                            </div>
+                            <div class="bg-orange-50 px-2 py-0.5 rounded text-xs font-medium text-orange-600/80">
+                                {{ all.sales > 0 ? all.sales + "+人付款" : "新品上架" }}
+                            </div>
+                        </div>
+                    </div>
+                </router-link>
+
+                <router-link :to="`/buy/product/${product.productType}/${product.id}`" v-show="currentCategory.id !== 0"
+                    class="group bg-white rounded-2xl overflow-hidden border border-gray-100 hover:border-gray-100 transition-all duration-300 relative z-10 hover:z-50 hover:scale-105 hover:shadow-lg"
+                    v-for="product in products" :key="`${product.productType}-${product.id}`">
+                    <!-- 图片容器 -->
+                    <div class="relative w-full aspect-square bg-gray-50 overflow-hidden">
+                        <img :src="product.image" class="w-full h-full" />
+                        <!-- 遮罩层，增加质感 -->
+                        <div class="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-300">
+                        </div>
+                    </div>
+
+                    <!-- 内容区域 -->
+                    <div class="p-4 flex flex-col flex-1">
+                        <h4
+                            class="font-medium text-gray-800 mb-2 line-clamp-2 h-[calc(2*1.6em)] text-sm leading-relaxed  group-hover:text-orange-600 transition-colors">
+                            {{ product.name }}
+                        </h4>
+
+                        <div class="mt-auto pt-2 flex items-end justify-between w-full">
+                            <div>
+                                <p class="flex items-baseline gap-0.5 text-orange-600 font-bold">
+                                    <span class="text-xs">￥</span>
+                                    <span class="text-xl">{{ product.price }}</span>
+                                    <span v-if="product.productType === 1"
+                                        class="text-xs text-gray-400 font-normal ml-1">起</span>
+                                </p>
+                            </div>
+                            <div class="bg-orange-50 px-2 py-0.5 rounded text-xs font-medium text-orange-600/80">
+                                {{ product.sales > 0 ? product.sales + "+人付款" : "新品上架" }}
+                            </div>
+                        </div>
+                    </div>
+                </router-link>
+            </div>
+
+            <div v-show="currentCategory.productType === 0" class="h-16 border-t flex items-center p-2">
+                <Pagination v-if="total > 0" v-model:page="pageNum" :total="total" :items-per-page="pageSize"
+                    :sibling-count="1" show-edges>
+                    <PaginationContent v-slot="{ items }">
+                        <PaginationPrevious />
+                        <template v-for="(item, index) in items">
+                            <PaginationItem v-if="item.type === 'page'" :key="index" :value="item.value"
+                                :is-active="item.value === pageNum">
+                                {{ item.value }}
+                            </PaginationItem>
+                            <PaginationEllipsis v-else :key="item.type" :index="index" />
+                        </template>
+                        <PaginationNext />
+                    </PaginationContent>
+                </Pagination>
             </div>
         </div>
     </div>
@@ -120,9 +130,10 @@
 
 <script setup lang="ts">
     import axios from "@/utils/myAxios"
-    import { onMounted, ref } from "vue"
+    import { onMounted, ref, watch } from "vue"
     import { Button } from "@/components/ui/button"
     import { Input } from "@/components/ui/input"
+    import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationNext, PaginationPrevious, } from '@/components/ui/pagination'
     import 'vue-sonner/style.css'
     import { toast } from "vue-sonner"
     import { useRoute, useRouter } from 'vue-router'
@@ -145,7 +156,6 @@
         image: string
     }
 
-    const products = ref<Product[]>([])
     const categories = ref<category[]>([{
         id: 0,
         productType: 0,
@@ -179,15 +189,32 @@
         }
     }
 
+    const products = ref<Product[]>([])
+    const pageNum = ref(1)
+    const pageSize = ref(15)
+    const total = ref(0)
+
+    watch(
+        () => pageNum.value,
+        () => {
+            ShowComponent(currentCategory.value)
+        }
+    )
+
     const ShowComponent = async (category: category) => {
         try {
             currentCategory.value = category
             router.replace(`/buy/${category.id}`)
             if (category.productType === 0) {
                 const response = await axios.get("/api/user/shop/products/hot", {
-                    params: { count: 0 } // 稍微多取几个，或者保持5个
+                    params: {
+                        pageNum: pageNum.value,
+                        pageSize: pageSize.value,
+                    }
                 })
-                allProducts.value = response.data.data
+                const resData = response.data.data
+                allProducts.value = resData.list
+                total.value = resData.total
             } else if (category.productType === 1) {
                 const response = await axios.get('/api/user/shop/products/components', {
                     params: {

@@ -1,5 +1,6 @@
 package com.laolao.controller.user.forum;
 
+import com.github.pagehelper.PageInfo;
 import com.laolao.common.result.Result;
 import com.laolao.pojo.forum.dto.CreatePostDTO;
 import com.laolao.pojo.forum.vo.CommentReplyVO;
@@ -91,11 +92,10 @@ public class PostController {
     /**
      * 获取热门帖子
      *
-     * @param count 数量
      * @return 帖子简单信息
      */
     @GetMapping("/hot")
-    public Result<List<PostSimpleVO>> getHot(int count) {
-        return postService.getHot(count);
+    public Result<PageInfo<PostSimpleVO>> getHot(Integer pageNum, Integer pageSize) {
+        return postService.getHot(pageNum, pageSize);
     }
 }

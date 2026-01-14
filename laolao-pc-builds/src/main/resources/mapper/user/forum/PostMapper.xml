@@ -28,12 +28,4 @@
             #{id}
         </foreach>
     </select>
-    <select id="getHot" resultType="com.laolao.pojo.forum.entity.Post" parameterType="com.laolao.pojo.forum.entity.Post">
-        select *, (like_count * 1 + comment_count * 4) - TIMESTAMPDIFF(HOUR, created_at, NOW()) AS hot_score
-            from forum_post where status = 1
-            order by hot_score DESC
-            <if test="count != 0">
-                limit #{count}
-            </if>
-    </select>
 </mapper>

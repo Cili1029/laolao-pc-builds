@@ -10,7 +10,7 @@
             <div
                 class="mt-5 flex items-center gap-4 rounded-2xl border border-slate-100 bg-white/90 px-6 py-5 shadow-sm">
                 <img :src="categoryStore.getCategoryById(categoryStore.currentCategory)?.image" class="h-15 w-15" />
-                
+
                 <div>
                     <p class="text-3xl font-black text-slate-900">
                         {{ categoryStore.getCategoryById(categoryStore.currentCategory)?.name }}
@@ -43,31 +43,46 @@
                     <p class="w-24 text-center text-base">最后回复</p>
                 </div>
             </div>
-            <div class="divide-y divide-slate-100">
-                <div v-for="simple in postSimple" :key="simple.id"
-                    class="flex flex-wrap items-center justify-between gap-4 px-6 py-4 transition hover:bg-slate-50/60">
-                    <div class="space-y-2">
-                        <router-link :to="`/forum/${simple.categoryId}/post/${simple.id}`"
-                            class="text-lg font-semibold text-slate-900 hover:text-orange-500">
-                            {{ simple.title }}
-                        </router-link>
-                        <div @click="categoryStore.currentCategory = simple.categoryId"
-                            class="inline-flex cursor-pointer items-center rounded-full bg-slate-100 px-3 py-1 mx-2 text-xs text-slate-500 transition hover:bg-slate-200">
-                                <img :src="categoryStore.getCategoryById(simple.categoryId)?.image" class="h-4 w-4" />
-                                
-                            {{ categoryStore.getCategoryById(simple.categoryId)?.name }}
-                        </div>
-                    </div>
+            <div v-for="simple in postSimple" :key="simple.id"
+                class="flex flex-wrap items-center justify-between gap-4 px-6 py-4 transition hover:bg-slate-50/60">
+                <div class="space-y-2">
+                    <router-link :to="`/forum/${simple.categoryId}/post/${simple.id}`"
+                        class="text-lg font-semibold text-slate-900 hover:text-orange-500">
+                        {{ simple.title }}
+                    </router-link>
+                    <div @click="categoryStore.currentCategory = simple.categoryId"
+                        class="inline-flex cursor-pointer items-center rounded-full bg-slate-100 px-3 py-1 mx-2 text-xs text-slate-500 transition hover:bg-slate-200">
+                        <img :src="categoryStore.getCategoryById(simple.categoryId)?.image" class="h-4 w-4" />
 
-                    <div class="hidden items-center gap-4 text-slate-500 md:flex">
-                        <p class="w-12 text-center text-base font-bold text-slate-900">{{
-                            simple.commentCount }}</p>
-                        <p class="w-12 text-center text-base font-bold text-slate-900">{{ simple.likeCount
-                            }}</p>
-                        <p class="w-24 text-center text-sm font-bold text-slate-900">{{
-                            formatTime(simple.commentedAt) }}</p>
+                        {{ categoryStore.getCategoryById(simple.categoryId)?.name }}
                     </div>
                 </div>
+
+                <div class="hidden items-center gap-4 text-slate-500 md:flex">
+                    <p class="w-12 text-center text-base font-bold text-slate-900">{{
+                        simple.commentCount }}</p>
+                    <p class="w-12 text-center text-base font-bold text-slate-900">{{ simple.likeCount
+                        }}</p>
+                    <p class="w-24 text-center text-sm font-bold text-slate-900">{{
+                        formatTime(simple.commentedAt) }}</p>
+                </div>
+            </div>
+
+            <div v-if="categoryStore.currentCategory === 5" class="h-16 border-t flex items-center p-2">
+                <Pagination v-if="total > 0" v-model:page="pageNum" :total="total" :items-per-page="pageSize"
+                    :sibling-count="1" show-edges>
+                    <PaginationContent v-slot="{ items }">
+                        <PaginationPrevious />
+                        <template v-for="(item, index) in items">
+                            <PaginationItem v-if="item.type === 'page'" :key="index" :value="item.value"
+                                :is-active="item.value === pageNum">
+                                {{ item.value }}
+                            </PaginationItem>
+                            <PaginationEllipsis v-else :key="item.type" :index="index" />
+                        </template>
+                        <PaginationNext />
+                    </PaginationContent>
+                </Pagination>
             </div>
         </div>
     </div>
@@ -78,6 +93,7 @@
     import { ref, watch } from 'vue'
     import { Input } from "@/components/ui/input"
     import { Button } from "@/components/ui/button"
+    import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationNext, PaginationPrevious, } from '@/components/ui/pagination'
     import { useForumCategoryStore } from '@/stores/ForumCategoryStore'
     const categoryStore = useForumCategoryStore()
     import { usePostStore } from '@/stores/PostStore'
@@ -97,16 +113,39 @@
         commentedAt: string
     }
     const postSimple = ref<PostSimple[]>([])
+    const pageNum = ref(1)
+    const pageSize = ref(10)
+    const total = ref(0)
+
+    watch(
+        () => pageNum.value,
+        () => {
+            getPost()
+        }
+    )
 
     const back = ref<boolean>(false)
     const getPost = async () => {
         back.value = false
-        const response = await axios.get("/api/user/forum/post/simple", {
-            params: {
-                categoryId: categoryStore.currentCategory
-            }
-        })
-        postSimple.value = response.data.data
+        if (categoryStore.currentCategory === 5) {
+            // 热门
+            const response = await axios.get("/api/user/forum/post/hot", {
+                params: {
+                    pageNum: pageNum.value,
+                    pageSize: pageSize.value,
+                }
+            })
+            const resData = response.data.data
+            postSimple.value = resData.list
+            total.value = resData.total
+        } else {
+            const response = await axios.get("/api/user/forum/post/simple", {
+                params: {
+                    categoryId: categoryStore.currentCategory
+                }
+            })
+            postSimple.value = response.data.data
+        }
     }
 
     // 初始化dayjs

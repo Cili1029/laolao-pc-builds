@@ -1,5 +1,7 @@
 package com.laolao.service.user.forum.impl;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.laolao.common.context.UserContext;
 import com.laolao.common.result.Result;
 import com.laolao.converter.MapStruct;
@@ -43,12 +45,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Result<List<PostSimpleVO>> getPostSimple(int categoryId) {
-        List<Post> postList;
-        if (categoryId == 5) {
-            postList = postMapper.getHot(0);
-        } else {
-            postList = postMapper.selectPostSimple(categoryId);
-        }
+        List<Post> postList = postMapper.selectPostSimple(categoryId);
         List<PostSimpleVO> postSimpleVOList = new ArrayList<>();
         for (Post post : postList) {
             PostSimpleVO postSimpleVO = mapStruct.PostToSimpleVO(post);
@@ -166,14 +163,11 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Result<List<PostSimpleVO>> getHot(int count) {
-        List<Post> postList = postMapper.getHot(count);
-        List<PostSimpleVO> postSimpleVOList = new ArrayList<>();
-        for (Post post : postList) {
-            PostSimpleVO postSimpleVO = mapStruct.PostToSimpleVO(post);
-            postSimpleVOList.add(postSimpleVO);
-        }
-        return Result.success(postSimpleVOList);
+    public Result<PageInfo<PostSimpleVO>> getHot(Integer pageNum, Integer pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
+        List<PostSimpleVO> postList = postMapper.getHot();
+        PageInfo<PostSimpleVO> res = new PageInfo<>(postList);
+        return Result.success(res);
     }
 
     @Override

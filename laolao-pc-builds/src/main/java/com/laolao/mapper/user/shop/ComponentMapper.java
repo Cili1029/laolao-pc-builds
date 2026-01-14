@@ -37,5 +37,6 @@ public interface ComponentMapper {
             "where cv.id = #{id}")
     OrderProductVO selectOrderProduct(int productId);
 
-    List<ProductVO> getHot(int limit);
+    // 获取热门产品（组件和整机）
+    List<ProductVO> getHot();
 }

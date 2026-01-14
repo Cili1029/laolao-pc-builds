@@ -217,9 +217,12 @@
     const getPostHot = async () => {
         try {
             const response = await axios.get("/api/user/forum/post/hot", {
-                params: { count: 5 }
+                params: {
+                    pageNum: 1,
+                    pageSize: 5,
+                }
             })
-            postSimple.value = response.data.data
+            postSimple.value = response.data.data.list
         } catch (e) {
             console.error("Failed to load hot posts", e)
         }
@@ -240,9 +243,12 @@
     const getProductHot = async () => {
         try {
             const response = await axios.get("/api/user/shop/products/hot", {
-                params: { count: 5 } // 稍微多取几个，或者保持5个
+                params: {
+                    pageNum: 1,
+                    pageSize: 5,
+                }
             })
-            products.value = response.data.data
+            products.value = response.data.data.list
         } catch (e) {
             console.error("Failed to load hot products", e)
         }

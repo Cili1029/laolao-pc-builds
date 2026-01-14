@@ -1,6 +1,7 @@
 package com.laolao.mapper.user.forum;
 
 import com.laolao.pojo.forum.entity.Post;
+import com.laolao.pojo.forum.vo.PostSimpleVO;
 import org.apache.ibatis.annotations.*;
 
 import java.time.LocalDateTime;
@@ -35,5 +36,10 @@ public interface PostMapper {
 
     List<Post> getPostBatch(List<Integer> postIdList);
 
-    List<Post> getHot(int count);
+    @Select("""
+            select id, category_id, title, like_count, comment_count, commented_by, commented_at, (like_count * 1 + comment_count * 4) - TIMESTAMPDIFF(HOUR, created_at, NOW()) AS hot_score
+            from forum_post
+            order by hot_score DESC
+            """)
+    List<PostSimpleVO> getHot();
 }
