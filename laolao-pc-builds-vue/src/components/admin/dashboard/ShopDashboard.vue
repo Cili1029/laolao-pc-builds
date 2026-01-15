@@ -76,7 +76,17 @@
                     <CardDescription>本月销售表现最突出的前六件商品</CardDescription>
                 </CardHeader>
                 <CardContent class="flex-1 min-h-0 p-0 relative">
-                    <v-chart class="h-full w-full" :option="chartOption" autoresize />
+                    <v-chart v-if="summary.monthProducts.length > 0" class="h-full w-full" :option="chartOption" autoresize />
+                    <div v-else class="flex flex-col h-full items-center justify-center gap-4 text-center">
+                        <div class="rounded-full bg-muted/30 p-4">
+                            <Ghost class="h-10 w-10 text-muted-foreground/60" />
+                        </div>
+                        <div class="space-y-1">
+                            <p class="text-sm text-muted-foreground">
+                                这个月没有任何新发布的帖子！
+                            </p>
+                        </div>
+                    </div>
                 </CardContent>
             </Card>
         </div>
@@ -86,7 +96,7 @@
 <script setup lang="ts">
     import { ref, onMounted, computed } from 'vue'
     import axios from '@/utils/myAxios'
-    import { Package, DollarSign, ShoppingCart } from 'lucide-vue-next'
+    import { Package, DollarSign, ShoppingCart, Ghost } from 'lucide-vue-next'
     import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, } from "@/components/ui/card"
     import { use } from 'echarts/core'
     import { CanvasRenderer } from 'echarts/renderers'

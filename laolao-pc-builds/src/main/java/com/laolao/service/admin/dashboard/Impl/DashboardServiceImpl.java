@@ -7,6 +7,7 @@ import com.laolao.mapper.dashboard.UserDashboardMapper;
 import com.laolao.pojo.dashboard.vo.*;
 import com.laolao.service.admin.dashboard.DashboardService;
 import jakarta.annotation.Resource;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -25,8 +26,8 @@ public class DashboardServiceImpl implements DashboardService {
     @Resource
     private ForumDashboardMapper forumDashboardMapper;
 
-
     @Override
+    @Cacheable(value = "admin#10", key = "T(com.laolao.common.constant.RedisConstant).ADMIN_DASHBOARD_USER")
     public Result<UserDashboardSummaryVO> getUserSummary() {
         UserDashboardSummaryVO userDashboardSummaryVO = new UserDashboardSummaryVO();
         // 总用户
@@ -50,6 +51,7 @@ public class DashboardServiceImpl implements DashboardService {
     }
 
     @Override
+    @Cacheable(value = "admin#10", key = "T(com.laolao.common.constant.RedisConstant).ADMIN_DASHBOARD_SHOP")
     public Result<ShopDashboardSummaryVO> getShopSummary() {
         // 获取商品数据
         ShopDashboardSummaryVO shopDashboardSummaryVO = new ShopDashboardSummaryVO();
@@ -76,6 +78,7 @@ public class DashboardServiceImpl implements DashboardService {
     }
 
     @Override
+    @Cacheable(value = "admin#10", key = "T(com.laolao.common.constant.RedisConstant).ADMIN_DASHBOARD_FORUM")
     public Result<ForumDashboardSummaryVO> getForumSummary() {
         ForumDashboardSummaryVO forumDashboardSummaryVO = new ForumDashboardSummaryVO();
         forumDashboardSummaryVO.setCategoryCount(forumDashboardMapper.getCategoryCount());
@@ -90,7 +93,7 @@ public class DashboardServiceImpl implements DashboardService {
         forumDashboardSummaryVO.setMonthPostCount(forumDashboardMapper.getMonthPostCount(monthStart));
         forumDashboardSummaryVO.setMonthCommentCount(forumDashboardMapper.getMonthCommentCount(monthStart));
         forumDashboardSummaryVO.setAllMonthPostCount(forumDashboardMapper.getAllMonthPostCount());
-        forumDashboardSummaryVO.setHotCategories(forumDashboardMapper.getHotCategories());
+        forumDashboardSummaryVO.setHotCategories(forumDashboardMapper.getHotCategories(monthStart));
         return Result.success(forumDashboardSummaryVO);
     }
 }

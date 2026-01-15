@@ -47,8 +47,9 @@ public interface ForumDashboardMapper {
                 select c.name, count(f.id) post_count
                 from forum_post f
                          join forum_category c on f.category_id = c.id
+                where f.created_at >= #{monthStart} and f.created_at <= NOW()
                 group by f.category_id
                 order by post_count desc;
             """)
-    List<HotForumCategoryVO> getHotCategories();
+    List<HotForumCategoryVO> getHotCategories(LocalDateTime monthStart);
 }

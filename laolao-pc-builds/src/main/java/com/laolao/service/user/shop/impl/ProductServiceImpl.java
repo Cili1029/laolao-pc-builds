@@ -29,6 +29,7 @@ public class ProductServiceImpl implements ProductService {
     private MapStruct mapStruct;
 
     @Override
+    @Cacheable(value = "shop#720", key = "T(com.laolao.common.constant.RedisConstant).SHOP_COMPONENT_SIMPLE_KEY + #categoryId")
     public Result<List<ProductVO>> getComponentListWithCategoryId(int categoryId) {
         List<ProductVO> productVoList;
         productVoList = componentMapper.getByConditions(categoryId, null);
@@ -37,6 +38,7 @@ public class ProductServiceImpl implements ProductService {
 
 
     @Override
+    @Cacheable(value = "shop#720", key = "T(com.laolao.common.constant.RedisConstant).SHOP_BUNDLE_SIMPLE_KEY + #categoryId")
     public Result<List<ProductVO>> getBundleListWithCategoryId(int categoryId) {
         List<ProductVO> productVoList = new ArrayList<>();
         List<Bundle> bundles = bundleMapper.getByConditions(categoryId, null);
