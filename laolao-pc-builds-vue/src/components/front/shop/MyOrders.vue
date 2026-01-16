@@ -135,7 +135,7 @@
                     </DialogHeader>
 
                     <div class="flex flex-col md:flex-row flex-1 overflow-hidden">
-                        <!-- 左侧：商品列表 (可滚动) -->
+                        <!-- 左侧：商品列表 -->
                         <div
                             class="w-full md:w-7/12 bg-gray-50/30 p-6 overflow-y-auto scrollbar-edge border-r border-gray-100 h-[300px] md:h-auto">
                             <div class="space-y-3">
@@ -157,7 +157,7 @@
                             </div>
                         </div>
 
-                        <!-- 右侧：信息 (可滚动) -->
+                        <!-- 右侧：信息 -->
                         <div class="w-full md:w-5/12 bg-white p-6 overflow-y-auto scrollbar-edge h-[400px] md:h-auto">
                             <div class="space-y-6">
                                 <div v-if="detail?.trackingNo"

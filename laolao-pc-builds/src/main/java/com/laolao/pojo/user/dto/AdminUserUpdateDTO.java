@@ -2,15 +2,12 @@ package com.laolao.pojo.user.dto;
 
 import lombok.*;
 
-import java.io.Serializable;
-import java.time.LocalDateTime;
-
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class AdminUserUpdateDTO implements Serializable {
+public class AdminUserUpdateDTO {
     /**
      * 主键
      */

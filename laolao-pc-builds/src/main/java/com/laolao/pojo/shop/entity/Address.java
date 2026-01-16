@@ -2,15 +2,12 @@ package com.laolao.pojo.shop.entity;
 
 import lombok.*;
 
-import java.io.Serializable;
-
-
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class Address implements Serializable {
+public class Address {
     /**
      * 主键
      */

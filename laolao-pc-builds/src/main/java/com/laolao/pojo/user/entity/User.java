@@ -2,7 +2,6 @@ package com.laolao.pojo.user.entity;
 
 import lombok.*;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Getter
@@ -10,7 +9,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class User implements Serializable {
+public class User {
     /**
      * 主键
      */

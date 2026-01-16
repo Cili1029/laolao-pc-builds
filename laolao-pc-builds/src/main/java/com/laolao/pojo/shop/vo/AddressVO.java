@@ -2,14 +2,13 @@ package com.laolao.pojo.shop.vo;
 
 import lombok.*;
 
-import java.io.Serializable;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class AddressVO implements Serializable {
+public class AddressVO {
     /**
      * 主键
      */

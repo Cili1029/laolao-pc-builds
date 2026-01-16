@@ -23,12 +23,12 @@
 
                     <TableBody>
                         <TableRow v-for="post in posts" :key="post.id" class="hover:bg-muted/10">
-                            <!-- ID: 字体加大到 text-sm -->
+                            <!-- ID -->
                             <TableCell class="font-mono text-sm text-muted-foreground text-center">
                                 {{ post.id }}
                             </TableCell>
 
-                            <!-- 标题: 限制宽度 max-w-[150px] 并截断 -->
+                            <!-- 标题 -->
                             <TableCell>
                                 <router-link :to="`/forum/${post.categoryId}/post/${post.id}`"
                                     class="max-w-[150px] truncate font-medium text-sm text-foreground"
@@ -37,10 +37,9 @@
                                 </router-link>
                             </TableCell>
 
-                            <!-- 描述: 限制宽度 max-w-[220px] 并截断 -->
+                            <!-- 描述 -->
                             <TableCell>
                                 <div class="flex items-center gap-3">
-                                    <!-- 图片稍微加大到 h-10 (40px) 方便看清 -->
                                     <Avatar v-if="post.images && post.images.length > 0"
                                         class="h-10 w-10 rounded-md border shrink-0">
                                         <AvatarImage :src="post.images[0]!" class="object-cover" />
@@ -51,7 +50,6 @@
                                         <span class="text-xs text-muted-foreground">-</span>
                                     </div>
 
-                                    <!-- 文本截断关键：flex-1 + min-w-0 + truncate -->
                                     <div class="flex-1 min-w-0">
                                         <p class="truncate text-sm text-muted-foreground max-w-[220px]"
                                             :title="post.content">
@@ -61,7 +59,7 @@
                                 </div>
                             </TableCell>
 
-                            <!-- 数据统计: 字体加大 -->
+                            <!-- 数据统计 -->
                             <TableCell class="text-center font-mono text-sm">
                                 {{ post.likeCount }}
                             </TableCell>
@@ -78,7 +76,7 @@
                                 </Badge>
                             </TableCell>
 
-                            <!-- 时间信息: 字体使用 text-xs (比之前大一点)，两行显示 -->
+                            <!-- 时间信息 -->
                             <TableCell class="hidden xl:table-cell text-center text-xs text-muted-foreground">
                                 <div class="font-medium text-foreground/80 mb-1 truncate max-w-[100px] mx-auto">{{
                                     post.userId }}</div>
@@ -103,7 +101,7 @@
                                 <p v-else>无数据</p>
                             </TableCell>
 
-                            <!-- 操作: 按钮稍微大一点 h-9 -->
+                            <!-- 操作 -->
                             <TableCell class="text-center">
                                 <div class="flex items-center justify-center gap-2">
                                     <Select v-model="post.categoryId"

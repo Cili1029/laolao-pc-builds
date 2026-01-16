@@ -1,5 +1,6 @@
 package com.laolao.service.admin.dashboard.Impl;
 
+import com.laolao.common.constant.RedisConstant;
 import com.laolao.common.result.Result;
 import com.laolao.mapper.dashboard.ForumDashboardMapper;
 import com.laolao.mapper.dashboard.ShopDashboardMapper;
@@ -27,7 +28,8 @@ public class DashboardServiceImpl implements DashboardService {
     private ForumDashboardMapper forumDashboardMapper;
 
     @Override
-    @Cacheable(value = "admin#10", key = "T(com.laolao.common.constant.RedisConstant).ADMIN_DASHBOARD_USER")
+    @Cacheable(value = RedisConstant.Admin.CACHE_NAME + RedisConstant.Expire.MIN_10,
+            key = "T(com.laolao.common.constant.RedisConstant$Admin).USER")
     public Result<UserDashboardSummaryVO> getUserSummary() {
         UserDashboardSummaryVO userDashboardSummaryVO = new UserDashboardSummaryVO();
         // 总用户
@@ -51,7 +53,8 @@ public class DashboardServiceImpl implements DashboardService {
     }
 
     @Override
-    @Cacheable(value = "admin#10", key = "T(com.laolao.common.constant.RedisConstant).ADMIN_DASHBOARD_SHOP")
+    @Cacheable(value = RedisConstant.Admin.CACHE_NAME + RedisConstant.Expire.MIN_10,
+            key = "T(com.laolao.common.constant.RedisConstant$Admin).SHOP")
     public Result<ShopDashboardSummaryVO> getShopSummary() {
         // 获取商品数据
         ShopDashboardSummaryVO shopDashboardSummaryVO = new ShopDashboardSummaryVO();
@@ -78,7 +81,8 @@ public class DashboardServiceImpl implements DashboardService {
     }
 
     @Override
-    @Cacheable(value = "admin#10", key = "T(com.laolao.common.constant.RedisConstant).ADMIN_DASHBOARD_FORUM")
+    @Cacheable(value = RedisConstant.Admin.CACHE_NAME + RedisConstant.Expire.MIN_10,
+            key = "T(com.laolao.common.constant.RedisConstant$Admin).FORUM")
     public Result<ForumDashboardSummaryVO> getForumSummary() {
         ForumDashboardSummaryVO forumDashboardSummaryVO = new ForumDashboardSummaryVO();
         forumDashboardSummaryVO.setCategoryCount(forumDashboardMapper.getCategoryCount());

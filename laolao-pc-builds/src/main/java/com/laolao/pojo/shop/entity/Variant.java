@@ -2,7 +2,6 @@ package com.laolao.pojo.shop.entity;
 
 import lombok.*;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -12,7 +11,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @ToString
 @Builder
-public class Variant implements Serializable {
+public class Variant {
     /**
      * 主键
      */

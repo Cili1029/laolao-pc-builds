@@ -1,5 +1,6 @@
 package com.laolao.service.user.shop.impl;
 
+import com.laolao.common.constant.RedisConstant;
 import com.laolao.converter.MapStruct;
 import com.laolao.mapper.user.shop.ShopCategoryMapper;
 import com.laolao.pojo.shop.entity.ShopCategory;
@@ -21,7 +22,8 @@ public class ShopCategoryServiceImpl implements ShopCategoryService {
     private MapStruct mapStruct;
 
     @Override
-    @Cacheable(value = "shop#1440", key = "T(com.laolao.common.constant.RedisConstant).SHOP_CATEGORY")
+    @Cacheable(value = RedisConstant.Shop.CACHE_NAME + RedisConstant.Expire.DAY_1,
+            key = "T(com.laolao.common.constant.RedisConstant$Shop).CATEGORY")
     public Result<List<ShopCategoryVO>> list() {
         List<ShopCategory> shopCategoryList = shopCategoryMapper.get();
 

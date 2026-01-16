@@ -38,7 +38,6 @@
                                             </div>
                                             <div class="grid gap-2">
                                                 <Label>组件类别</Label>
-                                                <!-- 注意：Select 的 value 需要转为字符串匹配 -->
                                                 <Select v-model="newComponent!.categoryId">
                                                     <SelectTrigger>
                                                         <SelectValue placeholder="请选择类别" />
@@ -259,7 +258,7 @@
                                 </TableCell>
                             </TableRow>
 
-                            <!-- 子行：版本列表 -->
+                            <!-- 子行 -->
                             <TableRow v-if="openId === component.id">
                                 <TableCell colspan="12" class="p-0 border-t-0 bg-muted/20 shadow-inner">
                                     <div class="px-12 py-3">

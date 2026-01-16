@@ -81,9 +81,4 @@ public class Post {
      * 最后更新时间
      */
     private LocalDateTime updatedAt;
-
-    /**
-     * 热度分数
-     */
-    private int hotScore;
 }

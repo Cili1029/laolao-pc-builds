@@ -165,7 +165,7 @@
                                                 {{ simple.commentCount }}
                                             </span>
                                         </span>
-                                        <span class="ml-auto text-gray-300">{{ formatDate(simple.updatedAt) }}</span>
+                                        <span class="ml-auto text-gray-300">{{ formatDate(simple.commentedAt) }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -210,7 +210,7 @@
         title: string
         likeCount: number
         commentCount: number
-        updatedAt: string
+        commentedAt: string
     }
     const postSimple = ref<PostSimple[]>([])
 

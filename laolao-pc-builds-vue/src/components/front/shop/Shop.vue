@@ -42,10 +42,8 @@
                 <router-link :to="`/buy/product/${all.productType}/${all.id}`" v-show="currentCategory.id === 0"
                     class="group bg-white rounded-2xl overflow-hidden border border-gray-100 hover:border-gray-100 transition-all duration-300 relative z-10 hover:z-50 hover:scale-105 hover:shadow-lg"
                     v-for="all in allProducts" :key="`${all.productType}-${all.id}`">
-                    <!-- 图片容器 -->
                     <div class="relative w-full aspect-square bg-gray-50 overflow-hidden">
                         <img :src="all.image" class="w-full h-full" />
-                        <!-- 遮罩层，增加质感 -->
                         <div class="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-300">
                         </div>
                     </div>
@@ -76,10 +74,8 @@
                 <router-link :to="`/buy/product/${product.productType}/${product.id}`" v-show="currentCategory.id !== 0"
                     class="group bg-white rounded-2xl overflow-hidden border border-gray-100 hover:border-gray-100 transition-all duration-300 relative z-10 hover:z-50 hover:scale-105 hover:shadow-lg"
                     v-for="product in products" :key="`${product.productType}-${product.id}`">
-                    <!-- 图片容器 -->
                     <div class="relative w-full aspect-square bg-gray-50 overflow-hidden">
                         <img :src="product.image" class="w-full h-full" />
-                        <!-- 遮罩层，增加质感 -->
                         <div class="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-300">
                         </div>
                     </div>

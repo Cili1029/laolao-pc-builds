@@ -44,9 +44,4 @@ public class PostSimpleVO {
      * 最后评论时间
      */
     private LocalDateTime commentedAt;
-
-    /**
-     * 热度分数
-     */
-    private int hotScore;
 }

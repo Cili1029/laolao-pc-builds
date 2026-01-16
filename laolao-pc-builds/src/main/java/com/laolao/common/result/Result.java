@@ -3,14 +3,13 @@ package com.laolao.common.result;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.io.Serializable;
 
 /**
  * 后端统一返回结果
  */
 @Setter
 @Getter
-public class Result<T> implements Serializable {
+public class Result<T> {
 
     private Integer code; //编码：1成功，0为失败
     private String msg; //错误信息

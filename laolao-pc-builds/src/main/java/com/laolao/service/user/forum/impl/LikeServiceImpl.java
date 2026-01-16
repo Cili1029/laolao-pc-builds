@@ -1,5 +1,6 @@
 package com.laolao.service.user.forum.impl;
 
+import com.laolao.common.constant.CommonConstant;
 import com.laolao.common.context.UserContext;
 import com.laolao.common.result.Result;
 import com.laolao.mapper.user.forum.CommentMapper;
@@ -40,13 +41,13 @@ public class LikeServiceImpl implements LikeService {
             int newStatus = 1 - currentStatus;
             likeMapper.updateStatus(userId, likeDTO.getLikeType(),
                     likeDTO.getLikeId(), newStatus);
-            updateLikeCount(likeDTO, newStatus == 1 ? 1 : -1);
-            return Result.success(newStatus == 1 ? 1 : -1,newStatus == 1 ? "点赞！" : "取消点赞！");
+            updateLikeCount(likeDTO, newStatus == CommonConstant.CommonStatus.LIKED ? 1 : -1);
+            return Result.success(newStatus == CommonConstant.CommonStatus.LIKED ? 1 : -1,newStatus == 1 ? "点赞！" : "取消点赞！");
         }
     }
 
     private void updateLikeCount(LikeDTO likeDTO, int delta) {
-        if (likeDTO.getLikeType() == 1) {
+        if (likeDTO.getLikeType() == CommonConstant.ForumLike.POST) {
             postMapper.updateLikeCount(likeDTO.getLikeId(), delta);
         } else {
             commentMapper.updateLikeCount(likeDTO.getLikeId(), delta);

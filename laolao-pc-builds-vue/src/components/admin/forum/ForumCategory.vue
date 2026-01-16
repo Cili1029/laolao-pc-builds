@@ -35,7 +35,6 @@
                                 <div class="flex flex-col items-center gap-4" @click="showAddDialog = true">
                                     <div
                                         class="relative group cursor-pointer overflow-hidden rounded-xl border shadow-sm">
-                                        <!-- 使用 Avatar 或 img 均可，这里用 img 方便控制大图 -->
                                         <img :src="newCategory.image[0]" v-if="newCategory.image.length > 0"
                                             class="h-32 w-32 object-cover transition-transform duration-300 group-hover:scale-105" />
                                         <div v-else class="h-32 w-32"></div>
@@ -148,7 +147,6 @@
                                         <div class="flex flex-col items-center gap-4" @click="showUpdateDialog = true">
                                             <div
                                                 class="relative group cursor-pointer overflow-hidden rounded-xl border shadow-sm">
-                                                <!-- 使用 Avatar 或 img 均可，这里用 img 方便控制大图 -->
                                                 <img :src="category.image"
                                                     class="h-32 w-32 object-cover transition-transform duration-300 group-hover:scale-105" />
                                                 <div

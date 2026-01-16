@@ -266,7 +266,7 @@
                     </div>
                 </div>
 
-                <!-- 右边付款详细：固定宽度，sticky吸附 -->
+                <!-- 右边付款详细 -->
                 <div class="w-full lg:w-[340px] flex-shrink-0">
                     <div class="sticky top-0 bg-white p-5 border border-gray-100 rounded-lg shadow-lg flex flex-col">
                         <div class="border-b border-gray-100 pb-3 mb-4">

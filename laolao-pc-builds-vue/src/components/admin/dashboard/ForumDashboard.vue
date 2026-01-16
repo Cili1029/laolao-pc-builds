@@ -191,7 +191,6 @@
 
     use([CanvasRenderer, BarChart, LineChart, GridComponent, TooltipComponent])
 
-    // 折线图配置：优化单位和颜色
     const salesTrendOption = computed(() => {
         return {
             tooltip: {
@@ -234,7 +233,6 @@
         }
     })
 
-    // 柱状图配置：优化换行显示和语义
     const chartOption = computed(() => {
         const data = [...summary.value.hotCategories].reverse()
         return {

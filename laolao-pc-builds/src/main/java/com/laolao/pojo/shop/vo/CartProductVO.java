@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class CartProductVO implements Serializable {
+public class CartProductVO {
     /**
      * 商品Id
      */

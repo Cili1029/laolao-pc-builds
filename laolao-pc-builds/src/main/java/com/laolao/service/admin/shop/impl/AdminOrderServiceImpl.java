@@ -2,6 +2,7 @@ package com.laolao.service.admin.shop.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.laolao.common.constant.CommonConstant;
 import com.laolao.common.result.Result;
 import com.laolao.converter.MapStruct;
 import com.laolao.mapper.admin.shop.AdminOrderMapper;
@@ -57,7 +58,7 @@ public class AdminOrderServiceImpl implements AdminOrderService {
 
     @Override
     public Result<String> ship(AdminOrderShipDTO adminOrderShipDTO) {
-        adminOrderShipDTO.setStatus(3);
+        adminOrderShipDTO.setStatus(CommonConstant.Order.SHIPPED);
         adminOrderShipDTO.setShipTime(LocalDateTime.now());
         adminOrderMapper.ship(adminOrderShipDTO);
         return Result.success("已发货！");

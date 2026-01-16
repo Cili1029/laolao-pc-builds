@@ -2,6 +2,8 @@ package com.laolao.service.user.shop.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.laolao.common.constant.CommonConstant;
+import com.laolao.common.constant.RedisConstant;
 import com.laolao.converter.MapStruct;
 import com.laolao.mapper.user.shop.BundleMapper;
 import com.laolao.mapper.user.shop.ComponentMapper;
@@ -29,7 +31,8 @@ public class ProductServiceImpl implements ProductService {
     private MapStruct mapStruct;
 
     @Override
-    @Cacheable(value = "shop#720", key = "T(com.laolao.common.constant.RedisConstant).SHOP_COMPONENT_SIMPLE_KEY + #categoryId")
+    @Cacheable(value = RedisConstant.Shop.CACHE_NAME + RedisConstant.Expire.HOUR_12,
+            key = "T(com.laolao.common.constant.RedisConstant$Shop).COMPONENT_SIMPLE + #categoryId")
     public Result<List<ProductVO>> getComponentListWithCategoryId(int categoryId) {
         List<ProductVO> productVoList;
         productVoList = componentMapper.getByConditions(categoryId, null);
@@ -38,7 +41,8 @@ public class ProductServiceImpl implements ProductService {
 
 
     @Override
-    @Cacheable(value = "shop#720", key = "T(com.laolao.common.constant.RedisConstant).SHOP_BUNDLE_SIMPLE_KEY + #categoryId")
+    @Cacheable(value = RedisConstant.Shop.CACHE_NAME + RedisConstant.Expire.HOUR_12,
+            key = "T(com.laolao.common.constant.RedisConstant$Shop).BUNDLE_SIMPLE + #categoryId")
     public Result<List<ProductVO>> getBundleListWithCategoryId(int categoryId) {
         List<ProductVO> productVoList = new ArrayList<>();
         List<Bundle> bundles = bundleMapper.getByConditions(categoryId, null);
@@ -51,7 +55,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Result<List<ProductVO>> searchByName(int categoryId, String searchContent) {
-        if (categoryId == 0) {
+        if (categoryId == CommonConstant.Product.ALL) {
             // 全部搜索
             List<ProductVO> productVOS = componentMapper.getByConditions(0, searchContent);
             List<Bundle> bundles = bundleMapper.getByConditions(0, searchContent);
@@ -64,7 +68,7 @@ public class ProductServiceImpl implements ProductService {
 
         int productType = componentMapper.getType(categoryId);
         List<ProductVO> productVoList = new ArrayList<>();
-        if (productType == 1) {
+        if (productType == CommonConstant.Product.COMPONENT) {
             productVoList = componentMapper.getByConditions(categoryId, searchContent);
         } else {
             List<Bundle> bundles = bundleMapper.getByConditions(categoryId, searchContent);
@@ -77,8 +81,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    @Cacheable(value = "shop#60",
-            key = "#pageSize == 5 ? (T(com.laolao.common.constant.RedisConstant).SHOP_HOT_HOME + #pageNum) : (T(com.laolao.common.constant.RedisConstant).SHOP_HOT_ALL + #pageNum)")
+    @Cacheable(value = RedisConstant.Shop.CACHE_NAME + RedisConstant.Expire.HOUR_1,
+            key = "#pageSize == 5 ? (T(com.laolao.common.constant.RedisConstant$Shop).HOT_HOME) : (T(com.laolao.common.constant.RedisConstant$Shop).HOT_ALL + #pageNum)")
     public Result<PageInfo<ProductVO>> getHot(Integer pageNum, Integer pageSize) {
         PageHelper.startPage(pageNum, pageSize);
         List<ProductVO> Res = componentMapper.getHot();
@@ -88,7 +92,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    @Cacheable(value = "shop#720", key = "T(com.laolao.common.constant.RedisConstant).SHOP_COMPONENT_DETAIL_KEY + #id")
+    @Cacheable(value = RedisConstant.Shop.CACHE_NAME + RedisConstant.Expire.HOUR_12,
+            key = "T(com.laolao.common.constant.RedisConstant$Shop).COMPONENT_DETAIL + #id")
     public Result<ComponentDetailsVO> getComponentDetails(int id) {
         ComponentDetailsVO componentDetailsVO;
         // 部件
@@ -106,7 +111,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    @Cacheable(value = "shop#720", key = "T(com.laolao.common.constant.RedisConstant).SHOP_BUNDLE_DETAIL_KEY + #id")
+    @Cacheable(value = RedisConstant.Shop.CACHE_NAME + RedisConstant.Expire.HOUR_12,
+            key = "T(com.laolao.common.constant.RedisConstant$Shop).BUNDLE_DETAIL + #id")
     public Result<BundleDetailsVO> getBundleDetails(int id) {
         BundleDetailsVO bundleDetailsVO;
         Bundle bundle = bundleMapper.selectBundle(id);

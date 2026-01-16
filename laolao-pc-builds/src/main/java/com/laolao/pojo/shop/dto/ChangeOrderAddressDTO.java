@@ -2,15 +2,13 @@ package com.laolao.pojo.shop.dto;
 
 import lombok.*;
 
-import java.io.Serializable;
-
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
 @Builder
-public class ChangeOrderAddressDTO implements Serializable {
+public class ChangeOrderAddressDTO {
     /**
      * 收货人地址主键
      */

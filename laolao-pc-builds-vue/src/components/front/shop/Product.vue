@@ -1,12 +1,9 @@
 <template>
   <div class="h-full flex flex-col bg-slate-50 py-4 overflow-hidden">
-    <!-- 主卡片容器：用于居中和统一背景 -->
     <div
       class="flex-1 bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden max-w-screen-2xl mx-auto w-full">
-
-      <!-- Type 1: 单一组件商品 -->
       <div v-if="Number(route.params.productType) === 1" class="flex flex-col lg:flex-row h-full">
-        <!-- 左侧：图片与详细信息 (可滚动) -->
+        <!-- 左侧：图片与详细信息 -->
         <div
           class="w-full lg:w-7/12 h-full overflow-y-auto scrollbar-edge p-4 border-b lg:border-b-0 lg:border-r border-gray-100">
           <div class="w-full flex justify-center mb-8">
@@ -52,7 +49,7 @@
 
           <div class="border-t-3"></div>
 
-          <!-- 通用描述 (可滚动) -->
+          <!-- 通用描述 -->
           <div class="flex-grow overflow-y-auto scrollbar-edge">
             <p class="text-gray-600 text-sm leading-7">{{ component?.commonDescription }}</p>
           </div>

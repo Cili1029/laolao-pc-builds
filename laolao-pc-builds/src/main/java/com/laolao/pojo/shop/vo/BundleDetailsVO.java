@@ -2,7 +2,6 @@ package com.laolao.pojo.shop.vo;
 
 import lombok.*;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -11,7 +10,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class BundleDetailsVO implements Serializable {
+public class BundleDetailsVO {
     /**
      * 主键
      */

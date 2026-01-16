@@ -2,14 +2,12 @@ package com.laolao.pojo.shop.vo;
 
 import lombok.*;
 
-import java.io.Serializable;
-
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class DistrictVO implements Serializable {
+public class DistrictVO {
     /**
      * 行政区划级别
      * country:国家

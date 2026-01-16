@@ -37,9 +37,9 @@ public interface PostMapper {
     List<Post> getPostBatch(List<Integer> postIdList);
 
     @Select("""
-            select id, category_id, title, like_count, comment_count, commented_by, commented_at, (like_count * 1 + comment_count * 4) - TIMESTAMPDIFF(HOUR, created_at, NOW()) AS hot_score
+            select id, category_id, title, like_count, comment_count, commented_by, commented_at
             from forum_post
-            order by hot_score DESC
+            order by ((like_count * 1 + comment_count * 4) - TIMESTAMPDIFF(HOUR, created_at, NOW())) DESC
             """)
     List<PostSimpleVO> getHot();
 }

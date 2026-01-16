@@ -1,7 +1,7 @@
 <template>
-    <!-- 根容器：占满父容器，相对定位 -->
+    <!-- 根容器 -->
     <div class="h-full w-full overflow-hidden relative">
-        <!-- 表格滚动区域：填充分页上方所有空间 -->
+        <!-- 表格滚动区域 -->
         <div class="absolute inset-0 bottom-16 overflow-y-auto scrollbar-edge">
             <div class="rounded-md border bg-background shadow-sm h-full flex flex-col">
                 <Table v-if="bundles && bundles.length > 0">
@@ -42,7 +42,6 @@
                                             </div>
                                             <div class="grid gap-2">
                                                 <Label>组件类别</Label>
-                                                <!-- 注意：Select 的 value 需要转为字符串匹配 -->
                                                 <Select v-model="newBundle!.categoryId">
                                                     <SelectTrigger>
                                                         <SelectValue placeholder="请选择类别" />
@@ -312,7 +311,7 @@
                                 </TableCell>
                             </TableRow>
 
-                            <!-- 子行：版本列表 -->
+                            <!-- 子行 -->
                             <TableRow v-if="openId === bundle.id">
                                 <TableCell colspan="14" class="p-0 border-t-0 bg-muted/20 shadow-inner">
                                     <div class="px-12 py-3">

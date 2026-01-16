@@ -35,7 +35,6 @@
                                 <div class="flex flex-col items-center gap-4" @click="showAddDialog = true">
                                     <div
                                         class="relative group cursor-pointer overflow-hidden rounded-xl border shadow-sm">
-                                        <!-- 使用 Avatar 或 img 均可，这里用 img 方便控制大图 -->
                                         <img :src="newCategory.image[0]" v-if="newCategory.image.length > 0"
                                             class="h-32 w-32 object-cover transition-transform duration-300 group-hover:scale-105" />
                                         <div v-else class="h-32 w-32"></div>
@@ -54,14 +53,12 @@
                                 <div class="grid gap-4">
                                     <div class="grid gap-2">
                                         <Label>所属类别</Label>
-                                        <!-- 注意：Select 的 value 需要转为字符串匹配 -->
                                         <Select v-model="newCategory!.productType">
                                             <SelectTrigger>
                                                 <SelectValue placeholder="请选择类别" />
                                             </SelectTrigger>
                                             <SelectContent>
                                                 <SelectGroup>
-                                                    <!-- 这里的 value 视你的后端是 number 还是 string 而定 -->
                                                     <SelectItem :value="1">组件</SelectItem>
                                                     <SelectItem :value="2">整机</SelectItem>
                                                 </SelectGroup>
@@ -93,14 +90,14 @@
                     <!-- ID -->
                     <TableCell class="font-medium text-center">{{ category.id }}</TableCell>
 
-                    <!-- 分类类别：数字转文字 + Badge -->
+                    <!-- 分类类别 -->
                     <TableCell class="text-center">
                         <Badge variant="outline" class="font-normal">
                             {{ category.productType === 1 ? '组件' : (category.productType === 2 ? '整机' : '其他') }}
                         </Badge>
                     </TableCell>
 
-                    <!-- 分类：图片 + 名称 -->
+                    <!-- 分类 -->
                     <TableCell>
                         <div class="flex items-center gap-3">
                             <Avatar class="h-9 w-9 rounded-lg border">
@@ -181,7 +178,6 @@
                                         <div class="grid gap-4">
                                             <div class="grid gap-2">
                                                 <Label>所属类别</Label>
-                                                <!-- 注意：Select 的 value 需要转为字符串匹配 -->
                                                 <Select v-model="updateData!.productType"
                                                     :default-value="String(updateData!.productType)">
                                                     <SelectTrigger>
@@ -189,7 +185,6 @@
                                                     </SelectTrigger>
                                                     <SelectContent>
                                                         <SelectGroup>
-                                                            <!-- 这里的 value 视你的后端是 number 还是 string 而定 -->
                                                             <SelectItem :value="1">组件</SelectItem>
                                                             <SelectItem :value="2">整机</SelectItem>
                                                         </SelectGroup>
@@ -402,7 +397,7 @@
     })
 
     const initUpdateData = (category: Category) => {
-        // 1. 手动构建 updateData，避免深拷贝覆盖 image 数组类型
+        // 手动构建 updateData，避免深拷贝覆盖 image 数组类型
         updateData.value = {
             id: category.id,
             productType: category.productType,

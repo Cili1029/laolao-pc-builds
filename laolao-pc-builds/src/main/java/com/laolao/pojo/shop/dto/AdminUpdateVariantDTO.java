@@ -2,7 +2,6 @@ package com.laolao.pojo.shop.dto;
 
 import lombok.*;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 
 @Getter
@@ -10,7 +9,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class AdminUpdateVariantDTO implements Serializable {
+public class AdminUpdateVariantDTO {
     /**
      * 版本Id
      */

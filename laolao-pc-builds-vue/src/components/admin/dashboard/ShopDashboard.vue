@@ -47,7 +47,6 @@
                         <div class="text-xs text-muted-foreground">({{ summary.completedOrderCount }}/{{
                             summary.orderCount }})</div>
                     </div>
-                    <!-- 进度条可视化 -->
                     <div class="mt-3 h-2 w-full bg-secondary rounded-full overflow-hidden">
                         <div class="h-full bg-purple-500 transition-all duration-500"
                             :style="{ width: `${conversionRate * 100}%` }" />
@@ -156,14 +155,13 @@
     // 2. 注册组件
     use([CanvasRenderer, BarChart, LineChart, GridComponent, TooltipComponent])
 
-    // 3. 新增月销售额趋势的配置
+    // 3. 新增月销售额趋势
     const salesTrendOption = computed(() => {
         return {
             tooltip: {
                 trigger: 'axis',
                 backgroundColor: 'rgba(255, 255, 255, 0.9)',
                 textStyle: { color: '#000' },
-                // 格式化悬浮提示
                 formatter: (params: any) => {
                     const data = params[0]
                     return `${data.name}<br/>销售额: <span style="font-weight:bold">￥${data.value.toLocaleString()}</span>`
@@ -178,7 +176,7 @@
             },
             xAxis: {
                 type: 'category',
-                boundaryGap: false, // 坐标轴两端不留白，折线贴边
+                boundaryGap: false,
                 data: summary.value.monthAmount.map(item => item.month),
                 axisLine: { show: false },
                 axisTick: { show: false },
@@ -202,7 +200,7 @@
                         width: 3,
                         color: '#3b82f6'
                     },
-                    // 渐变面积填充 (可选，让图表更好看)
+                    // 渐变面积填充
                     areaStyle: {
                         color: {
                             type: 'linear',

@@ -98,7 +98,6 @@
                             <span class="font-medium text-purple-700">75%</span>
                         </div>
                         <div class="h-1.5 w-full bg-purple-100 rounded-full overflow-hidden">
-                            <!-- 这里的 w-[75%] 实际开发中可以根据比例动态计算 -->
                             <div class="h-full bg-purple-500 rounded-full transition-all duration-1000"
                                 style="width: 75%" />
                         </div>
@@ -135,12 +134,10 @@
     import { useCommonStore } from '@/stores/CommonStore'
     const commonStore = useCommonStore()
 
-    // 模拟初始化
     onMounted(() => {
         fetchSummary()
     })
 
-    // 定义数据接口
     interface UserSimple {
         id: number;
         name: string;
@@ -175,17 +172,15 @@
         }
     }
 
-    // 2. 注册组件
     use([CanvasRenderer, BarChart, LineChart, GridComponent, TooltipComponent])
 
-    // 3. 新增月销售额趋势的配置
+    // 新增月销售额趋势
     const salesTrendOption = computed(() => {
         return {
             tooltip: {
                 trigger: 'axis',
                 backgroundColor: 'rgba(255, 255, 255, 0.9)',
                 textStyle: { color: '#000' },
-                // 格式化悬浮提示
                 formatter: (params: any) => {
                     const data = params[0]
                     return `${data.name}<br/>销售额: <span style="font-weight:bold">￥${data.value.toLocaleString()}</span>`
@@ -200,7 +195,7 @@
             },
             xAxis: {
                 type: 'category',
-                boundaryGap: false, // 坐标轴两端不留白，折线贴边
+                boundaryGap: false,
                 data: summary.value.monthCounts.map(item => item.month),
                 axisLine: { show: false },
                 axisTick: { show: false },
@@ -224,7 +219,7 @@
                         width: 3,
                         color: '#3b82f6'
                     },
-                    // 渐变面积填充 (可选，让图表更好看)
+                    // 渐变面积填充
                     areaStyle: {
                         color: {
                             type: 'linear',

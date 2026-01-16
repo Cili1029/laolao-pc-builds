@@ -296,7 +296,6 @@ import { CircleCheckBig, Ticket, TicketX } from "lucide-vue-next"
 
   const handleUseCoupon = (discountAmount: number, couponId: number) => {
     emits('discountAmount', discountAmount);
-    // 2. 可选：使用后关闭优惠券弹窗（根据需求决定是否添加）
     localIsOpen.value = false
     emits('update:isOpen', false) // 同步父组件的 isOpen 状态
     emits('userCouponId', couponId)

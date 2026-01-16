@@ -172,7 +172,7 @@
                                         <DialogTrigger as-child>
                                             <Button variant="ghost" size="icon"
                                                 class="h-8 w-8 text-muted-foreground hover:text-primary"
-                                                @click="openEdit(coupon)"> <!-- 修改：点击调用 openEdit -->
+                                                @click="openEdit(coupon)">
                                                 <Edit class="h-4 w-4" />
                                             </Button>
                                         </DialogTrigger>
@@ -388,8 +388,8 @@
         discountAmount: number
         stock: number
         status: number
-        validStartTime: string // ISO String
-        validEndTime: string   // ISO String
+        validStartTime: string
+        validEndTime: string
         createdBy: string
         createdAt: string
         updatedBy: string
@@ -404,7 +404,6 @@
     onMounted(() => getCoupon())
     watch(() => pageNum.value, () => getCoupon())
 
-    // --- API 方法 ---
     const getCoupon = async () => {
         try {
             const response = await axios.get("/api/admin/shop/coupon", {
@@ -440,7 +439,6 @@
         } catch (error) { console.error(error) }
     }
 
-    // --- 日期代理工厂 (通用) ---
     const createDateProxy = (targetRef: Ref<string>) => {
         return computed({
             get: () => {
@@ -453,13 +451,9 @@
         })
     }
 
-    // --- 辅助：时间格式化工具 ---
     const pad = (n: number | string) => n.toString().padStart(2, '0')
     const formatTimeStr = (arr: any[]) => arr.map(pad).join(':')
 
-    // ==========================================
-    // 1. 新增逻辑
-    // ==========================================
     const newCoupon = ref({
         name: "",
         stock: 0,
@@ -493,11 +487,7 @@
             getCoupon()
         } catch (error) { console.error(error) }
     }
-
-    // ==========================================
-    // 2. 编辑逻辑
-    // ==========================================
-
+    
     // 编辑用的数据模型
     const editingCoupon = ref({
         id: 0,
