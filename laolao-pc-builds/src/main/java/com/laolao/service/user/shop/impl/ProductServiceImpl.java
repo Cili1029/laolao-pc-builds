@@ -2,7 +2,7 @@ package com.laolao.service.user.shop.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.laolao.common.constant.CommonConstant;
+import com.laolao.common.constant.ProductConstant;
 import com.laolao.common.constant.RedisConstant;
 import com.laolao.converter.MapStruct;
 import com.laolao.mapper.user.shop.BundleMapper;
@@ -55,7 +55,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Result<List<ProductVO>> searchByName(int categoryId, String searchContent) {
-        if (categoryId == CommonConstant.Product.ALL) {
+        if (categoryId == ProductConstant.ALL) {
             // 全部搜索
             List<ProductVO> productVOS = componentMapper.getByConditions(0, searchContent);
             List<Bundle> bundles = bundleMapper.getByConditions(0, searchContent);
@@ -68,7 +68,7 @@ public class ProductServiceImpl implements ProductService {
 
         int productType = componentMapper.getType(categoryId);
         List<ProductVO> productVoList = new ArrayList<>();
-        if (productType == CommonConstant.Product.COMPONENT) {
+        if (productType == ProductConstant.COMPONENT) {
             productVoList = componentMapper.getByConditions(categoryId, searchContent);
         } else {
             List<Bundle> bundles = bundleMapper.getByConditions(categoryId, searchContent);

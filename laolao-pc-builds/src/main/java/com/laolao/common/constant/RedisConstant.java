@@ -1,5 +1,6 @@
 package com.laolao.common.constant;
 
+// Redis的key定义
 public class RedisConstant {
     public static final String SIGN_IN_CODE_KEY = "login:code:";
     public static final Long SIGN_IN_CODE_TTL = 2L;

@@ -1,6 +1,6 @@
 package com.laolao.common.websocket;
 
-import com.laolao.common.constant.CommonConstant;
+import com.laolao.common.constant.UserTypeConstant;
 import com.laolao.common.result.WsMessage;
 import com.laolao.mapper.dashboard.UserDashboardMapper;
 import com.laolao.pojo.dashboard.vo.OnlineUserVO;
@@ -44,7 +44,7 @@ public class NotificationHandler extends TextWebSocketHandler {
         Integer admin = (Integer) session.getAttributes().get("admin");
         if (userId != null) {
             USER_SESSIONS.put(userId, session);
-            if (admin == CommonConstant.UserType.ADMIN) {
+            if (admin == UserTypeConstant.ADMIN) {
                 ADMIN_SESSIONS.put(userId, session);
             }
             broadcastOnlineCount();

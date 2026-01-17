@@ -2,7 +2,8 @@ package com.laolao.service.user.forum.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.laolao.common.constant.CommonConstant;
+import com.laolao.common.constant.StatusConstant;
+import com.laolao.common.constant.ForumLikeConstant;
 import com.laolao.common.context.UserContext;
 import com.laolao.common.result.Result;
 import com.laolao.converter.MapStruct;
@@ -78,7 +79,7 @@ public class PostServiceImpl implements PostService {
 
         // 判断是否点赞
         ArrayList<LikeTarget> likeTargets = new ArrayList<>();
-        likeTargets.add(new LikeTarget(CommonConstant.ForumLike.POST, id));
+        likeTargets.add(new LikeTarget(ForumLikeConstant.POST, id));
 
         // 评论
         List<CommentVO> commentVOList = new ArrayList<>();
@@ -87,14 +88,14 @@ public class PostServiceImpl implements PostService {
             List<Like> likes = likeMapper.queryLike(UserContext.getCurrentId(), likeTargets);
             if (!likes.isEmpty()) {
                 // 点赞了
-                postVO.setLike(CommonConstant.CommonStatus.LIKED);
+                postVO.setLike(StatusConstant.LIKED);
             }
             return Result.success(postVO);
         } else {
             // 有，设置用户信息并转换写入
 
             // 帖子
-            likeTargets.addAll(allCommentList.stream().map(comment -> new LikeTarget(CommonConstant.ForumLike.COMMENT, comment.getId())).collect(Collectors.toCollection(ArrayList::new)));
+            likeTargets.addAll(allCommentList.stream().map(comment -> new LikeTarget(ForumLikeConstant.COMMENT, comment.getId())).collect(Collectors.toCollection(ArrayList::new)));
 
             List<Like> likes = likeMapper.queryLike(UserContext.getCurrentId(), likeTargets);
             //转为Map
@@ -112,14 +113,14 @@ public class PostServiceImpl implements PostService {
                 comment.setUser(userSimpleVO);
                 CommentVO commentVO = mapStruct.commentToCommentVO(comment);
 
-                if (likeMap.get(CommonConstant.ForumLike.COMMENT + "_" + commentVO.getId()) != null) {
+                if (likeMap.get(ForumLikeConstant.COMMENT + "_" + commentVO.getId()) != null) {
                     // 点赞了
-                    commentVO.setLike(CommonConstant.CommonStatus.LIKED);
+                    commentVO.setLike(StatusConstant.LIKED);
                 }
 
-                if (likeMap.get(CommonConstant.ForumLike.POST + "_" + id) != null) {
+                if (likeMap.get(ForumLikeConstant.POST + "_" + id) != null) {
                     // 点赞了
-                    postVO.setLike(CommonConstant.CommonStatus.LIKED);
+                    postVO.setLike(StatusConstant.LIKED);
                 }
                 commentVOList.add(commentVO);
             }
@@ -141,7 +142,7 @@ public class PostServiceImpl implements PostService {
         List<CommentReplyVO> commentReplyVOList = new ArrayList<>();
 
         // 获取点赞信息
-        ArrayList<LikeTarget> likeTargets = replyList.stream().map(reply -> new LikeTarget(CommonConstant.ForumLike.COMMENT, reply.getId())).collect(Collectors.toCollection(ArrayList::new));
+        ArrayList<LikeTarget> likeTargets = replyList.stream().map(reply -> new LikeTarget(ForumLikeConstant.COMMENT, reply.getId())).collect(Collectors.toCollection(ArrayList::new));
         List<Like> likes = likeMapper.queryLike(UserContext.getCurrentId(), likeTargets);
         //转为Map
         Map<Integer, Like> likeMap = likes.stream().collect(Collectors.toMap(
@@ -156,7 +157,7 @@ public class PostServiceImpl implements PostService {
             CommentReplyVO commentReplyVO = mapStruct.commentToCommentReplyVO(reply);
             if (likeMap.get(commentReplyVO.getId()) != null) {
                 // 点赞了
-                commentReplyVO.setLike(CommonConstant.CommonStatus.LIKED);
+                commentReplyVO.setLike(StatusConstant.LIKED);
             }
             commentReplyVOList.add(commentReplyVO);
         }

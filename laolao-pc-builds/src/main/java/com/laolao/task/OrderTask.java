@@ -1,6 +1,6 @@
 package com.laolao.task;
 
-import com.laolao.common.constant.CommonConstant;
+import com.laolao.common.constant.OrderConstant;
 import com.laolao.mapper.user.shop.OrderMapper;
 import com.laolao.mapper.user.shop.ShopCouponMapper;
 import com.laolao.pojo.shop.entity.Order;
@@ -31,7 +31,7 @@ public class OrderTask {
 
                 order.setDiscountAmount(BigDecimal.valueOf(0));
                 order.setUserCouponId(null);
-                order.setStatus(CommonConstant.Order.CANCELLED);
+                order.setStatus(OrderConstant.CANCELLED);
                 order.setCancelReason("订单超时自动取消");
                 order.setCancelTime(LocalDateTime.now());
                 orderMapper.updateExpire(order);

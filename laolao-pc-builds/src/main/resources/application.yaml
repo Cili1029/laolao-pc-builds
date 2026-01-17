@@ -65,8 +65,8 @@ pagehelper:
 laolao:
   jwt:
     # 设置jwt签名加密时使用的秘钥
-    user-secret-key: laolaolaolaolaolaolaolaolaolaolao
+    user-secret-key: ${laolao.jwt.user-secret-key}
     # 设置jwt过期时间
     user-ttl: 604800000
-amap:
-  key: ${laolao.amap.key}
+  amap:
+    key: ${laolao.amap.key}

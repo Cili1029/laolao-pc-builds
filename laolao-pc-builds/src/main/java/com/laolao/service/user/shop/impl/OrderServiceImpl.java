@@ -1,7 +1,8 @@
 package com.laolao.service.user.shop.impl;
 
-import com.laolao.common.constant.CommonConstant;
-import com.laolao.common.constant.MessageConstant;
+import com.laolao.common.constant.StatusConstant;
+import com.laolao.common.constant.OrderConstant;
+import com.laolao.common.constant.ProductConstant;
 import com.laolao.common.context.UserContext;
 import com.laolao.common.exception.UnknownError;
 import com.laolao.common.result.Result;
@@ -55,7 +56,7 @@ public class OrderServiceImpl implements OrderService {
         int userId = UserContext.getCurrentId();
         List<CartItem> cartItemList = cartMapper.getList(userId);
         List<IdAndQuantityVO> components = cartItemList.stream()
-                .filter(cartItem -> cartItem.getProductType() == CommonConstant.Product.COMPONENT)
+                .filter(cartItem -> cartItem.getProductType() == ProductConstant.COMPONENT)
                 .map(cartItem -> new IdAndQuantityVO(
                         cartItem.getProductId(),
                         cartItem.getQuantity()
@@ -63,7 +64,7 @@ public class OrderServiceImpl implements OrderService {
                 .toList();
         // 整机的id
         List<IdAndQuantityVO> bundles = cartItemList.stream()
-                .filter(cartItem -> cartItem.getProductType() == CommonConstant.Product.BUNDLE)
+                .filter(cartItem -> cartItem.getProductType() == ProductConstant.BUNDLE)
                 .map(cartItem -> new IdAndQuantityVO(
                         cartItem.getProductId(),
                         cartItem.getQuantity()
@@ -179,8 +180,8 @@ public class OrderServiceImpl implements OrderService {
     public Result<Integer> getStatus(String number) {
         int userId = UserContext.getCurrentId();
         Order order = orderMapper.selectOrder(userId, number);
-        if (order.getStatus() != CommonConstant.Order.PENDING_PAYMENT) {
-            throw new UnknownError(MessageConstant.UNKNOWN_ERROR);
+        if (order.getStatus() != OrderConstant.PENDING_PAYMENT) {
+            throw new UnknownError("未知错误");
         }
 
         return Result.success(order.getStatus());
@@ -255,7 +256,7 @@ public class OrderServiceImpl implements OrderService {
         Order order = new Order();
         order.setUserId(userId);
         order.setNumber(cancelDTO.getNumber());
-        order.setStatus(CommonConstant.Order.CANCELLED);
+        order.setStatus(OrderConstant.CANCELLED);
         order.setCancelReason(cancelDTO.getCancelReason());
         order.setCancelTime(LocalDateTime.now());
         order.setDiscountAmount(BigDecimal.valueOf(0));
@@ -271,7 +272,7 @@ public class OrderServiceImpl implements OrderService {
         Order order = new Order();
         order.setUserId(userId);
         order.setNumber(payDTO.getNumber());
-        order.setStatus(CommonConstant.Order.PENDING_SHIPMENT);
+        order.setStatus(OrderConstant.PENDING_SHIPMENT);
         order.setCheckoutTime(LocalDateTime.now());
         orderMapper.update(order);
         // websocket通知管理员
@@ -283,7 +284,7 @@ public class OrderServiceImpl implements OrderService {
     public Result<String> useCoupon(CouponDTO couponDTO) {
         int userId = UserContext.getCurrentId();
         couponDTO.setUserId(userId);
-        couponDTO.setStatus(CommonConstant.CommonStatus.USED);
+        couponDTO.setStatus(StatusConstant.USED);
         couponDTO.setUsedAt(LocalDateTime.now());
         // 查询优惠券信息折扣
         BigDecimal discountAmount = shopCouponMapper.selectShopCouponById(couponDTO.getId());
@@ -301,7 +302,7 @@ public class OrderServiceImpl implements OrderService {
     public Result<String> cancelCoupon(CouponDTO couponDTO) {
         int userId = UserContext.getCurrentId();
         couponDTO.setUserId(userId);
-        couponDTO.setStatus(CommonConstant.CommonStatus.NOT_USED);
+        couponDTO.setStatus(StatusConstant.NOT_USED);
         couponDTO.setUsedAt(null);
         orderMapper.updateCoupon(null, BigDecimal.valueOf(0), couponDTO.getNumber());
         couponDTO.setNumber(null);

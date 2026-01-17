@@ -1,6 +1,6 @@
 package com.laolao.common.websocket;
 
-import com.laolao.common.constant.JwtClaimsConstant;
+import com.laolao.common.constant.JwtConstant;
 import com.laolao.common.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
 import jakarta.annotation.Resource;
@@ -41,8 +41,8 @@ public class WebSocketInterceptor implements HandshakeInterceptor {
             if (StringUtils.isNotBlank(token)) {
                 try {
                     Claims claims = jwtUtil.parseJWT(token);
-                    int userId = Integer.parseInt(claims.get(JwtClaimsConstant.USER_ID).toString());
-                    int admin = Integer.parseInt(claims.get(JwtClaimsConstant.ADMIN).toString());
+                    int userId = Integer.parseInt(claims.get(JwtConstant.USER_ID).toString());
+                    int admin = Integer.parseInt(claims.get(JwtConstant.ADMIN).toString());
                     attributes.put("userId", userId);
                     attributes.put("admin", admin);
                     return true;

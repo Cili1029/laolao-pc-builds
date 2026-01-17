@@ -1,6 +1,6 @@
 package com.laolao.service.user.shop.impl;
 
-import com.laolao.common.constant.CommonConstant;
+import com.laolao.common.constant.ProductConstant;
 import com.laolao.common.context.UserContext;
 import com.laolao.common.result.Result;
 import com.laolao.converter.MapStruct;
@@ -38,12 +38,12 @@ public class CartServiceImpl implements CartService {
 
         // 组件的id
         List<Integer> componentIds = cartItemList.stream()
-                .filter(cartItem -> cartItem.getProductType() == CommonConstant.Product.COMPONENT)
+                .filter(cartItem -> cartItem.getProductType() == ProductConstant.COMPONENT)
                 .map(CartItem::getProductId)
                 .toList();
         // 整机的id
         List<Integer> bundleIds = cartItemList.stream()
-                .filter(cartItem -> cartItem.getProductType() == CommonConstant.Product.BUNDLE)
+                .filter(cartItem -> cartItem.getProductType() == ProductConstant.BUNDLE)
                 .map(CartItem::getProductId)
                 .toList();
         if (componentIds.isEmpty() && bundleIds.isEmpty()) {
@@ -64,7 +64,7 @@ public class CartServiceImpl implements CartService {
     @Override
     public Result<String> addToCart(BuyProductDTO buyProductDTO) {
         // 查询是否在售,库存是否充足
-        if (buyProductDTO.getProductType() == CommonConstant.Product.COMPONENT) {
+        if (buyProductDTO.getProductType() == ProductConstant.COMPONENT) {
             Variant variant = componentMapper.check(buyProductDTO.getProductId());
             if (variant == null) {
                 return Result.error("商品不可购买（停售或无库存）");

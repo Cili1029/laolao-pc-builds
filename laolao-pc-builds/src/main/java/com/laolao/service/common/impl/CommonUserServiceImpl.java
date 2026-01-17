@@ -1,7 +1,7 @@
 package com.laolao.service.common.impl;
 
-import com.laolao.common.constant.JwtClaimsConstant;
-import com.laolao.common.constant.MessageConstant;
+import com.laolao.common.constant.StatusConstant;
+import com.laolao.common.constant.JwtConstant;
 import com.laolao.common.constant.RedisConstant;
 import com.laolao.common.exception.UnknownError;
 import com.laolao.common.result.Result;
@@ -48,14 +48,14 @@ public class CommonUserServiceImpl implements CommonUserService {
     public Result<String> getEmailCode(String email) throws Exception {
         // 手机号位数验证待开发 应该先验证用户是否存在，在验证验证码
         if (!StringUtils.hasText(email)) {
-            throw new UnknownError(MessageConstant.UNKNOWN_ERROR);
+            throw new UnknownError("未知错误");
         }
 
         String code = String.format("%06d", ThreadLocalRandom.current().nextInt(0, 1000000));
 
         Boolean result = aliDirectMailUtil.sendEmail(email, "您的验证码是<strong>" + code + "</strong>");
         if (!result) {
-            throw new UnknownError(MessageConstant.UNKNOWN_ERROR);
+            throw new UnknownError("未知错误");
         }
 
         // 验证码存入Redis用于验证
@@ -65,41 +65,49 @@ public class CommonUserServiceImpl implements CommonUserService {
 
     @Override
     public Result<UserSimpleVO> signInWithUsername(SignInWithUsernameDTO signInWithUsernameDTO, HttpServletResponse res) {
-            User user = userCommonMapper.checkUserExists(signInWithUsernameDTO.getUsername(), null);
+        User user = userCommonMapper.checkUserExists(signInWithUsernameDTO.getUsername(), null);
 
-            // 用户不存在
-            if (user == null) {
-                return Result.error(MessageConstant.USER_NOT_FOUND);
-            }
+        // 用户不存在
+        if (user == null) {
+            return Result.error("用户不存在");
+        }
 
-            // 加密密码进行比对，错误则密码错误
-            String password = DigestUtils.md5DigestAsHex(signInWithUsernameDTO.getPassword().getBytes());
-            if (!password.equals(user.getPassword())) {
-                return Result.error(MessageConstant.PASSWORD_ERROR);
-            }
+        if (user.getStatus() == StatusConstant.DISABLED) {
+            return Result.error("账号被锁定");
+        }
 
-            // 设置jwt令牌并返回前端
-            return setJwtToSignIn(user, res);
+        // 加密密码进行比对，错误则密码错误
+        String password = DigestUtils.md5DigestAsHex(signInWithUsernameDTO.getPassword().getBytes());
+        if (!password.equals(user.getPassword())) {
+            return Result.error("密码错误");
+        }
+
+        // 设置jwt令牌并返回前端
+        return setJwtToSignIn(user, res);
     }
 
     @Override
     public Result<UserSimpleVO> signInWithEmail(SignInWithEmailDTO signInWithEmailDTO, HttpServletResponse res) {
-            Result<String> result = email(signInWithEmailDTO.getEmail(), signInWithEmailDTO.getEmailCode());
-            if (result != null) {
-                return Result.error(result.getMsg());
-            }
-            User user = userCommonMapper.checkUserExists(null, signInWithEmailDTO.getEmail());
-            // 用户不存在
-            if (user == null) {
-                return Result.error(MessageConstant.USER_NOT_FOUND);
-            }
-            return setJwtToSignIn(user, res);
+        Result<String> result = email(signInWithEmailDTO.getEmail(), signInWithEmailDTO.getEmailCode());
+        if (result != null) {
+            return Result.error(result.getMsg());
+        }
+        User user = userCommonMapper.checkUserExists(null, signInWithEmailDTO.getEmail());
+        // 用户不存在
+        if (user == null) {
+            return Result.error("用户不存在");
+        }
+
+        if (user.getStatus() == StatusConstant.DISABLED) {
+            return Result.error("账号被锁定");
+        }
+        return setJwtToSignIn(user, res);
     }
 
     @Override
     public Result<UserSimpleVO> signUp(SignUpDTO signUpDTO, HttpServletResponse res) {
         if (!StringUtils.hasText(signUpDTO.getUsername()) || !StringUtils.hasText(signUpDTO.getPassword()) || !StringUtils.hasText(signUpDTO.getEmail()) || !StringUtils.hasText(signUpDTO.getEmailCode())) {
-            return Result.error(MessageConstant.UNKNOWN_ERROR);
+            return Result.error("未知错误");
         }
 
         Result<String> result = email(signUpDTO.getEmail(), signUpDTO.getEmailCode());
@@ -108,7 +116,7 @@ public class CommonUserServiceImpl implements CommonUserService {
         }
 
         if (userCommonMapper.checkUserExists(signUpDTO.getUsername(), signUpDTO.getEmail()) != null) {
-            return Result.error(MessageConstant.USER_ALREADY_EXISTS);
+            return Result.error("用户已存在");
         }
 
         User user = new User();
@@ -141,7 +149,7 @@ public class CommonUserServiceImpl implements CommonUserService {
         // 验证验证码
         String emailCode = stringRedisTemplate.opsForValue().get(RedisConstant.SIGN_IN_CODE_KEY + email);
         if (emailCode == null || !emailCode.equals(code)) {
-            return Result.error(MessageConstant.EMAILCODE_ERROR);
+            return Result.error("验证码错误");
         }
 
         // 合理，通过
@@ -154,10 +162,10 @@ public class CommonUserServiceImpl implements CommonUserService {
 
         //设置jwt
         HashMap<String, Object> claims = new HashMap<>();
-        claims.put(JwtClaimsConstant.USER_ID, user.getId());
-        claims.put(JwtClaimsConstant.USERNAME, user.getUsername());
-        claims.put(JwtClaimsConstant.NAME, user.getName());
-        claims.put(JwtClaimsConstant.ADMIN, user.getAdmin());
+        claims.put(JwtConstant.USER_ID, user.getId());
+        claims.put(JwtConstant.USERNAME, user.getUsername());
+        claims.put(JwtConstant.NAME, user.getName());
+        claims.put(JwtConstant.ADMIN, user.getAdmin());
         String jwt = jwtUtil.createJWT(claims);
 
         // 存入Cookie
@@ -177,11 +185,11 @@ public class CommonUserServiceImpl implements CommonUserService {
         String jwt = getJwtFromCookie(cookies);
         try {
             Claims claims = jwtUtil.parseJWT(jwt);
-            long userId = Long.parseLong(claims.get(JwtClaimsConstant.USER_ID).toString());
+            long userId = Long.parseLong(claims.get(JwtConstant.USER_ID).toString());
             User user = userCommonMapper.getUser(userId);
             UserSimpleVO userSimpleVO = mapStruct.userToUserSimpleVO(user);
             return Result.success(userSimpleVO);
-        }  catch (Exception e) {
+        } catch (Exception e) {
             return Result.error();
         }
     }
