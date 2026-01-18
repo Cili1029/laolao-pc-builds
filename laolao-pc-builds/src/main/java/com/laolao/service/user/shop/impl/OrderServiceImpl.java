@@ -7,6 +7,7 @@ import com.laolao.common.context.UserContext;
 import com.laolao.common.exception.UnknownError;
 import com.laolao.common.result.Result;
 import com.laolao.common.result.WsMessage;
+import com.laolao.common.utils.OrderUtil;
 import com.laolao.common.websocket.NotificationHandler;
 import com.laolao.converter.MapStruct;
 import com.laolao.mapper.user.shop.*;
@@ -21,7 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -80,7 +80,7 @@ public class OrderServiceImpl implements OrderService {
         // 订单表
         Order order = new Order();
         // 生成订单号
-        String number = "ORD" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")) + (int) ((Math.random() * 900) + 100);
+        String number = OrderUtil.generateOrderNumber();
         // 下单用户
         order.setNumber(number);
         order.setUserId(userId);
@@ -140,7 +140,7 @@ public class OrderServiceImpl implements OrderService {
         // 订单表
         Order order = new Order();
         // 生成订单号
-        String number = "ORD" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")) + (int) ((Math.random() * 900) + 100);
+        String number = OrderUtil.generateOrderNumber();
         // 下单用户
         order.setNumber(number);
         order.setUserId(userId);

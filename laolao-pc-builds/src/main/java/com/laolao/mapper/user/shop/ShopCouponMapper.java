@@ -33,4 +33,10 @@ public interface ShopCouponMapper {
 
     @Select("select * from user_coupon u join shop_coupon s on u.coupon_id = s.id where user_id = #{userId} or u.id = #{userCouponId}")
     List<UserCouponVO> selectAvailableCoupon(int userId, int userCouponId);
+
+    @Select("select count(id) from user_coupon where user_id = #{userId} and coupon_id = #{couponId} ")
+    int isGotTheCoupon(int userId, int couponId);
+
+    @Update("update shop_coupon set stock = stock - 1 where id = #{couponId}")
+    void updateStock(int couponId);
 }

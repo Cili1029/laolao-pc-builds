@@ -15,6 +15,7 @@ public interface AdminShopCouponMapper {
 
     @Insert("insert into shop_coupon(name, description, minimum_amount, discount_amount, stock, valid_start_time, valid_end_time, created_by, created_at, updated_by, updated_at) " +
             "value (#{name}, #{description}, #{minimumAmount}, #{discountAmount}, #{stock}, #{validStartTime}, #{validEndTime}, #{createdBy}, #{createdAt}, #{updatedBy}, #{updatedAt})")
+    @Options(useGeneratedKeys = true, keyProperty = "id")
     void insert(ShopCoupon shopCoupon);
 
     @Delete("delete from shop_coupon where id = #{id}")
@@ -29,4 +30,7 @@ public interface AdminShopCouponMapper {
             "where id like concat('%',#{searchContent},'%') or name like concat('%',#{searchContent},'%')" +
             "order by status desc")
     List<ShopCoupon> search(String searchContent);
+
+    @Select("select stock from shop_coupon where id = #{id}")
+    int selectOldStock(int id);
 }

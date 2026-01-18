@@ -17,6 +17,10 @@ public class RedisConstant {
     public static class Shop {
         public static final String CACHE_NAME = "shop";
 
+        // 优惠券
+        public static final String COUPON_LOCK = CACHE_NAME + "coupon:lock:";
+        public static final String COUPON_STOCK =CACHE_NAME + "coupon:stock:";
+
         // 商品分类
         public static final String CATEGORY = "category:";
 
