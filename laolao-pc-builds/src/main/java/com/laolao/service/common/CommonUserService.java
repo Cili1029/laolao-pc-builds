@@ -19,5 +19,5 @@ public interface CommonUserService {
 
     Result<String> signOut(HttpServletResponse res);
 
-    Result<UserSimpleVO> getProfile(HttpServletRequest req);
+    Result<UserSimpleVO> getProfile(HttpServletRequest req, HttpServletResponse res);
 }

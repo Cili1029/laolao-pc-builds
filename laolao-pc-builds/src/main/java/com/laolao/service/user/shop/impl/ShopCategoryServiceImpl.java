@@ -22,7 +22,7 @@ public class ShopCategoryServiceImpl implements ShopCategoryService {
     private MapStruct mapStruct;
 
     @Override
-    @Cacheable(value = RedisConstant.Shop.CACHE_NAME + RedisConstant.Expire.DAY_1,
+    @Cacheable(value = RedisConstant.Shop.CACHE_NAME + RedisConstant.Expire.STR_DAY_1,
             key = "T(com.laolao.common.constant.RedisConstant$Shop).CATEGORY")
     public Result<List<ShopCategoryVO>> list() {
         List<ShopCategory> shopCategoryList = shopCategoryMapper.get();

@@ -31,7 +31,7 @@ public class ProductServiceImpl implements ProductService {
     private MapStruct mapStruct;
 
     @Override
-    @Cacheable(value = RedisConstant.Shop.CACHE_NAME + RedisConstant.Expire.HOUR_12,
+    @Cacheable(value = RedisConstant.Shop.CACHE_NAME + RedisConstant.Expire.STR_HOUR_12,
             key = "T(com.laolao.common.constant.RedisConstant$Shop).COMPONENT_SIMPLE + #categoryId")
     public Result<List<ProductVO>> getComponentListWithCategoryId(int categoryId) {
         List<ProductVO> productVoList;
@@ -41,7 +41,7 @@ public class ProductServiceImpl implements ProductService {
 
 
     @Override
-    @Cacheable(value = RedisConstant.Shop.CACHE_NAME + RedisConstant.Expire.HOUR_12,
+    @Cacheable(value = RedisConstant.Shop.CACHE_NAME + RedisConstant.Expire.STR_HOUR_12,
             key = "T(com.laolao.common.constant.RedisConstant$Shop).BUNDLE_SIMPLE + #categoryId")
     public Result<List<ProductVO>> getBundleListWithCategoryId(int categoryId) {
         List<ProductVO> productVoList = new ArrayList<>();
@@ -81,7 +81,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    @Cacheable(value = RedisConstant.Shop.CACHE_NAME + RedisConstant.Expire.HOUR_1,
+    @Cacheable(value = RedisConstant.Shop.CACHE_NAME + RedisConstant.Expire.STR_HOUR_1,
             key = "#pageSize == 5 ? (T(com.laolao.common.constant.RedisConstant$Shop).HOT_HOME) : (T(com.laolao.common.constant.RedisConstant$Shop).HOT_ALL + #pageNum)")
     public Result<PageInfo<ProductVO>> getHot(Integer pageNum, Integer pageSize) {
         PageHelper.startPage(pageNum, pageSize);
@@ -92,7 +92,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    @Cacheable(value = RedisConstant.Shop.CACHE_NAME + RedisConstant.Expire.HOUR_12,
+    @Cacheable(value = RedisConstant.Shop.CACHE_NAME + RedisConstant.Expire.STR_HOUR_12,
             key = "T(com.laolao.common.constant.RedisConstant$Shop).COMPONENT_DETAIL + #id")
     public Result<ComponentDetailsVO> getComponentDetails(int id) {
         ComponentDetailsVO componentDetailsVO;
@@ -111,7 +111,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    @Cacheable(value = RedisConstant.Shop.CACHE_NAME + RedisConstant.Expire.HOUR_12,
+    @Cacheable(value = RedisConstant.Shop.CACHE_NAME + RedisConstant.Expire.STR_HOUR_12,
             key = "T(com.laolao.common.constant.RedisConstant$Shop).BUNDLE_DETAIL + #id")
     public Result<BundleDetailsVO> getBundleDetails(int id) {
         BundleDetailsVO bundleDetailsVO;

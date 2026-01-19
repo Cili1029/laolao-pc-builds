@@ -22,21 +22,23 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
+        // 登录校验
         registry.addInterceptor(signInInterceptor)
                 .addPathPatterns("/**")
                 .excludePathPatterns("/api/common/user/email-code")
                 .excludePathPatterns("/api/common/user/sign-in/username")
                 .excludePathPatterns("/api/common/user/sign-in/email")
                 .excludePathPatterns("/api/common/user/sign-up")
-                .excludePathPatterns("/api/common/user/profile")
                 .excludePathPatterns("/api/user/forum/post/hot")
                 .excludePathPatterns("/api/user/shop/products/hot")
                 .order(1);
 
+        // 管理员权限校验
         registry.addInterceptor(adminInInterceptor)
                 .addPathPatterns("/api/admin/**")
                 .order(2);
 
+        // Sql记录需求校验
         registry.addInterceptor(sqlMarkInterceptor)
                 .addPathPatterns("/api/admin/**")
                 .order(3);

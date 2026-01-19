@@ -30,7 +30,4 @@ public interface AdminShopCouponMapper {
             "where id like concat('%',#{searchContent},'%') or name like concat('%',#{searchContent},'%')" +
             "order by status desc")
     List<ShopCoupon> search(String searchContent);
-
-    @Select("select stock from shop_coupon where id = #{id}")
-    int selectOldStock(int id);
 }

@@ -2,6 +2,7 @@ package com.laolao.service.admin.user.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.laolao.common.constant.RedisConstant;
 import com.laolao.common.result.Result;
 import com.laolao.converter.MapStruct;
 import com.laolao.mapper.admin.user.AdminUserMapper;
@@ -13,6 +14,7 @@ import com.laolao.service.admin.user.AdminUserService;
 import jakarta.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -26,6 +28,8 @@ public class AdminUserServiceImpl implements AdminUserService {
     private MapStruct mapStruct;
     @Resource
     private SysFileMapper sysFileMapper;
+    @Resource
+    private StringRedisTemplate stringRedisTemplate;
 
     @Override
     public Result<PageInfo<AdminUserVO>> getUser(Integer pageNum, Integer pageSize, String searchContent) {
@@ -55,6 +59,7 @@ public class AdminUserServiceImpl implements AdminUserService {
         user.setId(id);
         user.setStatus(status);
         adminUserMapper.updateStatus(user);
+        stringRedisTemplate.delete(RedisConstant.User.SIGN_IN_JWT + id);
         return Result.success(status == 1 ? "已启用！" : "已禁用！");
     }
 

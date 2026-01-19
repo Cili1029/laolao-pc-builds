@@ -2,15 +2,28 @@ package com.laolao.common.constant;
 
 // Redis的key定义
 public class RedisConstant {
-    public static final String SIGN_IN_CODE_KEY = "login:code:";
-    public static final Long SIGN_IN_CODE_TTL = 2L;
-
     // 时间
     public static class Expire {
-        public static final String MIN_10 = "#10";
-        public static final String HOUR_1 = "#60";
-        public static final String HOUR_12 = "#720";
-        public static final String DAY_1 = "#1440";
+        public static final int MIN_2 = 2;
+        public static final int MIN_5 = 5;
+        public static final int MIN_10 = 10;
+        public static final int HOUR_1 = 60;
+        public static final int HOUR_12 = 720;
+        public static final int DAY_1 = 1440;
+        public static final int DAY_7 = 10080;
+
+        public static final String STR_MIN_10 = "#" + MIN_10;
+        public static final String STR_HOUR_1 = "#" + HOUR_1;
+        public static final String STR_HOUR_12 = "#" + HOUR_12;
+        public static final String STR_DAY_1 = "#" + DAY_1;
+    }
+    
+    // 用户
+    public static class User {
+        public static final String CACHE_NAME = "user";
+
+        public static final String SIGN_IN_CODE = CACHE_NAME + "::login:code:";
+        public static final String SIGN_IN_JWT = CACHE_NAME + "::login:jwt:";
     }
 
     // 商城
@@ -18,8 +31,8 @@ public class RedisConstant {
         public static final String CACHE_NAME = "shop";
 
         // 优惠券
-        public static final String COUPON_LOCK = CACHE_NAME + "coupon:lock:";
-        public static final String COUPON_STOCK =CACHE_NAME + "coupon:stock:";
+        public static final String COUPON_LOCK = CACHE_NAME + "::coupon:lock:";
+        public static final String COUPON_STOCK = CACHE_NAME + "::coupon:stock:";
 
         // 商品分类
         public static final String CATEGORY = "category:";

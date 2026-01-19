@@ -16,7 +16,7 @@ public interface UserCommonMapper {
 
 
     @Select("select * from user where id = #{userId}")
-    User getUser(long userId);
+    User getUser(int userId);
 
     List<User> selectUser(List<Integer> userIdList1);
 

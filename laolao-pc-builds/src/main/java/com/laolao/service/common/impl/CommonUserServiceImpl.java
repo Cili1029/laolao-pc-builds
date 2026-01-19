@@ -3,6 +3,7 @@ package com.laolao.service.common.impl;
 import com.laolao.common.constant.StatusConstant;
 import com.laolao.common.constant.JwtConstant;
 import com.laolao.common.constant.RedisConstant;
+import com.laolao.common.context.UserContext;
 import com.laolao.common.exception.UnknownError;
 import com.laolao.common.result.Result;
 import com.laolao.common.utils.AliDirectMailUtil;
@@ -16,7 +17,6 @@ import com.laolao.pojo.user.dto.SignUpDTO;
 import com.laolao.pojo.user.entity.User;
 import com.laolao.pojo.user.vo.UserSimpleVO;
 import com.laolao.service.common.CommonUserService;
-import io.jsonwebtoken.Claims;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -59,7 +59,7 @@ public class CommonUserServiceImpl implements CommonUserService {
         }
 
         // 验证码存入Redis用于验证
-        stringRedisTemplate.opsForValue().set(RedisConstant.SIGN_IN_CODE_KEY + email, code, RedisConstant.SIGN_IN_CODE_TTL, TimeUnit.MINUTES);
+        stringRedisTemplate.opsForValue().set(RedisConstant.User.SIGN_IN_CODE + email, code, RedisConstant.Expire.MIN_2, TimeUnit.MINUTES);
         return Result.success("已发送！");
     }
 
@@ -99,7 +99,7 @@ public class CommonUserServiceImpl implements CommonUserService {
         }
 
         if (user.getStatus() == StatusConstant.DISABLED) {
-            return Result.error("账号被锁定");
+            return Result.error("账号被锁定，有疑问联系管理员");
         }
         return setJwtToSignIn(user, res);
     }
@@ -137,8 +137,9 @@ public class CommonUserServiceImpl implements CommonUserService {
         cookie.setHttpOnly(true);        // 防止 XSS 攻击
         cookie.setSecure(false);         // 本地开发用 false，生产环境用 true (HTTPS)
         cookie.setPath("/");             // 对整个应用有效
-        cookie.setMaxAge(0); // 7天过期
+        cookie.setMaxAge(0);
         res.addCookie(cookie);
+        stringRedisTemplate.delete(RedisConstant.User.SIGN_IN_JWT + UserContext.getCurrentId());
         return Result.success("已退出！");
     }
 
@@ -147,7 +148,7 @@ public class CommonUserServiceImpl implements CommonUserService {
         // 手机号位数验证待开发
 
         // 验证验证码
-        String emailCode = stringRedisTemplate.opsForValue().get(RedisConstant.SIGN_IN_CODE_KEY + email);
+        String emailCode = stringRedisTemplate.opsForValue().get(RedisConstant.User.SIGN_IN_CODE + email);
         if (emailCode == null || !emailCode.equals(code)) {
             return Result.error("验证码错误");
         }
@@ -176,32 +177,20 @@ public class CommonUserServiceImpl implements CommonUserService {
         cookie.setMaxAge(7 * 24 * 60 * 60); // 7天过期
         res.addCookie(cookie);
 
+        // 同时存入Redis做双重校验
+        stringRedisTemplate.opsForValue().set(RedisConstant.User.SIGN_IN_JWT + user.getId(), jwt, RedisConstant.Expire.DAY_7, TimeUnit.MINUTES);
+
         return Result.success(userSimpleVO, "登陆/注册成功！");
     }
 
     @Override
-    public Result<UserSimpleVO> getProfile(HttpServletRequest req) {
-        Cookie[] cookies = req.getCookies();
-        String jwt = getJwtFromCookie(cookies);
-        try {
-            Claims claims = jwtUtil.parseJWT(jwt);
-            long userId = Long.parseLong(claims.get(JwtConstant.USER_ID).toString());
-            User user = userCommonMapper.getUser(userId);
-            UserSimpleVO userSimpleVO = mapStruct.userToUserSimpleVO(user);
-            return Result.success(userSimpleVO);
-        } catch (Exception e) {
+    public Result<UserSimpleVO> getProfile(HttpServletRequest req, HttpServletResponse res) {
+        if (UserContext.getCurrentId() == null) {
             return Result.error();
         }
-    }
 
-    public String getJwtFromCookie(Cookie[] cookies) {
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if (cookie.getName().equals("jwt_token")) {
-                    return cookie.getValue();
-                }
-            }
-        }
-        return null;
+        User user = userCommonMapper.getUser(UserContext.getCurrentId());
+        UserSimpleVO userSimpleVO = mapStruct.userToUserSimpleVO(user);
+        return Result.success(userSimpleVO);
     }
 }

@@ -28,7 +28,7 @@ public class DashboardServiceImpl implements DashboardService {
     private ForumDashboardMapper forumDashboardMapper;
 
     @Override
-    @Cacheable(value = RedisConstant.Admin.CACHE_NAME + RedisConstant.Expire.MIN_10,
+    @Cacheable(value = RedisConstant.Admin.CACHE_NAME + RedisConstant.Expire.STR_MIN_10,
             key = "T(com.laolao.common.constant.RedisConstant$Admin).USER")
     public Result<UserDashboardSummaryVO> getUserSummary() {
         UserDashboardSummaryVO userDashboardSummaryVO = new UserDashboardSummaryVO();
@@ -53,7 +53,7 @@ public class DashboardServiceImpl implements DashboardService {
     }
 
     @Override
-    @Cacheable(value = RedisConstant.Admin.CACHE_NAME + RedisConstant.Expire.MIN_10,
+    @Cacheable(value = RedisConstant.Admin.CACHE_NAME + RedisConstant.Expire.STR_MIN_10,
             key = "T(com.laolao.common.constant.RedisConstant$Admin).SHOP")
     public Result<ShopDashboardSummaryVO> getShopSummary() {
         // 获取商品数据
@@ -81,7 +81,7 @@ public class DashboardServiceImpl implements DashboardService {
     }
 
     @Override
-    @Cacheable(value = RedisConstant.Admin.CACHE_NAME + RedisConstant.Expire.MIN_10,
+    @Cacheable(value = RedisConstant.Admin.CACHE_NAME + RedisConstant.Expire.STR_MIN_10,
             key = "T(com.laolao.common.constant.RedisConstant$Admin).FORUM")
     public Result<ForumDashboardSummaryVO> getForumSummary() {
         ForumDashboardSummaryVO forumDashboardSummaryVO = new ForumDashboardSummaryVO();

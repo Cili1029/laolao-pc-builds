@@ -79,8 +79,8 @@ public class CommonUserController {
      * @return 用户基本数据
      */
     @GetMapping("/profile")
-    public Result<UserSimpleVO> getProfile(HttpServletRequest req) {
-        return userService.getProfile(req);
+    public Result<UserSimpleVO> getProfile(HttpServletRequest req, HttpServletResponse res) {
+        return userService.getProfile(req, res);
     }
 
     /**
