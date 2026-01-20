@@ -5,6 +5,10 @@ import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.laolao.common.constant.RedisConstant;
+import jakarta.annotation.Resource;
+import org.redisson.api.RBloomFilter;
+import org.redisson.api.RedissonClient;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
@@ -26,8 +30,11 @@ import java.time.Duration;
 @EnableCaching
 public class RedisConfig {
 
+    @Resource
+    private RedissonClient redissonClient;
+
     /**
-     * 核心配置：自定义 CacheManager
+     * 自定义Redis缓存配置
      */
     @Bean
     public CacheManager cacheManager(RedisConnectionFactory factory) {
@@ -46,7 +53,7 @@ public class RedisConfig {
     }
 
     /**
-     * 配置 Jackson 序列化器 (支持时间类型和多态)
+     * 配置Jackson序列化器 (解决时间类型和多态)
      */
     private GenericJackson2JsonRedisSerializer getJsonSerializer() {
         ObjectMapper objectMapper = new ObjectMapper();
@@ -60,7 +67,37 @@ public class RedisConfig {
     }
 
     /**
-     * 内部类：支持解析 #ttl 的 CacheManager
+     * 产品的布隆过滤器
+     */
+    @Bean
+    public RBloomFilter<Integer> componentBloomFilter() {
+        // 定义
+        RBloomFilter<Integer> productBloomFilter = redissonClient.getBloomFilter(RedisConstant.BloomFilter.COMPONENT_BLOOM);
+        // 初始化
+        // expectedInsertions: 预期插入的数据量
+        // falseProbability: 期望的误判率（通常设为 0.03 或 0.01）
+        productBloomFilter.tryInit(150L, 0.01);
+
+        return productBloomFilter;
+    }
+
+    /**
+     * 整机的布隆过滤器
+     */
+    @Bean
+    public RBloomFilter<Integer> bundleBloomFilter() {
+        // 定义
+        RBloomFilter<Integer> bundleBloomFilter = redissonClient.getBloomFilter(RedisConstant.BloomFilter.BUNDLE_BLOOM);
+        // 初始化
+        // expectedInsertions: 预期插入的数据量
+        // falseProbability: 期望的误判率（通常设为 0.03 或 0.01）
+        bundleBloomFilter.tryInit(150L, 0.01);
+
+        return bundleBloomFilter;
+    }
+
+    /**
+     * 解析#ttl时间
      */
     private static class TtlRedisCacheManager extends RedisCacheManager {
 

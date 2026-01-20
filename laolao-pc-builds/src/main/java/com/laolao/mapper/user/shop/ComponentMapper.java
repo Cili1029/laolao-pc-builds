@@ -39,4 +39,7 @@ public interface ComponentMapper {
 
     // 获取热门产品（组件和整机）
     List<ProductVO> getHot();
+
+    @Select("select id from shop_component")
+    List<Integer> selectId();
 }

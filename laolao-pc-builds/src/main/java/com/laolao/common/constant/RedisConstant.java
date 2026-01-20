@@ -61,4 +61,11 @@ public class RedisConstant {
         public static final String SHOP = DASHBOARD_PREFIX + "shop:";
         public static final String FORUM = DASHBOARD_PREFIX + "forum:";
     }
+
+    // 布隆过滤器
+    public static class BloomFilter {
+        public static final String CACHE_NAME = "bloom:";
+        public static final String COMPONENT_BLOOM = BloomFilter.CACHE_NAME + "component";
+        public static final String BUNDLE_BLOOM = BloomFilter.CACHE_NAME + "bundle";
+    }
 }

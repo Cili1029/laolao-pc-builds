@@ -11,7 +11,7 @@ import java.util.List;
 @ToString
 public class AdminAddBundleDTO {
     /**
-     * 组件名
+     * 整机名
      */
     private String name;
 
@@ -31,7 +31,7 @@ public class AdminAddBundleDTO {
     private String description;
 
     /**
-     * 通用描述
+     * 价格
      */
     private String price;
 }

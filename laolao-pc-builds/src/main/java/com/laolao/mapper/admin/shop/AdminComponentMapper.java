@@ -20,6 +20,7 @@ public interface AdminComponentMapper {
     void delete(int id);
 
     @Insert("insert into shop_component(name, category_id, images, common_description, created_by, created_at, updated_by, updated_at) value (#{name}, #{categoryId}, #{images}, #{commonDescription}, #{createdBy}, #{createdAt}, #{updatedBy}, #{updatedAt})")
+    @Options(useGeneratedKeys = true, keyProperty = "id")
     void insert(Component component);
 
     @Update("update shop_component set name = #{name}, category_id = #{categoryId}, common_description = #{commonDescription}, sort = #{sort}, images = #{images}, updated_by = #{updatedBy}, updated_at = #{updatedAt} where id = #{id}")
@@ -29,4 +30,7 @@ public interface AdminComponentMapper {
             "where id like concat('%',#{searchContent},'%') or name like concat('%',#{searchContent},'%') " +
             "order by created_at desc")
     List<Component> search(String searchContent);
+
+    @Select("select category_id from shop_component where id = #{id}")
+    int selectCategoryId(int id);
 }

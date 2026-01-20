@@ -14,6 +14,7 @@ import com.laolao.pojo.shop.vo.*;
 import com.laolao.common.result.Result;
 import com.laolao.service.user.shop.ProductService;
 import jakarta.annotation.Resource;
+import org.redisson.api.RBloomFilter;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +30,10 @@ public class ProductServiceImpl implements ProductService {
     private BundleMapper bundleMapper;
     @Resource
     private MapStruct mapStruct;
+    @Resource
+    private RBloomFilter<Integer> componentBloomFilter;
+    @Resource
+    private RBloomFilter<Integer> bundleBloomFilter;
 
     @Override
     @Cacheable(value = RedisConstant.Shop.CACHE_NAME + RedisConstant.Expire.STR_HOUR_12,
@@ -95,6 +100,11 @@ public class ProductServiceImpl implements ProductService {
     @Cacheable(value = RedisConstant.Shop.CACHE_NAME + RedisConstant.Expire.STR_HOUR_12,
             key = "T(com.laolao.common.constant.RedisConstant$Shop).COMPONENT_DETAIL + #id")
     public Result<ComponentDetailsVO> getComponentDetails(int id) {
+        // 先查布隆
+        if (!componentBloomFilter.contains(id)) {
+            return Result.error(null);
+        }
+
         ComponentDetailsVO componentDetailsVO;
         // 部件
         Component component = componentMapper.getProduct(id);
@@ -114,6 +124,11 @@ public class ProductServiceImpl implements ProductService {
     @Cacheable(value = RedisConstant.Shop.CACHE_NAME + RedisConstant.Expire.STR_HOUR_12,
             key = "T(com.laolao.common.constant.RedisConstant$Shop).BUNDLE_DETAIL + #id")
     public Result<BundleDetailsVO> getBundleDetails(int id) {
+        // 先查布隆
+        if (!bundleBloomFilter.contains(id)) {
+            return Result.error(null);
+        }
+
         BundleDetailsVO bundleDetailsVO;
         Bundle bundle = bundleMapper.selectBundle(id);
         bundleDetailsVO = mapStruct.bundleToProductDetailsVO(bundle);

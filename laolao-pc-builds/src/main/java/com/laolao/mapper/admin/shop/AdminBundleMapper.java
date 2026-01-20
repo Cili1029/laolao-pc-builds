@@ -58,4 +58,13 @@ public interface AdminBundleMapper {
             "where id like concat('%',#{searchContent},'%') or name like concat('%',#{searchContent},'%')" +
             "order by created_at desc")
     List<Bundle> search(String searchContent);
+
+    @Select("select category_id from shop_bundle where id = #{id}")
+    int selectCategoryId(int id);
+
+    @Select("delete from shop_bundle_configuration where bundle_id = #{id}")
+    void deleteVariantByBundleId(int id);
+
+    @Select("select bundle_id from shop_bundle_configuration where id = #{id}")
+    Integer selectBundleIdByConfigId(int id);
 }
