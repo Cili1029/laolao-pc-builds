@@ -1,5 +1,6 @@
 package com.laolao.service.user.shop.impl;
 
+import com.laolao.common.constant.RocketMQConstant;
 import com.laolao.common.constant.StatusConstant;
 import com.laolao.common.constant.OrderConstant;
 import com.laolao.common.constant.ProductConstant;
@@ -17,6 +18,8 @@ import com.laolao.pojo.shop.vo.*;
 import com.laolao.service.user.shop.CartService;
 import com.laolao.service.user.shop.OrderService;
 import jakarta.annotation.Resource;
+import org.apache.rocketmq.spring.core.RocketMQTemplate;
+import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,6 +48,8 @@ public class OrderServiceImpl implements OrderService {
     private ShopCouponMapper shopCouponMapper;
     @Resource
     private NotificationHandler notificationHandler;
+    @Resource
+    private RocketMQTemplate rocketMQTemplate;
 
     @Transactional
     @Override
@@ -115,6 +120,14 @@ public class OrderServiceImpl implements OrderService {
         // 清空购物车
         cartMapper.clear(userId);
 
+        // 发送订单到消息队列
+        rocketMQTemplate.syncSend(
+                RocketMQConstant.ORDER_TIMEOUT_TOPIC,
+                MessageBuilder.withPayload(id).build(),
+                3000,
+                5
+        );
+
         return Result.success(number, "创建订单成功");
     }
 
@@ -166,6 +179,14 @@ public class OrderServiceImpl implements OrderService {
         orderDetail.setOrderId(id);
         orderDetails.add(orderDetail);
         orderMapper.insertToDetail(orderDetails);
+
+        // 发送订单到消息队列
+        rocketMQTemplate.syncSend(
+                RocketMQConstant.ORDER_TIMEOUT_TOPIC,
+                MessageBuilder.withPayload(id).build(),
+                3000,
+                5
+        );
 
         return Result.success(number, "创建订单成功");
     }

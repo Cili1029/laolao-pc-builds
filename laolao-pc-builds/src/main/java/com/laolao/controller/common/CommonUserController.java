@@ -30,8 +30,8 @@ public class CommonUserController {
      * @throws Exception 阿里云邮件推送异常
      */
     @PostMapping("/email-code")
-    public Result<String> getEmailCode(@RequestBody Map<String, String> request) throws Exception {
-        return userService.getEmailCode(request.get("email"));
+    public Result<String> getEmailCode(@RequestBody Map<String, String> request, HttpServletRequest rq) throws Exception {
+        return userService.getEmailCode(request.get("email"), rq);
     }
 
     /**

@@ -76,7 +76,7 @@
                             <input type="text" placeholder="输入验证码" v-model="signInDetails.emailCode"
                                 class="w-5/7 rounded bg-gray-100 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-orange-200" />
                             <Button @click="!countDown && getEmailCode(signInDetails.email)"
-                                :disabled="countDown > 0 || isSendingCode || !signInDetails.email"
+                                :disabled="countDown > 0 || isSendingCode || !signInDetails.email || formErrors.signIn.email.length > 0"
                                 class="w-2/7 rounded bg-orange-100 text-xs text-orange-500 hover:bg-orange-200"
                                 :class="{ 'cursor-not-allowed': countDown }">
                                 {{ countDown > 0 ? countDown + 's' : "发送验证码" }}

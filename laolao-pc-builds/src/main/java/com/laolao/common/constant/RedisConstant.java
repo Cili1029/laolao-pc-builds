@@ -4,18 +4,10 @@ package com.laolao.common.constant;
 public class RedisConstant {
     // 时间
     public static class Expire {
-        public static final int MIN_2 = 2;
-        public static final int MIN_5 = 5;
-        public static final int MIN_10 = 10;
-        public static final int HOUR_1 = 60;
-        public static final int HOUR_12 = 720;
-        public static final int DAY_1 = 1440;
-        public static final int DAY_7 = 10080;
-
-        public static final String STR_MIN_10 = "#" + MIN_10;
-        public static final String STR_HOUR_1 = "#" + HOUR_1;
-        public static final String STR_HOUR_12 = "#" + HOUR_12;
-        public static final String STR_DAY_1 = "#" + DAY_1;
+        public static final String STR_MIN_10 = "#" + ExpireConstant.MIN_10;
+        public static final String STR_HOUR_1 = "#" + ExpireConstant.HOUR_1;
+        public static final String STR_HOUR_12 = "#" + ExpireConstant.HOUR_12;
+        public static final String STR_DAY_1 = "#" + ExpireConstant.DAY_1;
     }
     
     // 用户
@@ -24,6 +16,13 @@ public class RedisConstant {
 
         public static final String SIGN_IN_CODE = CACHE_NAME + "::login:code:";
         public static final String SIGN_IN_JWT = CACHE_NAME + "::login:jwt:";
+
+        // 邮箱验证码邮箱限流 一个邮箱1分钟只能发送1次
+        public static final String LIMIT_EMAIL_RATE = CACHE_NAME + "::login:limit:email:";
+        // 邮箱验证码IP请求限流 一个IP24小时只能发送10次
+        public static final String LIMIT_IP_RATE = CACHE_NAME + "::login:limit:ip:";
+
+
     }
 
     // 商城

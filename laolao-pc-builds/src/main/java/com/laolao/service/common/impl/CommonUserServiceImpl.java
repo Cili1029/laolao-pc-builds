@@ -1,5 +1,6 @@
 package com.laolao.service.common.impl;
 
+import com.laolao.common.constant.ExpireConstant;
 import com.laolao.common.constant.StatusConstant;
 import com.laolao.common.constant.JwtConstant;
 import com.laolao.common.constant.RedisConstant;
@@ -21,11 +22,15 @@ import jakarta.annotation.Resource;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.redisson.api.RRateLimiter;
+import org.redisson.api.RateType;
+import org.redisson.api.RedissonClient;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 import org.springframework.util.StringUtils;
 
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
@@ -43,12 +48,21 @@ public class CommonUserServiceImpl implements CommonUserService {
     private StringRedisTemplate stringRedisTemplate;
     @Resource
     private AliDirectMailUtil aliDirectMailUtil;
+    @Resource
+    private RedissonClient redissonClient;
 
     @Override
-    public Result<String> getEmailCode(String email) throws Exception {
+    public Result<String> getEmailCode(String email, HttpServletRequest rq) throws Exception {
         // 手机号位数验证待开发 应该先验证用户是否存在，在验证验证码
         if (!StringUtils.hasText(email)) {
             throw new UnknownError("未知错误");
+        }
+
+        // 判断是否限流
+        String remoteAddr = rq.getRemoteAddr();
+        Result<String> checkResult = checkEmailRateLimit(email, remoteAddr);
+        if (checkResult.getCode() == 0) {
+            return checkResult;
         }
 
         String code = String.format("%06d", ThreadLocalRandom.current().nextInt(0, 1000000));
@@ -59,8 +73,27 @@ public class CommonUserServiceImpl implements CommonUserService {
         }
 
         // 验证码存入Redis用于验证
-        stringRedisTemplate.opsForValue().set(RedisConstant.User.SIGN_IN_CODE + email, code, RedisConstant.Expire.MIN_2, TimeUnit.MINUTES);
+        stringRedisTemplate.opsForValue().set(RedisConstant.User.SIGN_IN_CODE + email, code, ExpireConstant.MIN_2, TimeUnit.MINUTES);
         return Result.success("已发送！");
+    }
+
+    public Result<String> checkEmailRateLimit(String email, String ip){
+        // 限流一 邮箱限流 一个邮箱1分钟只能发送1次
+        RRateLimiter emailRateLimiter = redissonClient.getRateLimiter(RedisConstant.User.LIMIT_EMAIL_RATE + email);
+        // 初始化
+        emailRateLimiter.trySetRate(RateType.OVERALL, 1, Duration.ofMinutes(ExpireConstant.MIN_1));
+        if (!emailRateLimiter.tryAcquire()) {
+            return Result.error("请求过于频繁，请 1 分钟后再试");
+        }
+
+        // 限流二 IP限流 一个IP24小时只能发送10次
+        RRateLimiter ipRateLimiter = redissonClient.getRateLimiter(RedisConstant.User.LIMIT_IP_RATE + ip);
+        // 初始化
+        ipRateLimiter.trySetRate(RateType.OVERALL, 10, Duration.ofMinutes(ExpireConstant.DAY_1));
+        if (!ipRateLimiter.tryAcquire()) {
+            return Result.error("今日该 IP 发送次数已达上限，请明日再试");
+        }
+        return Result.success();
     }
 
     @Override
@@ -178,7 +211,7 @@ public class CommonUserServiceImpl implements CommonUserService {
         res.addCookie(cookie);
 
         // 同时存入Redis做双重校验
-        stringRedisTemplate.opsForValue().set(RedisConstant.User.SIGN_IN_JWT + user.getId(), jwt, RedisConstant.Expire.DAY_7, TimeUnit.MINUTES);
+        stringRedisTemplate.opsForValue().set(RedisConstant.User.SIGN_IN_JWT + user.getId(), jwt, ExpireConstant.DAY_7, TimeUnit.MINUTES);
 
         return Result.success(userSimpleVO, "登陆/注册成功！");
     }

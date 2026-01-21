@@ -47,4 +47,7 @@ public interface OrderMapper {
 
     @Update("update shop_order set status = 5, receive_time = #{now} where number = #{number}")
     void receiveOrder(String number, LocalDateTime now);
+
+    @Select("select status from shop_order where id = #{id}")
+    int checkStatus(Integer id);
 }

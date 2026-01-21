@@ -9,7 +9,8 @@
 - **装机商城**
   - 多级商品分类（配件与整机）、商品变体（如显存容量）、热销榜单。
   - 购物车管理、订单创建与查询、优惠券使用、收货地址管理（高德地图行政区三级联动）。
-  - 定时任务自动关闭超时未支付订单（15分钟），Redis 缓存热点数据。
+  - 定时任务自动关闭超时未支付订单（15分钟），RocketMQ 异步消息队列处理订单超时。
+  - 布隆过滤器优化商品查询性能，防止缓存穿透。
   - 支持整机套餐（Bundle）和单个配件（Component）两种商品类型。
 - **装机社区**
   - 帖子分类浏览、热门榜、详情页。
@@ -34,6 +35,8 @@
 - `laolao_pc_builds.sql` 提供完整数据库初始化脚本，开箱即用。
 - 文件上传管理，支持阿里云 OSS 存储。
 - SQL 日志记录与拦截器，便于调试与监控。
+- RocketMQ 消息队列，支持异步订单超时处理。
+- 布隆过滤器优化查询性能，防止缓存穿透。
 - WebSocket 实时通信，支持在线用户统计、实时通知推送。
 - 数据可视化，基于 ECharts 的图表展示，支持趋势分析、排名统计等。
 
@@ -41,7 +44,7 @@
 
 | 层级 | 技术 |
 | ---- | ---- |
-| 后端 | Spring Boot 3.5.6 · Spring Web / WebFlux · Spring WebSocket · MyBatis 3.0.5 & PageHelper 2.1.1 · MySQL 8.x · Redis · MapStruct 1.6.3 · JWT (jjwt 0.13.0) · Alibaba OSS 3.18.3 & DirectMail · Druid 1.2.27 · Lombok 1.18.42 · Spring AOP · 定时任务（@Scheduled） |
+| 后端 | Spring Boot 3.5.6 · Spring Web / WebFlux · Spring WebSocket · MyBatis 3.0.5 & PageHelper 2.1.1 · MySQL 8.x · Redis & Redisson 4.1.0 · RocketMQ 2.3.5 · MapStruct 1.6.3 · JWT (jjwt 0.13.0) · Alibaba OSS 3.18.3 & DirectMail · Druid 1.2.27 · Lombok 1.18.42 · Spring AOP · 定时任务（@Scheduled） · 布隆过滤器 |
 | 前端 | Vue 3.5.22 + TypeScript 5.9.3 + Vite 7.1.7 · Pinia 3.0.3 · Vue Router 4.5.1 · Tailwind CSS v4.1.14 · shadcn-vue (reka-ui 2.6.1) · Axios 1.12.2 · lucide-vue-next 0.544.0 · @vueuse/core 13.9.0 · vue-sonner 2.0.9 · vue3-cookies 1.0.6 · dayjs 1.11.18 · ECharts 6.0.0 & vue-echarts 8.0.1 · @tanstack/vue-table 8.21.3 |
 | 配套 | Maven Wrapper · npm / Node.js 20+ · 阿里云对象存储（OSS）· 阿里云邮件推送（DirectMail）· 高德地图开放平台 Web 服务 API |
 
@@ -73,6 +76,7 @@
 │  │  │  ├─ admin/               # 管理端服务
 │  │  │  ├─ user/                # 用户端服务
 │  │  │  └─ common/              # 通用服务
+│  │  ├─ consumer/               # RocketMQ 消息消费者
 │  │  ├─ mapper/                 # MyBatis 数据访问层
 │  │  │  ├─ admin/               # 管理端 Mapper
 │  │  │  ├─ user/                # 用户端 Mapper
@@ -83,11 +87,12 @@
 │  │  │  ├─ forum/               # 论坛相关实体
 │  │  │  └─ user/                # 用户相关实体
 │  │  ├─ common/                 # 通用组件
-│  │  │  ├─ config/              # 配置类（MyBatis、Web）
+│  │  │  ├─ config/              # 配置类（MyBatis、Redis、WebSocket）
 │  │  │  ├─ constant/            # 常量定义
 │  │  │  ├─ context/             # 上下文（用户上下文、SQL日志上下文）
 │  │  │  ├─ exception/           # 异常定义
 │  │  │  ├─ handler/             # 处理器（全局异常、类型转换）
+│  │  │  ├─ init/                # 初始化器（布隆过滤器初始化）
 │  │  │  ├─ properties/          # 配置属性类
 │  │  │  ├─ result/              # 统一响应结果
 │  │  │  ├─ utils/               # 工具类（JWT、OSS、邮件、地图）
@@ -154,6 +159,7 @@
 - **Node.js 20+ / npm 10+**：前端开发环境
 - **MySQL 8.x**：数据库
 - **Redis 6+**：缓存服务
+- **RocketMQ 5.x**：消息队列服务
 
 ### 可选服务（用于完整功能）
 
@@ -224,6 +230,8 @@ Vite Dev Server 默认在 `http://localhost:5173` 运行，`vite.config.ts` 已�
 | `laolao.redis.*` | Redis 连接配置 | 包括 host、port、database，用于缓存用户态与热点数据 |
 | `laolao.jwt.user-secret-key` | JWT 签名秘钥 | 自行更换并妥善保管，用于生成和验证用户 Token |
 | `laolao.jwt.user-ttl` | JWT 过期时间 | 默认 604800000 毫秒（7天） |
+| `rocketmq.name-server` | RocketMQ 服务器地址 | 默认 127.0.0.1:9876，用于订单超时消息队列 |
+| `rocketmq.producer.*` | RocketMQ 生产者配置 | 包括 group、send-message-timeout、retry-times-when-send-failed |
 | `aliyun.oss.*` | 阿里云 OSS 配置 | 包括 endpoint、bucket-name，用于用户上传图片 |
 | `aliyun.access-key.*` | 阿里云 AccessKey | 包括 accessKey-id、accessKey-secret，用于 OSS 和邮件推送 |
 | `laolao.amap.key` | 高德地图 Web 服务 Key | 用于地址解析和三级联动 |
@@ -262,6 +270,18 @@ Vite Dev Server 默认在 `http://localhost:5173` 运行，`vite.config.ts` 已�
 ### 定时任务
 
 - **订单超时处理**：每 5 分钟检查一次，自动关闭超过 15 分钟未支付的订单，并释放已使用的优惠券。
+
+### RocketMQ 消息队列
+
+- **异步订单处理**：使用 RocketMQ 实现订单超时的异步消息处理，提高系统响应性能。
+- **生产者消费者模式**：订单超时任务作为生产者发送延迟消息，OrderConsumer 作为消费者处理订单取消逻辑。
+- **消息可靠性**：支持消息重试机制，确保订单超时处理不遗漏。
+
+### 布隆过滤器
+
+- **商品查询优化**：使用 Redisson 实现的分布式布隆过滤器，缓存商品ID，提升查询性能。
+- **防缓存穿透**：在查询商品前先检查布隆过滤器，避免无效的数据库查询。
+- **自动初始化**：应用启动时自动加载所有商品ID到布隆过滤器，预热缓存。
 
 ### WebSocket 实时通信
 

@@ -9,7 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 public interface CommonUserService {
-    Result<String> getEmailCode(String email) throws Exception;
+    Result<String> getEmailCode(String email, HttpServletRequest rq) throws Exception;
 
     Result<UserSimpleVO> signInWithUsername(SignInWithUsernameDTO signInWithUsernameDTO, HttpServletResponse res);
 
