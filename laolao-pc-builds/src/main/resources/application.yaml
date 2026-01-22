@@ -68,7 +68,7 @@ rocketmq:
   # 生产者（消息发送方）相关配置
   producer:
     # 生产者组名称
-    group: order_producer_group
+    group: producer_group
     # 发送消息的超时时间
     send-message-timeout: 3000
     # 发送失败时的重试次数

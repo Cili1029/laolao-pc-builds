@@ -26,6 +26,8 @@ import UserDashboard from '@/components/admin/dashboard/UserDashboard.vue';
 import ShopDashboard from '@/components/admin/dashboard/ShopDashboard.vue';
 import ForumDashboard from '@/components/admin/dashboard/ForumDashboard.vue';
 
+import Test from '@/components/common/test.vue';
+
 const routes: Array<RouteRecordRaw> = [
   // 1. 用户端路由组
   {
@@ -33,6 +35,12 @@ const routes: Array<RouteRecordRaw> = [
     component: frontLayout,
     redirect: '/home',
     children: [
+      {
+        path: 'test',
+        name: 'Test',
+        component: Test,
+        meta: { showFooter: false }
+      },
       {
         path: 'home',
         name: 'Home',

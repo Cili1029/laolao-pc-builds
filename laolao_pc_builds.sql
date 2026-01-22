@@ -11,7 +11,7 @@
  Target Server Version : 80039 (8.0.39)
  File Encoding         : 65001
 
- Date: 10/12/2025 20:11:35
+ Date: 21/01/2026 16:13:42
 */
 
 SET NAMES utf8mb4;
@@ -46,11 +46,11 @@ CREATE TABLE `forum_comment`  (
   `parent` int NULL DEFAULT 0 COMMENT '回复指向的评论Id,0则为直接评论',
   `content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '评论内容',
   `images` json NULL COMMENT '评论图片，最多一张',
-  `status` tinyint NULL DEFAULT 1 COMMENT '状态：1-正常，2-删除',
+  `status` tinyint NULL DEFAULT 1 COMMENT '状态：1-正常，0-删除/锁定',
   `like_count` int NULL DEFAULT 0 COMMENT '点赞数',
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 261 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '帖子评论' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 273 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '帖子评论' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for forum_like
@@ -65,7 +65,7 @@ CREATE TABLE `forum_like`  (
   `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '最后更新时间（点赞，取消点赞时间）',
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `uk_user_target`(`user_id` ASC, `like_type` ASC, `like_id` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 54 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '点赞记录表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 58 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '点赞记录表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for forum_post
@@ -80,11 +80,14 @@ CREATE TABLE `forum_post`  (
   `images` json NULL COMMENT '帖子图片',
   `like_count` int NULL DEFAULT 0 COMMENT '点赞数',
   `comment_count` int NULL DEFAULT 0 COMMENT '评论数',
-  `status` tinyint NULL DEFAULT 1 COMMENT '状态：1-正常，2-删除',
+  `status` tinyint NULL DEFAULT 1 COMMENT '状态：1-正常，0-删除/锁定',
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '最后更新时间（评论时间）',
+  `commented_by` int NOT NULL COMMENT '最后评论人',
+  `commented_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '最后评论时间',
+  `updated_by` int NULL DEFAULT NULL COMMENT '最后更新人',
+  `updated_at` datetime NULL DEFAULT NULL COMMENT '最后更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 95 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '帖子' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 100 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '帖子' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for shop_address
@@ -101,7 +104,7 @@ CREATE TABLE `shop_address`  (
   `detail_address` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '详细地址',
   `default_address` tinyint(1) NULL DEFAULT 0 COMMENT '是否默认地址',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 36 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '收货人信息' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 37 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '收货人信息' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for shop_bundle
@@ -125,7 +128,7 @@ CREATE TABLE `shop_bundle`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `idx_bundles_category_status`(`category_id` ASC, `status` ASC, `sort` ASC) USING BTREE,
   INDEX `idx_bundles_name`(`name` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 9 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '整机信息' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 10 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '整机信息' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for shop_bundle_configuration
@@ -143,7 +146,7 @@ CREATE TABLE `shop_bundle_configuration`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `idx_bundle_config_bundle`(`bundle_id` ASC, `variant_id` ASC) USING BTREE,
   INDEX `idx_bundle_config_quantity`(`bundle_id` ASC, `quantity` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 27 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '整机配置信息' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 28 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '整机配置信息' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for shop_cart_item
@@ -158,7 +161,7 @@ CREATE TABLE `shop_cart_item`  (
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 194 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '购物车' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 206 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '购物车' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for shop_category
@@ -201,7 +204,7 @@ CREATE TABLE `shop_component`  (
   INDEX `idx_components_category_status`(`category_id` ASC, `status` ASC, `sort` ASC) USING BTREE,
   INDEX `idx_components_name`(`name` ASC) USING BTREE,
   INDEX `idx_components_status_sort`(`status` ASC, `sort` ASC, `id` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 76 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '组件信息' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 77 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '组件信息' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for shop_component_variant
@@ -222,7 +225,7 @@ CREATE TABLE `shop_component_variant`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `idx_variants_component_status`(`component_id` ASC, `status` ASC) USING BTREE,
   INDEX `idx_variants_stock_status`(`stock` ASC, `status` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 130 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '组件版本信息' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 131 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '组件版本信息' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for shop_coupon
@@ -243,7 +246,7 @@ CREATE TABLE `shop_coupon`  (
   `updated_by` int NOT NULL DEFAULT 0 COMMENT '更新人',
   `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 9 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 11 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for shop_order
@@ -261,15 +264,17 @@ CREATE TABLE `shop_order`  (
   `phone` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '收货人手机号',
   `address_id` int NULL DEFAULT NULL COMMENT '当前选择的地址Id',
   `address` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '收货地址（用于存入固定订单信息）',
+  `tracking_no` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '快递单号',
+  `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `checkout_time` datetime NULL DEFAULT NULL COMMENT '支付时间',
+  `ship_time` datetime NULL DEFAULT NULL COMMENT '发货时间',
+  `arrival_time` datetime NULL DEFAULT NULL COMMENT '到货时间',
+  `receive_time` datetime NULL DEFAULT NULL COMMENT '确认收货时间',
+  `cancel_time` datetime NULL DEFAULT NULL COMMENT '订单取消时间',
   `cancel_reason` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '订单取消原因',
   `rejection_reason` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '订单拒绝原因',
-  `checkout_time` datetime NULL DEFAULT NULL COMMENT '支付时间',
-  `cancel_time` datetime NULL DEFAULT NULL COMMENT '订单取消时间',
-  `delivery_time` datetime NULL DEFAULT NULL COMMENT '发货时间',
-  `receive_time` datetime NULL DEFAULT NULL COMMENT '确认收货时间',
-  `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 102 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '订单表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 112 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '订单表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for shop_order_detail
@@ -285,7 +290,7 @@ CREATE TABLE `shop_order_detail`  (
   `price` decimal(10, 2) NOT NULL COMMENT '单价',
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 120 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '订单明细表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 133 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '订单明细表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for sys_file
@@ -310,7 +315,7 @@ CREATE TABLE `user`  (
   `avatar` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '头像',
   `name` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '用户昵称',
   `email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '邮箱',
-  `status` int NOT NULL DEFAULT 1 COMMENT '状态：1-启用 2-禁用',
+  `status` int NOT NULL DEFAULT 1 COMMENT '状态：1-启用 0-禁用',
   `admin` int NOT NULL DEFAULT 0 COMMENT '管理权限 1-是 0-否',
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_by` int NOT NULL DEFAULT 0 COMMENT '更新人',
@@ -331,6 +336,6 @@ CREATE TABLE `user_coupon`  (
   `claimed_at` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '领取时间',
   `used_at` datetime NULL DEFAULT NULL COMMENT '使用时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 24 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 30 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 SET FOREIGN_KEY_CHECKS = 1;

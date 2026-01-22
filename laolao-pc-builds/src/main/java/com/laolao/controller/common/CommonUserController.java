@@ -25,13 +25,13 @@ public class CommonUserController {
     /**
      * 获取邮箱验证码
      *
-     * @param request 请求
+     * @param email 请求
      * @return 结果信息
      * @throws Exception 阿里云邮件推送异常
      */
     @PostMapping("/email-code")
-    public Result<String> getEmailCode(@RequestBody Map<String, String> request, HttpServletRequest rq) throws Exception {
-        return userService.getEmailCode(request.get("email"), rq);
+    public Result<String> getEmailCode(@RequestBody Map<String, String> email, HttpServletRequest rq) throws Exception {
+        return userService.getEmailCode(email.get("email"), rq);
     }
 
     /**

@@ -125,7 +125,7 @@ public class OrderServiceImpl implements OrderService {
                 RocketMQConstant.ORDER_TIMEOUT_TOPIC,
                 MessageBuilder.withPayload(id).build(),
                 3000,
-                5
+                16
         );
 
         return Result.success(number, "创建订单成功");
@@ -185,7 +185,7 @@ public class OrderServiceImpl implements OrderService {
                 RocketMQConstant.ORDER_TIMEOUT_TOPIC,
                 MessageBuilder.withPayload(id).build(),
                 3000,
-                5
+                16
         );
 
         return Result.success(number, "创建订单成功");
