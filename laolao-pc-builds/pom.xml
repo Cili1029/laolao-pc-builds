@@ -67,11 +67,12 @@
             <version>4.1.0</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.apache.rocketmq</groupId>
-            <artifactId>rocketmq-spring-boot-starter</artifactId>
-            <version>2.3.5</version>
-        </dependency>
+<!--        RocketMQ，服务器配置低开不了，这边用定时任务代替-->
+<!--        <dependency>-->
+<!--            <groupId>org.apache.rocketmq</groupId>-->
+<!--            <artifactId>rocketmq-spring-boot-starter</artifactId>-->
+<!--            <version>2.3.5</version>-->
+<!--        </dependency>-->
 
         <dependency>
             <groupId>com.mysql</groupId>

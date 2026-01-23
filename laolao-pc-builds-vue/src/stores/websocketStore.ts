@@ -9,8 +9,8 @@ export const useWebSocketStore = defineStore('websocket', () => {
     const isConnected = ref(false)
     let heartbeatTimer: any = null
     let reconnectTimer: any = null
+    let isIntentionalDisconnect = false // 标记是否为主动断开
 
-    // 连接地址：走 Vite 代理，注意用 ws 协议，且路径要匹配 vite.config.ts
     // location.host 会自动适配 localhost:5173
     const WS_URL = `ws://${location.host}/ws/notify`
 
@@ -23,6 +23,7 @@ export const useWebSocketStore = defineStore('websocket', () => {
         socket.value.onopen = () => {
             console.log('✅ WebSocket 连接成功')
             isConnected.value = true
+            isIntentionalDisconnect = false // 连接成功时重置标记
             startHeartbeat()
         }
 
@@ -34,7 +35,14 @@ export const useWebSocketStore = defineStore('websocket', () => {
             console.log('❌ WebSocket 连接断开')
             isConnected.value = false
             stopHeartbeat()
-            // 尝试重连 (5秒后)
+
+            // 如果是主动断开（退出登录），不重连
+            if (isIntentionalDisconnect) {
+                isIntentionalDisconnect = false // 重置标记
+                return
+            }
+
+            // 只有意外断开时才重连
             clearTimeout(reconnectTimer)
             reconnectTimer = setTimeout(() => {
                 console.log('🔄 尝试重连 WebSocket...')
@@ -101,6 +109,7 @@ export const useWebSocketStore = defineStore('websocket', () => {
 
     // 4. 主动断开 (退出登录时调用)
     const disconnect = () => {
+        isIntentionalDisconnect = true // 标记为主动断开
         if (socket.value) {
             socket.value.close()
             socket.value = null
