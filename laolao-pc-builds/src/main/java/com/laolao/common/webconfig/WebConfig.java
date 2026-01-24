@@ -31,6 +31,7 @@ public class WebConfig implements WebMvcConfigurer {
                 .excludePathPatterns("/api/common/user/sign-up")
                 .excludePathPatterns("/api/user/forum/post/hot")
                 .excludePathPatterns("/api/user/shop/products/hot")
+                .excludePathPatterns("/api/user/shop/pay/notify")
                 .order(1);
 
         // 管理员权限校验

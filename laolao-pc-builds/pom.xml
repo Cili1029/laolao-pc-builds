@@ -75,6 +75,13 @@
 <!--        </dependency>-->
 
         <dependency>
+            <groupId>com.alipay.sdk</groupId>
+            <artifactId>alipay-sdk-java</artifactId>
+            <version>4.40.630.ALL</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
         </dependency>

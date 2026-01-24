@@ -54,7 +54,7 @@
                 cancel_time=#{cancelTime},
             </if>
         </set>
-                where user_id = #{userId} and number = #{number}
+                where number = #{number}
     </update>
 
     <select id="selectOrders" resultType="com.laolao.pojo.shop.vo.OrdersVO" parameterType="com.laolao.pojo.shop.vo.OrdersVO">

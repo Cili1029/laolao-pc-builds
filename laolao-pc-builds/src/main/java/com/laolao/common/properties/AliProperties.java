@@ -14,6 +14,8 @@ public class AliProperties {
 
     private Oss oss;
 
+    private Pay pay;
+
     @Getter
     @Setter
     public static class AccessKey {
@@ -26,5 +28,18 @@ public class AliProperties {
     public static class Oss {
         private String endpoint;
         private String bucketName;
+    }
+
+    @Getter
+    @Setter
+    public static class Pay {
+        private String appId;
+        private String privateKey;
+        private String charset;
+        private String signType;
+        private String alipayPublicKey;
+        private String gateway;
+        private String notifyUrl;
+        private String returnUrl;
     }
 }

@@ -40,6 +40,19 @@ aliyun:
   oss:
     endpoint: ${laolao.aliyun.oss.endpoint}
     bucket-name: ${laolao.aliyun.oss.bucket-name}
+  pay:
+      # 沙箱应用ID
+      app-id: ${laolao.aliyun.pay.app-id}
+      # 应用私钥
+      private-key: ${laolao.aliyun.pay.private-key}
+      sign-type: ${laolao.aliyun.pay.signType}
+      charset: ${laolao.aliyun.pay.charset}
+      # 支付宝公钥
+      alipay-public-key: ${laolao.aliyun.pay.alipay-public-key}
+      # 网关
+      gateway: ${laolao.aliyun.pay.gateway}
+      notify-url: ${laolao.aliyun.pay.notify-url}
+      return-url: ${laolao.aliyun.pay.return-url}
 
 pagehelper:
   # 1. 数据库方言（必须配置，告诉 PageHelper 用哪种数据库的分页语法）

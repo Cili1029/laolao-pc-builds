@@ -23,8 +23,6 @@ public interface OrderService {
 
     Result<String> cancelOrder(CancelDTO cancelDTO);
 
-    Result<String> pay(PayDTO payDTO);
-
     Result<String> useCoupon(CouponDTO couponDTO);
 
     Result<String> cancelCoupon(CouponDTO couponDTO);

@@ -286,21 +286,6 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Result<String> pay(PayDTO payDTO) {
-        // 付款流程省去。。。
-        int userId = UserContext.getCurrentId();
-        Order order = new Order();
-        order.setUserId(userId);
-        order.setNumber(payDTO.getNumber());
-        order.setStatus(OrderConstant.PENDING_SHIPMENT);
-        order.setCheckoutTime(LocalDateTime.now());
-        orderMapper.update(order);
-        // websocket通知管理员
-        notificationHandler.sendToAllAdmins(WsMessage.of("new_order", "订单号：" + payDTO.getNumber()));
-        return Result.success("付款成功");
-    }
-
-    @Override
     public Result<String> useCoupon(CouponDTO couponDTO) {
         int userId = UserContext.getCurrentId();
         couponDTO.setUserId(userId);

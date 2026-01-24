@@ -106,16 +106,6 @@ public class OrderController {
     }
 
     /**
-     * 付款
-     * @param payDTO 订单号
-     * @return 结果信息
-     */
-    @PatchMapping("/pay")
-    public Result<String> pay(@RequestBody PayDTO payDTO) {
-        return orderService.pay(payDTO);
-    }
-
-    /**
      * 选择优惠券
      *
      * @param couponDTO 基本数据
@@ -148,6 +138,5 @@ public class OrderController {
     public Result<String> receive(@RequestParam String number) {
         return orderService.receive(number);
     }
-
-
 }
+

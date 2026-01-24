@@ -115,7 +115,7 @@
 
                                 <div class="flex items-baseline gap-2 mb-1">
                                     <span class="font-bold text-gray-900 text-base truncate">{{ address.consignee
-                                        }}</span>
+                                    }}</span>
                                     <span class="text-xs text-gray-500">{{ address.phone }}</span>
                                 </div>
 
@@ -312,13 +312,14 @@
                                 v-if="selectAddress !== 0">
                                 <p class="line-clamp-1 font-medium text-gray-900 mb-0.5">
                                     <span class="text-orange-600 mr-1">📍</span>
-                                    {{addressList.find(a => a.id === selectAddress)?.province}} {{addressList.find(a => a.id === selectAddress)?.city }} {{addressList.find(a => a.id ===
-                                    selectAddress)?.district }}
+                                    {{addressList.find(a => a.id === selectAddress)?.province}} {{addressList.find(a =>
+                                        a.id === selectAddress)?.city}} {{addressList.find(a => a.id ===
+                                        selectAddress)?.district}}
                                 </p>
                                 <p class="line-clamp-1 pl-4">{{addressList.find(a => a.id ===
-                                    selectAddress)?.detailAddress }}</p>
+                                    selectAddress)?.detailAddress}}</p>
                                 <p class="pl-4 mt-1 text-gray-500">{{addressList.find(a => a.id ===
-                                    selectAddress)?.consignee }} {{addressList.find(a => a.id === selectAddress)?.phone
+                                    selectAddress)?.consignee}} {{addressList.find(a => a.id === selectAddress)?.phone
                                     }}</p>
                             </div>
 
@@ -354,12 +355,14 @@
             :userCouponId="userCouponId" v-model:isOpen="isOpenCouponDialog" @discountAmount="handleCouponUse"
             @userCouponId="handleUserCouponId">
         </CouponDialog>
+
+        <div v-html="alipayHtml" ref="alipayFormContainer"></div>
     </div>
 </template>
 
 <script setup lang="ts">
     import axios from "@/utils/myAxios"
-    import { onMounted, ref, reactive } from "vue"
+    import { onMounted, ref, reactive, computed, nextTick } from "vue"
     import { useRoute, useRouter } from 'vue-router'
     const route = useRoute()
     const router = useRouter()
@@ -635,6 +638,11 @@
     const discountAmount = ref(0)
     const userCouponId = ref(0)
 
+    const productNames = computed(() => {
+        return products.value.map(item => item.name).join('，')
+    })
+
+
     const showOrder = async () => {
         try {
             const response = await axios.get("/api/user/shop/order/list", {
@@ -653,15 +661,35 @@
         }
     }
 
+
+    const alipayHtml = ref('')
+
+    // 新增引用 ref
+    const alipayFormContainer = ref<HTMLDivElement | null>(null)
+
     // 提交订单
     const pay = async () => {
         try {
-            const response = await axios.patch("/api/user/shop/order/pay", {
-                number: number
+            const response = await axios.patch("/api/user/shop/pay", {
+                number: number,
+                subject: productNames.value,
+                payType: 1
+            }, {
+                responseType: 'text'
             })
-            if (response.data.code === 1) {
-                router.replace('/my-orders');
-            }
+            alipayHtml.value = response.data
+            // if (response.data.code === 1) {
+            //     router.replace('/my-orders');
+            // }
+            
+
+            nextTick(() => {
+                const form = alipayFormContainer.value?.querySelector('form')
+                if (form) {
+                    form.submit()
+                }
+            })
+
         } catch (error) {
             console.log(error)
         }

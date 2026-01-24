@@ -50,4 +50,7 @@ public interface OrderMapper {
 
     @Select("select status from shop_order where id = #{id}")
     int checkStatus(Integer id);
+
+    @Select("select original_amount - discount_amount from shop_order where number = #{number}")
+    BigDecimal selectAmountByNumber(String number);
 }
