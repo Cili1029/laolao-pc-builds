@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 
 
 public interface PayService {
-    ResponseEntity alipayReturn(HttpServletRequest request);
+    Result<String> pay(PayDTO payDTO);
+    ResponseEntity<Void> alipayReturn(HttpServletRequest request);
     String alipayNotify(HttpServletRequest request);
-    String pay(PayDTO payDTO);
 }

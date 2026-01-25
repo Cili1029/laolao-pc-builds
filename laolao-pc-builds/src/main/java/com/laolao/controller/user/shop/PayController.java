@@ -1,5 +1,6 @@
 package com.laolao.controller.user.shop;
 
+import com.laolao.common.result.Result;
 import com.laolao.pojo.shop.dto.PayDTO;
 import com.laolao.service.user.shop.PayService;
 import jakarta.annotation.Resource;
@@ -16,11 +17,11 @@ public class PayController {
     /**
      * 付款
      *
-     * @param payDTO 订单号以及付款类型
+     * @param payDTO 订单号以及表体，付款类型
      * @return 结果信息
      */
     @PatchMapping
-    public String pay(@RequestBody PayDTO payDTO) {
+    public Result<String> pay(@RequestBody PayDTO payDTO) {
         return payService.pay(payDTO);
     }
 
@@ -29,7 +30,7 @@ public class PayController {
      * 同步回调不可作为支付成功的依据，仅用于页面跳转
      */
     @GetMapping("/return")
-    public ResponseEntity alipayReturn(HttpServletRequest request) {
+    public ResponseEntity<Void> alipayReturn(HttpServletRequest request) {
         return payService.alipayReturn(request);
     }
 

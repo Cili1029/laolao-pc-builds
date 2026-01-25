@@ -5,7 +5,6 @@ import com.alipay.api.AlipayClient;
 import com.alipay.api.internal.util.AlipaySignature;
 import com.alipay.api.request.AlipayTradePagePayRequest;
 import com.laolao.common.constant.OrderConstant;
-import com.laolao.common.context.UserContext;
 import com.laolao.common.properties.AliProperties;
 import com.laolao.common.result.Result;
 import com.laolao.common.result.WsMessage;
@@ -19,8 +18,6 @@ import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -39,25 +36,19 @@ public class PayServiceImpl implements PayService {
     private AliProperties aliProperties;
 
     @Override
-    public String pay(PayDTO payDTO) {
-//        if (payDTO.getPayType() == 1) {
-        // 数据库查钱
-        BigDecimal totalAmount = orderMapper.selectAmountByNumber(payDTO.getNumber());
-        // 支付宝付款
-        return alipay(payDTO.getNumber(), totalAmount.toString(), payDTO.getSubject());
-//        }
+    public Result<String> pay(PayDTO payDTO) {
+        if (payDTO.getPayType() == 1) {
+            // 数据库查钱
+            BigDecimal totalAmount = orderMapper.selectAmountByNumber(payDTO.getNumber());
+            // 支付宝付款
+            return alipay(payDTO.getNumber(), totalAmount.toString(), payDTO.getSubject());
+        }
 
         // 假付款，付款流程省去。。。
-//        int userId = UserContext.getCurrentId();
-//        Order order = new Order();
-//        order.setUserId(userId);
-//        order.setNumber(payDTO.getNumber());
-//        order.setStatus(OrderConstant.PENDING_SHIPMENT);
-//        order.setCheckoutTime(LocalDateTime.now());
-//        orderMapper.update(order);
-//        // websocket通知管理员
-//        notificationHandler.sendToAllAdmins(WsMessage.of("new_order", "订单号：" + payDTO.getNumber()));
-//        return Result.success("付款成功");
+        changeOrderStatus(payDTO.getNumber());
+        // websocket通知管理员
+        notificationHandler.sendToAllAdmins(WsMessage.of("new_order", "订单号：" + payDTO.getNumber()));
+        return Result.success("付款成功");
     }
 
     /**
@@ -68,7 +59,7 @@ public class PayServiceImpl implements PayService {
      * @param subject     订单标题
      * @return 支付页面HTML（前端直接渲染即可跳转支付宝沙箱支付）
      */
-    public String alipay(String outTradeNo, String totalAmount, String subject) {
+    public Result<String> alipay(String outTradeNo, String totalAmount, String subject) {
         try {
             AlipayClient alipayClient = aliPayUtil.createAlipayClient();
             // 创建支付请求
@@ -85,14 +76,14 @@ public class PayServiceImpl implements PayService {
                     "}";
             request.setBizContent(bizContent);
 
-            return alipayClient.pageExecute(request).getBody();
+            return Result.success(alipayClient.pageExecute(request).getBody(), "");
         } catch (AlipayApiException e) {
             e.printStackTrace();
-            return "同步回调处理失败：" + e.getErrMsg();
+            return Result.success("同步回调处理失败：" + e.getErrMsg());
         }
     }
 
-    public ResponseEntity alipayReturn(HttpServletRequest request) {
+    public ResponseEntity<Void> alipayReturn(HttpServletRequest request) {
         try {
             // 获取回调参数
             Map<String, String> params = new HashMap<>();
@@ -108,18 +99,16 @@ public class PayServiceImpl implements PayService {
 
             if (signVerified) {
                 // 签名验证通过，获取订单信息
-                return ResponseEntity.status(302).header("Location", "http://localhost:5173/home").build();
+                return ResponseEntity.status(302).header("Location", "http://localhost:5173/pay-success").build();
             } else {
-                return ResponseEntity.status(302).header("Location", "http://localhost:5173/home").build();
+                return ResponseEntity.status(302).header("Location", "http://localhost:5173/error").build();
             }
         } catch (AlipayApiException e) {
             e.printStackTrace();
-            return ResponseEntity.status(302).header("Location", "http://localhost:5173/home").build();
+            return ResponseEntity.status(302).header("Location", "http://localhost:5173/error").build();
         }
     }
 
-    @PostMapping("/notify")
-    @ResponseBody
     public String alipayNotify(HttpServletRequest request) {
         try {
             // 获取回调参数
@@ -137,16 +126,12 @@ public class PayServiceImpl implements PayService {
             if (signVerified) {
                 // 签名验证通过，处理业务逻辑
                 String outTradeNo = params.get("out_trade_no"); // 商户订单号
-                String tradeNo = params.get("trade_no"); // 支付宝交易号 现在没啥用
+//                String tradeNo = params.get("trade_no"); // 支付宝交易号 现在没啥用
                 String tradeStatus = params.get("trade_status"); // 交易状态
 
                 // 只有交易状态为TRADE_SUCCESS或TRADE_FINISHED才代表支付成功
                 if ("TRADE_SUCCESS".equals(tradeStatus) || "TRADE_FINISHED".equals(tradeStatus)) {
-                    Order order = new Order();
-                    order.setNumber(outTradeNo);
-                    order.setStatus(OrderConstant.PENDING_SHIPMENT);
-                    order.setCheckoutTime(LocalDateTime.now());
-                    orderMapper.update(order);
+                    changeOrderStatus(outTradeNo);
                     // websocket通知管理员
                     notificationHandler.sendToAllAdmins(WsMessage.of("new_order", "订单号：" + outTradeNo));
                     // 必须返回"success"给支付宝，否则支付宝会重复通知
@@ -158,5 +143,13 @@ public class PayServiceImpl implements PayService {
         }
         // 验证失败或处理异常，返回"fail"
         return "fail";
+    }
+
+    private void changeOrderStatus(String number) {
+        Order order = new Order();
+        order.setNumber(number);
+        order.setStatus(OrderConstant.PENDING_SHIPMENT);
+        order.setCheckoutTime(LocalDateTime.now());
+        orderMapper.update(order);
     }
 }

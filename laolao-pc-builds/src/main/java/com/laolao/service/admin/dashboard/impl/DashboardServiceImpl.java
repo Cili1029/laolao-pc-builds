@@ -1,4 +1,4 @@
-package com.laolao.service.admin.dashboard.Impl;
+package com.laolao.service.admin.dashboard.impl;
 
 import com.laolao.common.constant.RedisConstant;
 import com.laolao.common.result.Result;

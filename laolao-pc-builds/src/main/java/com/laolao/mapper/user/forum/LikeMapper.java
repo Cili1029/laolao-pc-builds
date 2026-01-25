@@ -11,7 +11,7 @@ import java.util.List;
 public interface LikeMapper {
     @Insert("INSERT INTO forum_like (user_id, like_type, like_id)" +
             "VALUES (#{userId}, #{likeType}, #{likeId})")
-    int like(Like like);
+    void like(Like like);
 
     @Select("select status from forum_like where user_id = #{userId} and like_type = #{likeType} and like_id = #{likeId}")
     Integer getStatus(int userId, int likeType, int likeId);

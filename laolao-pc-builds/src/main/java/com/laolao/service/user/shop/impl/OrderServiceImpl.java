@@ -6,7 +6,6 @@ import com.laolao.common.constant.ProductConstant;
 import com.laolao.common.context.UserContext;
 import com.laolao.common.exception.UnknownError;
 import com.laolao.common.result.Result;
-import com.laolao.common.result.WsMessage;
 import com.laolao.common.utils.OrderUtil;
 import com.laolao.common.websocket.NotificationHandler;
 import com.laolao.converter.MapStruct;

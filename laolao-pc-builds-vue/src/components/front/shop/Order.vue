@@ -335,12 +335,23 @@
                                     <AlertDialogHeader>
                                         <AlertDialogTitle>确定付款吗？</AlertDialogTitle>
                                         <AlertDialogDescription>
-                                            未接入微信支付宝支付接口，点击付款视为付款成功
+                                            <p>
+                                                假装付款：<span class="text-red-500">跳过</span>支付过程，<span
+                                                    class="text-red-500">直接</span>视为支付成功
+                                            </p>
+                                            <p>
+                                                支付宝付款：<span class="text-red-500">支付宝</span>支付，需要<span
+                                                    class="text-red-500">站长</span>提供沙箱账号
+                                            </p>
                                         </AlertDialogDescription>
                                     </AlertDialogHeader>
                                     <AlertDialogFooter>
                                         <AlertDialogCancel>等一下</AlertDialogCancel>
-                                        <AlertDialogAction class="bg-orange-500 hover:bg-orange-600" @click="pay()">付款
+                                        <AlertDialogAction class="bg-orange-500 hover:bg-orange-600" @click="pay(0)">
+                                            假装付款
+                                        </AlertDialogAction>
+                                        <AlertDialogAction class="bg-orange-500 hover:bg-orange-600" @click="pay(1)">
+                                            支付宝付款
                                         </AlertDialogAction>
                                     </AlertDialogFooter>
                                 </AlertDialogContent>
@@ -355,14 +366,12 @@
             :userCouponId="userCouponId" v-model:isOpen="isOpenCouponDialog" @discountAmount="handleCouponUse"
             @userCouponId="handleUserCouponId">
         </CouponDialog>
-
-        <div v-html="alipayHtml" ref="alipayFormContainer"></div>
     </div>
 </template>
 
 <script setup lang="ts">
     import axios from "@/utils/myAxios"
-    import { onMounted, ref, reactive, computed, nextTick } from "vue"
+    import { onMounted, ref, reactive, computed } from "vue"
     import { useRoute, useRouter } from 'vue-router'
     const route = useRoute()
     const router = useRouter()
@@ -372,7 +381,8 @@
     import { Input } from "@/components/ui/input"
     import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger, } from '@/components/ui/alert-dialog'
     import { Label } from "@/components/ui/label"
-    import CouponDialog from '@/components/front/shop/CouponDialog.vue';
+    import CouponDialog from '@/components/front/shop/CouponDialog.vue'
+    import { toast } from "vue-sonner"
 
     onMounted(() => {
         // 判断订单是否为待付款再进行下一步
@@ -661,35 +671,35 @@
         }
     }
 
-
-    const alipayHtml = ref('')
-
-    // 新增引用 ref
-    const alipayFormContainer = ref<HTMLDivElement | null>(null)
-
     // 提交订单
-    const pay = async () => {
+    const pay = async (payType: number) => {
         try {
             const response = await axios.patch("/api/user/shop/pay", {
                 number: number,
                 subject: productNames.value,
-                payType: 1
-            }, {
-                responseType: 'text'
+                payType: payType
             })
-            alipayHtml.value = response.data
-            // if (response.data.code === 1) {
-            //     router.replace('/my-orders');
-            // }
-            
 
-            nextTick(() => {
-                const form = alipayFormContainer.value?.querySelector('form')
-                if (form) {
-                    form.submit()
+            if (response.data.code === 1) {
+                if (payType === 0) {
+                    router.replace('/my-orders');
+                    toast("嗨！", {
+                        description: "支付成功！",
+                        action: {
+                            label: '我知道了',
+                        },
+                    })
+                } else {
+                    const htmlCode = response.data.data
+                    // 创建文件对象
+                    const blob = new Blob([htmlCode], { type: 'text/html;charset=utf-8' })
+                    // 生成临时URL
+                    const url = URL.createObjectURL(blob)
+                    // 跳转
+                    window.location.replace(url);
                 }
-            })
 
+            }
         } catch (error) {
             console.log(error)
         }

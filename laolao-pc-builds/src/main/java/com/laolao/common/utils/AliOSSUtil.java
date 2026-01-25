@@ -116,7 +116,7 @@ public class AliOSSUtil {
                 try {
                     // (关键) 2.1 URL 解码：处理中文特殊字符
                     // 例如 "%E7%BB%84" -> "组"
-                    String decodedUrl = URLDecoder.decode(urlStr, StandardCharsets.UTF_8.toString());
+                    String decodedUrl = URLDecoder.decode(urlStr, StandardCharsets.UTF_8);
 
                     // 2.2 提取路径：去除 http://domain/ 部分，只保留 key
                     // 使用 java.net.URL 类来解析路径

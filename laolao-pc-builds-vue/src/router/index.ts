@@ -1,4 +1,3 @@
-// src/router/index.ts
 import { createRouter, createWebHistory } from 'vue-router'
 import type { RouteRecordRaw } from 'vue-router';
 import frontLayout from '@/components/front/FrontLayout.vue';
@@ -12,6 +11,8 @@ import PostSimple from '@/components/front/forum/PostSimple.vue';
 import Sign from '@/components/common/Sign.vue';
 import FrontUser from '@/components/front/user/User.vue';
 import Product from '@/components/front/shop/Product.vue';
+import PaySuccess from '@/components/front/common/paySuccess.vue';
+import Error from '@/components/front/common/Error.vue';
 
 import AdminLayout from '@/components/admin/AdminLayout.vue';
 import AdminUser from '@/components/admin/user/User.vue';
@@ -26,7 +27,9 @@ import UserDashboard from '@/components/admin/dashboard/UserDashboard.vue';
 import ShopDashboard from '@/components/admin/dashboard/ShopDashboard.vue';
 import ForumDashboard from '@/components/admin/dashboard/ForumDashboard.vue';
 
-import Test from '@/components/common/test.vue';
+import Test from '@/components/common/Test.vue';
+
+
 
 const routes: Array<RouteRecordRaw> = [
   // 1. 用户端路由组
@@ -97,6 +100,23 @@ const routes: Array<RouteRecordRaw> = [
             component: Post,
           }
         ]
+      },
+      {
+        path: 'pay-success',
+        name: 'PaySuccess',
+        component: PaySuccess,
+        meta: { showFooter: false }
+      },
+      {
+        path: 'error',
+        name: 'Error',
+        component: Error,
+        meta: { showFooter: false }
+      },
+      {
+        path: ':pathMatch(.*)*',
+        name: 'NotFound',
+        component: Error
       }
     ]
   },
@@ -162,7 +182,7 @@ const routes: Array<RouteRecordRaw> = [
         component: ForumDashboard,
       },
     ]
-  }
+  },
 ]
 
 const router = createRouter({

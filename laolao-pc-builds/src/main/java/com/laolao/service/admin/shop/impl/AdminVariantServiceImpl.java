@@ -10,7 +10,6 @@ import com.laolao.pojo.shop.dto.AdminAddVariantDTO;
 import com.laolao.pojo.shop.dto.AdminUpdateVariantDTO;
 import com.laolao.service.admin.shop.AdminVariantService;
 import jakarta.annotation.Resource;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,7 +20,7 @@ public class AdminVariantServiceImpl implements AdminVariantService {
     private AdminVariantMapper adminVariantMapper;
     @Resource
     private AdminComponentMapper adminComponentMapper;
-    @Autowired
+    @Resource
     private MapStruct mapStruct;
 
     @Override
