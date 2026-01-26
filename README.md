@@ -9,7 +9,9 @@
 - **装机商城**
   - 多级商品分类（配件与整机）、商品变体（如显存容量）、热销榜单。
   - 购物车管理、订单创建与查询、优惠券使用、收货地址管理（高德地图行政区三级联动）。
-  - 定时任务自动关闭超时未支付订单（15分钟），RocketMQ 异步消息队列处理订单超时。
+  - 订单支付功能，支持假装付款（测试模式）和支付宝支付（沙箱环境），支付回调处理。
+  - 订单状态管理（待付款、待发货、物流中、已完成、已取消），支持订单取消、收货确认等操作。
+  - 订单超时处理：默认使用定时任务自动关闭超时未支付订单（15分钟），可选启用 RocketMQ 实现异步消息队列处理。
   - 布隆过滤器优化商品查询性能，防止缓存穿透。
   - 支持整机套餐（Bundle）和单个配件（Component）两种商品类型。
 - **装机社区**
@@ -34,120 +36,162 @@
 - `laolaoPC/` 目录提供示例物料（商品图片、用户头像、论坛分类图标等），可作为商品展示。
 - `laolao_pc_builds.sql` 提供完整数据库初始化脚本，开箱即用。
 - 文件上传管理，支持阿里云 OSS 存储。
-- SQL 日志记录与拦截器，便于调试与监控。
-- RocketMQ 消息队列，支持异步订单超时处理。
+- SQL 日志记录与拦截器（基于 @LogSql 注解），便于调试与监控。
+- 订单超时处理：默认使用定时任务（适配低配置服务器），可选启用 RocketMQ 实现异步消息队列处理（需取消 pom.xml 和 application.yaml 中的注释）。
 - 布隆过滤器优化查询性能，防止缓存穿透。
 - WebSocket 实时通信，支持在线用户统计、实时通知推送。
 - 数据可视化，基于 ECharts 的图表展示，支持趋势分析、排名统计等。
+- 支付集成，支持支付宝支付（沙箱环境）和测试模式。
 
 ## 技术栈
 
-| 层级 | 技术 |
+### 后端技术
+
+| 分类 | 技术 |
 | ---- | ---- |
-| 后端 | Spring Boot 3.5.6 · Spring Web / WebFlux · Spring WebSocket · MyBatis 3.0.5 & PageHelper 2.1.1 · MySQL 8.x · Redis & Redisson 4.1.0 · RocketMQ 2.3.5 · MapStruct 1.6.3 · JWT (jjwt 0.13.0) · Alibaba OSS 3.18.3 & DirectMail · Druid 1.2.27 · Lombok 1.18.42 · Spring AOP · 定时任务（@Scheduled） · 布隆过滤器 |
-| 前端 | Vue 3.5.22 + TypeScript 5.9.3 + Vite 7.1.7 · Pinia 3.0.3 · Vue Router 4.5.1 · Tailwind CSS v4.1.14 · shadcn-vue (reka-ui 2.6.1) · Axios 1.12.2 · lucide-vue-next 0.544.0 · @vueuse/core 13.9.0 · vue-sonner 2.0.9 · vue3-cookies 1.0.6 · dayjs 1.11.18 · ECharts 6.0.0 & vue-echarts 8.0.1 · @tanstack/vue-table 8.21.3 |
-| 配套 | Maven Wrapper · npm / Node.js 20+ · 阿里云对象存储（OSS）· 阿里云邮件推送（DirectMail）· 高德地图开放平台 Web 服务 API |
+| 核心框架 | Spring Boot · Spring Web / WebFlux · Spring WebSocket · Spring AOP |
+| 数据持久化 | MyBatis · PageHelper（分页插件）· MySQL · Druid（连接池） |
+| 缓存与消息队列 | Redis · Redisson（分布式锁、布隆过滤器）· RocketMQ |
+| 工具库 | MapStruct（对象映射）· JWT（身份认证）· Lombok（代码生成）· 支付宝 SDK（支付）· Alibaba OSS（对象存储）· DirectMail（邮件推送）· 定时任务（@Scheduled） |
+
+### 前端技术
+
+| 分类 | 技术 |
+| ---- | ---- |
+| 核心框架 | Vue · TypeScript · Vite |
+| 状态管理与路由 | Pinia（状态管理）· Vue Router（路由） |
+| UI 框架与组件 | Tailwind CSS · shadcn-vue / reka-ui（UI 组件库）· lucide-vue-next（图标库） |
+| 工具库 | Axios（HTTP 客户端）· @vueuse/core（组合式工具集）· @vorms/core（表单验证）· vue-sonner（消息提示）· vue3-cookies（Cookie 管理）· dayjs（日期处理）· ECharts / vue-echarts（图表）· @tanstack/vue-table（表格）· embla-carousel-vue（轮播图）· vaul-vue（抽屉组件）· class-variance-authority（样式变体）· tailwind-merge（样式合并） |
+
+### 开发工具与配套服务
+
+| 分类 | 技术 |
+| ---- | ---- |
+| 构建工具 | Maven Wrapper · npm / Node.js |
+| 云服务 | 阿里云 OSS（对象存储）· 阿里云 DirectMail（邮件推送）· 高德地图开放平台（地址服务）· 支付宝开放平台（支付服务） |
 
 ## 目录结构
 
 ```
-├─ README.md                    # 项目说明（当前文件）
-├─ laolao_pc_builds.sql         # MySQL 数据库初始化脚本
-├─ laolaoPC/                    # 静态资源目录（商品图片、用户头像、论坛分类图标等）
-│  ├─ shop/                     # 商城相关图片
-│  │  ├─ component/             # 配件图片（按分类编号）
-│  │  ├─ bundle/                 # 整机套餐图片
-│  │  ├─ category/              # 商城分类图标
-│  │  └─ common/                # 商城通用图片
-│  ├─ forum/                    # 论坛相关图片
-│  │  ├─ category/               # 论坛分类图标
-│  │  ├─ post/                   # 帖子图片
-│  │  └─ comment/                # 评论图片
-│  └─ user/                     # 用户相关图片
-│     └─ avatar/                 # 用户头像
-├─ laolao-pc-builds/             # Spring Boot 后端
+├─ README.md                      # 项目说明（当前文件）
+├─ laolao_pc_builds.sql           # MySQL 数据库初始化脚本
+├─ laolaoPC/                      # 静态资源目录（商品图片、用户头像、论坛分类图标等）
+│  ├─ shop/                       # 商城相关图片
+│  │  ├─ component/               # 配件图片（按分类编号）
+│  │  ├─ bundle/                  # 整机套餐图片
+│  │  ├─ category/                # 商城分类图标
+│  │  └─ common/                  # 商城通用图片
+│  ├─ forum/                      # 论坛相关图片
+│  │  ├─ category/                # 论坛分类图标
+│  │  ├─ post/                    # 帖子图片
+│  │  └─ comment/                 # 评论图片
+│  └─ user/                       # 用户相关图片
+│     └─ avatar/                  # 用户头像
+├─ laolao-pc-builds/              # Spring Boot 后端
 │  ├─ src/main/java/com/laolao/
-│  │  ├─ controller/             # 控制器层
-│  │  │  ├─ admin/               # 管理端接口（用户、商城、论坛、Dashboard）
-│  │  │  │  └─ dashboard/       # Dashboard 统计接口
-│  │  │  ├─ user/                # 用户端接口（商城、论坛、用户）
-│  │  │  └─ common/              # 通用接口（文件上传、用户信息）
-│  │  ├─ service/                # 业务逻辑层
-│  │  │  ├─ admin/               # 管理端服务
-│  │  │  ├─ user/                # 用户端服务
-│  │  │  └─ common/              # 通用服务
-│  │  ├─ consumer/               # RocketMQ 消息消费者
-│  │  ├─ mapper/                 # MyBatis 数据访问层
-│  │  │  ├─ admin/               # 管理端 Mapper
-│  │  │  ├─ user/                # 用户端 Mapper
-│  │  │  ├─ common/              # 通用 Mapper
-│  │  │  └─ dashboard/          # Dashboard 统计 Mapper
-│  │  ├─ pojo/                   # 实体类、DTO、VO
-│  │  │  ├─ shop/                # 商城相关实体
-│  │  │  ├─ forum/               # 论坛相关实体
-│  │  │  └─ user/                # 用户相关实体
-│  │  ├─ common/                 # 通用组件
-│  │  │  ├─ config/              # 配置类（MyBatis、Redis、WebSocket）
-│  │  │  ├─ constant/            # 常量定义
-│  │  │  ├─ context/             # 上下文（用户上下文、SQL日志上下文）
-│  │  │  ├─ exception/           # 异常定义
-│  │  │  ├─ handler/             # 处理器（全局异常、类型转换）
-│  │  │  ├─ init/                # 初始化器（布隆过滤器初始化）
-│  │  │  ├─ properties/          # 配置属性类
-│  │  │  ├─ result/              # 统一响应结果
-│  │  │  ├─ utils/               # 工具类（JWT、OSS、邮件、地图）
-│  │  │  └─ websocket/           # WebSocket 处理器与拦截器
-│  │  ├─ converter/              # MapStruct 转换器
-│  │  ├─ Interceptor/            # 拦截器（登录、管理员、SQL日志、自动填充）
-│  │  ├─ task/                   # 定时任务（订单超时处理、文件清理）
-│  │  ├─ webconfig/              # Web 配置（跨域、拦截器注册）
+│  │  ├─ controller/              # 控制器层
+│  │  │  ├─ admin/                # 管理端接口
+│  │  │  │  ├─ dashboard/         # Dashboard 统计接口
+│  │  │  │  ├─ forum/             # 论坛管理接口
+│  │  │  │  ├─ shop/              # 商城管理接口
+│  │  │  │  └─ user/              # 用户管理接口
+│  │  │  ├─ user/                 # 用户端接口
+│  │  │  │  ├─ forum/             # 论坛接口
+│  │  │  │  ├─ shop/              # 商城接口
+│  │  │  │  └─ user/              # 用户中心接口
+│  │  │  └─ common/               # 通用接口（文件上传、用户信息）
+│  │  ├─ service/                 # 业务逻辑层
+│  │  │  ├─ admin/                # 管理端服务
+│  │  │  ├─ user/                 # 用户端服务
+│  │  │  └─ common/               # 通用服务
+│  │  ├─ consumer/                # RocketMQ 消息消费者
+│  │  ├─ mapper/                  # MyBatis 数据访问层
+│  │  │  ├─ admin/                # 管理端 Mapper
+│  │  │  ├─ user/                 # 用户端 Mapper
+│  │  │  ├─ common/               # 通用 Mapper
+│  │  │  └─ dashboard/            # Dashboard 统计 Mapper
+│  │  ├─ pojo/                    # 实体类、DTO、VO
+│  │  │  ├─ shop/                 # 商城相关实体
+│  │  │  ├─ forum/                # 论坛相关实体
+│  │  │  ├─ user/                 # 用户相关实体
+│  │  │  ├─ common/               # 通用实体
+│  │  │  └─ dashboard/            # Dashboard 统计实体
+│  │  ├─ common/                  # 通用组件
+│  │  │  ├─ annotation/           # 注解定义（@LogSql 等）
+│  │  │  ├─ config/               # 配置类（MyBatis、Redis、WebSocket）
+│  │  │  ├─ constant/             # 常量定义
+│  │  │  ├─ context/              # 上下文（用户上下文、SQL日志上下文）
+│  │  │  ├─ exception/            # 异常定义
+│  │  │  ├─ handler/              # 处理器（全局异常、类型转换）
+│  │  │  ├─ init/                 # 初始化器（布隆过滤器初始化）
+│  │  │  ├─ interceptor/          # 拦截器（登录、管理员、SQL日志、自动填充）
+│  │  │  ├─ properties/           # 配置属性类
+│  │  │  ├─ result/               # 统一响应结果
+│  │  │  ├─ utils/                # 工具类（JWT、OSS、邮件、地图、支付等）
+│  │  │  ├─ webconfig/            # Web 配置（跨域、拦截器注册）
+│  │  │  └─ websocket/            # WebSocket 处理器与拦截器
+│  │  ├─ converter/               # MapStruct 转换器
+│  │  ├─ task/                    # 定时任务（订单超时处理、文件清理）
 │  │  └─ LaolaoPcBuildsApplication.java
 │  └─ src/main/resources/
-│     ├─ application.yaml        # 主配置文件
-│     ├─ application-dev.yaml    # 开发环境配置
-│     ├─ application-prod.yaml   # 生产环境配置
-│     ├─ logback-spring.xml      # 日志配置
-│     └─ mapper/                 # MyBatis XML 映射文件
-│        ├─ admin/               # 管理端 Mapper XML
-│        ├─ user/                # 用户端 Mapper XML
-│        └─ common/              # 通用 Mapper XML
-└─ laolao-pc-builds-vue/         # Vue 3 + Vite 前端
-   ├─ src/
+│     ├─ application.yaml         # 主配置文件
+│     ├─ application-dev.yaml     # 开发环境配置
+│     ├─ application-prod.yaml    # 生产环境配置
+│     ├─ logback-spring.xml       # 日志配置
+│     └─ mapper/                  # MyBatis XML 映射文件
+│        ├─ admin/                # 管理端 Mapper XML
+│        │  ├─ dashboard/         # Dashboard 统计 Mapper XML
+│        │  ├─ forum/             # 论坛管理 Mapper XML
+│        │  ├─ shop/              # 商城管理 Mapper XML
+│        │  └─ user/              # 用户管理 Mapper XML
+│        ├─ user/                 # 用户端 Mapper XML
+│        │  ├─ forum/             # 论坛 Mapper XML
+│        │  ├─ shop/              # 商城 Mapper XML
+│        │  └─ user/              # 用户 Mapper XML
+│        └─ common/               # 通用 Mapper XML
+└─ laolao-pc-builds-vue/          # Vue 3 + Vite 前端
+   ├─ src/ 
    │  ├─ components/              # 组件目录
-   │  │  ├─ admin/               # 管理端组件
-   │  │  │  ├─ AdminLayout.vue   # 管理端布局
-   │  │  │  ├─ dashboard/        # Dashboard 统计组件（用户、商城、论坛）
-   │  │  │  ├─ shop/             # 商城管理组件
-   │  │  │  ├─ forum/            # 论坛管理组件
-   │  │  │  ├─ user/             # 用户管理组件
-   │  │  │  └─ sidebar/          # 侧边栏组件
-   │  │  ├─ front/               # 用户端组件
-   │  │  │  ├─ common/           # 通用组件（首页、布局）
-   │  │  │  ├─ shop/             # 商城组件
-   │  │  │  ├─ forum/            # 论坛组件
-   │  │  │  └─ user/             # 用户中心组件
-   │  │  ├─ common/              # 公共组件（登录注册、文件管理）
-   │  │  └─ ui/                  # shadcn-vue UI 组件库
-   │  ├─ stores/                 # Pinia 状态管理
-   │  │  ├─ UserStore.ts         # 用户状态
-   │  │  ├─ PostStore.ts         # 帖子状态
+   │  │  ├─ admin/                # 管理端组件
+   │  │  │  ├─ AdminLayout.vue    # 管理端布局
+   │  │  │  ├─ dashboard/         # Dashboard 统计组件（用户、商城、论坛）
+   │  │  │  ├─ shop/              # 商城管理组件
+   │  │  │  ├─ forum/             # 论坛管理组件
+   │  │  │  ├─ user/              # 用户管理组件
+   │  │  │  └─ sidebar/           # 侧边栏组件
+   │  │  ├─ front/                # 用户端组件
+   │  │  │  ├─ FrontLayout.vue    # 用户端布局
+   │  │  │  ├─ Home.vue           # 首页
+   │  │  │  ├─ common/            # 通用组件（错误页、支付成功页）
+   │  │  │  ├─ shop/              # 商城组件
+   │  │  │  ├─ forum/             # 论坛组件
+   │  │  │  └─ user/              # 用户中心组件
+   │  │  ├─ common/               # 公共组件（登录注册、文件管理）
+   │  │  └─ ui/                   # shadcn-vue UI 组件库
+   │  ├─ stores/                  # Pinia 状态管理
+   │  │  ├─ UserStore.ts          # 用户状态
+   │  │  ├─ PostStore.ts          # 帖子状态
    │  │  ├─ ForumCategoryStore.ts # 论坛分类状态
-   │  │  ├─ CommonStore.ts       # 通用状态
-   │  │  └─ websocketStore.ts    # WebSocket 连接状态
-   │  ├─ router/                 # 路由配置
-   │  │  └─ index.ts             # 路由定义
-   │  ├─ utils/                  # 工具函数
-   │  │  └─ myAxios.ts           # Axios 封装
-   │  ├─ lib/                    # 库文件
-   │  │  └─ utils.ts             # 通用工具函数
-   │  ├─ App.vue                 # 根组件
-   │  ├─ main.ts                 # 入口文件
-   │  └─ style.css               # 全局样式
-   ├─ public/                    # 静态资源
-   ├─ components.json            # shadcn-vue 配置
-   ├─ package.json               # 依赖配置
-   ├─ vite.config.ts             # Vite 配置
-   └─ tsconfig.json              # TypeScript 配置
+   │  │  ├─ CommonStore.ts        # 通用状态
+   │  │  └─ websocketStore.ts     # WebSocket 连接状态
+   │  ├─ router/                  # 路由配置
+   │  │  └─ index.ts              # 路由定义
+   │  ├─ utils/                   # 工具函数
+   │  │  └─ myAxios.ts            # Axios 封装
+   │  ├─ lib/                     # 库文件
+   │  │  └─ utils.ts              # 通用工具函数
+   │  ├─ assets/                  # 静态资源
+   │  ├─ App.vue                  # 根组件
+   │  ├─ main.ts                  # 入口文件
+   │  └─ style.css                # 全局样式
+   ├─ public/                     # 公共静态资源
+   ├─ components.json             # shadcn-vue 配置
+   ├─ index.html                  # HTML 入口文件
+   ├─ package.json                # 依赖配置
+   ├─ vite.config.ts              # Vite 配置
+   ├─ tsconfig.json               # TypeScript 配置
+   ├─ tsconfig.app.json           # TypeScript 应用配置
+   └─ tsconfig.node.json          # TypeScript Node 配置
 ```
 
 ## 环境要求
@@ -159,13 +203,14 @@
 - **Node.js 20+ / npm 10+**：前端开发环境
 - **MySQL 8.x**：数据库
 - **Redis 6+**：缓存服务
-- **RocketMQ 5.x**：消息队列服务
 
 ### 可选服务（用于完整功能）
 
 - **阿里云 OSS**：对象存储，用于图片上传
 - **阿里云邮件推送（DirectMail）**：发送邮箱验证码
 - **高德地图开放平台**：Web 服务 Key，用于地址三级联动
+- **支付宝开放平台**：支付功能（沙箱环境用于测试，生产环境需要正式配置）
+- **RocketMQ 5.x**：消息队列服务（可选，当前使用定时任务代替。如服务器配置允许，可取消注释启用 RocketMQ 实现异步订单超时处理）
 
 ## 快速开始
 
@@ -230,10 +275,11 @@ Vite Dev Server 默认在 `http://localhost:5173` 运行，`vite.config.ts` 已�
 | `laolao.redis.*` | Redis 连接配置 | 包括 host、port、database，用于缓存用户态与热点数据 |
 | `laolao.jwt.user-secret-key` | JWT 签名秘钥 | 自行更换并妥善保管，用于生成和验证用户 Token |
 | `laolao.jwt.user-ttl` | JWT 过期时间 | 默认 604800000 毫秒（7天） |
-| `rocketmq.name-server` | RocketMQ 服务器地址 | 默认 127.0.0.1:9876，用于订单超时消息队列 |
-| `rocketmq.producer.*` | RocketMQ 生产者配置 | 包括 group、send-message-timeout、retry-times-when-send-failed |
+| `rocketmq.name-server` | RocketMQ 服务器地址（可选） | 默认 127.0.0.1:9876，用于订单超时消息队列。需取消注释启用 |
+| `rocketmq.producer.*` | RocketMQ 生产者配置（可选） | 包括 group、send-message-timeout、retry-times-when-send-failed。需取消注释启用 |
 | `aliyun.oss.*` | 阿里云 OSS 配置 | 包括 endpoint、bucket-name，用于用户上传图片 |
 | `aliyun.access-key.*` | 阿里云 AccessKey | 包括 accessKey-id、accessKey-secret，用于 OSS 和邮件推送 |
+| `aliyun.pay.*` | 支付宝支付配置 | 包括 app-id、private-key、alipay-public-key、gateway、notify-url、return-url 等 |
 | `laolao.amap.key` | 高德地图 Web 服务 Key | 用于地址解析和三级联动 |
 
 ### 前端配置（vite.config.ts）
@@ -267,11 +313,17 @@ Vite Dev Server 默认在 `http://localhost:5173` 运行，`vite.config.ts` 已�
 
 ## 核心特性
 
-### RocketMQ 消息队列
+### 订单超时处理
 
-- **异步订单处理**：使用 RocketMQ 实现订单超时的异步消息处理，提高系统响应性能。
-- **生产者消费者模式**：订单超时任务作为生产者发送延迟消息，OrderConsumer 作为消费者处理订单取消逻辑。
-- **消息可靠性**：支持消息重试机制，确保订单超时处理不遗漏。
+- **默认方案（定时任务）**：使用 Spring 定时任务（@Scheduled）实现订单超时自动关闭，适配低配置服务器环境。
+  - 超时时间控制：订单创建后 15 分钟内未支付自动取消，释放库存。
+  - 可靠性保障：定时任务定期扫描待付款订单，确保超时订单及时处理。
+- **可选方案（RocketMQ）**：如服务器配置允许，可启用 RocketMQ 实现异步消息队列处理。
+  - 启用方式：
+    1. 在 `pom.xml` 中取消 RocketMQ 依赖注释（第 70-75 行）
+    2. 在 `application.yaml` 中取消 RocketMQ 配置注释（第 79-89 行）
+    3. 启动 RocketMQ 服务（NameServer 和 Broker）
+  - 优势：异步处理，性能更好，支持消息重试机制，适合高并发场景。
 
 ### 布隆过滤器
 
@@ -288,10 +340,11 @@ Vite Dev Server 默认在 `http://localhost:5173` 运行，`vite.config.ts` 已�
 
 ### 拦截器机制
 
-- **登录拦截器**：验证用户 JWT Token，保护需要登录的接口。
-- **管理员拦截器**：验证管理员权限，保护管理端接口。
-- **SQL 日志拦截器**：记录 SQL 执行日志，便于调试和性能分析。
-- **自动填充拦截器**：自动填充创建时间、更新时间等字段。
+- **登录拦截器（SignInInterceptor）**：验证用户 JWT Token，保护需要登录的接口，支持 Cookie 会话管理。
+- **管理员拦截器（AdminInInterceptor）**：验证管理员权限，保护管理端接口。
+- **SQL 标记拦截器（SqlMarkInterceptor）**：基于 @LogSql 注解标记需要记录 SQL 的业务方法。
+- **SQL 日志拦截器（SqlLogInterceptor）**：MyBatis 拦截器，记录标记业务的 SQL 执行日志、耗时和操作人，便于调试和性能分析。
+- **自动填充拦截器（AutoFillInterceptor）**：MyBatis 拦截器，自动填充创建时间、更新时间等字段。
 
 ### 数据缓存
 
@@ -306,23 +359,14 @@ Vite Dev Server 默认在 `http://localhost:5173` 运行，`vite.config.ts` 已�
 
 ### 文件管理
 
-- **阿里云 OSS 集成**：支持图片上传到阿里云 OSS。
+- **阿里云 OSS 集成**：支持图片上传到阿里云 OSS，提供文件管理功能。
 - **文件清理任务**：定时清理无效文件，节省存储空间。
 
-## 开发计划
+### 支付集成
 
-- [x] 基础商城功能（商品、购物车、订单、优惠券）
-- [x] 论坛功能（帖子、评论、点赞）
-- [x] 用户系统（登录、注册、个人中心）
-- [x] 管理端（用户管理、商品管理、论坛管理）
-- [x] 定时任务（订单超时处理）
-- [x] WebSocket 实时通信（在线用户统计、实时通知）
-- [x] Dashboard 数据可视化（用户、商城、论坛统计）
-- [x] 订单支付通道对接（支付宝 / 微信）
-- [ ] 实时聊天 / 评论 @ 通知
-- [ ] 产品推荐算法（基于用户行为的配置推荐）
-- [ ] 商品库存预警
-- [ ] 更多数据统计与分析功能
+- **支付宝支付**：集成支付宝 SDK，支持支付宝沙箱环境支付和支付回调处理。
+- **测试模式**：提供假装付款功能，方便开发测试，跳过实际支付流程。
+- **支付状态管理**：完整的订单支付状态流转（待付款 → 已付款 → 待发货）。
 
 ## 项目结构说明
 
@@ -348,14 +392,6 @@ Vite Dev Server 默认在 `http://localhost:5173` 运行，`vite.config.ts` 已�
 3. **密钥安全**：生产环境请务必修改 JWT 密钥和阿里云 AccessKey，不要提交到版本控制。
 4. **跨域配置**：前后端分离开发时，已配置跨域支持。
 5. **静态资源**：`laolaoPC/` 目录包含示例图片，可根据需要替换。
-
-## 贡献指南
-
-欢迎提交 Issue 和 Pull Request，一起把装机体验做到极致 ✨
-
-## 许可证
-
-本项目采用 MIT 许可证。
 
 
 

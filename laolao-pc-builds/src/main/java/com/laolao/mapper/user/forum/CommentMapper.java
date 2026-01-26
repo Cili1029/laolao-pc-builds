@@ -32,4 +32,7 @@ public interface CommentMapper {
 
     @Update("update forum_comment set like_count = like_count + #{delta} where id = #{likeId}")
     void updateLikeCount(int likeId, int delta);
+
+    @Select("select user_id from forum_comment where id = #{commentId}")
+    int selectUserByPost(int commentId);
 }

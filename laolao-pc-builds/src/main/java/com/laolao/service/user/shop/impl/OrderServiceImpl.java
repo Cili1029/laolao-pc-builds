@@ -7,7 +7,6 @@ import com.laolao.common.context.UserContext;
 import com.laolao.common.exception.UnknownError;
 import com.laolao.common.result.Result;
 import com.laolao.common.utils.OrderUtil;
-import com.laolao.common.websocket.NotificationHandler;
 import com.laolao.converter.MapStruct;
 import com.laolao.mapper.user.shop.*;
 import com.laolao.pojo.shop.dto.*;
@@ -42,8 +41,6 @@ public class OrderServiceImpl implements OrderService {
     private BundleMapper bundleMapper;
     @Resource
     private ShopCouponMapper shopCouponMapper;
-    @Resource
-    private NotificationHandler notificationHandler;
 //    @Resource
 //    private RocketMQTemplate rocketMQTemplate;
 

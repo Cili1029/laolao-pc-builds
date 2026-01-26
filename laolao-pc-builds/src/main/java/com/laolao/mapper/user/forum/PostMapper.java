@@ -42,4 +42,7 @@ public interface PostMapper {
             order by ((like_count * 1 + comment_count * 4) - TIMESTAMPDIFF(HOUR, created_at, NOW())) DESC
             """)
     List<PostSimpleVO> getHot();
+
+    @Select("select user_id from forum_post where id = #{postId}")
+    int selectUserByPost(int postId);
 }

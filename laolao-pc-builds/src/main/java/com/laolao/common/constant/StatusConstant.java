@@ -14,4 +14,8 @@ public class StatusConstant {
     public static final int NOT_USED = 0;
     // 已使用
     public static final int USED = 1;
+    // 未读
+    public static final int UNREAD = 0;
+    // 已读
+    public static final int READ = 1;
 }

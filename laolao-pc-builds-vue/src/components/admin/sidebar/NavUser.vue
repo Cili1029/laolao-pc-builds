@@ -37,23 +37,23 @@
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
             <DropdownMenuItem>
-              <Sparkles />
-              Upgrade to Pro
+              <Ghost />
+              功能1
             </DropdownMenuItem>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
-            <DropdownMenuItem>
-              <BadgeCheck />
-              Account
+            <DropdownMenuItem @click="router.push('/home');">
+              <Home />
+              返回主页
             </DropdownMenuItem>
             <DropdownMenuItem>
-              <CreditCard />
-              Billing
+              <Ghost />
+              功能3
             </DropdownMenuItem>
             <DropdownMenuItem>
-              <Bell />
-              Notifications
+              <Ghost />
+              功能4
             </DropdownMenuItem>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
@@ -69,7 +69,7 @@
 </template>
 
 <script setup lang="ts">
-  import { BadgeCheck, Bell, ChevronsUpDown, CreditCard, LogOut, Sparkles, } from "lucide-vue-next"
+  import { ChevronsUpDown, Ghost, Home, LogOut } from "lucide-vue-next"
   import { Avatar, AvatarFallback, AvatarImage, } from '@/components/ui/avatar'
   import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger, } from '@/components/ui/dropdown-menu'
   import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar, } from '@/components/ui/sidebar'

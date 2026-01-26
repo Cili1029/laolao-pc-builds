@@ -12,10 +12,13 @@ import com.laolao.pojo.forum.dto.AddReplyDTO;
 import com.laolao.pojo.forum.entity.Comment;
 import com.laolao.pojo.forum.vo.CommentReplyVO;
 import com.laolao.pojo.forum.vo.CommentVO;
+import com.laolao.pojo.user.Listener.CommentNotification;
+import com.laolao.pojo.user.Listener.ReplyNotification;
 import com.laolao.pojo.user.entity.User;
 import com.laolao.pojo.user.vo.UserSimpleVO;
 import com.laolao.service.user.forum.CommentService;
 import jakarta.annotation.Resource;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
@@ -36,8 +39,11 @@ public class CommentServiceImpl implements CommentService {
     private PostMapper postMapper;
     @Resource
     private SysFileMapper sysFileMapper;
+    @Resource
+    private ApplicationEventPublisher eventPublisher;
 
     @Override
+    @Transactional
     public Result<CommentVO> addComment(AddCommentDTO addCommentDTO) {
         int userId = UserContext.getCurrentId();
         User user = userCommonMapper.getUser(userId);
@@ -60,10 +66,20 @@ public class CommentServiceImpl implements CommentService {
         postMapper.updateCommentCount(addCommentDTO.getId(), 1, LocalDateTime.now(), UserContext.getCurrentId());
         List<CommentVO> commentVOList = new ArrayList<>();
         setUserToComment(userMap, Collections.singletonList(comment), commentVOList, null, 1);
+
+        // 发布异步通知
+        CommentNotification commentNotification = CommentNotification.builder()
+                .senderId(userId)
+                .postId(addCommentDTO.getId())
+                .content(addCommentDTO.getContent())
+                .build();
+        eventPublisher.publishEvent(commentNotification);
+
         return Result.success(commentVOList.get(0), "发表成功！");
     }
 
     @Override
+    @Transactional
     public Result<CommentReplyVO> addReply(AddReplyDTO addReplyDTO) {
         int userId = UserContext.getCurrentId();
         User user = userCommonMapper.getUser(userId);
@@ -87,6 +103,16 @@ public class CommentServiceImpl implements CommentService {
         postMapper.updateCommentCount(addReplyDTO.getId(), 1, LocalDateTime.now(), UserContext.getCurrentId());
         List<CommentReplyVO> commentReplyVOList = new ArrayList<>();
         setUserToComment(userMap, Collections.singletonList(comment), null, commentReplyVOList, 2);
+
+        // 发布异步通知
+        ReplyNotification replyNotification = ReplyNotification.builder()
+                .senderId(userId)
+                .postId(addReplyDTO.getId())
+                .commentId(addReplyDTO.getParent())
+                .content(addReplyDTO.getContent())
+                .build();
+        eventPublisher.publishEvent(replyNotification);
+
         return Result.success(commentReplyVOList.get(0), "发表成功！");
     }
 

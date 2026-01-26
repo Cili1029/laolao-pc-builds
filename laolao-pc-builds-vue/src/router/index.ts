@@ -11,7 +11,7 @@ import PostSimple from '@/components/front/forum/PostSimple.vue';
 import Sign from '@/components/common/Sign.vue';
 import FrontUser from '@/components/front/user/User.vue';
 import Product from '@/components/front/shop/Product.vue';
-import PaySuccess from '@/components/front/common/paySuccess.vue';
+import PaySuccess from '@/components/front/common/PaySuccess.vue';
 import Error from '@/components/front/common/Error.vue';
 
 import AdminLayout from '@/components/admin/AdminLayout.vue';
