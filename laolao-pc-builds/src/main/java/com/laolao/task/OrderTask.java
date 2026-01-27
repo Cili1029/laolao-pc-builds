@@ -7,6 +7,7 @@ import com.laolao.pojo.shop.entity.Order;
 import jakarta.annotation.Resource;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -16,7 +17,6 @@ import java.util.List;
 public class OrderTask {
     @Resource
     private OrderMapper orderMapper;
-
     @Resource
     private ShopCouponMapper shopCouponMapper;
 
@@ -45,8 +45,10 @@ public class OrderTask {
 
     // 模拟快递到达
     @Scheduled(cron = "0 0/5 * * * ?")
+    @Transactional
     public void arrivalOrders() {
         LocalDateTime expire = LocalDateTime.now().minusMinutes(5);
         orderMapper.arrivalOrder(expire, LocalDateTime.now());
+
     }
 }

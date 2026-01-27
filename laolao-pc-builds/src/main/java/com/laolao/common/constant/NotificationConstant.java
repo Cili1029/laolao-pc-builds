@@ -10,6 +10,9 @@ public class NotificationConstant {
     // 回复评论
     public static final int REPLY = 2;
 
-    // 点赞
-    public static final int LIKE = 3;
+    // 帖子点赞
+    public static final int POST_LIKE = 3;
+
+    // 评论点赞
+    public static final int COMMENT_LIKE = 4;
 }

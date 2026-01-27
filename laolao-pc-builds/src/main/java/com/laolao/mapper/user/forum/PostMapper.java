@@ -2,6 +2,7 @@ package com.laolao.mapper.user.forum;
 
 import com.laolao.pojo.forum.entity.Post;
 import com.laolao.pojo.forum.vo.PostSimpleVO;
+import com.laolao.pojo.user.Listener.LikePostOrComment;
 import org.apache.ibatis.annotations.*;
 
 import java.time.LocalDateTime;
@@ -45,4 +46,7 @@ public interface PostMapper {
 
     @Select("select user_id from forum_post where id = #{postId}")
     int selectUserByPost(int postId);
+
+    @Select("select user_id, title as content from forum_post where id = #{postId}")
+    LikePostOrComment selectUserAndTitleByPost(int postId);
 }

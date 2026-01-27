@@ -1,4 +1,4 @@
-package com.laolao.pojo.user.entity;
+package com.laolao.pojo.user.Listener;
 
 import lombok.*;
 
@@ -10,12 +10,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @ToString
 @Builder
-public class Notification {
-    /**
-     * 主键
-     */
-    private int id;
-
+public class OrderNotification {
     /**
      * 接收通知的用户ID
      */
@@ -32,16 +27,6 @@ public class Notification {
     private int type;
 
     /**
-     * 所属帖子id
-     */
-    private Integer postId;
-
-    /**
-     * 所属评论id
-     */
-    private Integer commentId;
-
-    /**
      * 通知标题
      */
     private String title;
@@ -52,12 +37,17 @@ public class Notification {
     private String content;
 
     /**
-     * 是否已读：0-未读，1-已读
-     */
-    private int status;
-
-    /**
      * 创建时间
      */
     private LocalDateTime createdAt;
+
+    /**
+     * 订单状态: 1待付款 2待发货 3已发货 4待收货 5已完成 6已取消
+     */
+    private Integer orderStatus;
+
+    /**
+     * 订单主键
+     */
+    private int orderId;
 }

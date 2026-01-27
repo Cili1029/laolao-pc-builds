@@ -8,7 +8,12 @@ import com.laolao.pojo.forum.vo.*;
 import com.laolao.pojo.shop.dto.*;
 import com.laolao.pojo.shop.entity.*;
 import com.laolao.pojo.shop.vo.*;
+import com.laolao.pojo.user.Listener.CommentNotification;
+import com.laolao.pojo.user.Listener.LikeNotification;
+import com.laolao.pojo.user.Listener.OrderNotification;
+import com.laolao.pojo.user.Listener.ReplyNotification;
 import com.laolao.pojo.user.dto.AdminUserUpdateDTO;
+import com.laolao.pojo.user.entity.Notification;
 import com.laolao.pojo.user.entity.User;
 import com.laolao.pojo.user.vo.AdminUserVO;
 import com.laolao.pojo.user.dto.UpdateUserDTO;
@@ -95,4 +100,12 @@ public interface MapStruct {
     AdminOrderVO orderToAdminOrderVO(Order order);
 
     AdminOrderDetailVO orderDetailToorderDetailVO(OrderDetail orderDetail);
+
+    Notification likeNotificationToNotification(LikeNotification notification);
+
+    Notification replyNotificationToNotification(ReplyNotification replyNotification);
+
+    Notification commentNotificationToNotification(CommentNotification commentNotification);
+
+    Notification orderNotificationToNotification(OrderNotification orderNotification);
 }

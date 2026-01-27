@@ -3,6 +3,7 @@ package com.laolao.mapper.user.shop;
 import com.laolao.pojo.shop.entity.Order;
 import com.laolao.pojo.shop.entity.OrderDetail;
 import com.laolao.pojo.shop.vo.OrdersVO;
+import com.laolao.pojo.user.Listener.OrderNumberAndUser;
 import org.apache.ibatis.annotations.*;
 
 import java.math.BigDecimal;
@@ -53,4 +54,7 @@ public interface OrderMapper {
 
     @Select("select original_amount - discount_amount from shop_order where number = #{number}")
     BigDecimal selectAmountByNumber(String number);
+
+    @Select("select user_id, number from shop_order where id = #{orderId}")
+    OrderNumberAndUser selectUserByNumber(int orderId);
 }

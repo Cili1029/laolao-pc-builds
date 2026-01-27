@@ -2,6 +2,7 @@ package com.laolao.service.admin.shop.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.laolao.common.constant.NotificationConstant;
 import com.laolao.common.constant.OrderConstant;
 import com.laolao.common.result.Result;
 import com.laolao.converter.MapStruct;
@@ -12,10 +13,13 @@ import com.laolao.pojo.shop.entity.Order;
 import com.laolao.pojo.shop.entity.OrderDetail;
 import com.laolao.pojo.shop.vo.AdminOrderDetailVO;
 import com.laolao.pojo.shop.vo.AdminOrderVO;
+import com.laolao.pojo.user.Listener.OrderNotification;
 import com.laolao.service.admin.shop.AdminOrderService;
 import jakarta.annotation.Resource;
 import org.springframework.beans.BeanUtils;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -23,11 +27,12 @@ import java.util.List;
 
 @Service
 public class AdminOrderServiceImpl implements AdminOrderService {
-
     @Resource
     private AdminOrderMapper adminOrderMapper;
     @Resource
     private MapStruct mapStruct;
+    @Resource
+    private ApplicationEventPublisher eventPublisher;
 
     @Override
     public Result<PageInfo<AdminOrderVO>> getCoupon(Integer status, String searchContent, Integer pageNum, Integer pageSize) {
@@ -57,10 +62,21 @@ public class AdminOrderServiceImpl implements AdminOrderService {
     }
 
     @Override
+    @Transactional
     public Result<String> ship(AdminOrderShipDTO adminOrderShipDTO) {
         adminOrderShipDTO.setStatus(OrderConstant.SHIPPED);
         adminOrderShipDTO.setShipTime(LocalDateTime.now());
         adminOrderMapper.ship(adminOrderShipDTO);
+
+        // 发布异步通知
+        OrderNotification orderNotification = OrderNotification.builder()
+                .senderId(0)
+                .type(NotificationConstant.SYS)
+                .orderStatus(OrderConstant.SHIPPED)
+                .orderId(adminOrderShipDTO.getId())
+                .build();
+        eventPublisher.publishEvent(orderNotification);
+
         return Result.success("已发货！");
     }
 

@@ -1,4 +1,4 @@
-package com.laolao.pojo.user.entity;
+package com.laolao.pojo.user.vo;
 
 import lombok.*;
 
@@ -10,21 +10,11 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @ToString
 @Builder
-public class Notification {
+public class NotificationVO {
     /**
      * 主键
      */
     private int id;
-
-    /**
-     * 接收通知的用户ID
-     */
-    private int receiverId;
-
-    /**
-     * 发送通知的用户ID（0-系统通知）
-     */
-    private int senderId;
 
     /**
      * 类型：1-系统通知，2-评论帖子，3-回复评论，4-点赞
@@ -37,9 +27,9 @@ public class Notification {
     private Integer postId;
 
     /**
-     * 所属评论id
+     * 所属分类id
      */
-    private Integer commentId;
+    private Integer categoryId;
 
     /**
      * 通知标题
@@ -50,11 +40,6 @@ public class Notification {
      * 通知简要内容（冗余存储，用于展示）
      */
     private String content;
-
-    /**
-     * 是否已读：0-未读，1-已读
-     */
-    private int status;
 
     /**
      * 创建时间

@@ -83,7 +83,7 @@
                         <Button variant="ghost" size="icon"
                           class="h-6 w-6 rounded hover:bg-white hover:shadow-sm hover:text-orange-600"
                           @click="quantity(product, 0)">
-                           <Minus />
+                          <Minus />
                         </Button>
                         <span class="text-sm font-bold w-4 text-center">{{ product.quantity }}</span>
                         <Button variant="ghost" size="icon"
@@ -100,7 +100,7 @@
               <!-- 空状态 -->
               <div v-else class="flex-1 flex flex-col justify-center items-center h-full text-gray-300 gap-4">
                 <div class="bg-gray-50 p-6 rounded-full shadow-inner">
-                  <CandyOff class="h-15 w-15"/>
+                  <CandyOff class="h-15 w-15" />
                 </div>
                 <div class="text-center">
                   <p class="font-bold text-gray-400">购物车空空如也</p>
@@ -159,6 +159,12 @@
                     <span>个人信息</span>
                   </DropdownMenuItem>
                 </RouterLink>
+                <DropdownMenuItem @click="showNotificationDialog()"
+                  class="cursor-pointer rounded-lg hover:bg-orange-50 hover:text-orange-600 focus:bg-orange-50 focus:text-orange-600">
+                  <Mail />
+                  <span>我的消息</span>
+                  <span v-if="messageCount && messageCount > 0">({{ messageCount }}条未读消息)</span>
+                </DropdownMenuItem>
                 <RouterLink to="/my-orders">
                   <DropdownMenuItem
                     class="cursor-pointer rounded-lg hover:bg-orange-50 hover:text-orange-600 focus:bg-orange-50 focus:text-orange-600">
@@ -228,11 +234,12 @@
     </div>
     <!-- 全局弹窗 -->
     <CouponDialog :type="couponDialogType" v-model:isOpen="isOpenCouponDialog"></CouponDialog>
+    <NotificationDialog v-model:isOpen="isOpenNotificationDialog"></NotificationDialog>
   </div>
 </template>
 
 <script setup lang="ts">
-  import { ref, computed, watch, onUnmounted } from 'vue'
+  import { ref, computed, watch, onUnmounted, onMounted } from 'vue'
   import axios from '@/utils/myAxios'
   import { useRoute } from 'vue-router'
   const route = useRoute()
@@ -240,7 +247,7 @@
   import CouponDialog from '@/components/front/shop/CouponDialog.vue';
   import { toast } from "vue-sonner"
   import 'vue-sonner/style.css'
-  import { CandyOff, Clipboard, Gift, LogOut, MessagesSquare, Minus, Plus, ShieldUser, ShoppingCart, Store, Trash, User } from 'lucide-vue-next';
+  import { CandyOff, Clipboard, Gift, LogOut, Mail, MessagesSquare, Minus, Plus, ShieldUser, ShoppingCart, Store, Trash, User } from 'lucide-vue-next';
   import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger, } from "@/components/ui/sheet"
   import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
   import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
@@ -252,6 +259,7 @@
   import { useCommonStore } from '@/stores/CommonStore'
   const commonStore = useCommonStore()
   import { useWebSocketStore } from '@/stores/websocketStore'
+  import NotificationDialog from './user/NotificationDialog.vue'
   const wsStore = useWebSocketStore()
 
   watch(
@@ -265,6 +273,22 @@
     },
     { immediate: true } // 初始化时立即执行一次
   )
+
+  onMounted(() => {
+    getMessageCount()
+  })
+
+  const messageCount = ref(0)
+
+  const getMessageCount = async () => {
+    products.value = []
+    try {
+      const response = await axios.get("/api/user/notification/status")
+      messageCount.value = response.data.data || []
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   onUnmounted(() => {
     wsStore.disconnect()
@@ -384,6 +408,12 @@
   const showCouponDialog = (type: number) => {
     couponDialogType.value = type
     isOpenCouponDialog.value = true
+  }
+
+  const isOpenNotificationDialog = ref(false); // 控制弹窗显示/隐藏
+  const showNotificationDialog = () => {
+    isOpenNotificationDialog.value = true
+    messageCount.value = 0
   }
 </script>
 

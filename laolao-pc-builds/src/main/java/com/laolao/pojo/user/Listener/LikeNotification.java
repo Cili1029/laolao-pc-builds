@@ -1,4 +1,4 @@
-package com.laolao.pojo.user.entity;
+package com.laolao.pojo.user.Listener;
 
 import lombok.*;
 
@@ -10,12 +10,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @ToString
 @Builder
-public class Notification {
-    /**
-     * 主键
-     */
-    private int id;
-
+public class LikeNotification {
     /**
      * 接收通知的用户ID
      */
@@ -52,12 +47,17 @@ public class Notification {
     private String content;
 
     /**
-     * 是否已读：0-未读，1-已读
-     */
-    private int status;
-
-    /**
      * 创建时间
      */
     private LocalDateTime createdAt;
+
+    /**
+     * 点赞类型：1-帖子，2-评论
+     */
+    private int likeType;
+
+    /**
+     * 点赞Id
+     */
+    private int likeId;
 }

@@ -1,6 +1,7 @@
 package com.laolao.mapper.user.forum;
 
 import com.laolao.pojo.forum.entity.Comment;
+import com.laolao.pojo.user.Listener.LikePostOrComment;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -34,5 +35,8 @@ public interface CommentMapper {
     void updateLikeCount(int likeId, int delta);
 
     @Select("select user_id from forum_comment where id = #{commentId}")
-    int selectUserByPost(int commentId);
+    int selectUserByComment(int commentId);
+
+    @Select("select user_id, post_id, content from forum_comment where id = #{likeId}")
+    LikePostOrComment selectUserAndTitleByComment(int likeId);
 }
