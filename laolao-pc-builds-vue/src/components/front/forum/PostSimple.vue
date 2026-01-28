@@ -1,39 +1,38 @@
 <template>
     <div class="h-full overflow-y-auto bg-gradient-to-b from-slate-50 to-white scrollbar-edge">
         <!-- 板块描述 -->
-        <div class="rounded-3xl border border-slate-100 bg-white/90 p-6 m-2 shadow-md backdrop-blur">
-            <div class="rounded-2xl bg-sky-50 px-5 py-3 text-slate-700 shadow-inner">
+        <div class="rounded-2xl border border-slate-100 bg-white/90 p-2 m-2 shadow-sm backdrop-blur">
+            <div class="rounded-2xl bg-sky-50 px-5 py-3 text-slate-700">
                 <span class="text-base leading-relaxed">
                     <span class="font-bold">真诚、友善、团结、专业</span>，共建你我引以为荣之社区。
                 </span>
             </div>
-            <div
-                class="mt-5 flex items-center gap-4 rounded-2xl border border-slate-100 bg-white/90 px-6 py-5 shadow-sm">
-                <img :src="categoryStore.getCategoryById(categoryStore.currentCategory)?.image" class="h-15 w-15" />
-
-                <div>
-                    <p class="text-3xl font-black text-slate-900">
-                        {{ categoryStore.getCategoryById(categoryStore.currentCategory)?.name }}
-                    </p>
-                    <p class="text-sm text-slate-500">
-                        {{ categoryStore.getCategoryById(categoryStore.currentCategory)?.description }}
-                    </p>
+            <div class="flex justify-between items-center py-4">
+                <div class="flex">
+                    <img :src="categoryStore.getCategoryById(categoryStore.currentCategory)?.image"
+                        class="h-15 w-15 mx-3" />
+                    <div>
+                        <p class="text-3xl font-black text-slate-900">
+                            {{ categoryStore.getCategoryById(categoryStore.currentCategory)?.name }}
+                        </p>
+                        <p class="text-sm text-slate-500">
+                            {{ categoryStore.getCategoryById(categoryStore.currentCategory)?.description }}
+                        </p>
+                    </div>
                 </div>
-            </div>
-            <div v-show="categoryStore.currentCategory !== 5"
-                class="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-slate-50/70 px-4 py-3">
-                <p class="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">发现好贴</p>
-                <div class="flex w-full max-w-md items-center gap-2">
+                <div v-show="categoryStore.currentCategory !== 5" class="flex w-full max-w-sm items-center space-x-2">
                     <Button v-if="back" @click="getPost()" class="rounded-full px-4">返回</Button>
                     <Input type="text" placeholder="搜索帖子..." v-model="searchContent"
                         class="flex-1 rounded-full border-slate-200" />
-                    <Button type="submit" class="rounded-full px-4" @click="search()"
-                        :disabled="!searchContent">搜索</Button>
+                    <Button type="submit" class="rounded-full px-4" @click="search()" :disabled="!searchContent">
+                        搜索
+                    </Button>
                 </div>
             </div>
+
         </div>
 
-        <div class="rounded-3xl border border-slate-100 bg-white/90 shadow-xl">
+        <div class="">
             <div
                 class="flex items-center justify-between rounded-t-3xl bg-slate-50/80 px-6 py-2 font-semibold text-slate-400">
                 <span class="text-base">帖子</span>
@@ -43,30 +42,28 @@
                     <p class="w-24 text-center text-base">最后回复</p>
                 </div>
             </div>
-            <div v-for="simple in postSimple" :key="simple.id"
-                class="flex flex-wrap items-center justify-between gap-4 px-6 py-4 transition hover:bg-slate-50/60">
+            <router-link :to="`/forum/${simple.categoryId}/post/${simple.id}`" v-for="simple in postSimple"
+                :key="simple.id" class="flex items-center justify-between gap-4 px-6 py-4 transition hover:bg-slate-50">
                 <div class="space-y-2">
-                    <router-link :to="`/forum/${simple.categoryId}/post/${simple.id}`"
-                        class="text-lg font-semibold text-slate-900 hover:text-orange-500">
+                    <span class="text-lg font-semibold">
                         {{ simple.title }}
-                    </router-link>
+                    </span>
                     <div @click="categoryStore.currentCategory = simple.categoryId"
                         class="inline-flex cursor-pointer items-center rounded-full bg-slate-100 px-3 py-1 mx-2 text-xs text-slate-500 transition hover:bg-slate-200">
                         <img :src="categoryStore.getCategoryById(simple.categoryId)?.image" class="h-4 w-4" />
-
                         {{ categoryStore.getCategoryById(simple.categoryId)?.name }}
                     </div>
                 </div>
 
                 <div class="hidden items-center gap-4 text-slate-500 md:flex">
-                    <p class="w-12 text-center text-base font-bold text-slate-900">{{
-                        simple.commentCount }}</p>
-                    <p class="w-12 text-center text-base font-bold text-slate-900">{{ simple.likeCount
-                        }}</p>
-                    <p class="w-24 text-center text-sm font-bold text-slate-900">{{
-                        formatTime(simple.commentedAt) }}</p>
+                    <p class="w-12 text-center text-base font-bold text-slate-900">
+                        {{ simple.commentCount }}</p>
+                    <p class="w-12 text-center text-base font-bold text-slate-900">
+                        {{ simple.likeCount }}</p>
+                    <p class="w-24 text-center text-sm font-bold text-slate-900">
+                        {{ formatTime(simple.commentedAt) }}</p>
                 </div>
-            </div>
+            </router-link>
 
             <div v-if="categoryStore.currentCategory === 5" class="h-16 border-t flex items-center p-2">
                 <Pagination v-if="total > 0" v-model:page="pageNum" :total="total" :items-per-page="pageSize"

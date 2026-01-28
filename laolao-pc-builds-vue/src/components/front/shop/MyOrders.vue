@@ -163,7 +163,7 @@
                                 <div v-if="detail?.trackingNo"
                                     class="bg-blue-50/50 px-4 py-2 my-2 rounded-lg border border-blue-50 space-y-2">
                                     <div class="flex justify-between text-xs text-gray-500">
-                                        <span>订单号</span>
+                                        <span>快递单号</span>
                                         <span>{{ detail.trackingNo }}</span>
                                     </div>
                                 </div>

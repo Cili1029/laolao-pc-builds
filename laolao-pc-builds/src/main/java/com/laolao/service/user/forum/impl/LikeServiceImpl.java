@@ -9,7 +9,6 @@ import com.laolao.mapper.user.forum.LikeMapper;
 import com.laolao.mapper.user.forum.PostMapper;
 import com.laolao.pojo.forum.dto.LikeDTO;
 import com.laolao.pojo.forum.entity.Like;
-import com.laolao.pojo.user.Listener.CommentNotification;
 import com.laolao.pojo.user.Listener.LikeNotification;
 import com.laolao.service.user.forum.LikeService;
 import jakarta.annotation.Resource;

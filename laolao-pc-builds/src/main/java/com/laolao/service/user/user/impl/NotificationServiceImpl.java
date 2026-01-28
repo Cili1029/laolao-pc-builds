@@ -67,7 +67,8 @@ public class NotificationServiceImpl implements NotificationService {
         commentNotification.setType(NotificationConstant.COMMENT);
         commentNotification.setTitle("新评论");
         // 截取内容防溢出
-        commentNotification.setContent(commentNotification.getContent().length() > 9 ? commentNotification.getContent().substring(0, 8) : commentNotification.getContent() + "...");
+        commentNotification.setContent("有人评论：" + (commentNotification.getContent().length() > 9 ?
+                (commentNotification.getContent().substring(0, 8) + "...") : commentNotification.getContent()));
         // 转换写入数据库
         Notification notification = mapStruct.commentNotificationToNotification(commentNotification);
         notificationMapper.insertNotification(notification);
@@ -88,7 +89,8 @@ public class NotificationServiceImpl implements NotificationService {
         replyNotification.setType(NotificationConstant.REPLY);
         replyNotification.setTitle("新回复");
         // 截取内容防溢出
-        replyNotification.setContent(replyNotification.getContent().length() > 9 ? replyNotification.getContent().substring(0, 8) : replyNotification.getContent() + "...");
+        replyNotification.setContent("有人回复你：" + (replyNotification.getContent().length() > 9 ?
+                (replyNotification.getContent().substring(0, 8) + "...") : replyNotification.getContent()));
         // 转换写入数据库
         Notification notification = mapStruct.replyNotificationToNotification(replyNotification);
         notificationMapper.insertNotification(notification);
@@ -112,7 +114,8 @@ public class NotificationServiceImpl implements NotificationService {
             }
             likeNotification.setReceiverId(post.getUserId());
             likeNotification.setTitle("新点赞");
-            likeNotification.setContent("你的帖子 " + (post.getContent().length() > 9 ? post.getContent().substring(0, 8) : post.getContent()) + "... 被点赞了");
+            likeNotification.setContent("有人点赞了你的帖子： " + (post.getContent().length() > 9 ?
+                    (post.getContent().substring(0, 8) + "...") : post.getContent()));
             // 转换写入
             Notification notification = mapStruct.likeNotificationToNotification(likeNotification);
             // 写入数据库
@@ -132,7 +135,8 @@ public class NotificationServiceImpl implements NotificationService {
             likeNotification.setPostId(comment.getPostId());
             likeNotification.setTitle("新点赞");
             // 截取内容防溢出
-            likeNotification.setContent("你的评论 " + (comment.getContent().length() > 9 ? comment.getContent().substring(0, 8) : comment.getContent()) + "... 被点赞了");
+            likeNotification.setContent("有人点赞了你的评论: " + (comment.getContent().length() > 9 ?
+                    (comment.getContent().substring(0, 8) + "...") : comment.getContent()));
             // 转换写入数据库
             Notification notification = mapStruct.likeNotificationToNotification(likeNotification);
             notificationMapper.insertNotification(notification);
@@ -148,7 +152,7 @@ public class NotificationServiceImpl implements NotificationService {
         OrderNumberAndUser numberAndUser = orderMapper.selectUserByNumber(orderNotification.getOrderId());
         orderNotification.setReceiverId(numberAndUser.getUserId());
         orderNotification.setTitle("发货通知");
-        orderNotification.setContent("订单" + numberAndUser.getNumber() + (orderNotification.getOrderStatus() == OrderConstant.SHIPPED ? "发货" : "到货") + "了");
+        orderNotification.setContent("订单 " + numberAndUser.getNumber() + (orderNotification.getOrderStatus() == OrderConstant.SHIPPED ? " 发货" : " 到货") + "了");
         // 转换写入数据库
         Notification notification = mapStruct.orderNotificationToNotification(orderNotification);
         notificationMapper.insertNotification(notification);

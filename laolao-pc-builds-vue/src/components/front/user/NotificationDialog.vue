@@ -27,7 +27,7 @@
                   <span class="text-xs text-gray-400">
                     {{ formatTime(notification.createdAt) }}
                   </span>
-                  <Button @click="goTo(notification)" size="sm" class="h-8 px-3 text-xs">
+                  <Button @click="goTo(notification)" class="h-8 text-xs">
                     去查看
                   </Button>
                 </div>
