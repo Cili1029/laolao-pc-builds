@@ -1,5 +1,20 @@
 <template>
     <div class="h-full overflow-y-auto p-3 scrollbar-edge">
+        <div class="w-full flex justify-center">
+            <Carousel>
+                <CarouselContent>
+                    <CarouselItem v-for="image in post?.images" :key="image">
+                        <div class="flex h-full items-center justify-center">
+                            <Card class="w-full overflow-hidden border-none shadow-none bg-slate-50/70">
+                                <CardContent class="flex items-center justify-center">
+                                    <img :src="image" class="w-full h-auto max-h-[300px] object-contain rounded-md" />
+                                </CardContent>
+                            </Card>
+                        </div>
+                    </CarouselItem>
+                </CarouselContent>
+            </Carousel>
+        </div>
         <!-- 贴主 -->
         <div class="bg-white/90 p-5">
             <div class="flex justify-between">
@@ -17,14 +32,7 @@
             <p class="text-2xl font-black text-slate-900">{{ post?.title }}</p>
             <!-- 内容 -->
             <div class="w-full space-y-4">
-                <div class="text-base leading-relaxed text-slate-700">
-                    <p class="whitespace-pre-line">{{ post?.content }}</p>
-                    <div class="mt-4 grid gap-4 md:grid-cols-2">
-                        <img :src="image" v-for="image in post?.images" :key="image"
-                            class="max-h-96 w-full rounded-2xl object-cover shadow transition hover:shadow-lg"
-                            alt="帖子图片">
-                    </div>
-                </div>
+                <p class="whitespace-pre-line">{{ post?.content }}</p>
                 <div class="flex items-center justify-between">
                     <div class="flex gap-6 text-center text-sm text-slate-500">
                         <div @click="changeCategory()"
@@ -93,7 +101,7 @@
         <div class="w-full h-px bg-gray-200"></div>
 
         <!-- 评论 -->
-        <div class="py-4 space-y-4">
+        <div v-if="post.comment && post.comment.length > 0" class="py-4 space-y-4">
             <div v-for="comment in post?.comment" :key="comment.id"
                 class="space-y-2 rounded-base border border-slate-100 bg-white/90 p-5 shadow-sm">
                 <div class="flex justify-between items-center">
@@ -116,7 +124,6 @@
                         </div>
                     </div>
                 </div>
-                <!-- 头像 -->
 
                 <!-- 直接评论 -->
                 <div class="flex gap-4">
@@ -297,6 +304,14 @@
                 </div>
             </div>
         </div>
+        <div v-else class="flex flex-col items-center justify-center gap-4 text-center py-4">
+            <div class="rounded-full bg-muted/30 p-4">
+                <Ghost class="h-10 w-10 text-muted-foreground/60" />
+            </div>
+            <p class="text-sm text-muted-foreground">
+                去发布的第一条评论！
+            </p>
+        </div>
         <!-- 回复 -->
         <div class="mt-4 grid gap-3">
             <Textarea v-model="myComment" class="h-32 rounded-2xl" placeholder="说点什么..."></Textarea>
@@ -322,6 +337,8 @@
     import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
     import { Textarea } from "@/components/ui/textarea"
     import { Button } from "@/components/ui/button"
+    import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel'
+    import { Card, CardContent } from '@/components/ui/card'
     import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger, } from '@/components/ui/alert-dialog'
     import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog"
     import dayjs from 'dayjs'
@@ -333,8 +350,7 @@
     import { useUserStore } from '@/stores/UserStore'
     const userStore = useUserStore()
     import router from '@/router'
-    import { ChevronDown, ChevronUp, Image, Rocket, ThumbsUp } from 'lucide-vue-next'
-
+    import { ChevronDown, ChevronUp, Ghost, Image, Rocket, ThumbsUp } from 'lucide-vue-next'
 
     // 初始化dayjs
     dayjs.extend(relativeTime)

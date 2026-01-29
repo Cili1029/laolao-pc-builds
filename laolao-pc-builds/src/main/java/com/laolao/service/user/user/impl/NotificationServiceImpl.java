@@ -72,7 +72,6 @@ public class NotificationServiceImpl implements NotificationService {
         // 转换写入数据库
         Notification notification = mapStruct.commentNotificationToNotification(commentNotification);
         notificationMapper.insertNotification(notification);
-        // TODO websocket
     }
 
     @Async
@@ -94,7 +93,6 @@ public class NotificationServiceImpl implements NotificationService {
         // 转换写入数据库
         Notification notification = mapStruct.replyNotificationToNotification(replyNotification);
         notificationMapper.insertNotification(notification);
-        // TODO websocket
     }
 
     @Async

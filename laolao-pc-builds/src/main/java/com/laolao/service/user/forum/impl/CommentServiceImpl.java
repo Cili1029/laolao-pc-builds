@@ -1,5 +1,6 @@
 package com.laolao.service.user.forum.impl;
 
+import com.github.houbb.sensitive.word.core.SensitiveWordHelper;
 import com.laolao.common.context.UserContext;
 import com.laolao.common.result.Result;
 import com.laolao.converter.MapStruct;
@@ -53,7 +54,7 @@ public class CommentServiceImpl implements CommentService {
         Comment comment = Comment.builder()
                 .postId(addCommentDTO.getId())
                 .userId(userId)
-                .content(addCommentDTO.getContent())
+                .content(SensitiveWordHelper.replace(addCommentDTO.getContent(), '0'))
                 .images(addCommentDTO.getImages())
                 .build();
         // 修改文件状态
@@ -90,7 +91,7 @@ public class CommentServiceImpl implements CommentService {
                 .postId(addReplyDTO.getId())
                 .userId(userId)
                 .parent(addReplyDTO.getParent())
-                .content(addReplyDTO.getContent())
+                .content(SensitiveWordHelper.replace(addReplyDTO.getContent(), '0'))
                 .images(addReplyDTO.getImages())
                 .build();
         // 修改文件状态

@@ -10,10 +10,10 @@
             <Carousel class="w-full max-w-xl 2xl:max-w-2xl" :plugins="[Autoplay({ delay: 5000, })]">
               <CarouselContent>
                 <CarouselItem v-for="image in component?.images" :key="image">
-                  <div class="p-1">
+                  <div>
                     <Card>
-                      <CardContent class="flex aspect-square items-center justify-center">
-                        <img :src="image" class="w-full rounded-md" />
+                      <CardContent class="flex items-center justify-center">
+                        <img :src="image" class="w-full h-auto rounded-md" />
                       </CardContent>
                     </Card>
                   </div>

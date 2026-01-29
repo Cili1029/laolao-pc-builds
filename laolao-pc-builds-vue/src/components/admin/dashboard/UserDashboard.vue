@@ -19,7 +19,7 @@
                                 :key="user.id">
                                 <Tooltip>
                                     <TooltipTrigger as-child>
-                                        <Avatar
+                                        <Avatar @click="router.push(`/user/${user.id}`)"
                                             class="h-7 w-7 border-2 border-background ring-1 ring-black/5 transition-transform hover:scale-110 hover:z-20">
                                             <AvatarImage :src="user.avatar" />
                                             <AvatarFallback class="text-[10px] bg-green-100 text-green-700">
@@ -132,6 +132,7 @@
     import { BarChart, LineChart } from 'echarts/charts'
     import VChart from 'vue-echarts'
     import { useCommonStore } from '@/stores/CommonStore'
+    import router from '@/router'
     const commonStore = useCommonStore()
 
     onMounted(() => {

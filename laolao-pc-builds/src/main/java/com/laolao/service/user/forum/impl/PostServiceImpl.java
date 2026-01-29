@@ -1,5 +1,6 @@
 package com.laolao.service.user.forum.impl;
 
+import com.github.houbb.sensitive.word.core.SensitiveWordHelper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.laolao.common.constant.StatusConstant;
@@ -192,8 +193,8 @@ public class PostServiceImpl implements PostService {
         Post post = Post.builder()
                 .userId(UserContext.getCurrentId())
                 .categoryId(createPostDTO.getCategoryId())
-                .title(createPostDTO.getTitle())
-                .content(createPostDTO.getContent())
+                .title(SensitiveWordHelper.replace(createPostDTO.getTitle(), '0'))
+                .content(SensitiveWordHelper.replace(createPostDTO.getContent(), '0'))
                 .images(createPostDTO.getImages())
                 .commentedBy(UserContext.getCurrentId())
                 .commentedAt(LocalDateTime.now())
